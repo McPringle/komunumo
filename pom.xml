@@ -79,7 +79,7 @@
         <jooq.version>3.19.13</jooq.version>
         <maven.version>3.9.9</maven.version>
         <mockito.version>5.14.1</mockito.version>
-        <vaadin.version>24.4.13</vaadin.version>
+        <vaadin.version>24.5.0</vaadin.version>
     </properties>
 
     <parent>
