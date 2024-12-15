@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Komunumo – The Open Source Community Manager</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <link rel="icon" type="image/x-icon" href="/images/favicon/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="192x192"  href="/images/favicon/android-icon-192x192.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon/favicon-96x96.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png" />
+        <link rel="shortcut icon" type="image/x-icon" href="/images/favicon/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="57x57" href="/images/favicon/apple-icon-57x57.png" />
+        <link rel="apple-touch-icon" sizes="60x60" href="/images/favicon/apple-icon-60x60.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="/images/favicon/apple-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/images/favicon/apple-icon-76x76.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="/images/favicon/apple-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="120x120" href="/images/favicon/apple-icon-120x120.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="/images/favicon/apple-icon-144x144.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/images/favicon/apple-icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-icon-180x180.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" />
+        <meta name="msapplication-TileColor" content="#ffffff" />
+        <meta name="msapplication-TileImage" content="/images/favicon/ms-icon-144x144.png" />
+        <meta name="theme-color" content="#ffffff" />
+        <script src="https://use.fontawesome.com/07259f69c0.js"></script>
+
+        <style>
+            * {
+                color: #FFFFFF;
+                font-family: 'Roboto', sans-serif;
+            }
+
+            body {
+                background-image: linear-gradient(45deg, #00FFC9 0%, #00FF99 100%);
+                margin: 0;
+                padding: 0;
+            }
+
+            img {
+                display: block;
+                margin: 50px auto 0;
+                width: 350px;
+            }
+
+            .mission {
+                font-size: 32px;
+                line-height: 36px;
+                text-align: center;
+            }
+
+            .github {
+                background: rgba(0,0,0,0.20);
+                border-radius: 8px;
+                font-size: 50px;
+                line-height: 36px;
+                margin: 0 auto;
+                text-align: center;
+                width: 100px;
+            }
+
+            .github a, .knowmore a {
+                display: block;
+                text-decoration: none;
+            }
+
+            .knowmore {
+                font-size: 18px;
+                line-height: 30px;
+                margin: 64px;
+                text-align: center;
+            }
+
+            .fa-chevron-right {
+                font-size: 30px;
+                transform: rotate(90deg);
+            }
+
+            #description {
+                background: rgba(0,0,0,0.20);
+                font-size: 24px;
+                margin: 0;
+                padding: 50px;
+            }
+
+            #description p {
+                margin-top: 0;
+            }
+
+            @media screen and (min-width: 1000px) {
+                img {
+                    margin-top: 150px;
+                    width: 520px;
+                }
+
+                .mission {
+                    font-size: 64px;
+                    line-height: 66px;
+                }
+
+                .github {
+                    line-height: 66px;
+                }
+
+                #description {
+                    column-count: 2;
+                    column-gap: 50px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <img src="images/komunumo.svg" alt="Komunumo" title="Komunumo" />
+        <p class="mission">the open source<br />community management</p>
+        <div class="github"><a href="https://github.com/McPringle/komunumo"><i class="fa fa-github" aria-hidden="true"></i></a></div>
+        <div class="knowmore"><a href="#description">know more</a><a href="#description"><i class="fa fa-chevron-right" aria-hidden="true"></i></a></div>
+        <div id="description">
+            <p>You are are community leader? Komunumo makes your life a lot easier! Eveything you need to run your community in one place, for free! Komunumo is an open source community management software which assists you in all tasks managing a community like a user group.</p>
+            <p>With Komunumo you can manage your community members (including self-management), organize events (including registration), send out newsletters, manage your sponsors, and a lot more.</p>
+            <p>We have set ourselves the goal of implementing all important Meetup functions for communities in Komunumo. We strive for full compatibility with the Fediverse to ensure smooth data exchange with Mastodon, Mobilizon, and other services.</p>
+            <p>Komunumo is open source software licensed under the <a href="https://www.gnu.org/licenses/agpl-3.0.html">GNU Affero General Public License</a> (AGPL) and free to use for everyone. Komunumo is being developed by a very ambitious <a href="https://github.com/McPringle/komunumo/blob/main/CONTRIBUTORS.md">group of people</a>, who are very active in different communities and give their free time for this project. Nobody earns money with Komunumo. Komunumo is owned by the community!</p>
+            <p>For development we use a <a href="https://github.com/McPringle/komunumo">GitHub repository</a>, where we <a href="https://github.com/McPringle/komunumo/issues">track all issues</a> like feature requests and bugs and host a forum for <a href="https://github.com/McPringle/komunumo/discussions">discussions and support</a>.</p>
+            <p>We use the <a href="https://en.wikipedia.org/wiki/Java_(programming_language)">Java</a> programming language and the <a href="https://vaadin.com/">Vaadin</a> framework for the server. For this website we just use static HTML 5 and GitHub Pages. Komunumo is not finished yet, it is under heavy development and any kind of help is highly appreciated!</p>
+        </div>
+    </body>
+</html>
