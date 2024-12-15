@@ -1,0 +1,47 @@
+{
+  "projectName": "komunumo",
+  "projectOwner": "McPringle",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "CONTRIBUTORS.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "gitmoji",
+  "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg?style=flat-square)](#contributors)",
+  "contributors": [
+    {
+      "login": "McPringle",
+      "name": "Marcus Fihlon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1254039?v=4",
+      "profile": "https://github.com/McPringle",
+      "contributions": [
+        "projectManagement",
+        "ideas",
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "Interactiondesigner",
+      "name": "Interactiondesigner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17220369?v=4",
+      "profile": "https://github.com/Interactiondesigner",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "simasch",
+      "name": "Simon Martinelli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/593352?v=4",
+      "profile": "https://github.com/simasch",
+      "contributions": [
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "linkToUsage": false
+}

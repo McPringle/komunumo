@@ -1,0 +1,22 @@
+services:
+
+  db:
+    image: mariadb:lts
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: true
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - type: bind
+        source: ${MARIADB_DATA}
+        target: /var/lib/mysql
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "4000:8080"

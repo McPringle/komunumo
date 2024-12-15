@@ -1,0 +1,2 @@
+This directory is used by the MariaDB database which can be run locally using Docker Compose.
+Don't delete it and don't commit it's contents.
