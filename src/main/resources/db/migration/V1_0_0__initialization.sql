@@ -1,4 +1,4 @@
-CREATE TABLE `client` (
+CREATE TABLE `group` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `created` DATETIME NOT NULL,
     `updated` DATETIME NOT NULL,
@@ -6,4 +6,4 @@ CREATE TABLE `client` (
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `client_name` ON `client` (`name`);
+CREATE INDEX `group_name` ON `group` (`name`);

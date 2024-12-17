@@ -22,5 +22,5 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 
-public record Client(@Nullable Long id, @Nullable LocalDateTime created, @Nullable LocalDateTime updated,
-                     @NotNull String name) { }
+public record Group(@Nullable Long id, @Nullable LocalDateTime created, @Nullable LocalDateTime updated,
+                    @NotNull String name) { }

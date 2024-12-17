@@ -18,44 +18,44 @@
 package org.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.db.tables.records.ClientRecord;
-import org.komunumo.data.entity.Client;
+import org.komunumo.data.db.tables.records.GroupRecord;
+import org.komunumo.data.entity.Group;
 import org.komunumo.data.service.getter.DSLContextGetter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
-import static org.komunumo.data.db.Tables.CLIENT;
+import static org.komunumo.data.db.Tables.GROUP;
 
-interface ClientService extends DSLContextGetter {
+interface GroupService extends DSLContextGetter {
 
     @NotNull
-    default Client storeClient(@NotNull final Client client) {
-        final ClientRecord clientRecord = dsl().fetchOptional(CLIENT, CLIENT.ID.eq(client.id()))
-                .orElse(dsl().newRecord(CLIENT));
-        clientRecord.from(client);
+    default Group storeGroup(@NotNull final Group group) {
+        final GroupRecord groupRecord = dsl().fetchOptional(GROUP, GROUP.ID.eq(group.id()))
+                .orElse(dsl().newRecord(GROUP));
+        groupRecord.from(group);
         final var now = LocalDateTime.now(ZoneOffset.UTC);
-        if (clientRecord.getCreated() == null) {
-            clientRecord.setCreated(now);
-            clientRecord.setUpdated(now);
+        if (groupRecord.getCreated() == null) {
+            groupRecord.setCreated(now);
+            groupRecord.setUpdated(now);
         } else {
-            clientRecord.setUpdated(now);
+            groupRecord.setUpdated(now);
         }
-        clientRecord.store();
-        return clientRecord.into(Client.class);
+        groupRecord.store();
+        return groupRecord.into(Group.class);
     }
 
     @NotNull
-    default Optional<Client> getClient(@NotNull final Long id) {
-        return dsl().selectFrom(CLIENT)
-                .where(CLIENT.ID.eq(id))
-                .fetchOptionalInto(Client.class);
+    default Optional<Group> getGroup(@NotNull final Long id) {
+        return dsl().selectFrom(GROUP)
+                .where(GROUP.ID.eq(id))
+                .fetchOptionalInto(Group.class);
     }
 
-    default boolean deleteClient(@NotNull final Client client) {
-        return dsl().delete(CLIENT)
-                .where(CLIENT.ID.eq(client.id()))
+    default boolean deleteGroup(@NotNull final Group group) {
+        return dsl().delete(GROUP)
+                .where(GROUP.ID.eq(group.id()))
                 .execute() > 0;
     }
 
