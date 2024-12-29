@@ -360,6 +360,27 @@
             </plugin>
 
             <plugin>
+                <groupId>org.gaul</groupId>
+                <artifactId>modernizer-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <javaVersion>${java.version}</javaVersion>
+                    <failOnViolations>true</failOnViolations>
+                    <includeTestClasses>true</includeTestClasses>
+                    <ignorePackages>org.komunumo.data.db</ignorePackages>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>modernizer</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>modernizer</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
