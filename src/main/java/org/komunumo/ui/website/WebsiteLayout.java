@@ -23,13 +23,13 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.komunumo.configuration.Configuration;
+import org.komunumo.configuration.AppConfig;
 
 public final class WebsiteLayout extends Div implements RouterLayout {
 
     private final Main main;
 
-    public WebsiteLayout(@NotNull final Configuration configuration) {
+    public WebsiteLayout(@NotNull final AppConfig appConfig) {
         setId("website-container");
         main = new Main();
         add(main);

@@ -17,24 +17,15 @@
  */
 package org.komunumo.configuration;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
-@org.springframework.context.annotation.Configuration
 @ConfigurationProperties(prefix = "komunumo")
-@EnableConfigurationProperties
-@SuppressWarnings("checkstyle:DesignForExtension") // Spring configurations can be subclassed by the Spring Framework
-public class Configuration {
+public record AppConfig(String version) {
 
-    private String version;
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(@NotNull final String version) {
-        this.version = version;
-    }
+    @ConstructorBinding
+    @SuppressWarnings({"java:S1186", "java:S6207"})
+    // needed to add the `@ConstructorBinding` annotation
+    public AppConfig { }
 
 }

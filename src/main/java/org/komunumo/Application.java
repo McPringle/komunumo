@@ -22,8 +22,10 @@ import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import org.jetbrains.annotations.NotNull;
+import org.komunumo.configuration.AppConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -35,6 +37,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @PWA(name = "Komunumo - Open Source Community Manager", shortName = "Komunumo")
 @EnableScheduling
 @SpringBootApplication
+@EnableConfigurationProperties(AppConfig.class)
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
     public static void main(@NotNull final String... args) {
