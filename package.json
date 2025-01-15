@@ -30,7 +30,7 @@
     "@types/react": "18.3.18",
     "workbox-precaching": "7.3.0",
     "transform-ast": "2.4.4",
-    "typescript": "5.7.2",
+    "typescript": "5.7.3",
     "@vitejs/plugin-react": "4.3.4"
   },
   "overrides": {
@@ -64,7 +64,7 @@
       "@types/react": "18.3.18",
       "workbox-precaching": "7.3.0",
       "transform-ast": "2.4.4",
-      "typescript": "5.7.2",
+      "typescript": "5.7.3",
       "@vitejs/plugin-react": "4.3.4"
     },
     "hash": ""
