@@ -7,6 +7,14 @@
 
 *Komunumo* is an esperanto noun with a meaning of *community*.
 
+## About
+
+You are are community leader? Komunumo makes your life a lot easier! Eveything you need to run your community in one place, for free! Komunumo is an open source community management software which assists you in all tasks managing a community like a user group.
+
+With Komunumo you can manage your community members (including self-management), organize events (including registration), send out newsletters, manage your sponsors, and a lot more.
+
+We have set ourselves the goal of implementing all important [Meetup](https://www.meetup.com/) functions for communities in Komunumo. We strive for full compatibility with the [Fediverse](https://en.wikipedia.org/wiki/Fediverse) to ensure smooth data exchange with [Mastodon](https://en.wikipedia.org/wiki/Mastodon_(social_network)), [Mobilizon](https://en.wikipedia.org/wiki/Mobilizon), and other services using the [ActivityPub](https://en.wikipedia.org/wiki/ActivityPub) protocol.
+
 ## Contributing
 
 You can find a lot of information on how you can contribute to *Komunumo* in the separate file [CONTRIBUTING.md](CONTRIBUTING.md). A curated list of contributors is available in the file [CONTRIBUTORS.md](CONTRIBUTORS.md).
