@@ -3,7 +3,25 @@ CREATE TABLE `group` (
     `created` DATETIME NOT NULL,
     `updated` DATETIME NOT NULL,
     `name` VARCHAR(255) NOT NULL,
+    `description` TEXT NOT NULL,
+    `logo` VARCHAR(255) NOT NULL,
+    `image` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `group_name` ON `group` (`name`);
+CREATE UNIQUE INDEX `group_name` ON `group` (`name`);
+
+CREATE TABLE `event` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `group_id` BIGINT NOT NULL,
+    `created` DATETIME NOT NULL,
+    `updated` DATETIME NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `description` TEXT NOT NULL DEFAULT '',
+    `location` VARCHAR(255) NOT NULL DEFAULT '',
+    `begin` DATETIME DEFAULT NULL,
+    `end` DATETIME DEFAULT NULL,
+    `image` VARCHAR(255) NOT NULL DEFAULT '',
+    `status_id` BIGINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+);
