@@ -23,4 +23,4 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 
 public record Group(@Nullable Long id, @Nullable LocalDateTime created, @Nullable LocalDateTime updated,
-                    @NotNull String name) { }
+                    @NotNull String name, @NotNull String description, @NotNull String logo, @NotNull String image) { }

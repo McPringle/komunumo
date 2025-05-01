@@ -25,6 +25,7 @@ import org.komunumo.data.service.getter.DSLContextGetter;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.komunumo.data.db.Tables.GROUP;
 
@@ -51,6 +52,13 @@ interface GroupService extends DSLContextGetter {
         return dsl().selectFrom(GROUP)
                 .where(GROUP.ID.eq(id))
                 .fetchOptionalInto(Group.class);
+    }
+
+    @NotNull
+    default Stream<Group> getGroups() {
+        return dsl().selectFrom(GROUP)
+                .orderBy(GROUP.NAME)
+                .fetchStreamInto(Group.class);
     }
 
     default boolean deleteGroup(@NotNull final Group group) {

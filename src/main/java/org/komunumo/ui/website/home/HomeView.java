@@ -17,11 +17,15 @@
  */
 package org.komunumo.ui.website.home;
 
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.ListItem;
+import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
+import org.komunumo.data.entity.Group;
 import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.website.WebsiteLayout;
 
@@ -32,6 +36,16 @@ public class HomeView extends Div {
     public HomeView(@NotNull final DatabaseService databaseService) {
         setId("home-view");
         add(new H2("Home"));
+
+        final var groups = new UnorderedList();
+        databaseService.getGroups()
+                .map(this::createGroupOverview)
+                .forEach(groups::add);
+        add(groups);
+    }
+
+    private Component createGroupOverview(@NotNull final Group group) {
+        return new ListItem(group.name());
     }
 
 }

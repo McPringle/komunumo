@@ -34,32 +34,65 @@ class GroupServiceTest {
     private GroupService groupService;
 
     @Test
+    @SuppressWarnings("java:S5961")
     void happyCase() {
         // store a new group into the database
-        var group = new Group(null, null, null, "Test Group");
+        var group = new Group(null, null, null,
+                "Test Group Name", "Test Group Description", "Test Group Logo", "Test Group Image");
         group = groupService.storeGroup(group);
         assertEquals(1L, group.id());
-        assertEquals("Test Group", group.name());
+
         assertNotNull(group.created());
         assertNotNull(group.updated());
         assertEquals(group.created(), group.updated());
+
+        assertEquals("Test Group Name", group.name());
+        assertEquals("Test Group Description", group.description());
+        assertEquals("Test Group Logo", group.logo());
+        assertEquals("Test Group Image", group.image());
 
         // read the group from the database
         group = groupService.getGroup(1L).orElseThrow();
         assertEquals(1L, group.id());
-        assertEquals("Test Group", group.name());
+
         assertNotNull(group.created());
         assertNotNull(group.updated());
         assertEquals(group.created(), group.updated());
 
+        assertEquals("Test Group Name", group.name());
+        assertEquals("Test Group Description", group.description());
+        assertEquals("Test Group Logo", group.logo());
+        assertEquals("Test Group Image", group.image());
+
+        // read all groups from the database
+        final var groups = groupService.getGroups().toList();
+        assertEquals(1, groups.size());
+        group = groups.get(0);
+        assertEquals(1L, group.id());
+
+        assertNotNull(group.created());
+        assertNotNull(group.updated());
+        assertEquals(group.created(), group.updated());
+
+        assertEquals("Test Group Name", group.name());
+        assertEquals("Test Group Description", group.description());
+        assertEquals("Test Group Logo", group.logo());
+        assertEquals("Test Group Image", group.image());
+
         // update the existing group
-        group = new Group(group.id(), group.created(), group.updated(), "Test Group Modified");
+        group = new Group(group.id(), group.created(), group.updated(),
+                "Test Group Modified", group.description(), group.logo(), group.image());
         group = groupService.storeGroup(group);
         assertEquals(1L, group.id());
-        assertEquals("Test Group Modified", group.name());
+
         assertNotNull(group.created());
         assertNotNull(group.updated());
         assertTrue(group.updated().isAfter(group.created()));
+
+        assertEquals("Test Group Modified", group.name());
+        assertEquals("Test Group Description", group.description());
+        assertEquals("Test Group Logo", group.logo());
+        assertEquals("Test Group Image", group.image());
 
         // delete the existing group
         assertTrue(groupService.deleteGroup(group));
