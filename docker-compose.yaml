@@ -1,7 +1,7 @@
 services:
 
   db:
-    image: mariadb:lts
+    image: docker.io/mariadb:lts
     restart: always
     ports:
       - "3306:3306"
@@ -16,7 +16,7 @@ services:
         target: /var/lib/mysql
 
   adminer:
-    image: adminer
+    image: docker.io/adminer
     restart: always
     ports:
       - "4000:8080"
