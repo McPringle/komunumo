@@ -20,7 +20,6 @@ package org.komunumo.ui.website.home;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.ListItem;
-import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.entity.Group;
 import org.komunumo.data.service.DatabaseService;
@@ -33,9 +32,6 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class HomeViewIT extends KaribuTestBase {
-
-    @Autowired
-    private DSLContext dsl;
 
     @Autowired
     private DatabaseService databaseService;
