@@ -24,5 +24,10 @@ CREATE TABLE `event` (
     `image` VARCHAR(255) NOT NULL DEFAULT '',
     `visibility` ENUM('public', 'private') NOT NULL DEFAULT 'public',
     `status` ENUM('draft', 'published', 'canceled') NOT NULL DEFAULT 'draft',
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_event_group`
+        FOREIGN KEY (`group_id`)
+        REFERENCES `group` (`id`)
+        ON UPDATE RESTRICT
+        ON DELETE RESTRICT
 );
