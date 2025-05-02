@@ -23,6 +23,7 @@ CREATE TABLE `event` (
     `begin` DATETIME DEFAULT NULL,
     `end` DATETIME DEFAULT NULL,
     `image` VARCHAR(255) NOT NULL DEFAULT '',
-    `status_id` BIGINT NOT NULL DEFAULT 0,
+    `visibility` ENUM('public', 'private') NOT NULL DEFAULT 'public',
+    `status` ENUM('draft', 'published', 'canceled') NOT NULL DEFAULT 'draft',
     PRIMARY KEY (`id`)
 );
