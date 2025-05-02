@@ -7,10 +7,9 @@ CREATE TABLE `group` (
     `description` TEXT NOT NULL,
     `logo` VARCHAR(255) NOT NULL,
     `image` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_group_profile` (`profile`)
 );
-
-CREATE UNIQUE INDEX `group_profile` ON `group` (`profile`);
 
 CREATE TABLE `event` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
