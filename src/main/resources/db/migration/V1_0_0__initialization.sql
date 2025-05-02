@@ -1,5 +1,6 @@
 CREATE TABLE `group` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `profile` VARCHAR(255) NOT NULL,
     `created` DATETIME NOT NULL,
     `updated` DATETIME NOT NULL,
     `name` VARCHAR(255) NOT NULL,
@@ -9,7 +10,7 @@ CREATE TABLE `group` (
     PRIMARY KEY (`id`)
 );
 
-CREATE UNIQUE INDEX `group_name` ON `group` (`name`);
+CREATE UNIQUE INDEX `group_profile` ON `group` (`profile`);
 
 CREATE TABLE `event` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,

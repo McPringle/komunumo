@@ -37,10 +37,11 @@ class GroupServiceTest {
     @SuppressWarnings("java:S5961")
     void happyCase() {
         // store a new group into the database
-        var group = new Group(null, null, null,
+        var group = new Group(null, "@test", null, null,
                 "Test Group Name", "Test Group Description", "Test Group Logo", "Test Group Image");
         group = groupService.storeGroup(group);
         assertEquals(1L, group.id());
+        assertEquals("@test", group.profile());
 
         assertNotNull(group.created());
         assertNotNull(group.updated());
@@ -54,6 +55,7 @@ class GroupServiceTest {
         // read the group from the database
         group = groupService.getGroup(1L).orElseThrow();
         assertEquals(1L, group.id());
+        assertEquals("@test", group.profile());
 
         assertNotNull(group.created());
         assertNotNull(group.updated());
@@ -67,8 +69,9 @@ class GroupServiceTest {
         // read all groups from the database
         final var groups = groupService.getGroups().toList();
         assertEquals(1, groups.size());
-        group = groups.get(0);
+        group = groups.getFirst();
         assertEquals(1L, group.id());
+        assertEquals("@test", group.profile());
 
         assertNotNull(group.created());
         assertNotNull(group.updated());
@@ -80,10 +83,11 @@ class GroupServiceTest {
         assertEquals("Test Group Image", group.image());
 
         // update the existing group
-        group = new Group(group.id(), group.created(), group.updated(),
+        group = new Group(group.id(), group.profile(), group.created(), group.updated(),
                 "Test Group Modified", group.description(), group.logo(), group.image());
         group = groupService.storeGroup(group);
         assertEquals(1L, group.id());
+        assertEquals("@test", group.profile());
 
         assertNotNull(group.created());
         assertNotNull(group.updated());

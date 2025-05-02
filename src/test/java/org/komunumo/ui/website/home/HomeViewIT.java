@@ -42,7 +42,7 @@ class HomeViewIT extends KaribuTestBase {
 
     @Test
     void homeViewTest() {
-        final var group = new Group(1L, LocalDateTime.now(), LocalDateTime.now(),
+        final var group = new Group(1L, "@test", LocalDateTime.now(), LocalDateTime.now(),
                 "Test Group Name", "Test Group Description", "Test Group Logo", "Test Group Image");
         databaseService.storeGroup(group);
 
