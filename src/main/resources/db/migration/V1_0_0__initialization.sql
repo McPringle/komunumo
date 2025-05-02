@@ -7,7 +7,7 @@ CREATE TABLE `group` (
     `description` TEXT NOT NULL,
     `logo` VARCHAR(255) NOT NULL,
     `image` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`),
+    PRIMARY KEY `pk_group` (`id`),
     UNIQUE KEY `uk_group_profile` (`profile`)
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE `event` (
     `image` VARCHAR(255) NOT NULL DEFAULT '',
     `visibility` ENUM('public', 'private') NOT NULL DEFAULT 'public',
     `status` ENUM('draft', 'published', 'canceled') NOT NULL DEFAULT 'draft',
-    PRIMARY KEY (`id`),
+    PRIMARY KEY `pk_event` (`id`),
     CONSTRAINT `fk_event_group`
         FOREIGN KEY (`group_id`)
         REFERENCES `group` (`id`)
