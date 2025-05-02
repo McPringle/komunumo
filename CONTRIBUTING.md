@@ -75,6 +75,19 @@ Vaadin web applications are full-stack and include both client-side and server-s
 - Ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/vaadin) or join our [Discord channel](https://discord.gg/MYFq5RTbBn).
 - Report issues, create pull requests in [GitHub](https://github.com/vaadin/platform).
 
+## Database
+
+### Index Names
+
+List of prefixes for index names:
+
+| Prefix | Used For     | Example            |
+|--------|--------------|--------------------|
+| `pk_`  | Primary Key  | `pk_group`         |
+| `uk_`  | Unique Key   | `uk_group_profile` |
+| `fk_`  | Foreign Key  | `fk_event_group`   |
+| `idx_` | Normal Index | `idx_event_begin`  |
+
 ## Build
 
 ### Maven
