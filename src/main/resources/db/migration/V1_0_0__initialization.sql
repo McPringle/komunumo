@@ -34,6 +34,4 @@ CREATE TABLE `event` (
     CONSTRAINT `fk_event_group`
         FOREIGN KEY (`group_id`)
         REFERENCES `group` (`id`)
-        ON UPDATE RESTRICT
-        ON DELETE RESTRICT
 );
