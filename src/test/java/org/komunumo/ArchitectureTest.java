@@ -17,9 +17,14 @@
  */
 package org.komunumo;
 
+import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.lang.ArchCondition;
+import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.SimpleConditionEvent;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
@@ -43,14 +48,27 @@ class ArchitectureTest {
                 .check(imported);
     }
 
+
     @Test
-    void dtos_should_be_records() {
+    void dtos_should_be_records_or_enums() {
+        ArchCondition<JavaClass> beRecordOrEnum = new ArchCondition<>("be a record or enum") {
+            @Override
+            public void check(@NotNull final JavaClass clazz, @NotNull final ConditionEvents events) {
+                final var isRecord = clazz.isRecord();
+                final var isEnum = clazz.isEnum();
+
+                if (!isRecord && !isEnum) {
+                    final var message = clazz.getSimpleName() + " is neither a record nor an enum";
+                    events.add(SimpleConditionEvent.violated(clazz, message));
+                }
+            }
+        };
+
         classes()
                 .that()
                 .resideInAPackage("..dto..")
-                .should()
-                .beAssignableTo(Record.class)
-                .because("DTOs should be implemented as Java records to ensure immutability and clarity")
+                .should(beRecordOrEnum)
+                .because("DTOs should be implemented as Java records or enums to ensure immutability and clarity")
                 .check(imported);
     }
 }
