@@ -202,6 +202,12 @@
             <artifactId>mariadb</artifactId>
             <version>1.21.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>1.2.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
