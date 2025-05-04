@@ -12,15 +12,48 @@ If you prefer to meet people in real life to contribute to *Komunumo* together, 
 
 Please join our developer community using our [Matrix chat](#matrix-chat) to get support and help for contributing to *Komunumo*.
 
+### Commit Messages
+
+Please follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for all commit messages. This structured format helps automate changelogs, release processes, and code reviews.
+
+A commit message consists of the following parts:
+
+```
+<type>[optional scope]: <short description>
+
+[optional body]
+
+[optional footer]
+```
+
+#### Examples
+
+- `feat: add support for passkey authentication`
+- `fix(event): correct date formatting in export`
+- `chore: add missing license headers to source files`
+
+### Common `type` values:
+
+| Type       | Purpose                                             |
+|------------|-----------------------------------------------------|
+| `feat`     | Introduce a new feature                             |
+| `fix`      | Fix a bug                                           |
+| `docs`     | Documentation-only changes                          |
+| `style`    | Code style changes (formatting, missing semicolons) |
+| `refactor` | Code refactoring without functional change          |
+| `test`     | Add or update tests                                 |
+| `chore`    | Maintenance tasks like configs, license, etc.       |
+| `build`    | Changes to the build system or dependencies         |
+| `ci`       | Changes to CI configuration                         |
+
+> [!TIP]
+> For more information, see [conventionalcommits.org](https://www.conventionalcommits.org/)
+
 ### Sign-off your commits
 
 It is important to sign-off *every* commit. That is a de facto standard way to ensure that *you* have the right to submit your content and that you agree to the [DCO](DCO.md) (Developer Certificate of Origin).
 
 You can find more information about why this is important and how to do it easily in a very good [blog post](https://dev.to/janderssonse/git-signoff-and-signing-like-a-champ-41f3)  by Josef Andersson.
-
-### Add an emoji to your commit
-
-We love to add an emoji to the beginning of every commit message which relates to the nature of the change. You can find a searchable list of possible emojis and their meaning in the overview on the [gitmoji](https://gitmoji.dev/) website. If you prefer, you can also install one of the plugins that are available for almost all common IDEs.
 
 ### AI generated code
 
