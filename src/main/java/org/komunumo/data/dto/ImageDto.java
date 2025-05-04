@@ -15,29 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.data.service;
+package org.komunumo.data.dto;
 
 import org.jetbrains.annotations.NotNull;
-import org.jooq.DSLContext;
-import org.komunumo.data.service.getter.DSLContextGetter;
-import org.springframework.stereotype.Service;
+import org.jetbrains.annotations.Nullable;
 
-@Service
-public class DatabaseService implements DSLContextGetter, GroupService, ImageService {
-
-    private final DSLContext dsl;
-
-    public DatabaseService(@NotNull final DSLContext dsl) {
-        this.dsl = dsl;
-    }
-
-    /**
-     * Get the {@link DSLContext} to access the database.
-     * @return the {@link DSLContext}
-     */
-    @Override
-    public DSLContext dsl() {
-        return dsl;
-    }
-
-}
+public record ImageDto(
+        @Nullable Long id,
+        @NotNull ContentType contentType,
+        @NotNull String filename
+) { }
