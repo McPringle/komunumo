@@ -1,3 +1,9 @@
+CREATE TABLE `config` (
+    `key` VARCHAR(255) NOT NULL,
+    `value` VARCHAR(255) NOT NULL,
+    PRIMARY KEY `pk_config` (`key`)
+);
+
 CREATE TABLE `group` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `profile` VARCHAR(255) NOT NULL,
