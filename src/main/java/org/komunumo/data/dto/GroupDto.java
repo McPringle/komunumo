@@ -15,13 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.data.entity;
+package org.komunumo.data.dto;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.komunumo.data.db.tables.records.ImageRecord;
 
 import java.time.LocalDateTime;
 
-public record Group(@Nullable Long id, @NotNull String profile, @Nullable LocalDateTime created, @Nullable LocalDateTime updated,
-                    @NotNull String name, @NotNull String description, @Nullable ImageRecord image) { }
+public record GroupDto(
+        @Nullable Long id,
+        @NotNull String profile,
+        @Nullable LocalDateTime created,
+        @Nullable LocalDateTime updated,
+        @NotNull String name,
+        @NotNull String description,
+        @Nullable Long imageId
+) { }

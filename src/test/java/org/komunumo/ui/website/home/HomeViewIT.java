@@ -21,12 +21,10 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.ListItem;
 import org.junit.jupiter.api.Test;
-import org.komunumo.data.entity.Group;
+import org.komunumo.data.dto.GroupDto;
 import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.KaribuTestBase;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDateTime;
 
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +36,7 @@ class HomeViewIT extends KaribuTestBase {
 
     @Test
     void homeViewTest() {
-        final var group = new Group(1L, "@test", LocalDateTime.now(), LocalDateTime.now(),
+        final var group = new GroupDto(null, "@test", null, null,
                 "Test Group Name", "Test Group Description", null);
         databaseService.storeGroup(group);
 

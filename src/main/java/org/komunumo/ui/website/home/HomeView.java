@@ -25,7 +25,7 @@ import com.vaadin.flow.component.html.UnorderedList;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.entity.Group;
+import org.komunumo.data.dto.GroupDto;
 import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.website.WebsiteLayout;
 
@@ -44,7 +44,7 @@ public class HomeView extends Div {
         add(groups);
     }
 
-    private Component createGroupOverview(@NotNull final Group group) {
+    private Component createGroupOverview(@NotNull final GroupDto group) {
         return new ListItem(group.name());
     }
 

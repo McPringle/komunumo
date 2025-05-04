@@ -18,7 +18,7 @@
 package org.komunumo.data.service;
 
 import org.junit.jupiter.api.Test;
-import org.komunumo.data.entity.Group;
+import org.komunumo.data.dto.GroupDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -38,7 +38,7 @@ class GroupServiceTest {
     @SuppressWarnings("java:S5961")
     void happyCase() {
         // store a new group into the database
-        var group = new Group(null, "@test", null, null,
+        var group = new GroupDto(null, "@test", null, null,
                 "Test Group Name", "Test Group Description", null);
         group = groupService.storeGroup(group);
         assertEquals(1L, group.id());
@@ -50,7 +50,7 @@ class GroupServiceTest {
 
         assertEquals("Test Group Name", group.name());
         assertEquals("Test Group Description", group.description());
-        assertNull(group.image());
+        assertNull(group.imageId());
 
         // read the group from the database
         group = groupService.getGroup(1L).orElseThrow();
@@ -63,7 +63,7 @@ class GroupServiceTest {
 
         assertEquals("Test Group Name", group.name());
         assertEquals("Test Group Description", group.description());
-        assertNull(group.image());
+        assertNull(group.imageId());
 
         // read all groups from the database
         final var groups = groupService.getGroups().toList();
@@ -78,11 +78,11 @@ class GroupServiceTest {
 
         assertEquals("Test Group Name", group.name());
         assertEquals("Test Group Description", group.description());
-        assertNull(group.image());
+        assertNull(group.imageId());
 
         // update the existing group
-        group = new Group(group.id(), group.profile(), group.created(), group.updated(),
-                "Test Group Modified", group.description(), group.image());
+        group = new GroupDto(group.id(), group.profile(), group.created(), group.updated(),
+                "Test Group Modified", group.description(), group.imageId());
         group = groupService.storeGroup(group);
         assertEquals(1L, group.id());
         assertEquals("@test", group.profile());
@@ -93,7 +93,7 @@ class GroupServiceTest {
 
         assertEquals("Test Group Modified", group.name());
         assertEquals("Test Group Description", group.description());
-        assertNull(group.image());
+        assertNull(group.imageId());
 
         // delete the existing group
         assertTrue(groupService.deleteGroup(group));

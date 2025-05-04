@@ -19,7 +19,7 @@ package org.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.komunumo.data.db.tables.records.GroupRecord;
-import org.komunumo.data.entity.Group;
+import org.komunumo.data.dto.GroupDto;
 import org.komunumo.data.service.getter.DSLContextGetter;
 
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ import static org.komunumo.data.db.Tables.GROUP;
 interface GroupService extends DSLContextGetter {
 
     @NotNull
-    default Group storeGroup(@NotNull final Group group) {
+    default GroupDto storeGroup(@NotNull final GroupDto group) {
         final GroupRecord groupRecord = dsl().fetchOptional(GROUP, GROUP.ID.eq(group.id()))
                 .orElse(dsl().newRecord(GROUP));
         groupRecord.from(group);
@@ -44,24 +44,24 @@ interface GroupService extends DSLContextGetter {
             groupRecord.setUpdated(now);
         }
         groupRecord.store();
-        return groupRecord.into(Group.class);
+        return groupRecord.into(GroupDto.class);
     }
 
     @NotNull
-    default Optional<Group> getGroup(@NotNull final Long id) {
+    default Optional<GroupDto> getGroup(@NotNull final Long id) {
         return dsl().selectFrom(GROUP)
                 .where(GROUP.ID.eq(id))
-                .fetchOptionalInto(Group.class);
+                .fetchOptionalInto(GroupDto.class);
     }
 
     @NotNull
-    default Stream<Group> getGroups() {
+    default Stream<GroupDto> getGroups() {
         return dsl().selectFrom(GROUP)
                 .orderBy(GROUP.NAME)
-                .fetchStreamInto(Group.class);
+                .fetchStreamInto(GroupDto.class);
     }
 
-    default boolean deleteGroup(@NotNull final Group group) {
+    default boolean deleteGroup(@NotNull final GroupDto group) {
         return dsl().delete(GROUP)
                 .where(GROUP.ID.eq(group.id()))
                 .execute() > 0;
