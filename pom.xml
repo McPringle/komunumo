@@ -576,9 +576,13 @@
                                     <includeTypes>(?i:TINYINT\(1\))</includeTypes>
                                 </forcedType>
                                 <forcedType>
+                                    <userType>org.komunumo.data.dto.ContentType</userType>
+                                    <converter>org.komunumo.data.converter.ContentTypeConverter</converter>
+                                    <includeExpression>.*\.content_type</includeExpression>
+                                </forcedType>
+                                <forcedType>
                                     <userType>java.time.Duration</userType>
                                     <converter>org.komunumo.data.converter.LocalTimeDurationConverter</converter>
-                                    <genericConverter>false</genericConverter>
                                     <includeExpression>.*\.DURATION.*</includeExpression>
                                 </forcedType>
                             </forcedTypes>

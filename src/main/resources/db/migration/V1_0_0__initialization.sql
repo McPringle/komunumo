@@ -6,7 +6,7 @@ CREATE TABLE `config` (
 
 CREATE TABLE `image` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `type` ENUM('image/gif', 'image/jpeg', 'image/png', 'image/svg+xml') NOT NULL,
+    `content_type` VARCHAR(255) NOT NULL,
     `filename` VARCHAR(255) NOT NULL,
     PRIMARY KEY `pk_image` (`id`)
 );
