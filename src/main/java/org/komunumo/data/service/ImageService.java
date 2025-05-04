@@ -29,6 +29,7 @@ import static org.jooq.impl.DSL.selectOne;
 import static org.komunumo.data.db.tables.Event.EVENT;
 import static org.komunumo.data.db.tables.Group.GROUP;
 import static org.komunumo.data.db.tables.Image.IMAGE;
+import static org.komunumo.data.db.tables.User.USER;
 
 interface ImageService extends DSLContextGetter {
 
@@ -54,6 +55,11 @@ interface ImageService extends DSLContextGetter {
                         selectOne()
                                 .from(GROUP)
                                 .where(GROUP.IMAGE_ID.eq(IMAGE.ID))
+                )
+                .andNotExists(
+                        selectOne()
+                                .from(USER)
+                                .where(USER.IMAGE_ID.eq(IMAGE.ID))
                 )
                 .fetchStreamInto(ImageDto.class);
     }

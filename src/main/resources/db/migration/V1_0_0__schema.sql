@@ -4,11 +4,33 @@ CREATE TABLE `config` (
     PRIMARY KEY `pk_config` (`key`)
 );
 
+CREATE TABLE `role` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `key` VARCHAR(255) NOT NULL,
+    PRIMARY KEY `pk_role` (`id`),
+    UNIQUE KEY `uk_role_key` (`key`)
+);
+
 CREATE TABLE `image` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `content_type` VARCHAR(255) NOT NULL,
     `filename` VARCHAR(255) NOT NULL,
     PRIMARY KEY `pk_image` (`id`)
+);
+
+CREATE TABLE `user` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `created` DATETIME NOT NULL,
+    `profile` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `bio` TEXT NOT NULL,
+    `image_id` BIGINT DEFAULT NULL,
+    PRIMARY KEY `pk_user` (`id`),
+    UNIQUE KEY `uk_user_profile` (`profile`),
+    CONSTRAINT `fk_user_image`
+        FOREIGN KEY (`image_id`)
+            REFERENCES `image` (`id`)
 );
 
 CREATE TABLE `group` (
@@ -24,6 +46,20 @@ CREATE TABLE `group` (
     CONSTRAINT `fk_group_image`
         FOREIGN KEY (`image_id`)
             REFERENCES `image` (`id`)
+);
+
+CREATE TABLE `member` (
+    `user_id` BIGINT NOT NULL,
+    `group_id` BIGINT NOT NULL,
+    `role_id` BIGINT NOT NULL,
+    `since` DATETIME NOT NULL,
+    PRIMARY KEY `pk_member` (`user_id`, `group_id`),
+    CONSTRAINT `fk_member_user`
+        FOREIGN KEY (`user_id`)
+            REFERENCES `user` (`id`),
+    CONSTRAINT `fk_member_group`
+        FOREIGN KEY (`group_id`)
+            REFERENCES `group` (`id`)
 );
 
 CREATE TABLE `event` (
@@ -46,4 +82,17 @@ CREATE TABLE `event` (
     CONSTRAINT `fk_event_image`
         FOREIGN KEY (`image_id`)
             REFERENCES `image` (`id`)
+);
+
+CREATE TABLE `participant` (
+    `event_id` BIGINT NOT NULL,
+    `user_id` BIGINT NOT NULL,
+    `registered` DATETIME NOT NULL,
+    PRIMARY KEY `pk_participant` (`event_id`, `user_id`),
+    CONSTRAINT `fk_participant_event`
+        FOREIGN KEY (`event_id`)
+            REFERENCES `event` (`id`),
+    CONSTRAINT `fk_participant_user`
+        FOREIGN KEY (`user_id`)
+            REFERENCES `user` (`id`)
 );

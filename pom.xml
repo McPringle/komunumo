@@ -561,7 +561,7 @@
                 <configuration>
                     <jdbc>
                         <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
-                        <url>jdbc:tc:mariadb:lts:///ignored?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/migration/V1_0_0__initialization.sql</url>
+                        <url>jdbc:tc:mariadb:lts:///ignored?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/migration/V1_0_0__schema.sql</url>
                         <user>test</user>
                         <password>test</password>
                     </jdbc>
