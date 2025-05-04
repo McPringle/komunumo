@@ -16,10 +16,12 @@ Please join our developer community using our [Matrix chat](#matrix-chat) to get
 
 Please follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for all commit messages. This structured format helps automate changelogs, release processes, and code reviews.
 
+For *Komunumo*, we love to add the issue number to the end of the commit message. This helps to track the changes in the code and the issue tracker. When the commit closes an issue, the `closes`, `fixes`, or `resolves` keyword can be used. This will automatically close the issue when the commit is merged into the main branch.
+
 A commit message consists of the following parts:
 
 ```
-<type>[optional scope]: <short description>
+<type>[optional scope]: <short description> [optional keyword] #<issue number>
 
 [optional body]
 
@@ -28,9 +30,9 @@ A commit message consists of the following parts:
 
 #### Examples
 
-- `feat: add support for passkey authentication`
-- `fix(event): correct date formatting in export`
-- `chore: add missing license headers to source files`
+- `feat: add support for passkey authentication closes #123`
+- `fix(event): correct date formatting in export fixes #456`
+- `chore: add missing license headers to source files resolves #789`
 
 ### Common `type` values:
 
