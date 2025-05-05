@@ -577,10 +577,6 @@
                             <outputSchemaToDefault>true</outputSchemaToDefault>
                             <forcedTypes>
                                 <forcedType>
-                                    <name>BOOLEAN</name>
-                                    <includeTypes>(?i:TINYINT\(1\))</includeTypes>
-                                </forcedType>
-                                <forcedType>
                                     <userType>org.komunumo.data.dto.ContentType</userType>
                                     <converter>org.komunumo.data.converter.ContentTypeConverter</converter>
                                     <includeExpression>.*\.content_type</includeExpression>
