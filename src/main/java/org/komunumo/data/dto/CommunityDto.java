@@ -20,13 +20,13 @@ package org.komunumo.data.dto;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record CommunityDto(
         @Nullable String id,
         @NotNull String profile,
-        @Nullable LocalDateTime created,
-        @Nullable LocalDateTime updated,
+        @Nullable ZonedDateTime created,
+        @Nullable ZonedDateTime updated,
         @NotNull String name,
         @NotNull String description,
         @Nullable String imageId

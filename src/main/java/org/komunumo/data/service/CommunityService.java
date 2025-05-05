@@ -23,8 +23,8 @@ import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.service.getter.DSLContextGetter;
 import org.komunumo.data.service.getter.UniqueIdGetter;
 
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -40,7 +40,7 @@ interface CommunityService extends DSLContextGetter, UniqueIdGetter {
         if (communityRecord.getId() == null) {
             communityRecord.setId(getUniqueID(COMMUNITY));
         }
-        final var now = LocalDateTime.now(ZoneOffset.UTC);
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
         if (communityRecord.getCreated() == null) {
             communityRecord.setCreated(now);
             communityRecord.setUpdated(now);
