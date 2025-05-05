@@ -1,7 +1,7 @@
 CREATE TABLE config (
-    key VARCHAR(255) NOT NULL,
+    setting VARCHAR(255) NOT NULL,
     value VARCHAR(255) NOT NULL,
-    PRIMARY KEY (key)
+    PRIMARY KEY (setting)
 );
 
 CREATE TABLE image (
