@@ -26,7 +26,7 @@ CREATE TABLE user (
             REFERENCES image (id)
 );
 
-CREATE TABLE group (
+CREATE TABLE community (
     id VARCHAR(36) NOT NULL,
     profile VARCHAR(255) NOT NULL,
     created DATETIME NOT NULL,
@@ -35,29 +35,29 @@ CREATE TABLE group (
     description TEXT NOT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_group_profile (profile),
-    CONSTRAINT fk_group_image
+    UNIQUE KEY uk_community_profile (profile),
+    CONSTRAINT fk_community_image
         FOREIGN KEY (image_id)
             REFERENCES image (id)
 );
 
 CREATE TABLE member (
     user_id VARCHAR(36) NOT NULL,
-    group_id VARCHAR(36) NOT NULL,
+    community_id VARCHAR(36) NOT NULL,
     role VARCHAR(255) NOT NULL,
     since DATETIME NOT NULL,
-    PRIMARY KEY (user_id, group_id),
+    PRIMARY KEY (user_id, community_id),
     CONSTRAINT fk_member_user
         FOREIGN KEY (user_id)
             REFERENCES user (id),
-    CONSTRAINT fk_member_group
-        FOREIGN KEY (group_id)
-            REFERENCES group (id)
+    CONSTRAINT fk_member_community
+        FOREIGN KEY (community_id)
+            REFERENCES community (id)
 );
 
 CREATE TABLE event (
     id VARCHAR(36) NOT NULL,
-    group_id VARCHAR(36) NOT NULL,
+    community_id VARCHAR(36) NOT NULL,
     created DATETIME NOT NULL,
     updated DATETIME NOT NULL,
     title VARCHAR(255) NOT NULL,
@@ -71,9 +71,9 @@ CREATE TABLE event (
     CHECK (visibility IN ('public', 'private')),
     CHECK (status IN ('draft', 'published', 'canceled')),
     PRIMARY KEY (id),
-    CONSTRAINT fk_event_group
-        FOREIGN KEY (group_id)
-        REFERENCES group (id),
+    CONSTRAINT fk_event_community
+        FOREIGN KEY (community_id)
+        REFERENCES community (id),
     CONSTRAINT fk_event_image
         FOREIGN KEY (image_id)
             REFERENCES image (id)

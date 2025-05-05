@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 
-public record GroupDto(
+public record CommunityDto(
         @Nullable String id,
         @NotNull String profile,
         @Nullable LocalDateTime created,

@@ -21,7 +21,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.ListItem;
 import org.junit.jupiter.api.Test;
-import org.komunumo.data.dto.GroupDto;
+import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.KaribuTestBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +36,9 @@ class HomeViewIT extends KaribuTestBase {
 
     @Test
     void homeViewTest() {
-        final var group = new GroupDto(null, "@test", null, null,
+        final var group = new CommunityDto(null, "@test", null, null,
                 "Test Group Name", "Test Group Description", null);
-        databaseService.storeGroup(group);
+        databaseService.storeCommunity(group);
 
         UI.getCurrent().navigate(HomeView.class);
         UI.getCurrent().getPage().reload();
@@ -49,7 +49,7 @@ class HomeViewIT extends KaribuTestBase {
         final var groupName = _get(ListItem.class).getText();
         assertEquals("Test Group Name", groupName);
 
-        databaseService.deleteGroup(group);
+        databaseService.deleteCommunity(group);
     }
 
 }

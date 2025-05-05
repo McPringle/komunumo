@@ -27,8 +27,8 @@ import org.komunumo.data.service.getter.UniqueIdGetter;
 import java.util.stream.Stream;
 
 import static org.jooq.impl.DSL.selectOne;
+import static org.komunumo.data.db.tables.Community.COMMUNITY;
 import static org.komunumo.data.db.tables.Event.EVENT;
-import static org.komunumo.data.db.tables.Group.GROUP;
 import static org.komunumo.data.db.tables.Image.IMAGE;
 import static org.komunumo.data.db.tables.User.USER;
 
@@ -52,13 +52,13 @@ interface ImageService extends DSLContextGetter, UniqueIdGetter {
                 .selectFrom(IMAGE)
                 .whereNotExists(
                         selectOne()
-                                .from(EVENT)
-                                .where(EVENT.IMAGE_ID.eq(IMAGE.ID))
+                                .from(COMMUNITY)
+                                .where(COMMUNITY.IMAGE_ID.eq(IMAGE.ID))
                 )
                 .andNotExists(
                         selectOne()
-                                .from(GROUP)
-                                .where(GROUP.IMAGE_ID.eq(IMAGE.ID))
+                                .from(EVENT)
+                                .where(EVENT.IMAGE_ID.eq(IMAGE.ID))
                 )
                 .andNotExists(
                         selectOne()

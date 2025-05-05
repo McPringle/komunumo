@@ -26,7 +26,7 @@ import org.komunumo.data.service.getter.UniqueIdGetter;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DatabaseService implements DSLContextGetter, UniqueIdGetter, GroupService, ImageService {
+public class DatabaseService implements DSLContextGetter, UniqueIdGetter, CommunityService, ImageService {
 
     private final DSLContext dsl;
     private final UniqueIdGenerator idGenerator;
