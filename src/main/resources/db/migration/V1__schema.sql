@@ -66,8 +66,10 @@ CREATE TABLE `event` (
     `begin` DATETIME DEFAULT NULL,
     `end` DATETIME DEFAULT NULL,
     `image_id` VARCHAR(36) DEFAULT NULL,
-    `visibility` ENUM('public', 'private') NOT NULL DEFAULT 'public',
-    `status` ENUM('draft', 'published', 'canceled') NOT NULL DEFAULT 'draft',
+    `visibility` VARCHAR(255) NOT NULL DEFAULT 'public',
+    `status` VARCHAR(255) NOT NULL DEFAULT 'draft',
+    CHECK (visibility IN ('public', 'private')),
+    CHECK (status IN ('draft', 'published', 'canceled')),
     PRIMARY KEY (`id`),
     CONSTRAINT `fk_event_group`
         FOREIGN KEY (`group_id`)
