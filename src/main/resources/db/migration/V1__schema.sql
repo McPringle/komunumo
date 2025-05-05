@@ -20,7 +20,7 @@ CREATE TABLE user (
     bio TEXT NOT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_user_profile (profile),
+    UNIQUE uk_user_profile (profile),
     CONSTRAINT fk_user_image
         FOREIGN KEY (image_id)
             REFERENCES image (id)
@@ -35,7 +35,7 @@ CREATE TABLE community (
     description TEXT NOT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_community_profile (profile),
+    UNIQUE uk_community_profile (profile),
     CONSTRAINT fk_community_image
         FOREIGN KEY (image_id)
             REFERENCES image (id)
