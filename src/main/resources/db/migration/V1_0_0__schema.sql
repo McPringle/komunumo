@@ -1,13 +1,13 @@
 CREATE TABLE `config` (
     `key` VARCHAR(255) NOT NULL,
     `value` VARCHAR(255) NOT NULL,
-    PRIMARY KEY `pk_config` (`key`)
+    PRIMARY KEY (`key`)
 );
 
 CREATE TABLE `role` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `key` VARCHAR(255) NOT NULL,
-    PRIMARY KEY `pk_role` (`id`),
+    PRIMARY KEY (`id`),
     UNIQUE KEY `uk_role_key` (`key`)
 );
 
@@ -15,7 +15,7 @@ CREATE TABLE `image` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `content_type` VARCHAR(255) NOT NULL,
     `filename` VARCHAR(255) NOT NULL,
-    PRIMARY KEY `pk_image` (`id`)
+    PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `user` (
@@ -26,7 +26,7 @@ CREATE TABLE `user` (
     `name` VARCHAR(255) NOT NULL,
     `bio` TEXT NOT NULL,
     `image_id` BIGINT DEFAULT NULL,
-    PRIMARY KEY `pk_user` (`id`),
+    PRIMARY KEY (`id`),
     UNIQUE KEY `uk_user_profile` (`profile`),
     CONSTRAINT `fk_user_image`
         FOREIGN KEY (`image_id`)
@@ -41,7 +41,7 @@ CREATE TABLE `group` (
     `name` VARCHAR(255) NOT NULL,
     `description` TEXT NOT NULL,
     `image_id` BIGINT DEFAULT NULL,
-    PRIMARY KEY `pk_group` (`id`),
+    PRIMARY KEY (`id`),
     UNIQUE KEY `uk_group_profile` (`profile`),
     CONSTRAINT `fk_group_image`
         FOREIGN KEY (`image_id`)
@@ -53,7 +53,7 @@ CREATE TABLE `member` (
     `group_id` BIGINT NOT NULL,
     `role_id` BIGINT NOT NULL,
     `since` DATETIME NOT NULL,
-    PRIMARY KEY `pk_member` (`user_id`, `group_id`),
+    PRIMARY KEY (`user_id`, `group_id`),
     CONSTRAINT `fk_member_user`
         FOREIGN KEY (`user_id`)
             REFERENCES `user` (`id`),
@@ -75,7 +75,7 @@ CREATE TABLE `event` (
     `image_id` BIGINT DEFAULT NULL,
     `visibility` ENUM('public', 'private') NOT NULL DEFAULT 'public',
     `status` ENUM('draft', 'published', 'canceled') NOT NULL DEFAULT 'draft',
-    PRIMARY KEY `pk_event` (`id`),
+    PRIMARY KEY (`id`),
     CONSTRAINT `fk_event_group`
         FOREIGN KEY (`group_id`)
         REFERENCES `group` (`id`),
@@ -88,7 +88,7 @@ CREATE TABLE `participant` (
     `event_id` BIGINT NOT NULL,
     `user_id` BIGINT NOT NULL,
     `registered` DATETIME NOT NULL,
-    PRIMARY KEY `pk_participant` (`event_id`, `user_id`),
+    PRIMARY KEY (`event_id`, `user_id`),
     CONSTRAINT `fk_participant_event`
         FOREIGN KEY (`event_id`)
             REFERENCES `event` (`id`),
