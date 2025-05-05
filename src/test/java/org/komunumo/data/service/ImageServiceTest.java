@@ -33,16 +33,29 @@ class ImageServiceTest {
 
     @Test
     void happyCase() {
+        // store new image
         var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp"));
+        final var imageId = image.id();
         assertNotNull(image.id());
+        assertEquals(ContentType.IMAGE_WEBP, image.contentType());
+        assertEquals("test.webp", image.filename());
 
+        // update existing image
+        image = imageService.storeImage(new ImageDto(image.id(), ContentType.IMAGE_SVG, "test.svg"));
+        assertEquals(imageId, image.id());
+        assertEquals(ContentType.IMAGE_SVG, image.contentType());
+        assertEquals("test.svg", image.filename());
+
+        // find orphaned images
         final var orphanedImages = imageService.findOrphanedImages().toList();
         assertEquals(1, orphanedImages.size());
         assertEquals(image, orphanedImages.getFirst());
 
+        // delete image
         assertTrue(imageService.deleteImage(image));
         assertFalse(imageService.deleteImage(image));
 
+        // find orphaned images again
         assertTrue(imageService.findOrphanedImages().toList().isEmpty());
     }
 }

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public record ImageDto(
-        @Nullable Long id,
+        @Nullable String id,
         @NotNull ContentType contentType,
         @NotNull String filename
 ) { }

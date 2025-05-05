@@ -22,6 +22,7 @@ import org.komunumo.data.db.Tables;
 import org.komunumo.data.db.tables.records.ImageRecord;
 import org.komunumo.data.dto.ImageDto;
 import org.komunumo.data.service.getter.DSLContextGetter;
+import org.komunumo.data.service.getter.UniqueIdGetter;
 
 import java.util.stream.Stream;
 
@@ -31,7 +32,7 @@ import static org.komunumo.data.db.tables.Group.GROUP;
 import static org.komunumo.data.db.tables.Image.IMAGE;
 import static org.komunumo.data.db.tables.User.USER;
 
-interface ImageService extends DSLContextGetter {
+interface ImageService extends DSLContextGetter, UniqueIdGetter {
 
     @NotNull
     default ImageDto storeImage(@NotNull final ImageDto image) {
@@ -39,6 +40,9 @@ interface ImageService extends DSLContextGetter {
                 .fetchOptional(Tables.IMAGE, Tables.IMAGE.ID.eq(image.id()))
                 .orElse(dsl().newRecord(Tables.IMAGE));
         imageRecord.from(image);
+        if (imageRecord.getId() == null) {
+            imageRecord.setId(getUniqueID(Tables.IMAGE));
+        }
         imageRecord.store();
         return imageRecord.into(ImageDto.class);
     }

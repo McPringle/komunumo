@@ -41,7 +41,9 @@ class GroupServiceTest {
         var group = new GroupDto(null, "@test", null, null,
                 "Test Group Name", "Test Group Description", null);
         group = groupService.storeGroup(group);
-        assertEquals(1L, group.id());
+        final var groupId = group.id();
+
+        assertNotNull(groupId);
         assertEquals("@test", group.profile());
 
         assertNotNull(group.created());
@@ -53,8 +55,8 @@ class GroupServiceTest {
         assertNull(group.imageId());
 
         // read the group from the database
-        group = groupService.getGroup(1L).orElseThrow();
-        assertEquals(1L, group.id());
+        group = groupService.getGroup(groupId).orElseThrow();
+        assertEquals(groupId, group.id());
         assertEquals("@test", group.profile());
 
         assertNotNull(group.created());
@@ -69,7 +71,7 @@ class GroupServiceTest {
         final var groups = groupService.getGroups().toList();
         assertEquals(1, groups.size());
         group = groups.getFirst();
-        assertEquals(1L, group.id());
+        assertEquals(groupId, group.id());
         assertEquals("@test", group.profile());
 
         assertNotNull(group.created());
@@ -84,7 +86,7 @@ class GroupServiceTest {
         group = new GroupDto(group.id(), group.profile(), group.created(), group.updated(),
                 "Test Group Modified", group.description(), group.imageId());
         group = groupService.storeGroup(group);
-        assertEquals(1L, group.id());
+        assertEquals(groupId, group.id());
         assertEquals("@test", group.profile());
 
         assertNotNull(group.created());
@@ -97,7 +99,7 @@ class GroupServiceTest {
 
         // delete the existing group
         assertTrue(groupService.deleteGroup(group));
-        assertTrue(groupService.getGroup(1L).isEmpty());
+        assertTrue(groupService.getGroup(groupId).isEmpty());
 
         // delete the non-existing group (was already deleted before)
         assertFalse(groupService.deleteGroup(group));

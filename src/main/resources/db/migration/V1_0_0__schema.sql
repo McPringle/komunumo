@@ -5,27 +5,27 @@ CREATE TABLE `config` (
 );
 
 CREATE TABLE `role` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(36) NOT NULL,
     `key` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_role_key` (`key`)
 );
 
 CREATE TABLE `image` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(36) NOT NULL,
     `content_type` VARCHAR(255) NOT NULL,
     `filename` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
 CREATE TABLE `user` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(36) NOT NULL,
     `created` DATETIME NOT NULL,
     `profile` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
     `name` VARCHAR(255) NOT NULL,
     `bio` TEXT NOT NULL,
-    `image_id` BIGINT DEFAULT NULL,
+    `image_id` VARCHAR(36) DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_user_profile` (`profile`),
     CONSTRAINT `fk_user_image`
@@ -34,13 +34,13 @@ CREATE TABLE `user` (
 );
 
 CREATE TABLE `group` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `id` VARCHAR(36) NOT NULL,
     `profile` VARCHAR(255) NOT NULL,
     `created` DATETIME NOT NULL,
     `updated` DATETIME NOT NULL,
     `name` VARCHAR(255) NOT NULL,
     `description` TEXT NOT NULL,
-    `image_id` BIGINT DEFAULT NULL,
+    `image_id` VARCHAR(36) DEFAULT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_group_profile` (`profile`),
     CONSTRAINT `fk_group_image`
@@ -49,9 +49,9 @@ CREATE TABLE `group` (
 );
 
 CREATE TABLE `member` (
-    `user_id` BIGINT NOT NULL,
-    `group_id` BIGINT NOT NULL,
-    `role_id` BIGINT NOT NULL,
+    `user_id` VARCHAR(36) NOT NULL,
+    `group_id` VARCHAR(36) NOT NULL,
+    `role_id` VARCHAR(36) NOT NULL,
     `since` DATETIME NOT NULL,
     PRIMARY KEY (`user_id`, `group_id`),
     CONSTRAINT `fk_member_user`
@@ -63,8 +63,8 @@ CREATE TABLE `member` (
 );
 
 CREATE TABLE `event` (
-    `id` BIGINT NOT NULL AUTO_INCREMENT,
-    `group_id` BIGINT NOT NULL,
+    `id` VARCHAR(36) NOT NULL,
+    `group_id` VARCHAR(36) NOT NULL,
     `created` DATETIME NOT NULL,
     `updated` DATETIME NOT NULL,
     `title` VARCHAR(255) NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE `event` (
     `location` VARCHAR(255) NOT NULL DEFAULT '',
     `begin` DATETIME DEFAULT NULL,
     `end` DATETIME DEFAULT NULL,
-    `image_id` BIGINT DEFAULT NULL,
+    `image_id` VARCHAR(36) DEFAULT NULL,
     `visibility` ENUM('public', 'private') NOT NULL DEFAULT 'public',
     `status` ENUM('draft', 'published', 'canceled') NOT NULL DEFAULT 'draft',
     PRIMARY KEY (`id`),
@@ -85,8 +85,8 @@ CREATE TABLE `event` (
 );
 
 CREATE TABLE `participant` (
-    `event_id` BIGINT NOT NULL,
-    `user_id` BIGINT NOT NULL,
+    `event_id` VARCHAR(36) NOT NULL,
+    `user_id` VARCHAR(36) NOT NULL,
     `registered` DATETIME NOT NULL,
     PRIMARY KEY (`event_id`, `user_id`),
     CONSTRAINT `fk_participant_event`

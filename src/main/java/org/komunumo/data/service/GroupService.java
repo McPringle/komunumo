@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.komunumo.data.db.tables.records.GroupRecord;
 import org.komunumo.data.dto.GroupDto;
 import org.komunumo.data.service.getter.DSLContextGetter;
+import org.komunumo.data.service.getter.UniqueIdGetter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -29,13 +30,16 @@ import java.util.stream.Stream;
 
 import static org.komunumo.data.db.Tables.GROUP;
 
-interface GroupService extends DSLContextGetter {
+interface GroupService extends DSLContextGetter, UniqueIdGetter {
 
     @NotNull
     default GroupDto storeGroup(@NotNull final GroupDto group) {
         final GroupRecord groupRecord = dsl().fetchOptional(GROUP, GROUP.ID.eq(group.id()))
                 .orElse(dsl().newRecord(GROUP));
         groupRecord.from(group);
+        if (groupRecord.getId() == null) {
+            groupRecord.setId(getUniqueID(GROUP));
+        }
         final var now = LocalDateTime.now(ZoneOffset.UTC);
         if (groupRecord.getCreated() == null) {
             groupRecord.setCreated(now);
@@ -48,7 +52,7 @@ interface GroupService extends DSLContextGetter {
     }
 
     @NotNull
-    default Optional<GroupDto> getGroup(@NotNull final Long id) {
+    default Optional<GroupDto> getGroup(@NotNull final String id) {
         return dsl().selectFrom(GROUP)
                 .where(GROUP.ID.eq(id))
                 .fetchOptionalInto(GroupDto.class);

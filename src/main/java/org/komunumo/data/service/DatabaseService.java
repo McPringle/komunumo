@@ -19,25 +19,43 @@ package org.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
+import org.jooq.Table;
+import org.komunumo.data.generator.UniqueIdGenerator;
 import org.komunumo.data.service.getter.DSLContextGetter;
+import org.komunumo.data.service.getter.UniqueIdGetter;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DatabaseService implements DSLContextGetter, GroupService, ImageService {
+public class DatabaseService implements DSLContextGetter, UniqueIdGetter, GroupService, ImageService {
 
     private final DSLContext dsl;
+    private final UniqueIdGenerator idGenerator;
 
-    public DatabaseService(@NotNull final DSLContext dsl) {
+    public DatabaseService(@NotNull final DSLContext dsl, @NotNull final UniqueIdGenerator idGenerator) {
         this.dsl = dsl;
+        this.idGenerator = idGenerator;
     }
 
     /**
      * Get the {@link DSLContext} to access the database.
+     *
      * @return the {@link DSLContext}
      */
     @Override
     public DSLContext dsl() {
         return dsl;
+    }
+
+    /**
+     * Creates a unique UUID for the given table.
+     * The UUID is checked against the database and the local cache.
+     *
+     * @param table the table for which to generate an ID
+     * @return a unique ID in UUID format (RFC 4122)
+     */
+    @Override
+    public String getUniqueID(@NotNull final Table<?> table) {
+        return idGenerator.getUniqueID(table);
     }
 
 }

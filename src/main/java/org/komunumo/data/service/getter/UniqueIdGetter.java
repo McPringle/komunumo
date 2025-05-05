@@ -15,19 +15,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.data.dto;
+package org.komunumo.data.service.getter;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jooq.Table;
 
-import java.time.LocalDateTime;
+public interface UniqueIdGetter {
 
-public record GroupDto(
-        @Nullable String id,
-        @NotNull String profile,
-        @Nullable LocalDateTime created,
-        @Nullable LocalDateTime updated,
-        @NotNull String name,
-        @NotNull String description,
-        @Nullable String imageId
-) { }
+    /**
+     * Creates a unique UUID for the given table.
+     * The UUID is checked against the database and the local cache.
+     *
+     * @param table the table for which to generate an ID
+     * @return a unique ID in UUID format (RFC 4122)
+     */
+    String getUniqueID(@NotNull Table<?> table);
+
+    }
