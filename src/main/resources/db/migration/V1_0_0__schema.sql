@@ -4,13 +4,6 @@ CREATE TABLE `config` (
     PRIMARY KEY (`key`)
 );
 
-CREATE TABLE `role` (
-    `id` VARCHAR(36) NOT NULL,
-    `key` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uk_role_key` (`key`)
-);
-
 CREATE TABLE `image` (
     `id` VARCHAR(36) NOT NULL,
     `content_type` VARCHAR(255) NOT NULL,
@@ -51,7 +44,7 @@ CREATE TABLE `group` (
 CREATE TABLE `member` (
     `user_id` VARCHAR(36) NOT NULL,
     `group_id` VARCHAR(36) NOT NULL,
-    `role_id` VARCHAR(36) NOT NULL,
+    `role` VARCHAR(255) NOT NULL,
     `since` DATETIME NOT NULL,
     PRIMARY KEY (`user_id`, `group_id`),
     CONSTRAINT `fk_member_user`
