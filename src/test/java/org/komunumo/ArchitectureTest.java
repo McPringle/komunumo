@@ -27,6 +27,14 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
@@ -71,4 +79,44 @@ class ArchitectureTest {
                 .because("DTOs should be implemented as Java records or enums to ensure immutability and clarity")
                 .check(imported);
     }
+
+    @Test
+    void forbiddenDateTimeTypes_should_only_be_used_in_ZonedDateTimeConverter() {
+        final var forbiddenTypes = Set.of(
+                Calendar.class.getName(),
+                Date.class.getName(),
+                LocalDate.class.getName(),
+                LocalDateTime.class.getName(),
+                LocalTime.class.getName()
+        );
+        final var forbiddenTypeList = forbiddenTypes.stream()
+                .map(fqn -> fqn.substring(fqn.lastIndexOf('.') + 1))
+                .sorted()
+                .collect(Collectors.joining(", "));
+
+        final var notDependOnForbiddenDateTimeTypes = new ArchCondition<JavaClass>("not depend on " + forbiddenTypeList) {
+            @Override
+            public void check(@NotNull JavaClass clazz, @NotNull ConditionEvents events) {
+                if (clazz.getFullName().equals("org.komunumo.data.converter.ZonedDateTimeConverter")) {
+                    return; // exception for ZonedDateTimeConverter
+                }
+
+                clazz.getDirectDependenciesFromSelf().forEach(dependency -> {
+                    var targetName = dependency.getTargetClass().getFullName();
+                    if (forbiddenTypes.contains(targetName)) {
+                        events.add(SimpleConditionEvent.violated(
+                                dependency,
+                                "Class " + clazz.getName() + " depends on forbidden type: " + targetName
+                        ));
+                    }
+                });
+            }
+        };
+
+        classes()
+                .should(notDependOnForbiddenDateTimeTypes)
+                .because("Komunumo needs the timezone information!")
+                .check(imported);
+    }
+
 }
