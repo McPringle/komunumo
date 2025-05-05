@@ -13,7 +13,7 @@ CREATE TABLE image (
 
 CREATE TABLE user (
     id VARCHAR(36) NOT NULL,
-    created DATETIME NOT NULL,
+    created TIMESTAMP NOT NULL,
     profile VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -29,8 +29,8 @@ CREATE TABLE user (
 CREATE TABLE community (
     id VARCHAR(36) NOT NULL,
     profile VARCHAR(255) NOT NULL,
-    created DATETIME NOT NULL,
-    updated DATETIME NOT NULL,
+    created TIMESTAMP NOT NULL,
+    updated TIMESTAMP NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE member (
     user_id VARCHAR(36) NOT NULL,
     community_id VARCHAR(36) NOT NULL,
     role VARCHAR(255) NOT NULL,
-    since DATETIME NOT NULL,
+    since TIMESTAMP NOT NULL,
     PRIMARY KEY (user_id, community_id),
     CONSTRAINT fk_member_user
         FOREIGN KEY (user_id)
@@ -58,13 +58,13 @@ CREATE TABLE member (
 CREATE TABLE event (
     id VARCHAR(36) NOT NULL,
     community_id VARCHAR(36) NOT NULL,
-    created DATETIME NOT NULL,
-    updated DATETIME NOT NULL,
+    created TIMESTAMP NOT NULL,
+    updated TIMESTAMP NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     location VARCHAR(255) NOT NULL DEFAULT '',
-    begin DATETIME DEFAULT NULL,
-    end DATETIME DEFAULT NULL,
+    begin TIMESTAMP DEFAULT NULL,
+    end TIMESTAMP DEFAULT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
     visibility VARCHAR(255) NOT NULL DEFAULT 'public',
     status VARCHAR(255) NOT NULL DEFAULT 'draft',
@@ -82,7 +82,7 @@ CREATE TABLE event (
 CREATE TABLE participant (
     event_id VARCHAR(36) NOT NULL,
     user_id VARCHAR(36) NOT NULL,
-    registered DATETIME NOT NULL,
+    registered TIMESTAMP NOT NULL,
     PRIMARY KEY (event_id, user_id),
     CONSTRAINT fk_participant_event
         FOREIGN KEY (event_id)
