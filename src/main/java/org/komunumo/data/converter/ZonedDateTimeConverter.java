@@ -21,33 +21,34 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Converter;
 
-import java.time.Duration;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
-public final class LocalTimeDurationConverter implements Converter<LocalTime, Duration> {
+public final class ZonedDateTimeConverter implements Converter<LocalDateTime, ZonedDateTime> {
+
     @Override
-    public Duration from(@Nullable final LocalTime databaseObject) {
-        if (databaseObject == null) {
-            return null;
-        }
-        return Duration.between(LocalTime.of(0, 0), databaseObject);
+    public ZonedDateTime from(@Nullable final LocalDateTime databaseObject) {
+        // DB time is interpreted as UTC
+        return databaseObject == null ? null : databaseObject.atZone(ZoneOffset.UTC);
     }
 
     @Override
-    public LocalTime to(@Nullable final Duration userObject) {
-        if (userObject == null) {
-            return null;
-        }
-        return LocalTime.of(0, 0).plus(userObject);
+    public LocalDateTime to(@Nullable final ZonedDateTime userObject) {
+        // UTC time is saved without zone
+        return userObject == null ? null : userObject.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
     }
 
     @Override
-    public @NotNull Class<LocalTime> fromType() {
-        return LocalTime.class;
+    @NotNull
+    public Class<LocalDateTime> fromType() {
+        return LocalDateTime.class;
     }
 
     @Override
-    public @NotNull Class<Duration> toType() {
-        return Duration.class;
+    @NotNull
+    public Class<ZonedDateTime> toType() {
+        return ZonedDateTime.class;
     }
+
 }

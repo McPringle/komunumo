@@ -586,9 +586,10 @@
                                     <includeExpression>.*\.content_type</includeExpression>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>java.time.Duration</userType>
-                                    <converter>org.komunumo.data.converter.LocalTimeDurationConverter</converter>
-                                    <includeExpression>.*\.DURATION.*</includeExpression>
+                                    <includeTypes>TIMESTAMP</includeTypes>
+                                    <includeExpression>.*</includeExpression>
+                                    <userType>java.time.ZonedDateTime</userType>
+                                    <converter>org.komunumo.data.converter.ZonedDateTimeConverter</converter>
                                 </forcedType>
                             </forcedTypes>
                             <properties>
