@@ -31,4 +31,4 @@ public interface UniqueIdGetter {
      */
     String getUniqueID(@NotNull Table<?> table);
 
-    }
+}

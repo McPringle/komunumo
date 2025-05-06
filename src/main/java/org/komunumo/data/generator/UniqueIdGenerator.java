@@ -57,8 +57,8 @@ public class UniqueIdGenerator {
     private final ConcurrentHashMap<String, ReentrantLock> tableLocks = new ConcurrentHashMap<>();
 
     /**
-     * Creates a unique UUID for the given table.
-     * The UUID is checked against the database and the local cache.
+     * Creates a unique ID for the given table.
+     * The ID is checked against the database and the local cache.
      *
      * @param table the table for which to generate an ID
      * @return a unique ID in UUID format (RFC 4122)
