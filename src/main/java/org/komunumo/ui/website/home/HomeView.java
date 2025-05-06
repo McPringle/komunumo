@@ -20,13 +20,13 @@ package org.komunumo.ui.website.home;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.service.DatabaseService;
+import org.komunumo.ui.component.CommunityCard;
 import org.komunumo.ui.website.WebsiteLayout;
 
 @Route(value = "", layout = WebsiteLayout.class)
@@ -37,15 +37,16 @@ public class HomeView extends Div {
         setId("home-view");
         add(new H2("Home"));
 
-        final var groups = new UnorderedList();
+        final var communityContainer = new HorizontalLayout();
+        communityContainer.setWrap(true);
         databaseService.getCommunities()
-                .map(this::createGroupOverview)
-                .forEach(groups::add);
-        add(groups);
+                .map(this::createCommunityOverview)
+                .forEach(communityContainer::add);
+        add(communityContainer);
     }
 
-    private Component createGroupOverview(@NotNull final CommunityDto group) {
-        return new ListItem(group.name());
+    private Component createCommunityOverview(@NotNull final CommunityDto community) {
+        return new CommunityCard(community);
     }
 
 }

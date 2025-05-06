@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,34 +15,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package org.komunumo.ui.component;
 
-.community-card {
-    border: 1px solid #000000;
-    width: 400px;
-    height: 300px;
-    position: relative;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import org.jetbrains.annotations.NotNull;
+import org.komunumo.data.dto.CommunityDto;
 
-    background-image: url("https://d2exd72xrrp1s7.cloudfront.net/www/1f/1fbt8wruhurv11vohzhh9bynwj4qgod6jf-p404699785-full/18afb8c2b4d");
-    background-size: cover;
-    opacity: 0.5;
-}
+public class CommunityCard extends Div {
 
-.community-card:hover {
-    opacity: 1;
-}
+    public CommunityCard(@NotNull final CommunityDto community) {
+        addClassName("community-card");
+        add(new H3(community.name()));
+    }
 
-h3 {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    color: white;
-    text-shadow: 1px  1px 1px black,
-    1px -1px 1px black,
-    -1px  1px 1px black,
-    -1px -1px 1px black;
-    opacity: 1.0;
 }

@@ -19,8 +19,8 @@ package org.komunumo.ui.website.home;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.KaribuTestBase;
@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HomeViewIT extends KaribuTestBase {
 
@@ -42,12 +43,13 @@ class HomeViewIT extends KaribuTestBase {
         final var title = _get(H2.class, spec -> spec.withText("Home")).getText();
         assertEquals("Home", title);
 
-        final var communityList = _get(UnorderedList.class);
-        assertEquals(5, communityList.getChildren().count());
-        for (int i = 1; i <= 5; i++) {
-            final var communityName = "Demo Community " + i;
-            final var communityItem = _get(ListItem.class, spec -> spec.withText(communityName));
-            assertEquals(communityName, communityItem.getText());
+        final var communityList = _get(HorizontalLayout.class);
+        final var communityCards = communityList.getChildren().toList();
+        assertEquals(5, communityCards.size());
+
+        for (final var communityCard : communityCards) {
+            final var h3 = (H3) communityCard.getChildren().findFirst().orElseThrow();
+            assertTrue(h3.getText().startsWith("Demo Community"));
         }
     }
 
