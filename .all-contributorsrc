@@ -40,6 +40,15 @@
       "contributions": [
         "review"
       ]
+    },
+    {
+      "login": "big-phoot",
+      "name": "big-phoot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20629857?v=4",
+      "profile": "https://github.com/big-phoot",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
