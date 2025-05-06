@@ -22,6 +22,7 @@ import org.komunumo.data.dto.CommunityDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -69,18 +70,7 @@ class CommunityServiceTest {
 
         // read all communities from the database
         final var communities = communityService.getCommunities().toList();
-        assertEquals(1, communities.size());
-        community = communities.getFirst();
-        assertEquals(communityId, community.id());
-        assertEquals("@test", community.profile());
-
-        assertNotNull(community.created());
-        assertNotNull(community.updated());
-        assertEquals(community.created(), community.updated());
-
-        assertEquals("Test Community Name", community.name());
-        assertEquals("Test Community Description", community.description());
-        assertNull(community.imageId());
+        assertThat(communities).contains(community);
 
         // update the existing community
         community = new CommunityDto(community.id(), community.profile(), community.created(), community.updated(),

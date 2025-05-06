@@ -20,8 +20,8 @@ package org.komunumo.ui.website.home;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.ListItem;
+import com.vaadin.flow.component.html.UnorderedList;
 import org.junit.jupiter.api.Test;
-import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.KaribuTestBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,20 +36,19 @@ class HomeViewIT extends KaribuTestBase {
 
     @Test
     void homeViewTest() {
-        final var group = new CommunityDto(null, "@test", null, null,
-                "Test Group Name", "Test Group Description", null);
-        databaseService.storeCommunity(group);
-
         UI.getCurrent().navigate(HomeView.class);
         UI.getCurrent().getPage().reload();
 
         final var title = _get(H2.class, spec -> spec.withText("Home")).getText();
         assertEquals("Home", title);
 
-        final var groupName = _get(ListItem.class).getText();
-        assertEquals("Test Group Name", groupName);
-
-        databaseService.deleteCommunity(group);
+        final var communityList = _get(UnorderedList.class);
+        assertEquals(5, communityList.getChildren().count());
+        for (int i = 1; i <= 5; i++) {
+            final var communityName = "Demo Community " + i;
+            final var communityItem = _get(ListItem.class, spec -> spec.withText(communityName));
+            assertEquals(communityName, communityItem.getText());
+        }
     }
 
 }
