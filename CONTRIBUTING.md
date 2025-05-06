@@ -112,16 +112,29 @@ Vaadin web applications are full-stack and include both client-side and server-s
 
 ## Database
 
+### General Principles
+
+- **Database independence**: All schema definitions must be compatible with common SQL databases. Avoid vendor-specific features unless absolutely necessary.
+- **Schema migrations**: Use [Flyway](https://flywaydb.org/) for schema versioning. Each migration must have a clearly written description and follow our naming convention.
+- **Identifier generation**: Always use application-generated IDs (e.g., UUIDs) instead of `AUTO_INCREMENT`, `SERIAL`, or database sequences to ensure cross-database compatibility.
+- **Primary key constraints**: Primary key constraints should **not** have explicit names; let the database assign a default name to avoid conflicts across different environments.
+- **Timestamps**: Use `TIMESTAMP` instead of `DATETIME` to ensure consistent handling of time zones and better cross-database support.
+- **Enum usage**: Use Java `enum` types mapped via jOOQ converters to `VARCHAR` columns in the database. Do **not** reference enum values from lookup tables.
+- **DTO mapping**: All database access must go through the service layer. Records returned by jOOQ must be converted to DTOs in a dedicated mapping layer.
+- **Referential Integrity**: Use foreign key constraints to ensure referential integrity where appropriate.
+- **Optional Fields**: If a field is optional, make sure the database column is nullable and check for `null` explicitly in the application logic.
+
 ### Index Names
 
 List of prefixes for index names:
 
 | Prefix | Used For     | Example            |
 |--------|--------------|--------------------|
-| `pk_`  | Primary Key  | `pk_group`         |
 | `uk_`  | Unique Key   | `uk_group_profile` |
 | `fk_`  | Foreign Key  | `fk_event_group`   |
 | `idx_` | Normal Index | `idx_event_begin`  |
+
+Primary keys don't have a name and therefore no prefix!
 
 ## Build
 
