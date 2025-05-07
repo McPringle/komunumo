@@ -25,6 +25,8 @@ import org.komunumo.data.service.getter.DSLContextGetter;
 import org.komunumo.data.service.getter.UniqueIdGetter;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class DatabaseService implements DSLContextGetter, UniqueIdGetter, CommunityService, ImageService {
 
@@ -51,10 +53,10 @@ public class DatabaseService implements DSLContextGetter, UniqueIdGetter, Commun
      * The UUID is checked against the database and the local cache.
      *
      * @param table the table for which to generate an ID
-     * @return a unique ID in UUID format (RFC 4122)
+     * @return a Universally Unique Identifier (UUID, RFC 4122)
      */
     @Override
-    public String getUniqueID(@NotNull final Table<?> table) {
+    public UUID getUniqueID(@NotNull final Table<?> table) {
         return idGenerator.getUniqueID(table);
     }
 

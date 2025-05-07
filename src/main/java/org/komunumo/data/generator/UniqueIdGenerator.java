@@ -48,7 +48,7 @@ public class UniqueIdGenerator {
     }
 
     // Cache for recently generated UUIDs in the format “table:id”
-    private final Cache<String, Boolean> idCache = Caffeine.newBuilder()
+    private final Cache<UUID, Boolean> idCache = Caffeine.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .maximumSize(100)
             .build();
@@ -57,13 +57,13 @@ public class UniqueIdGenerator {
     private final ConcurrentHashMap<String, ReentrantLock> tableLocks = new ConcurrentHashMap<>();
 
     /**
-     * Creates a unique ID for the given table.
-     * The ID is checked against the database and the local cache.
+     * Creates a unique UUID for the given table.
+     * The UUID is checked against the database and the local cache.
      *
      * @param table the table for which to generate an ID
-     * @return a unique ID in UUID format (RFC 4122)
+     * @return a Universally Unique Identifier (UUID, RFC 4122)
      */
-    public String getUniqueID(@NotNull final Table<?> table) {
+    public UUID getUniqueID(@NotNull final Table<?> table) {
         final var tableName = table.getName();
         final var idField = table.field("id", String.class);
 
@@ -76,15 +76,13 @@ public class UniqueIdGenerator {
         lock.lock();
 
         try {
-            String uuid;
-            String cacheKey;
+            UUID uuid;
 
             do {
                 uuid = idSupplier.getId();
-                cacheKey = tableName + ":" + uuid;
-            } while (idCache.asMap().containsKey(cacheKey) || idExistsInDatabase(table, idField, uuid));
+            } while (idCache.asMap().containsKey(uuid) || idExistsInDatabase(table, idField, uuid));
 
-            idCache.put(cacheKey, true);
+            idCache.put(uuid, true);
             return uuid;
 
         } finally {
@@ -95,10 +93,10 @@ public class UniqueIdGenerator {
     /**
      * Checks whether a UUID already exists in the table.
      */
-    private boolean idExistsInDatabase(@NotNull final Table<?> table, @NotNull final Field<String> idField, @NotNull final String uuid) {
+    private boolean idExistsInDatabase(@NotNull final Table<?> table, @NotNull final Field<String> idField, @NotNull final UUID uuid) {
         return dsl.selectOne()
                 .from(table)
-                .where(idField.eq(uuid))
+                .where(idField.eq(uuid.toString()))
                 .limit(1)
                 .fetchOptional()
                 .isPresent();
@@ -106,14 +104,14 @@ public class UniqueIdGenerator {
 
     /** Interface for ID generators. */
     public interface IdSupplier {
-        @NotNull String getId();
+        @NotNull UUID getId();
     }
 
     /** Default implementation with UUID.randomUUID(). */
     public static final class RandomUUIDSupplier implements IdSupplier {
         @Override
-        public @NotNull String getId() {
-            return UUID.randomUUID().toString();
+        public @NotNull UUID getId() {
+            return UUID.randomUUID();
         }
     }
 

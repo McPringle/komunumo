@@ -20,6 +20,8 @@ package org.komunumo.data.service.getter;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Table;
 
+import java.util.UUID;
+
 public interface UniqueIdGetter {
 
     /**
@@ -27,8 +29,8 @@ public interface UniqueIdGetter {
      * The UUID is checked against the database and the local cache.
      *
      * @param table the table for which to generate an ID
-     * @return a unique ID in UUID format (RFC 4122)
+     * @return a Universally Unique Identifier (UUID, RFC 4122)
      */
-    String getUniqueID(@NotNull Table<?> table);
+    UUID getUniqueID(@NotNull Table<?> table);
 
 }

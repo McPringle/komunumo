@@ -20,8 +20,10 @@ package org.komunumo.data.dto;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 public record ImageDto(
-        @Nullable String id,
+        @Nullable UUID id,
         @NotNull ContentType contentType,
         @NotNull String filename
 ) { }

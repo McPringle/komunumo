@@ -54,12 +54,12 @@ class UniqueIdGeneratorTest {
     @Test
     void returnsGeneratedId() {
         // Arrange supplier with fixed ID
-        final var fixedId = UUID.randomUUID().toString();
+        final UUID fixedId = UUID.randomUUID();
         final UniqueIdGenerator.IdSupplier supplier = () -> fixedId;
         final UniqueIdGenerator generator = new UniqueIdGenerator(dsl, supplier);
 
         // Act
-        final String result = generator.getUniqueID(IMAGE);
+        final UUID result = generator.getUniqueID(IMAGE);
 
         // Assert
         assertEquals(fixedId, result);
@@ -68,9 +68,9 @@ class UniqueIdGeneratorTest {
     @Test
     void skipsIdIfAlreadyExistsInDatabase() {
         // Arrange
-        final var existingId = UUID.randomUUID().toString();
-        final var freshId = UUID.randomUUID().toString();
-        final var existingImage = new ImageDto(existingId, ContentType.IMAGE_WEBP, "test.webp");
+        final UUID existingId = UUID.randomUUID();
+        final UUID freshId = UUID.randomUUID();
+        final ImageDto existingImage = new ImageDto(existingId, ContentType.IMAGE_WEBP, "test.webp");
 
         try {
             databaseService.storeImage(existingImage);
@@ -85,7 +85,7 @@ class UniqueIdGeneratorTest {
             final UniqueIdGenerator generator = new UniqueIdGenerator(dsl, supplier);
 
             // Act
-            final String result = generator.getUniqueID(IMAGE);
+            final UUID result = generator.getUniqueID(IMAGE);
 
             // Assert
             assertEquals(freshId, result);
@@ -99,8 +99,8 @@ class UniqueIdGeneratorTest {
     @Test
     void skipsIdIfInCache() throws Exception {
         // Arrange: two IDs, one manually put into the cache
-        final var cachedId = UUID.randomUUID().toString();
-        final var freshId = UUID.randomUUID().toString();
+        final UUID cachedId = UUID.randomUUID();
+        final UUID freshId = UUID.randomUUID();
 
         // Supplier that first returns a cached ID, then a fresh ID
         final AtomicInteger callCount = new AtomicInteger(0);
@@ -115,13 +115,13 @@ class UniqueIdGeneratorTest {
         final Field cacheField = UniqueIdGenerator.class.getDeclaredField("idCache");
         cacheField.setAccessible(true);
         @SuppressWarnings("unchecked")
-        final var cache = (Cache<String, Boolean>) cacheField.get(generator);
+        final var cache = (Cache<UUID, Boolean>) cacheField.get(generator);
 
         // Simulate a recently used ID
-        cache.put(IMAGE.getName() + ":" + cachedId, true);
+        cache.put(cachedId, true);
 
         // Act
-        final String result = generator.getUniqueID(IMAGE);
+        final UUID result = generator.getUniqueID(IMAGE);
 
         // Assert
         assertEquals(freshId, result);
@@ -141,17 +141,16 @@ class UniqueIdGeneratorTest {
     @Test
     void generatesUniqueIdsInParallel() throws InterruptedException {
         final int threadCount = 100;
-        final UniqueIdGenerator.IdSupplier supplier = () -> UUID.randomUUID().toString();
-        final UniqueIdGenerator generator = new UniqueIdGenerator(dsl, supplier);
+        final UniqueIdGenerator generator = new UniqueIdGenerator(dsl);
 
-        final Set<String> ids = Collections.synchronizedSet(new HashSet<>());
+        final Set<UUID> ids = Collections.synchronizedSet(new HashSet<>());
         final CountDownLatch latch = new CountDownLatch(threadCount);
 
         try (final ExecutorService executor = Executors.newFixedThreadPool(threadCount)) {
             for (int i = 0; i < threadCount; i++) {
                 executor.submit(() -> {
                     try {
-                        final String id = generator.getUniqueID(IMAGE);
+                        final UUID id = generator.getUniqueID(IMAGE);
                         ids.add(id);
                     } finally {
                         latch.countDown();

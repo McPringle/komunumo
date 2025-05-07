@@ -26,6 +26,7 @@ import org.komunumo.data.service.getter.UniqueIdGetter;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.komunumo.data.db.tables.Community.COMMUNITY;
@@ -52,7 +53,7 @@ interface CommunityService extends DSLContextGetter, UniqueIdGetter {
     }
 
     @NotNull
-    default Optional<CommunityDto> getCommunity(@NotNull final String id) {
+    default Optional<CommunityDto> getCommunity(@NotNull final UUID id) {
         return dsl().selectFrom(COMMUNITY)
                 .where(COMMUNITY.ID.eq(id))
                 .fetchOptionalInto(CommunityDto.class);

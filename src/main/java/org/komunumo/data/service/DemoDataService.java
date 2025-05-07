@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public final class DemoDataService {
 
@@ -66,7 +68,7 @@ public final class DemoDataService {
      * @param number the integer to base the ID on
      * @return an ID with a predictable pattern
      */
-    private @NotNull String generateId(final int number) {
+    private @NotNull UUID generateId(final int number) {
         final var numStr = String.valueOf(number);
 
         // Repeat the number string until it reaches at least 32 characters
@@ -79,7 +81,7 @@ public final class DemoDataService {
         final var hex = hexBuilder.substring(0, 32);
 
         // Format the string to UUID pattern: 8-4-4-4-12
-        return String.format(
+        final var idStr = String.format(
                 "%s-%s-%s-%s-%s",
                 hex.substring(0, 8),
                 hex.substring(8, 12),
@@ -87,5 +89,7 @@ public final class DemoDataService {
                 hex.substring(16, 20),
                 hex.substring(20, 32)
         );
+
+        return UUID.fromString(idStr);
     }
 }

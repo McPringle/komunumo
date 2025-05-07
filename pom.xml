@@ -577,6 +577,12 @@
                             <outputSchemaToDefault>true</outputSchemaToDefault>
                             <forcedTypes>
                                 <forcedType>
+                                    <includeTypes>VARCHAR</includeTypes>
+                                    <includeExpression>(^id$|.*_id$)</includeExpression>
+                                    <userType>java.util.UUID</userType>
+                                    <converter>org.komunumo.data.converter.UUIDConverter</converter>
+                                </forcedType>
+                                <forcedType>
                                     <userType>org.komunumo.data.dto.ContentType</userType>
                                     <converter>org.komunumo.data.converter.ContentTypeConverter</converter>
                                     <includeExpression>.*\.content_type</includeExpression>

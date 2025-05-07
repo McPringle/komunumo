@@ -15,20 +15,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.data.dto;
+package org.komunumo.data.converter;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.Converter;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public record CommunityDto(
-        @Nullable UUID id,
-        @NotNull String profile,
-        @Nullable ZonedDateTime created,
-        @Nullable ZonedDateTime updated,
-        @NotNull String name,
-        @NotNull String description,
-        @Nullable UUID imageId
-) { }
+public final class UUIDConverter implements Converter<String, UUID> {
+
+    @Override
+    public UUID from(@Nullable final String databaseObject) {
+        return databaseObject == null ? null : UUID.fromString(databaseObject);
+    }
+
+    @Override
+    public String to(@Nullable final UUID userObject) {
+        return userObject == null ? null : userObject.toString();
+    }
+
+    @Override
+    public Class<String> fromType() {
+        return String.class;
+    }
+
+    @Override
+    public Class<UUID> toType() {
+        return UUID.class;
+    }
+
+}
