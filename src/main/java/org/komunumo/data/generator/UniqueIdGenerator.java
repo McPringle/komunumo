@@ -93,7 +93,9 @@ public class UniqueIdGenerator {
     /**
      * Checks whether a UUID already exists in the table.
      */
-    private boolean idExistsInDatabase(@NotNull final Table<?> table, @NotNull final Field<String> idField, @NotNull final UUID uuid) {
+    private boolean idExistsInDatabase(@NotNull final Table<?> table,
+                                       @NotNull final Field<String> idField,
+                                       @NotNull final UUID uuid) {
         return dsl.selectOne()
                 .from(table)
                 .where(idField.eq(uuid.toString()))

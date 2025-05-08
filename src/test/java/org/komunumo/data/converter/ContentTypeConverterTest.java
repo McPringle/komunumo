@@ -36,7 +36,10 @@ class ContentTypeConverterTest {
         assertEquals(ContentType.IMAGE_SVG, converter.from("image/svg+xml"));
         assertEquals(ContentType.IMAGE_WEBP, converter.from("image/webp"));
 
-        final var expectedException = assertThrows(IllegalArgumentException.class, () -> converter.from("unknown/type"));
+        final var expectedException = assertThrows(
+                IllegalArgumentException.class,
+                () -> converter.from("unknown/type"));
+
         assertEquals("Unknown content type: unknown/type", expectedException.getMessage());
     }
 

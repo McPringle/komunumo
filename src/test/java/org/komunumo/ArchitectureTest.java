@@ -94,7 +94,8 @@ class ArchitectureTest {
                 .sorted()
                 .collect(Collectors.joining(", "));
 
-        final var notDependOnForbiddenDateTimeTypes = new ArchCondition<JavaClass>("not depend on " + forbiddenTypeList) {
+        final var notDependOnForbiddenDateTimeTypes = new ArchCondition<JavaClass>(
+                "not depend on " + forbiddenTypeList) {
             @Override
             public void check(@NotNull JavaClass clazz, @NotNull ConditionEvents events) {
                 if (clazz.getFullName().equals("org.komunumo.data.converter.ZonedDateTimeConverter")) {
