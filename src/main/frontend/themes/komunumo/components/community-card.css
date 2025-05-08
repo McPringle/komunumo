@@ -16,4 +16,44 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "./components/community-card.css";
+.community-card {
+    position: relative;
+    width: 400px;
+    height: 300px;
+
+    overflow: hidden;
+    border-radius: 12px;
+
+    background-position: center;
+    background-size: cover;
+
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.community-card:hover {
+    transform: scale(1.03);
+}
+
+.community-card .overlay {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 2;
+}
+
+.community-card h3 {
+    margin: 0;
+
+    color: white;
+    text-align: center;
+    text-shadow:
+            1px  1px 1px black,
+            1px -1px 1px black,
+            -1px  1px 1px black,
+            -1px -1px 1px black;
+}

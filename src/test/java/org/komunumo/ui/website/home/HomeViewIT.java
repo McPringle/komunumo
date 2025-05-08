@@ -26,8 +26,11 @@ import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.KaribuTestBase;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Objects;
+
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HomeViewIT extends KaribuTestBase {
@@ -38,18 +41,28 @@ class HomeViewIT extends KaribuTestBase {
     @Test
     void homeViewTest() {
         UI.getCurrent().navigate(HomeView.class);
-        UI.getCurrent().getPage().reload();
 
         final var title = _get(H2.class, spec -> spec.withText("Home")).getText();
         assertEquals("Home", title);
 
         final var communityList = _get(HorizontalLayout.class);
         final var communityCards = communityList.getChildren().toList();
-        assertEquals(5, communityCards.size());
+        assertEquals(6, communityCards.size());
 
-        for (final var communityCard : communityCards) {
-            final var h3 = (H3) communityCard.getChildren().findFirst().orElseThrow();
-            assertTrue(h3.getText().startsWith("Demo Community"));
+        for (int i = 1; i <= 6; i++) {
+            final var communityCard = communityCards.get(i - 1);
+            final var h3 = Objects.requireNonNull(findComponent(communityCard, H3.class));
+            assertTrue(h3.getText().startsWith("Demo Community " + i));
+
+            final var backgroundImage = communityCard.getElement().getStyle().get("background-image");
+            assertNotNull(backgroundImage, "background-image should be set");
+            if (i <= 5) {
+                assertTrue(backgroundImage.contains("demo-background-" + i + ".jpg"),
+                        "expected to contain a demo background but was: " + backgroundImage);
+            } else { // demo community 6+ has no image
+                assertTrue(backgroundImage.contains("placeholder-400x300.jpg"),
+                        "expected to contain the placeholder background but was: " + backgroundImage);
+            }
         }
     }
 

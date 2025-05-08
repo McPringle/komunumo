@@ -66,6 +66,15 @@ interface CommunityService extends DSLContextGetter, UniqueIdGetter {
                 .fetchStreamInto(CommunityDto.class);
     }
 
+    default int getCommunityCount() {
+        return Optional.ofNullable(
+                dsl()
+                        .selectCount()
+                        .from(COMMUNITY)
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
+
     default boolean deleteCommunity(@NotNull final CommunityDto community) {
         return dsl().delete(COMMUNITY)
                 .where(COMMUNITY.ID.eq(community.id()))

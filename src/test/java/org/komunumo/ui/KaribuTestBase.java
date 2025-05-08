@@ -20,8 +20,11 @@ package org.komunumo.ui;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
 import com.github.mvysny.kaributesting.v10.spring.MockSpringServlet;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import kotlin.jvm.functions.Function0;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,4 +70,30 @@ public abstract class KaribuTestBase {
         MockVaadin.tearDown();
     }
 
+    /**
+     * <p>Recursively searches the component tree starting from the given {@code root}
+     * and returns the first component that is an instance of the specified {@code type}.</p>
+     *
+     * <p></p>This method performs a depth-first search and returns the first match found,
+     * including the {@code root} component itself if it matches.</p>
+     *
+     * @param root the root component from which to start the search (must not be {@code null})
+     * @param type the type of component to find (must not be {@code null})
+     * @return the first matching component of the specified type, or {@code null} if none found
+     */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    public static <T extends Component> T findComponent(@NotNull final Component root,
+                                                        @NotNull final Class<T> type) {
+        if (type.isInstance(root)) {
+            return (T) root;
+        }
+        for (final Component child : root.getChildren().toList()) {
+            T result = findComponent(child, type);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
+    }
 }

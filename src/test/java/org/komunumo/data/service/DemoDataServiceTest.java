@@ -35,13 +35,13 @@ class DemoDataServiceTest {
     @Test
     void createDemoData() {
         var communityCount = databaseService.getCommunities().count();
-        assertEquals(5, communityCount);
+        assertEquals(6, communityCount);
 
         // should not create new data because it was already executed using the `@PostConstruct` method
         demoDataService.createDemoData();
 
         communityCount = databaseService.getCommunities().count();
-        assertEquals(5, communityCount);
+        assertEquals(6, communityCount);
     }
 
 }

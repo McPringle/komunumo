@@ -23,7 +23,10 @@ import org.komunumo.data.dto.ImageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class ImageServiceTest {
@@ -33,29 +36,56 @@ class ImageServiceTest {
 
     @Test
     void happyCase() {
+        assertEquals(5, imageService.getImageCount());
+
         // store new image
         var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp"));
         final var imageId = image.id();
-        assertNotNull(image.id());
+        assertNotNull(imageId);
         assertEquals(ContentType.IMAGE_WEBP, image.contentType());
         assertEquals("test.webp", image.filename());
+        assertEquals(6, imageService.getImageCount());
+
+        // read the image from the database
+        image = imageService.getImage(imageId).orElseThrow();
+        assertEquals(imageId, image.id());
+        assertEquals(ContentType.IMAGE_WEBP, image.contentType());
+        assertEquals("test.webp", image.filename());
+        assertEquals(6, imageService.getImageCount());
 
         // update existing image
         image = imageService.storeImage(new ImageDto(image.id(), ContentType.IMAGE_SVG, "test.svg"));
         assertEquals(imageId, image.id());
         assertEquals(ContentType.IMAGE_SVG, image.contentType());
         assertEquals("test.svg", image.filename());
+        assertEquals(6, imageService.getImageCount());
+
+        // read the image from the database
+        image = imageService.getImage(imageId).orElseThrow();
+        assertEquals(imageId, image.id());
+        assertEquals(ContentType.IMAGE_SVG, image.contentType());
+        assertEquals("test.svg", image.filename());
+        assertEquals(6, imageService.getImageCount());
 
         // find orphaned images
         final var orphanedImages = imageService.findOrphanedImages().toList();
         assertEquals(1, orphanedImages.size());
         assertEquals(image, orphanedImages.getFirst());
 
-        // delete image
+        // delete the existing image
         assertTrue(imageService.deleteImage(image));
-        assertFalse(imageService.deleteImage(image));
+        assertTrue(imageService.getImage(imageId).isEmpty());
+        assertEquals(5, imageService.getImageCount());
 
         // find orphaned images again
         assertTrue(imageService.findOrphanedImages().toList().isEmpty());
+
+        // delete the non-existing image (was already deleted before)
+        assertFalse(imageService.deleteImage(image));
+    }
+
+    @Test
+    void noImageWithNullId() {
+        assertTrue(imageService.getImage(null).isEmpty());
     }
 }

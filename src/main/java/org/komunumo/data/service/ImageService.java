@@ -18,12 +18,15 @@
 package org.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.komunumo.data.db.Tables;
 import org.komunumo.data.db.tables.records.ImageRecord;
 import org.komunumo.data.dto.ImageDto;
 import org.komunumo.data.service.getter.DSLContextGetter;
 import org.komunumo.data.service.getter.UniqueIdGetter;
 
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.jooq.impl.DSL.selectOne;
@@ -45,6 +48,23 @@ interface ImageService extends DSLContextGetter, UniqueIdGetter {
         }
         imageRecord.store();
         return imageRecord.into(ImageDto.class);
+    }
+
+    @NotNull
+    default Optional<ImageDto> getImage(@Nullable final UUID id) {
+        return id == null ? Optional.empty() : dsl()
+                .selectFrom(IMAGE)
+                .where(IMAGE.ID.eq(id))
+                .fetchOptionalInto(ImageDto.class);
+    }
+
+    default int getImageCount() {
+        return Optional.ofNullable(
+                dsl()
+                        .selectCount()
+                        .from(IMAGE)
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
     }
 
     default @NotNull Stream<ImageDto> findOrphanedImages() {

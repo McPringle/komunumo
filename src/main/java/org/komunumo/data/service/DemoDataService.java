@@ -20,6 +20,8 @@ package org.komunumo.data.service;
 import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
 import org.komunumo.data.dto.CommunityDto;
+import org.komunumo.data.dto.ContentType;
+import org.komunumo.data.dto.ImageDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -49,11 +51,21 @@ public final class DemoDataService {
     public void createDemoData() {
         LOGGER.info("Creating demo data...");
 
-        if (databaseService.getCommunities().findAny().isEmpty()) {
+        if (databaseService.getImageCount() == 0) {
             for (int i = 1; i <= 5; i++) {
+                databaseService.storeImage(new ImageDto(
+                        generateId(Integer.toString(i)), ContentType.IMAGE_JPEG,
+                        "demo-background-" + i + ".jpg"));
+            }
+        }
+
+        if (databaseService.getCommunityCount() == 0) {
+            for (int i = 1; i <= 6; i++) {
+                final var generatedId = generateId(Integer.toString(i));
                 databaseService.storeCommunity(new CommunityDto(
-                        generateId(i), "@demoGroup" + i, null, null,
-                        "Demo Community " + i, "This is a demo community.", null));
+                        generatedId, "@demoGroup" + i, null, null,
+                        "Demo Community " + i, "This is a demo community.",
+                        i <= 5 ? generatedId : null)); // demo community 6+ has no image
             }
         }
 
@@ -61,20 +73,18 @@ public final class DemoDataService {
     }
 
     /**
-     * Generates a predictable ID based on a given integer.
-     * The ID consists of repeated digits of the input number,
+     * Generates a predictable ID based on a given part.
+     * The ID consists of repeated parts of the input,
      * formatted to match the standard UUID structure.
      *
-     * @param number the integer to base the ID on
+     * @param part the part to base the ID on
      * @return an ID with a predictable pattern
      */
-    private @NotNull UUID generateId(final int number) {
-        final var numStr = String.valueOf(number);
-
-        // Repeat the number string until it reaches at least 32 characters
+    private @NotNull UUID generateId(final String part) {
+        // Repeat the part until it reaches at least 32 characters
         final var hexBuilder = new StringBuilder();
         while (hexBuilder.length() < 32) {
-            hexBuilder.append(numStr);
+            hexBuilder.append(part);
         }
 
         // Trim to exactly 32 characters

@@ -33,7 +33,11 @@ import org.komunumo.ui.website.WebsiteLayout;
 @AnonymousAllowed
 public class HomeView extends Div {
 
+    private final transient DatabaseService databaseService;
+
     public HomeView(@NotNull final DatabaseService databaseService) {
+        this.databaseService = databaseService;
+
         setId("home-view");
         add(new H2("Home"));
 
@@ -46,7 +50,8 @@ public class HomeView extends Div {
     }
 
     private Component createCommunityOverview(@NotNull final CommunityDto community) {
-        return new CommunityCard(community);
+        final var image = databaseService.getImage(community.imageId()).orElse(null);
+        return new CommunityCard(community, image);
     }
 
 }
