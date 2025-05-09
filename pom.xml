@@ -427,6 +427,7 @@
                 <configuration>
                     <excludes>
                         <exclude>org/komunumo/data/db/**</exclude>
+                        <exclude>org/komunumo/plugin/internal/**</exclude><!-- TODO Remove after modularization -->
                     </excludes>
                 </configuration>
                 <executions>
