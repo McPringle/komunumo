@@ -17,41 +17,23 @@
  */
 package org.komunumo.ui.website.home;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.service.DatabaseService;
-import org.komunumo.ui.component.CommunityCard;
+import org.komunumo.ui.component.CommunityGrid;
 import org.komunumo.ui.website.WebsiteLayout;
 
 @Route(value = "", layout = WebsiteLayout.class)
 @AnonymousAllowed
 public class HomeView extends Div {
 
-    private final transient DatabaseService databaseService;
-
     public HomeView(@NotNull final DatabaseService databaseService) {
-        this.databaseService = databaseService;
-
         setId("home-view");
         add(new H2("Home"));
-
-        final var communityContainer = new HorizontalLayout();
-        communityContainer.setWrap(true);
-        databaseService.getCommunities()
-                .map(this::createCommunityOverview)
-                .forEach(communityContainer::add);
-        add(communityContainer);
-    }
-
-    private Component createCommunityOverview(@NotNull final CommunityDto community) {
-        final var image = databaseService.getImage(community.imageId()).orElse(null);
-        return new CommunityCard(community, image);
+        add(new CommunityGrid(databaseService));
     }
 
 }

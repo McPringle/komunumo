@@ -16,5 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "./components/community-card.css";
-@import "./components/community-grid.css";
+.community-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1rem;
+
+    width: 100%;
+    padding: 1rem;
+}

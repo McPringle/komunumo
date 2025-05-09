@@ -20,10 +20,10 @@ package org.komunumo.ui.website.home;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.KaribuTestBase;
+import org.komunumo.ui.component.CommunityGrid;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Objects;
@@ -45,7 +45,7 @@ class HomeViewIT extends KaribuTestBase {
         final var title = _get(H2.class, spec -> spec.withText("Home")).getText();
         assertEquals("Home", title);
 
-        final var communityList = _get(HorizontalLayout.class);
+        final var communityList = _get(CommunityGrid.class);
         final var communityCards = communityList.getChildren().toList();
         assertEquals(6, communityCards.size());
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,6 +15,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package org.komunumo.ui.component;
 
-@import "./components/community-card.css";
-@import "./components/community-grid.css";
+import com.vaadin.flow.component.html.Div;
+import org.jetbrains.annotations.NotNull;
+import org.komunumo.data.service.DatabaseService;
+
+public class CommunityGrid extends Div {
+
+    public CommunityGrid(@NotNull final DatabaseService databaseService) {
+        addClassName("community-grid");
+        databaseService.getCommunities().forEach(community -> {
+            final var image = databaseService.getImage(community.imageId()).orElse(null);
+            final var card = new CommunityCard(community, image);
+            add(card);
+        });
+    }
+}
