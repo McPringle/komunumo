@@ -22,7 +22,6 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import org.junit.jupiter.api.Test;
-import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.KaribuTestBase;
 import org.komunumo.ui.component.CommunityGrid;
 
@@ -34,9 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HomeViewIT extends KaribuTestBase {
-
-    @Autowired
-    private DatabaseService databaseService;
 
     @Test
     void homeViewTest() {
