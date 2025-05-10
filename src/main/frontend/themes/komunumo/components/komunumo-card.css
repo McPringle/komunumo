@@ -15,3 +15,45 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+.komunumo-card {
+    position: relative;
+    width: 400px;
+    height: 300px;
+
+    overflow: hidden;
+    border-radius: 12px;
+
+    background-position: center;
+    background-size: cover;
+
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.komunumo-card:hover {
+    transform: scale(1.03);
+}
+
+.komunumo-card .overlay {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 2;
+}
+
+.komunumo-card h3 {
+    margin: 0;
+
+    color: white;
+    text-align: center;
+    text-shadow:
+            1px  1px 1px black,
+            1px -1px 1px black,
+            -1px  1px 1px black,
+            -1px -1px 1px black;
+}

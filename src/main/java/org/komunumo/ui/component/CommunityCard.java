@@ -17,37 +17,19 @@
  */
 package org.komunumo.ui.component;
 
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.dto.ImageDto;
 
-public class CommunityCard extends Div {
+public class CommunityCard extends KomunumoCard {
 
     private static final String IMAGE_PLACEHOLDER = "/images/placeholder-400x300.jpg";
 
     public CommunityCard(@NotNull final CommunityDto community,
                          @Nullable final ImageDto image) {
+        super(community.name(), image == null ? IMAGE_PLACEHOLDER : image.getImageUrl());
         addClassName("community-card");
-        setBackgroundImage(image);
-        addOverlay(community);
-    }
-
-    private void setBackgroundImage(@Nullable final ImageDto image) {
-        final var imageUrl = image == null ? IMAGE_PLACEHOLDER : "/images/" + image.filename();
-        getStyle().set("background-image", "url('" + imageUrl + "')");
-    }
-
-    private void addOverlay(@NotNull final CommunityDto community) {
-        final var overlay = new Div();
-        overlay.addClassName("overlay");
-
-        final var title = new H3(community.name());
-
-        overlay.add(title);
-        add(overlay);
     }
 
 }

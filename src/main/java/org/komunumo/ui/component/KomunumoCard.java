@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,3 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package org.komunumo.ui.component;
+
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+public abstract class KomunumoCard extends Div {
+
+    public KomunumoCard(@NotNull final String title,
+                        @Nullable final String imageUrl) {
+        addClassName("komunumo-card");
+
+        if (imageUrl != null) {
+            getStyle().set("background-image", "url('" + imageUrl + "')");
+        }
+
+        final var overlay = new Div();
+        overlay.addClassName("overlay");
+        overlay.add(new H3(title));
+        add(overlay);
+    }
+
+}
