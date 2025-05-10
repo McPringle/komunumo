@@ -15,25 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.ui.website.home;
+package org.komunumo.ui.component;
 
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Header;
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.service.DatabaseService;
-import org.komunumo.ui.component.CommunityGrid;
-import org.komunumo.ui.component.PageHeader;
-import org.komunumo.ui.website.WebsiteLayout;
+import org.jetbrains.annotations.Nullable;
 
-@Route(value = "", layout = WebsiteLayout.class)
-@AnonymousAllowed
-public class HomeView extends Div {
+public final class PageHeader extends Header {
 
-    public HomeView(@NotNull final DatabaseService databaseService) {
-        setId("home-view");
-        add(new PageHeader("Komunumo", "Open Source Community Management"));
-        add(new CommunityGrid(databaseService));
+    public PageHeader(@NotNull final String title, @Nullable final String subTitle) {
+        addClassName("page-header");
+        add(new H1(title));
+
+        if (subTitle != null) {
+            add(new H2(subTitle));
+        }
     }
 
 }

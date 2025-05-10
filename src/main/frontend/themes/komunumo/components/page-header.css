@@ -1,4 +1,4 @@
-/*
+/**
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,25 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.ui.website.home;
 
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
-import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.service.DatabaseService;
-import org.komunumo.ui.component.CommunityGrid;
-import org.komunumo.ui.component.PageHeader;
-import org.komunumo.ui.website.WebsiteLayout;
-
-@Route(value = "", layout = WebsiteLayout.class)
-@AnonymousAllowed
-public class HomeView extends Div {
-
-    public HomeView(@NotNull final DatabaseService databaseService) {
-        setId("home-view");
-        add(new PageHeader("Komunumo", "Open Source Community Management"));
-        add(new CommunityGrid(databaseService));
-    }
-
+.page-header {
+    padding: 1rem;
+    border-bottom: 1px solid darkgray;
 }

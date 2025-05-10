@@ -16,7 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "./components/komunumo-card.css";
+@import "components/page-header.css";
+@import "components/komunumo-card.css";
 
-@import "./components/community-card.css";
-@import "./components/community-grid.css";
+@import "components/community-card.css";
+@import "components/community-grid.css";
