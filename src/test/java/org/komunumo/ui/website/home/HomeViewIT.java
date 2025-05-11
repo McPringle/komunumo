@@ -28,9 +28,7 @@ import org.komunumo.ui.component.CommunityGrid;
 import java.util.Objects;
 
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class HomeViewIT extends KaribuTestBase {
 
@@ -38,26 +36,31 @@ class HomeViewIT extends KaribuTestBase {
     void homeViewTest() {
         UI.getCurrent().navigate(HomeView.class);
 
-        assertEquals("Komunumo", _get(H1.class).getText());
-        assertEquals("Open Source Community Management", _get(H2.class).getText());
+        assertThat(_get(H1.class).getText()).isEqualTo("Komunumo");
+        assertThat(_get(H2.class).getText()).isEqualTo("Open Source Community Management");
 
         final var communityList = _get(CommunityGrid.class);
         final var communityCards = communityList.getChildren().toList();
-        assertEquals(6, communityCards.size());
+        assertThat(communityCards).hasSize(6);
 
         for (int i = 1; i <= 6; i++) {
             final var communityCard = communityCards.get(i - 1);
             final var h3 = Objects.requireNonNull(findComponent(communityCard, H3.class));
-            assertTrue(h3.getText().startsWith("Demo Community " + i));
+            assertThat(h3.getText()).isEqualTo("Demo Community " + i);
 
             final var backgroundImage = communityCard.getElement().getStyle().get("background-image");
-            assertNotNull(backgroundImage, "background-image should be set");
+            assertThat(backgroundImage)
+                    .as("background-image should be set")
+                    .isNotNull();
+
             if (i <= 5) {
-                assertTrue(backgroundImage.contains("demo-background-" + i + ".jpg"),
-                        "expected to contain a demo background but was: " + backgroundImage);
+                assertThat(backgroundImage)
+                        .as("expected to contain a demo background but was: " + backgroundImage)
+                        .contains("demo-background-" + i + ".jpg");
             } else { // demo community 6+ has no image
-                assertTrue(backgroundImage.contains("placeholder-400x300.jpg"),
-                        "expected to contain the placeholder background but was: " + backgroundImage);
+                assertThat(backgroundImage)
+                        .as("expected to contain the placeholder background but was: " + backgroundImage)
+                        .contains("placeholder-400x300.jpg");
             }
         }
     }

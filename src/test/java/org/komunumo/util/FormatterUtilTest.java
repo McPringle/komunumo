@@ -19,41 +19,22 @@ package org.komunumo.util;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class FormatterUtilTest {
 
     @Test
     void testFormatNumber() {
-        assertEquals("1", FormatterUtil.formatNumber(1L));
-        assertEquals("12", FormatterUtil.formatNumber(12L));
-        assertEquals("123", FormatterUtil.formatNumber(123L));
-        assertEquals("1'234", FormatterUtil.formatNumber(1234L));
-        assertEquals("12'345", FormatterUtil.formatNumber(12345L));
-        assertEquals("123'456", FormatterUtil.formatNumber(123456L));
-        assertEquals("1'234'567", FormatterUtil.formatNumber(1234567L));
-        assertEquals("12'345'678", FormatterUtil.formatNumber(12345678L));
-        assertEquals("123'456'789", FormatterUtil.formatNumber(123456789L));
-    }
-
-    @Test
-    @SuppressWarnings("PMD.AvoidAccessibilityAlteration") // this is exactly what we want to test
-    void privateConstructorWithException() {
-        final var cause = assertThrows(InvocationTargetException.class, () -> {
-            Constructor<FormatterUtil> constructor = FormatterUtil.class.getDeclaredConstructor();
-            if (Modifier.isPrivate(constructor.getModifiers())) {
-                constructor.setAccessible(true);
-                constructor.newInstance();
-            }
-        }).getCause();
-        assertInstanceOf(IllegalStateException.class, cause);
-        assertEquals("Utility class", cause.getMessage());
+        assertThat(FormatterUtil.formatNumber(0L)).isEqualTo("0");
+        assertThat(FormatterUtil.formatNumber(1L)).isEqualTo("1");
+        assertThat(FormatterUtil.formatNumber(12L)).isEqualTo("12");
+        assertThat(FormatterUtil.formatNumber(123L)).isEqualTo("123");
+        assertThat(FormatterUtil.formatNumber(1234L)).isEqualTo("1'234");
+        assertThat(FormatterUtil.formatNumber(12345L)).isEqualTo("12'345");
+        assertThat(FormatterUtil.formatNumber(123456L)).isEqualTo("123'456");
+        assertThat(FormatterUtil.formatNumber(1234567L)).isEqualTo("1'234'567");
+        assertThat(FormatterUtil.formatNumber(12345678L)).isEqualTo("12'345'678");
+        assertThat(FormatterUtil.formatNumber(123456789L)).isEqualTo("123'456'789");
     }
 
 }

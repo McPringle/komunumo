@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class DemoDataServiceTest {
@@ -35,13 +35,13 @@ class DemoDataServiceTest {
     @Test
     void createDemoData() {
         var communityCount = databaseService.getCommunities().count();
-        assertEquals(6, communityCount);
+        assertThat(communityCount).isEqualTo(6);
 
         // should not create new data because it was already executed using the `@PostConstruct` method
         demoDataService.createDemoData();
 
         communityCount = databaseService.getCommunities().count();
-        assertEquals(6, communityCount);
+        assertThat(communityCount).isEqualTo(6);
     }
 
 }

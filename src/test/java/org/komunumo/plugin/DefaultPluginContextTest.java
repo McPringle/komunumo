@@ -21,9 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.komunumo.data.service.DatabaseService;
 import org.slf4j.Logger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 class DefaultPluginContextTest {
@@ -32,15 +30,15 @@ class DefaultPluginContextTest {
     void getLogger() {
         final PluginContext context = new DefaultPluginContext(mock(DatabaseService.class));
         final Logger logger = context.getLogger(DefaultPluginContextTest.class);
-        assertNotNull(logger);
-        assertEquals("org.komunumo.plugin.DefaultPluginContextTest", logger.getName());
+        assertThat(logger).isNotNull();
+        assertThat(logger.getName()).isEqualTo("org.komunumo.plugin.DefaultPluginContextTest");
     }
 
     @Test
     void getDatabaseService() {
         final DatabaseService mockService = mock(DatabaseService.class);
         final PluginContext context = new DefaultPluginContext(mockService);
-        assertSame(mockService, context.getDatabaseService());
+        assertThat(context.getDatabaseService()).isSameAs(mockService);
     }
 
 }

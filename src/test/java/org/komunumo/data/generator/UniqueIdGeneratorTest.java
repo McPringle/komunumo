@@ -36,9 +36,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.komunumo.data.db.tables.Config.CONFIG;
 import static org.komunumo.data.db.tables.Image.IMAGE;
 
@@ -62,7 +61,7 @@ class UniqueIdGeneratorTest {
         final UUID result = generator.getUniqueID(IMAGE);
 
         // Assert
-        assertEquals(fixedId, result);
+        assertThat(result).isEqualTo(fixedId);
     }
 
     @Test
@@ -88,8 +87,10 @@ class UniqueIdGeneratorTest {
             final UUID result = generator.getUniqueID(IMAGE);
 
             // Assert
-            assertEquals(freshId, result);
-            assertEquals(2, callCount.get(), "Supplier should have been called twice due to database hit");
+            assertThat(result).isEqualTo(freshId);
+            assertThat(callCount.get())
+                    .as("Supplier should have been called twice due to database hit")
+                    .isEqualTo(2);
         } finally {
             // Clean up: remove the test image from the database
             databaseService.deleteImage(existingImage);
@@ -124,8 +125,10 @@ class UniqueIdGeneratorTest {
         final UUID result = generator.getUniqueID(IMAGE);
 
         // Assert
-        assertEquals(freshId, result);
-        assertEquals(2, callCount.get(), "Supplier should have been called twice due to cache hit");
+        assertThat(result).isEqualTo(freshId);
+        assertThat(callCount.get())
+                .as("Supplier should have been called twice due to cache hit")
+                .isEqualTo(2);
     }
 
     @Test
@@ -134,8 +137,9 @@ class UniqueIdGeneratorTest {
         final UniqueIdGenerator generator = new UniqueIdGenerator(dsl);
 
         // Act + Assert
-        final var expectedException = assertThrows(IllegalArgumentException.class, () -> generator.getUniqueID(CONFIG));
-        assertTrue(expectedException.getMessage().contains("Table 'config' does not have a String 'id' field"));
+        assertThatThrownBy(() -> generator.getUniqueID(CONFIG))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Table 'config' does not have a String 'id' field");
     }
 
     @Test
@@ -161,7 +165,9 @@ class UniqueIdGeneratorTest {
             latch.await();
         }
 
-        assertEquals(threadCount, ids.size(), "All generated IDs must be unique");
+        assertThat(ids)
+                .as("All generated IDs must be unique")
+                .hasSize(threadCount);
     }
 
 }

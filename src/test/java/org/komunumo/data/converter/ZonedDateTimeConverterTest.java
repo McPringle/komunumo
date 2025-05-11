@@ -19,15 +19,12 @@ package org.komunumo.data.converter;
 
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ZonedDateTimeConverterTest {
 
@@ -38,9 +35,17 @@ class ZonedDateTimeConverterTest {
         LocalDateTime databaseValue = LocalDateTime.of(2025, 5, 10, 15, 30);
         ZonedDateTime result = converter.from(databaseValue);
 
-        assertNotNull(result);
-        assertEquals(ZoneOffset.UTC, result.getZone());
-        assertEquals(Instant.parse("2025-05-10T15:30:00Z"), result.toInstant());
+        assertThat(result).isNotNull().satisfies(testee -> {
+            assertThat(testee.getZone()).isEqualTo(ZoneOffset.UTC);
+            assertThat(testee.getOffset()).isEqualTo(ZoneOffset.UTC);
+            assertThat(testee.getYear()).isEqualTo(2025);
+            assertThat(testee.getMonthValue()).isEqualTo(5);
+            assertThat(testee.getDayOfMonth()).isEqualTo(10);
+            assertThat(testee.getHour()).isEqualTo(15);
+            assertThat(testee.getMinute()).isEqualTo(30);
+            assertThat(testee.getSecond()).isZero();
+            assertThat(testee.getNano()).isZero();
+        });
     }
 
     @Test
@@ -48,20 +53,28 @@ class ZonedDateTimeConverterTest {
         ZonedDateTime zoned = ZonedDateTime.of(2025, 5, 10, 17, 30, 0, 0, ZoneId.of("Europe/Zurich"));
         LocalDateTime dbValue = converter.to(zoned);
 
-        assertNotNull(dbValue);
-        assertEquals(LocalDateTime.of(2025, 5, 10, 15, 30), dbValue); // Zürich ist UTC+2 im Mai
+        // in May, Zürich is UTC+2
+        assertThat(dbValue).isNotNull().satisfies(testee -> {
+            assertThat(testee.getYear()).isEqualTo(2025);
+            assertThat(testee.getMonthValue()).isEqualTo(5);
+            assertThat(testee.getDayOfMonth()).isEqualTo(10);
+            assertThat(testee.getHour()).isEqualTo(15);
+            assertThat(testee.getMinute()).isEqualTo(30);
+            assertThat(testee.getSecond()).isZero();
+            assertThat(testee.getNano()).isZero();
+        });
     }
 
     @Test
     void nullHandling() {
-        assertNull(converter.from(null));
-        assertNull(converter.to(null));
+        assertThat(converter.from(null)).isNull();
+        assertThat(converter.to(null)).isNull();
     }
 
     @Test
     void typeInfo() {
-        assertEquals(LocalDateTime.class, converter.fromType());
-        assertEquals(ZonedDateTime.class, converter.toType());
+        assertThat(converter.fromType()).isEqualTo(LocalDateTime.class);
+        assertThat(converter.toType()).isEqualTo(ZonedDateTime.class);
     }
 
 }

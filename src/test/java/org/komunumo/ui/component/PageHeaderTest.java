@@ -21,10 +21,7 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.komunumo.ui.KaribuTestBase.findComponent;
 
 class PageHeaderTest {
@@ -32,27 +29,27 @@ class PageHeaderTest {
     @Test
     void onlyTitle() {
         final var header = new PageHeader("Komunumo", null);
-        assertTrue(header.hasClassName("page-header"));
+        assertThat(header.getClassNames()).contains("page-header");
 
         final var h1 = findComponent(header, H1.class);
-        assertNotNull(h1);
-        assertEquals("Komunumo", h1.getText());
+        assertThat(h1).isNotNull();
+        assertThat(h1.getText()).isEqualTo("Komunumo");
 
-        assertNull(findComponent(header, H2.class));
+        assertThat(findComponent(header, H2.class)).isNull();
     }
 
     @Test
     void titleWithSubtitle() {
         final var header = new PageHeader("Komunumo", "Open Source Community Management");
-        assertTrue(header.hasClassName("page-header"));
+        assertThat(header.getClassNames()).contains("page-header");
 
         final var h1 = findComponent(header, H1.class);
-        assertNotNull(h1);
-        assertEquals("Komunumo", h1.getText());
+        assertThat(h1).isNotNull();
+        assertThat(h1.getText()).isEqualTo("Komunumo");
 
         final var h2 = findComponent(header, H2.class);
-        assertNotNull(h2);
-        assertEquals("Open Source Community Management", h2.getText());
+        assertThat(h2).isNotNull();
+        assertThat(h2.getText()).isEqualTo("Open Source Community Management");
     }
 
 }

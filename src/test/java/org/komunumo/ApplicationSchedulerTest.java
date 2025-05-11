@@ -24,9 +24,7 @@ import org.komunumo.data.service.DatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class ApplicationSchedulerTest {
@@ -37,14 +35,17 @@ class ApplicationSchedulerTest {
     @Test
     void cleanupOrphanedImages() {
         var image = databaseService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp"));
-        assertNotNull(image.id());
+        assertThat(image).isNotNull().satisfies(testee -> {
+            assertThat(testee.id()).isNotNull();
+            assertThat(testee.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
+            assertThat(testee.filename()).isEqualTo("test.webp");
+        });
 
         final var orphanedImages = databaseService.findOrphanedImages().toList();
-        assertEquals(1, orphanedImages.size());
-        assertEquals(image, orphanedImages.getFirst());
+        assertThat(orphanedImages).containsExactly(image);
 
         new ApplicationScheduler(databaseService).cleanupOrphanedImages();
-        assertTrue(databaseService.findOrphanedImages().toList().isEmpty());
+        assertThat(databaseService.findOrphanedImages().toList()).isEmpty();
     }
 
 }

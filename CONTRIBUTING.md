@@ -61,6 +61,27 @@ You can find more information about why this is important and how to do it easil
 
 AI generated source code is based on real existing source code, which is copied in whole or in part into the generated code. The license of the original source code with which the AI was trained is not taken into account. It is not clear which license conditions apply and how these can be complied with. For legal reasons, we therefore do not allow AI-generated source code at all.
 
+### Testing
+
+#### Assertions
+
+*Komunumo* uses [AssertJ](https://assertj.github.io/doc/) for writing assertions in unit tests. To ensure consistency, readability, and rich failure messages, only AssertJ should be used for all assertions. The use of JUnit's built-in `assert*` methods and Hamcrest matchers is explicitly disallowed and enforced through architecture tests. This includes, but is not limited to:
+
+- `org.junit.Assert`
+- `org.junit.jupiter.api.Assertions`
+- `org.hamcrest.MatcherAssert`
+
+Instead, use AssertJ's fluent assertion style, for example:
+
+```java
+assertThat(actual).isEqualTo(expected);
+
+assertThat(collection).containsExactly("one", "two");
+
+assertThatThrownBy(() -> service.doSomethingBad())
+    .isInstanceOf(IllegalArgumentException.class);
+```
+
 ## Communication
 
 ### Matrix Chat

@@ -22,6 +22,7 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.lang.ArchCondition;
+import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -40,8 +41,11 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 class ArchitectureTest {
 
-    private final JavaClasses imported = new ClassFileImporter()
+    private final JavaClasses classesWithoutTests = new ClassFileImporter()
             .withImportOption(new ImportOption.DoNotIncludeTests())
+            .importPackages("org.komunumo");
+    private final JavaClasses onlyTests = new ClassFileImporter()
+            .withImportOption(new ImportOption.OnlyIncludeTests())
             .importPackages("org.komunumo");
 
     @Test
@@ -53,7 +57,7 @@ class ArchitectureTest {
                 .accessClassesThat()
                 .resideInAnyPackage("org.komunumo.data.db..")
                 .because("only the service layer and jOOQ code should access jOOQ types directly")
-                .check(imported);
+                .check(classesWithoutTests);
     }
 
 
@@ -77,7 +81,7 @@ class ArchitectureTest {
                 .resideInAPackage("..dto..")
                 .should(beRecordOrEnum)
                 .because("DTOs should be implemented as Java records or enums to ensure immutability and clarity")
-                .check(imported);
+                .check(classesWithoutTests);
     }
 
     @Test
@@ -117,7 +121,43 @@ class ArchitectureTest {
         classes()
                 .should(notDependOnForbiddenDateTimeTypes)
                 .because("Komunumo needs the timezone information!")
-                .check(imported);
+                .check(classesWithoutTests);
+    }
+
+    @Test
+    void junit4_assertions_should_not_be_used() {
+        ArchRule rule = noClasses()
+                .should()
+                .accessClassesThat()
+                .resideInAnyPackage("org.junit")
+                .andShould()
+                .accessClassesThat()
+                .haveSimpleName("Assert")
+                .because("only AssertJ should be used for assertions");
+        rule.check(onlyTests);
+    }
+
+    @Test
+    void junit5_assertions_should_not_be_used() {
+        ArchRule rule = noClasses()
+                .should()
+                .accessClassesThat()
+                .resideInAnyPackage("org.junit.jupiter.api")
+                .andShould()
+                .accessClassesThat()
+                .haveSimpleName("Assertions")
+                .because("only AssertJ should be used for assertions");
+        rule.check(onlyTests);
+    }
+
+    @Test
+    void hamcrest_should_not_be_used() {
+        ArchRule rule = noClasses()
+                .should()
+                .accessClassesThat()
+                .resideInAnyPackage("org.hamcrest..")
+                .because("Hamcrest matchers should not be used");
+        rule.check(onlyTests);
     }
 
 }

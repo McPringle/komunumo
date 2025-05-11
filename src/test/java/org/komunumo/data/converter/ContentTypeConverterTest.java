@@ -20,51 +20,48 @@ package org.komunumo.data.converter;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.ContentType;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ContentTypeConverterTest {
 
     @Test
     void from() {
         final var converter = new ContentTypeConverter();
-        assertNull(converter.from(null));
-        assertEquals(ContentType.IMAGE_GIF, converter.from("image/gif"));
-        assertEquals(ContentType.IMAGE_JPEG, converter.from("image/jpeg"));
-        assertEquals(ContentType.IMAGE_PNG, converter.from("image/png"));
-        assertEquals(ContentType.IMAGE_SVG, converter.from("image/svg+xml"));
-        assertEquals(ContentType.IMAGE_WEBP, converter.from("image/webp"));
+        assertThat(converter.from(null)).isNull();
+        assertThat(converter.from("image/gif")).isEqualTo(ContentType.IMAGE_GIF);
+        assertThat(converter.from("image/jpeg")).isEqualTo(ContentType.IMAGE_JPEG);
+        assertThat(converter.from("image/png")).isEqualTo(ContentType.IMAGE_PNG);
+        assertThat(converter.from("image/svg+xml")).isEqualTo(ContentType.IMAGE_SVG);
+        assertThat(converter.from("image/webp")).isEqualTo(ContentType.IMAGE_WEBP);
 
-        final var expectedException = assertThrows(
-                IllegalArgumentException.class,
-                () -> converter.from("unknown/type"));
-
-        assertEquals("Unknown content type: unknown/type", expectedException.getMessage());
+        assertThatThrownBy(() -> converter.from("unknown/type"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Unknown content type: unknown/type");
     }
 
     @Test
     @SuppressWarnings("ConstantValue")
     void to() {
         final var converter = new ContentTypeConverter();
-        assertNull(converter.to(null));
-        assertEquals("image/gif", converter.to(ContentType.IMAGE_GIF));
-        assertEquals("image/jpeg", converter.to(ContentType.IMAGE_JPEG));
-        assertEquals("image/png", converter.to(ContentType.IMAGE_PNG));
-        assertEquals("image/svg+xml", converter.to(ContentType.IMAGE_SVG));
-        assertEquals("image/webp", converter.to(ContentType.IMAGE_WEBP));
+        assertThat(converter.to(null)).isNull();
+        assertThat(converter.to(ContentType.IMAGE_GIF)).isEqualTo("image/gif");
+        assertThat(converter.to(ContentType.IMAGE_JPEG)).isEqualTo("image/jpeg");
+        assertThat(converter.to(ContentType.IMAGE_PNG)).isEqualTo("image/png");
+        assertThat(converter.to(ContentType.IMAGE_SVG)).isEqualTo("image/svg+xml");
+        assertThat(converter.to(ContentType.IMAGE_WEBP)).isEqualTo("image/webp");
     }
 
     @Test
     void fromType() {
         final var converter = new ContentTypeConverter();
-        assertEquals(String.class, converter.fromType());
+        assertThat(converter.fromType()).isEqualTo(String.class);
     }
 
     @Test
     void toType() {
         final var converter = new ContentTypeConverter();
-        assertEquals(ContentType.class, converter.toType());
+        assertThat(converter.toType()).isEqualTo(ContentType.class);
     }
 
 }

@@ -22,10 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.komunumo.ui.KaribuTestBase.findComponent;
 
 class KomunumoCardTest {
@@ -39,20 +36,27 @@ class KomunumoCardTest {
     @Test
     void cardWithTitleAndImage() {
         final var card = new TestCard("Test Title", "/images/test.jpg");
-        assertTrue(card.getClassNames().contains("komunumo-card"));
-
-        final var bg = card.getStyle().get("background-image");
-        assertEquals("url('/images/test.jpg')", bg);
+        assertThat(card.getClassNames()).contains("komunumo-card");
 
         final var h3 = findComponent(card, H3.class);
-        assertNotNull(h3);
-        assertEquals("Test Title", h3.getText());
+        assertThat(h3).isNotNull();
+        assertThat(h3.getText()).isEqualTo("Test Title");
+
+        final var bg = card.getStyle().get("background-image");
+        assertThat(bg).isEqualTo("url('/images/test.jpg')");
     }
 
     @Test
     void cardWithTitleWithoutImage() {
         final var card = new TestCard("No Image", null);
-        assertNull(card.getStyle().get("background-image"));
+        assertThat(card.getClassNames()).contains("komunumo-card");
+
+        final var h3 = findComponent(card, H3.class);
+        assertThat(h3).isNotNull();
+        assertThat(h3.getText()).isEqualTo("No Image");
+
+        final var bg = card.getStyle().get("background-image");
+        assertThat(bg).isNull();
     }
 
 }

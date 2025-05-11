@@ -28,8 +28,8 @@ import org.komunumo.ui.website.home.HomeView;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,21 +42,21 @@ class WebsiteLayoutTest extends KaribuTestBase {
                 .getParent().orElseThrow();
 
         final var websiteLayout = (WebsiteLayout) uiParent;
-        assertEquals(1, websiteLayout.getComponentCount());
+        assertThat(websiteLayout.getComponentCount()).isEqualTo(1);
 
         final var main = (Main) websiteLayout.getComponentAt(0);
-        assertEquals(1, main.getElement().getChildCount());
+        assertThat(main.getElement().getChildCount()).isEqualTo(1);
 
         websiteLayout.showRouterLayoutContent(new Paragraph("foo"));
-        assertEquals(1, main.getElement().getChildCount());
-        assertEquals("foo", main.getElement().getChild(0).getText());
+        assertThat(main.getElement().getChildCount()).isEqualTo(1);
+        assertThat(main.getElement().getChild(0).getText()).isEqualTo("foo");
 
         websiteLayout.showRouterLayoutContent(new Paragraph("bar"));
-        assertEquals(1, main.getElement().getChildCount());
-        assertEquals("bar", main.getElement().getChild(0).getText());
+        assertThat(main.getElement().getChildCount()).isEqualTo(1);
+        assertThat(main.getElement().getChild(0).getText()).isEqualTo("bar");
 
         websiteLayout.removeRouterLayoutContent(null);
-        assertEquals(0, main.getElement().getChildCount());
+        assertThat(main.getElement().getChildCount()).isZero();
     }
 
     @Test
@@ -66,15 +66,16 @@ class WebsiteLayoutTest extends KaribuTestBase {
                 .getParent().orElseThrow();
 
         final var websiteLayout = (WebsiteLayout) uiParent;
-        assertEquals(1, websiteLayout.getComponentCount());
+        assertThat(websiteLayout.getComponentCount()).isEqualTo(1);
 
         final var content = mock(HasElement.class);
         final var element = mock(Element.class);
         when(content.getElement()).thenReturn(element);
         when(element.getComponent()).thenReturn(Optional.empty());
 
-        final var exception = assertThrows(IllegalArgumentException.class,
-                () -> websiteLayout.showRouterLayoutContent(content));
-        assertEquals("WebsiteLayout content must be a Component", exception.getMessage());
+        assertThatThrownBy(() -> websiteLayout.showRouterLayoutContent(content))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("WebsiteLayout content must be a Component");
     }
+
 }

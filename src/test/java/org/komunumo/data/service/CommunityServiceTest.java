@@ -23,11 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class CommunityServiceTest {
@@ -43,30 +38,34 @@ class CommunityServiceTest {
                 "Test Community Name", "Test Community Description", null);
         community = communityService.storeCommunity(community);
         final var communityId = community.id();
+        assertThat(communityId).isNotNull().satisfies(testee -> {
+            assertThat(testee.toString()).isNotEmpty();
+            assertThat(testee.toString()).isNotBlank();
+        });
 
-        assertNotNull(communityId);
-        assertEquals("@test", community.profile());
-
-        assertNotNull(community.created());
-        assertNotNull(community.updated());
-        assertEquals(community.created(), community.updated());
-
-        assertEquals("Test Community Name", community.name());
-        assertEquals("Test Community Description", community.description());
-        assertNull(community.imageId());
+        assertThat(community).isNotNull().satisfies(testee -> {
+            assertThat(testee.id()).isEqualTo(communityId);
+            assertThat(testee.profile()).isEqualTo("@test");
+            assertThat(testee.created()).isNotNull();
+            assertThat(testee.updated()).isNotNull();
+            assertThat(testee.updated()).isEqualTo(testee.created());
+            assertThat(testee.name()).isEqualTo("Test Community Name");
+            assertThat(testee.description()).isEqualTo("Test Community Description");
+            assertThat(testee.imageId()).isNull();
+        });
 
         // read the community from the database
         community = communityService.getCommunity(communityId).orElseThrow();
-        assertEquals(communityId, community.id());
-        assertEquals("@test", community.profile());
-
-        assertNotNull(community.created());
-        assertNotNull(community.updated());
-        assertEquals(community.created(), community.updated());
-
-        assertEquals("Test Community Name", community.name());
-        assertEquals("Test Community Description", community.description());
-        assertNull(community.imageId());
+        assertThat(community).isNotNull().satisfies(testee -> {
+            assertThat(testee.id()).isEqualTo(communityId);
+            assertThat(testee.profile()).isEqualTo("@test");
+            assertThat(testee.created()).isNotNull();
+            assertThat(testee.updated()).isNotNull();
+            assertThat(testee.updated()).isEqualTo(testee.created());
+            assertThat(testee.name()).isEqualTo("Test Community Name");
+            assertThat(testee.description()).isEqualTo("Test Community Description");
+            assertThat(testee.imageId()).isNull();
+        });
 
         // read all communities from the database
         final var communities = communityService.getCommunities().toList();
@@ -76,23 +75,23 @@ class CommunityServiceTest {
         community = new CommunityDto(community.id(), community.profile(), community.created(), community.updated(),
                 "Test Community Modified", community.description(), community.imageId());
         community = communityService.storeCommunity(community);
-        assertEquals(communityId, community.id());
-        assertEquals("@test", community.profile());
-
-        assertNotNull(community.created());
-        assertNotNull(community.updated());
-        assertTrue(community.updated().isAfter(community.created()));
-
-        assertEquals("Test Community Modified", community.name());
-        assertEquals("Test Community Description", community.description());
-        assertNull(community.imageId());
+        assertThat(community).isNotNull().satisfies(testee -> {
+            assertThat(testee.id()).isEqualTo(communityId);
+            assertThat(testee.profile()).isEqualTo("@test");
+            assertThat(testee.created()).isNotNull();
+            assertThat(testee.updated()).isNotNull();
+            assertThat(testee.updated()).isAfter(testee.created());
+            assertThat(testee.name()).isEqualTo("Test Community Modified");
+            assertThat(testee.description()).isEqualTo("Test Community Description");
+            assertThat(testee.imageId()).isNull();
+        });
 
         // delete the existing community
-        assertTrue(communityService.deleteCommunity(community));
-        assertTrue(communityService.getCommunity(communityId).isEmpty());
+        assertThat(communityService.deleteCommunity(community)).isTrue();
+        assertThat(communityService.getCommunity(communityId)).isEmpty();
 
         // delete the non-existing community (was already deleted before)
-        assertFalse(communityService.deleteCommunity(community));
+        assertThat(communityService.deleteCommunity(community)).isFalse();
     }
 
 }
