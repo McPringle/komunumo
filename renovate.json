@@ -15,6 +15,7 @@
   "reviewers": [
     "McPringle"
   ],
+  "labels": ["maintenance"],
   "packageRules": [
     {
       "matchManagers": ["maven", "maven-wrapper", "gradle", "gradle-wrapper"],
