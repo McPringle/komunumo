@@ -58,7 +58,7 @@ class ArchitectureTest {
             .importPackages("org.komunumo");
 
     @Test
-    void jooq_classes_should_only_be_accessed_by_service_layer() {
+    void jooqClassesShouldOnlyBeAccessedByServiceLayer() {
         noClasses()
                 .that()
                 .resideOutsideOfPackages("org.komunumo.data.service..", "org.komunumo.data.db..")
@@ -71,7 +71,7 @@ class ArchitectureTest {
 
 
     @Test
-    void dtos_should_be_records_or_enums() {
+    void dtosShouldBeRecordsOrEnums() {
         ArchCondition<JavaClass> beRecordOrEnum = new ArchCondition<>("be a record or enum") {
             @Override
             public void check(@NotNull final JavaClass clazz, @NotNull final ConditionEvents events) {
@@ -94,7 +94,7 @@ class ArchitectureTest {
     }
 
     @Test
-    void forbiddenDateTimeTypes_should_only_be_used_in_ZonedDateTimeConverter() {
+    void forbiddenDateTimeTypesShouldNotBeUsed() {
         final var forbiddenTypes = Set.of(
                 Calendar.class.getName(),
                 Date.class.getName(),
@@ -134,7 +134,7 @@ class ArchitectureTest {
     }
 
     @Test
-    void junit4_assertions_should_not_be_used() {
+    void junit4AssertionsShouldNotBeUsed() {
         ArchRule rule = noClasses()
                 .should()
                 .accessClassesThat()
@@ -147,7 +147,7 @@ class ArchitectureTest {
     }
 
     @Test
-    void junit5_assertions_should_not_be_used() {
+    void junit5AssertionsShouldNotBeUsed() {
         ArchRule rule = noClasses()
                 .should()
                 .accessClassesThat()
@@ -160,7 +160,7 @@ class ArchitectureTest {
     }
 
     @Test
-    void hamcrest_should_not_be_used() {
+    void hamcrestShouldNotBeUsed() {
         ArchRule rule = noClasses()
                 .should()
                 .accessClassesThat()
