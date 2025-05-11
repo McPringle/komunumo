@@ -28,6 +28,9 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -38,9 +41,15 @@ import java.util.stream.Collectors;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static org.assertj.core.api.Assertions.as;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 
 class ArchitectureTest {
 
+    private final JavaClasses allClasses = new ClassFileImporter()
+            .importPackages("org.komunumo");
     private final JavaClasses classesWithoutTests = new ClassFileImporter()
             .withImportOption(new ImportOption.DoNotIncludeTests())
             .importPackages("org.komunumo");
@@ -158,6 +167,29 @@ class ArchitectureTest {
                 .resideInAnyPackage("org.hamcrest..")
                 .because("Hamcrest matchers should not be used");
         rule.check(onlyTests);
+    }
+
+    @Test
+    void utilityClassesShouldHavePrivateConstructorsThatThrowExceptions() throws Exception {
+        for (final JavaClass javaClass : allClasses) {
+            if (javaClass.getSimpleName().endsWith("Util")) {
+                final Class<?> clazz = javaClass.reflect();
+                for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                    assertThat(Modifier.isPrivate(constructor.getModifiers()))
+                            .as("Constructor %s of %s should be private", constructor, clazz.getSimpleName())
+                            .isTrue();
+                    assertThatThrownBy(() -> {
+                        constructor.setAccessible(true);
+                        constructor.newInstance();
+                    })
+                            .isInstanceOf(InvocationTargetException.class)
+                            .extracting(Throwable::getCause)
+                            .isInstanceOf(IllegalStateException.class)
+                            .extracting(Throwable::getMessage, as(STRING))
+                            .isEqualTo("Utility class");
+                }
+            }
+        }
     }
 
 }
