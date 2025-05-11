@@ -21,20 +21,20 @@
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true,
       "automergeType": "branch",
-      "commitMessagePrefix" : "⬆️ "
+      "commitMessagePrefix" : "chore(deps): "
     },
     {
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "automergeType": "branch",
-      "commitMessagePrefix" : "⬆️ "
+      "commitMessagePrefix" : "chore(deps): "
     },
     {
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
       "automergeType": "branch",
-      "commitMessagePrefix": "⬆️ "
+      "commitMessagePrefix": "chore(deps): "
     }
   ],
   "platformAutomerge": true
