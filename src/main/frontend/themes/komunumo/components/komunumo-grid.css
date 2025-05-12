@@ -16,10 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "components/page-header.css";
-@import "components/navigation-bar.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
+.komunumo-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1rem;
 
-@import "components/community-card.css";
-@import "components/community-grid.css";
+    width: calc(100% - 2rem);
+    padding: 1rem;
+}

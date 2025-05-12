@@ -17,18 +17,22 @@
  */
 package org.komunumo.ui.component;
 
-import com.vaadin.flow.component.html.Div;
 import org.jetbrains.annotations.NotNull;
+import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.service.DatabaseService;
 
-public class CommunityGrid extends Div {
+public class CommunityGrid extends KomunumoGrid {
 
     public CommunityGrid(@NotNull final DatabaseService databaseService) {
+        super(databaseService.getCommunities()
+                .map(community -> mapToCard(databaseService, community))
+                .toArray(CommunityCard[]::new));
         addClassName("community-grid");
-        databaseService.getCommunities().forEach(community -> {
-            final var image = databaseService.getImage(community.imageId()).orElse(null);
-            final var card = new CommunityCard(community, image);
-            add(card);
-        });
+    }
+
+    private static @NotNull CommunityCard mapToCard(final @NotNull DatabaseService databaseService,
+                                                    final @NotNull CommunityDto community) {
+        final var image = databaseService.getImage(community.imageId()).orElse(null);
+        return new CommunityCard(community, image);
     }
 }
