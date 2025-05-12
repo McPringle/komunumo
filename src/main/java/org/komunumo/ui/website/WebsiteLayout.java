@@ -24,6 +24,7 @@ import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.komunumo.configuration.AppConfig;
+import org.komunumo.ui.component.NavigationBar;
 import org.komunumo.ui.component.PageHeader;
 
 public final class WebsiteLayout extends Div implements RouterLayout {
@@ -32,12 +33,17 @@ public final class WebsiteLayout extends Div implements RouterLayout {
 
     public WebsiteLayout(@NotNull final AppConfig appConfig) {
         addPageHeader();
+        addNavigationBar();
         main = new Main();
         add(main);
     }
 
     private void addPageHeader() {
         add(new PageHeader("Komunumo", "Open Source Community Management"));
+    }
+
+    private void addNavigationBar() {
+        add(new NavigationBar());
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,10 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package org.komunumo.ui.component;
 
-@import "components/page-header.css";
-@import "components/navigation-bar.css";
-@import "components/komunumo-card.css";
+import com.vaadin.flow.component.html.Nav;
+import com.vaadin.flow.router.RouterLink;
+import org.komunumo.ui.website.home.HomeView;
 
-@import "components/community-card.css";
-@import "components/community-grid.css";
+public final class NavigationBar extends Nav {
+
+    public NavigationBar() {
+        addClassName("navigation-bar");
+        add(new RouterLink("Home", HomeView.class));
+    }
+
+}

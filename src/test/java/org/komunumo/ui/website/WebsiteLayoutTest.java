@@ -25,9 +25,11 @@ import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.router.RouterLink;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.komunumo.ui.KaribuTestBase;
+import org.komunumo.ui.component.NavigationBar;
 import org.komunumo.ui.component.PageHeader;
 import org.komunumo.ui.website.home.HomeView;
 
@@ -55,8 +57,9 @@ class WebsiteLayoutTest extends KaribuTestBase {
     @Test
     void testLayoutContent() {
         final var components = websiteLayout.getChildren().toList();
-        assertThat(components).hasSize(2);
+        assertThat(components).hasSize(3); // same amount of asserts have to follow
         assertThat(components).filteredOn(PageHeader.class::isInstance).hasSize(1);
+        assertThat(components).filteredOn(NavigationBar.class::isInstance).hasSize(1);
         assertThat(components).filteredOn(Main.class::isInstance).hasSize(1);
     }
 
@@ -72,6 +75,18 @@ class WebsiteLayoutTest extends KaribuTestBase {
         final var h2 = findComponent(header, H2.class);
         assertThat(h2).isNotNull();
         assertThat(h2.getText()).isEqualTo("Open Source Community Management");
+    }
+
+    @Test
+    void testNavigationBar() {
+        final var navigationBar = findComponent(websiteLayout, NavigationBar.class);
+        assertThat(navigationBar).isNotNull();
+
+        final var routerLinks = findComponents(navigationBar, RouterLink.class);
+        assertThat(routerLinks).hasSize(1); // same amount of asserts have to follow
+        assertThat(routerLinks) // Vaadin refers to the home page using an empty string instead of "/"
+                .filteredOn(link -> "Home".equals(link.getText()) && "".equals(link.getHref()))
+                .hasSize(1);
     }
 
     @Test
