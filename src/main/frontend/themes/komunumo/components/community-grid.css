@@ -22,6 +22,6 @@
     justify-content: flex-start;
     gap: 1rem;
 
-    width: 100%;
+    width: calc(100% - 2rem);
     padding: 1rem;
 }
