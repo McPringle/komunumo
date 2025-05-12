@@ -20,11 +20,8 @@ package org.komunumo.ui;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
 import com.github.mvysny.kaributesting.v10.spring.MockSpringServlet;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import kotlin.jvm.functions.Function0;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * An abstract class which sets up Spring, Karibu-Testing and your app.
@@ -71,64 +65,6 @@ public abstract class KaribuTestBase {
     @AfterEach
     public void tearDown() {
         MockVaadin.tearDown();
-    }
-
-    /**
-     * <p>Recursively searches the component tree starting from the given {@code root}
-     * and returns the first component that is an instance of the specified {@code type}.</p>
-     *
-     * <p>This method performs a depth-first search and returns the first match found,
-     * including the {@code root} component itself if it matches.</p>
-     *
-     * @param root the root component from which to start the search (must not be {@code null})
-     * @param type the type of component to find (must not be {@code null})
-     * @return the first matching component of the specified type, or {@code null} if none found
-     */
-    @Nullable
-    @SuppressWarnings("unchecked")
-    public static <T extends Component> T findComponent(@NotNull final Component root,
-                                                        @NotNull final Class<T> type) {
-        if (type.isInstance(root)) {
-            return (T) root;
-        }
-        for (final Component child : root.getChildren().toList()) {
-            T result = findComponent(child, type);
-            if (result != null) {
-                return result;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * <p>Recursively searches the component tree starting from the given {@code root}
-     * and returns all components that are instances of the specified {@code type}.</p>
-     *
-     * <p>This method performs a depth-first search and returns all matches found,
-     * including the {@code root} component itself if it matches.</p>
-     *
-     * @param root the root component from which to start the search (must not be {@code null})
-     * @param type the type of components to find (must not be {@code null})
-     * @return a list of all matching components of the specified type, possibly empty but never {@code null}
-     */
-    @NotNull
-    public static <T extends Component> List<T> findComponents(@NotNull final Component root,
-                                                               @NotNull final Class<T> type) {
-        final List<T> result = new ArrayList<>();
-        findComponentsRecursively(root, type, result);
-        return result;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T extends Component> void findComponentsRecursively(@NotNull final Component component,
-                                                                        @NotNull final Class<T> type,
-                                                                        @NotNull final List<T> result) {
-        if (type.isInstance(component)) {
-            result.add((T) component);
-        }
-        for (final Component child : component.getChildren().toList()) {
-            findComponentsRecursively(child, type, result);
-        }
     }
 
 }

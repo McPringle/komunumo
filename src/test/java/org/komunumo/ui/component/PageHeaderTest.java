@@ -22,7 +22,7 @@ import com.vaadin.flow.component.html.H2;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.komunumo.ui.KaribuTestBase.findComponent;
+import static org.komunumo.util.TestUtil.findComponent;
 
 class PageHeaderTest {
 

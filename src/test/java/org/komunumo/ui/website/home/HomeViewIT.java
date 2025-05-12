@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.komunumo.util.TestUtil.findComponent;
 
 class HomeViewIT extends KaribuTestBase {
 

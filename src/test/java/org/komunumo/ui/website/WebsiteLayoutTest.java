@@ -19,6 +19,7 @@ package org.komunumo.ui.website;
 
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
@@ -26,6 +27,7 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.RouterLink;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.komunumo.ui.KaribuTestBase;
@@ -33,10 +35,15 @@ import org.komunumo.ui.component.NavigationBar;
 import org.komunumo.ui.component.PageHeader;
 import org.komunumo.ui.website.home.HomeView;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.komunumo.util.TestUtil.assertContainsExactlyOneInstanceOf;
+import static org.komunumo.util.TestUtil.assertContainsExactlyOneRouterLinkOf;
+import static org.komunumo.util.TestUtil.findComponent;
+import static org.komunumo.util.TestUtil.findComponents;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,10 +64,8 @@ class WebsiteLayoutTest extends KaribuTestBase {
     @Test
     void testLayoutContent() {
         final var components = websiteLayout.getChildren().toList();
-        assertThat(components).hasSize(3); // same amount of asserts have to follow
-        assertThat(components).filteredOn(PageHeader.class::isInstance).hasSize(1);
-        assertThat(components).filteredOn(NavigationBar.class::isInstance).hasSize(1);
-        assertThat(components).filteredOn(Main.class::isInstance).hasSize(1);
+        assertContainsExactlyOneInstanceOf(components,
+                PageHeader.class, NavigationBar.class, Main.class);
     }
 
     @Test
@@ -83,10 +88,8 @@ class WebsiteLayoutTest extends KaribuTestBase {
         assertThat(navigationBar).isNotNull();
 
         final var routerLinks = findComponents(navigationBar, RouterLink.class);
-        assertThat(routerLinks).hasSize(1); // same amount of asserts have to follow
-        assertThat(routerLinks) // Vaadin refers to the home page using an empty string instead of "/"
-                .filteredOn(link -> "Home".equals(link.getText()) && "".equals(link.getHref()))
-                .hasSize(1);
+        assertContainsExactlyOneRouterLinkOf(routerLinks,
+                new Anchor("", "Home"));
     }
 
     @Test
