@@ -24,6 +24,7 @@
     overflow: hidden;
     border-radius: 12px;
 
+    background-color: var(--lumo-contrast-10pct);
     background-position: center;
     background-size: cover;
 

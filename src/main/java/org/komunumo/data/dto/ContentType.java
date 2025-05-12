@@ -21,16 +21,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum ContentType {
-    IMAGE_GIF("image/gif"),
-    IMAGE_JPEG("image/jpeg"),
-    IMAGE_PNG("image/png"),
-    IMAGE_SVG("image/svg+xml"),
-    IMAGE_WEBP("image/webp");
+    IMAGE_GIF("image/gif", ".gif"),
+    IMAGE_JPEG("image/jpeg", ".jpg"),
+    IMAGE_PNG("image/png", ".png"),
+    IMAGE_SVG("image/svg+xml", ".svg"),
+    IMAGE_WEBP("image/webp", ".webp"),;
 
     private final @NotNull String contentType;
+    private final @NotNull String extension;
 
-    ContentType(@NotNull final String contentType) {
+    ContentType(@NotNull final String contentType, @NotNull final String extension) {
         this.contentType = contentType;
+        this.extension = extension;
     }
 
     public static ContentType fromContentType(@Nullable final String contentType) {
@@ -44,6 +46,10 @@ public enum ContentType {
 
     public @NotNull String getContentType() {
         return contentType;
+    }
+
+    public @NotNull String getExtension() {
+        return extension;
     }
 
 }

@@ -17,7 +17,10 @@
  */
 package org.komunumo.data.service;
 
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
+import org.komunumo.data.dto.ContentType;
+import org.komunumo.data.dto.ImageDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -42,6 +45,16 @@ class DemoDataServiceTest {
 
         communityCount = databaseService.getCommunities().count();
         assertThat(communityCount).isEqualTo(6);
+    }
+
+    @Test
+    void storeDemoImageWithWarning() {
+        try (var logCaptor = LogCaptor.forClass(DemoDataService.class)) {
+            final var filename = "non-existing.gif";
+            final var image = new ImageDto(null, ContentType.IMAGE_GIF, filename);
+            demoDataService.storeDemoImage(image, filename);
+            assertThat(logCaptor.getWarnLogs()).containsExactly("Demo image not found: non-existing.gif");
+        }
     }
 
 }

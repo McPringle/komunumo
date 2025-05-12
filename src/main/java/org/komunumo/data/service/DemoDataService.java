@@ -19,13 +19,20 @@ package org.komunumo.data.service;
 
 import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
+import org.komunumo.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
@@ -53,9 +60,11 @@ public final class DemoDataService {
 
         if (databaseService.getImageCount() == 0) {
             for (int i = 1; i <= 5; i++) {
-                databaseService.storeImage(new ImageDto(
+                final var filename = "demo-background-" + i + ".jpg";
+                final var image = databaseService.storeImage(new ImageDto(
                         generateId(Integer.toString(i)), ContentType.IMAGE_JPEG,
-                        "demo-background-" + i + ".jpg"));
+                        filename));
+                storeDemoImage(image, filename);
             }
         }
 
@@ -102,4 +111,25 @@ public final class DemoDataService {
 
         return UUID.fromString(idStr);
     }
+
+    @VisibleForTesting
+    void storeDemoImage(final ImageDto image, final String filename) {
+        // load resources from classpath
+        try (InputStream inputStream = getClass().getResourceAsStream("/META-INF/resources/images/" + filename)) {
+            if (inputStream == null) {
+                throw new FileNotFoundException("Demo image not found: " + filename);
+            }
+
+            // write them to a temporary file (for transfer to file-based API)
+            final var tempFile = Files.createTempFile("demo-image-", ".jpg");
+            tempFile.toFile().deleteOnExit();
+            Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+
+            // finally: store the image
+            ImageUtil.storeImage(image, tempFile);
+        } catch (final IOException e) {
+            LOGGER.warn(e.getMessage());
+        }
+    }
+
 }

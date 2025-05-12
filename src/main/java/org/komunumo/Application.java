@@ -21,12 +21,17 @@ import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
+import jakarta.servlet.http.HttpServlet;
 import org.jetbrains.annotations.NotNull;
 import org.komunumo.configuration.AppConfig;
+import org.komunumo.data.service.DatabaseService;
+import org.komunumo.ui.servlets.ImageServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.Locale;
@@ -45,6 +50,23 @@ public class Application extends SpringBootServletInitializer implements AppShel
     public static void main(@NotNull final String... args) {
         Locale.setDefault(Locale.ENGLISH);
         SpringApplication.run(Application.class, args);
+    }
+
+    /**
+     * <p>Registers the {@link ImageServlet} to handle HTTP requests to {@code /images/*}.</p>
+     *
+     * <p>This servlet is responsible for streaming stored image files from the file system
+     * and serves images with appropriate cache headers.</p>
+     *
+     * @param databaseService the service used to retrieve image metadata
+     * @return a servlet registration bean that maps {@code /images/*} to {@link ImageServlet}
+     */
+    @Bean
+    public ServletRegistrationBean<HttpServlet> imageServlet(final @NotNull DatabaseService databaseService) {
+        return new ServletRegistrationBean<>(
+                new ImageServlet(databaseService),
+                "/images/*"
+        );
     }
 
 }

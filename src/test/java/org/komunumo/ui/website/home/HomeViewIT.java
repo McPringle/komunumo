@@ -50,18 +50,17 @@ class HomeViewIT extends KaribuTestBase {
             assertThat(h3.getText()).isEqualTo("Demo Community " + i);
 
             final var backgroundImage = communityCard.getElement().getStyle().get("background-image");
-            assertThat(backgroundImage)
-                    .as("background-image should be set")
-                    .isNotNull();
-
             if (i <= 5) {
                 assertThat(backgroundImage)
+                        .as("background-image should be set")
+                        .isNotNull();
+                assertThat(backgroundImage)
                         .as("expected to contain a demo background but was: " + backgroundImage)
-                        .contains("demo-background-" + i + ".jpg");
+                        .contains(i + ".jpg");
             } else { // demo community 6+ has no image
                 assertThat(backgroundImage)
-                        .as("expected to contain the placeholder background but was: " + backgroundImage)
-                        .contains("placeholder-400x300.jpg");
+                        .as("there should be no background-image")
+                        .isNull();
             }
         }
     }

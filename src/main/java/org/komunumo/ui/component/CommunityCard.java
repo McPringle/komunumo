@@ -21,14 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.dto.ImageDto;
+import org.komunumo.util.ImageUtil;
 
 public class CommunityCard extends KomunumoCard {
 
-    private static final String IMAGE_PLACEHOLDER = "/images/placeholder-400x300.jpg";
-
     public CommunityCard(@NotNull final CommunityDto community,
                          @Nullable final ImageDto image) {
-        super(community.name(), image == null ? IMAGE_PLACEHOLDER : image.getImageUrl());
+        super(community.name(), ImageUtil.resolveImageUrl(image));
         addClassName("community-card");
     }
 
