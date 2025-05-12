@@ -29,6 +29,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Locale;
+
 /**
  * The entry point of the Spring Boot application.
  */
@@ -41,6 +43,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
     public static void main(@NotNull final String... args) {
+        Locale.setDefault(Locale.ENGLISH);
         SpringApplication.run(Application.class, args);
     }
 

@@ -17,6 +17,7 @@
  */
 package org.komunumo.ui.component;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.router.RouterLink;
 import org.komunumo.ui.website.home.HomeView;
@@ -24,8 +25,9 @@ import org.komunumo.ui.website.home.HomeView;
 public final class NavigationBar extends Nav {
 
     public NavigationBar() {
+        final var ui = UI.getCurrent();
         addClassName("navigation-bar");
-        add(new RouterLink("Home", HomeView.class));
+        add(new RouterLink(ui.getTranslation("home.title"), HomeView.class));
     }
 
 }

@@ -27,7 +27,6 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.RouterLink;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.komunumo.ui.KaribuTestBase;
@@ -35,7 +34,6 @@ import org.komunumo.ui.component.NavigationBar;
 import org.komunumo.ui.component.PageHeader;
 import org.komunumo.ui.website.home.HomeView;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,7 +87,7 @@ class WebsiteLayoutTest extends KaribuTestBase {
 
         final var routerLinks = findComponents(navigationBar, RouterLink.class);
         assertContainsExactlyOneRouterLinkOf(routerLinks,
-                new Anchor("", "Home"));
+                new Anchor("", "Overview"));
     }
 
     @Test

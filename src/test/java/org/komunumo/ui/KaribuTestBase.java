@@ -30,6 +30,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.Locale;
+
 /**
  * An abstract class which sets up Spring, Karibu-Testing and your app.
  * The easiest way to use this class in your tests is having your test class to extend
@@ -57,6 +59,8 @@ public abstract class KaribuTestBase {
         final Function0<UI> uiFactory = UI::new;
         final var servlet = new MockSpringServlet(routes, applicationContext, uiFactory);
         MockVaadin.setup(uiFactory, servlet);
+        UI.getCurrent().setLocale(Locale.ENGLISH);
+        Locale.setDefault(Locale.ENGLISH);
     }
 
     /**

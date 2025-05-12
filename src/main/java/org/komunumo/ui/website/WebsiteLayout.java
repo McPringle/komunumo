@@ -18,6 +18,7 @@
 package org.komunumo.ui.website;
 
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.router.RouterLayout;
@@ -29,17 +30,21 @@ import org.komunumo.ui.component.PageHeader;
 
 public final class WebsiteLayout extends Div implements RouterLayout {
 
+    private final UI ui;
     private final Main main;
 
     public WebsiteLayout(@NotNull final AppConfig appConfig) {
+        ui = UI.getCurrent();
+
         addPageHeader();
         addNavigationBar();
+
         main = new Main();
         add(main);
     }
 
     private void addPageHeader() {
-        add(new PageHeader("Komunumo", "Open Source Community Management"));
+        add(new PageHeader(ui.getTranslation("komunumo.title"), ui.getTranslation("komunumo.subtitle")));
     }
 
     private void addNavigationBar() {
