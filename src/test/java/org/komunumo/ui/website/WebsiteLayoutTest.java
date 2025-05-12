@@ -19,11 +19,16 @@ package org.komunumo.ui.website;
 
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.dom.Element;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.komunumo.ui.KaribuTestBase;
+import org.komunumo.ui.component.PageHeader;
 import org.komunumo.ui.website.home.HomeView;
 
 import java.util.Optional;
@@ -35,16 +40,44 @@ import static org.mockito.Mockito.when;
 
 class WebsiteLayoutTest extends KaribuTestBase {
 
+    private WebsiteLayout websiteLayout;
+
+    @BeforeEach
+    void setUp() {
+        UI.getCurrent().navigate(HomeView.class);
+        final var uiParent = UI.getCurrent()
+                .getCurrentView()
+                .getParent().orElseThrow()
+                .getParent().orElseThrow();
+        websiteLayout = (WebsiteLayout) uiParent;
+    }
+
+    @Test
+    void testLayoutContent() {
+        final var components = websiteLayout.getChildren().toList();
+        assertThat(components).hasSize(2);
+        assertThat(components).filteredOn(PageHeader.class::isInstance).hasSize(1);
+        assertThat(components).filteredOn(Main.class::isInstance).hasSize(1);
+    }
+
+    @Test
+    void testPageHeader() {
+        final var header = findComponent(websiteLayout, Header.class);
+        assertThat(header).isNotNull();
+
+        final var h1 = findComponent(header, H1.class);
+        assertThat(h1).isNotNull();
+        assertThat(h1.getText()).isEqualTo("Komunumo");
+
+        final var h2 = findComponent(header, H2.class);
+        assertThat(h2).isNotNull();
+        assertThat(h2.getText()).isEqualTo("Open Source Community Management");
+    }
+
     @Test
     void testRouterLayoutContent() {
-        UI.getCurrent().navigate(HomeView.class);
-        final var uiParent = UI.getCurrent().getCurrentView().getParent().orElseThrow()
-                .getParent().orElseThrow();
-
-        final var websiteLayout = (WebsiteLayout) uiParent;
-        assertThat(websiteLayout.getComponentCount()).isEqualTo(1);
-
-        final var main = (Main) websiteLayout.getComponentAt(0);
+        final var main = findComponent(websiteLayout, Main.class);
+        assertThat(main).isNotNull();
         assertThat(main.getElement().getChildCount()).isEqualTo(1);
 
         websiteLayout.showRouterLayoutContent(new Paragraph("foo"));
@@ -61,13 +94,6 @@ class WebsiteLayoutTest extends KaribuTestBase {
 
     @Test
     void testRouterLayoutContentException() {
-        UI.getCurrent().navigate(HomeView.class);
-        final var uiParent = UI.getCurrent().getCurrentView().getParent().orElseThrow()
-                .getParent().orElseThrow();
-
-        final var websiteLayout = (WebsiteLayout) uiParent;
-        assertThat(websiteLayout.getComponentCount()).isEqualTo(1);
-
         final var content = mock(HasElement.class);
         final var element = mock(Element.class);
         when(content.getElement()).thenReturn(element);

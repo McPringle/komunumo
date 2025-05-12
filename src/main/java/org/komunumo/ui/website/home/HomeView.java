@@ -23,7 +23,6 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.komunumo.data.service.DatabaseService;
 import org.komunumo.ui.component.CommunityGrid;
-import org.komunumo.ui.component.PageHeader;
 import org.komunumo.ui.website.WebsiteLayout;
 
 @Route(value = "", layout = WebsiteLayout.class)
@@ -32,7 +31,6 @@ public class HomeView extends Div {
 
     public HomeView(@NotNull final DatabaseService databaseService) {
         setId("home-view");
-        add(new PageHeader("Komunumo", "Open Source Community Management"));
         add(new CommunityGrid(databaseService));
     }
 

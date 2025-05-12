@@ -24,15 +24,20 @@ import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.komunumo.configuration.AppConfig;
+import org.komunumo.ui.component.PageHeader;
 
 public final class WebsiteLayout extends Div implements RouterLayout {
 
     private final Main main;
 
     public WebsiteLayout(@NotNull final AppConfig appConfig) {
-        setId("website-container");
+        addPageHeader();
         main = new Main();
         add(main);
+    }
+
+    private void addPageHeader() {
+        add(new PageHeader("Komunumo", "Open Source Community Management"));
     }
 
     @Override
