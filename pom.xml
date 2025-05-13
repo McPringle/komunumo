@@ -580,7 +580,7 @@
                 <configuration>
                     <jdbc>
                         <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
-                        <url>jdbc:tc:mariadb:lts:///ignored?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/migration/V1__schema.sql</url>
+                        <url>jdbc:tc:mariadb:lts:///ignored?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/migration/V1_0_0__schema.sql</url>
                         <user>test</user>
                         <password>test</password>
                     </jdbc>
@@ -593,6 +593,7 @@
                                 <forcedType>
                                     <includeTypes>VARCHAR</includeTypes>
                                     <includeExpression>(^id$|.*_id$)</includeExpression>
+                                    <excludeExpression>mail_template\.id</excludeExpression>
                                     <userType>java.util.UUID</userType>
                                     <converter>org.komunumo.data.converter.UUIDConverter</converter>
                                 </forcedType>

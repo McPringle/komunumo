@@ -4,6 +4,14 @@ CREATE TABLE config (
     PRIMARY KEY (setting)
 );
 
+CREATE TABLE mail_template (
+    id VARCHAR(255) NOT NULL,
+    language VARCHAR(2) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    markdown TEXT NOT NULL,
+    PRIMARY KEY (`id`, `language`)
+);
+
 CREATE TABLE image (
     id VARCHAR(36) NOT NULL,
     content_type VARCHAR(255) NOT NULL,
