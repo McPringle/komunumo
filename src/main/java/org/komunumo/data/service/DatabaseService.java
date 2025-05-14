@@ -20,23 +20,32 @@ package org.komunumo.data.service;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.jooq.Table;
+import org.komunumo.configuration.AppConfig;
 import org.komunumo.data.generator.UniqueIdGenerator;
 import org.komunumo.data.service.getter.DSLContextGetter;
 import org.komunumo.data.service.getter.UniqueIdGetter;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-public class DatabaseService implements DSLContextGetter, UniqueIdGetter, CommunityService, ImageService,
-        MailTemplateService {
+public final class DatabaseService implements DSLContextGetter, UniqueIdGetter, CommunityService, ImageService,
+        MailService {
 
-    private final DSLContext dsl;
-    private final UniqueIdGenerator idGenerator;
+    private final @NotNull DSLContext dsl;
+    private final @NotNull UniqueIdGenerator idGenerator;
+    private final @NotNull JavaMailSender mailSender;
+    private final @NotNull AppConfig appConfig;
 
-    public DatabaseService(@NotNull final DSLContext dsl, @NotNull final UniqueIdGenerator idGenerator) {
+    public DatabaseService(@NotNull final DSLContext dsl,
+                           @NotNull final UniqueIdGenerator idGenerator,
+                           @NotNull final JavaMailSender mailSender,
+                           @NotNull final AppConfig appConfig) {
         this.dsl = dsl;
         this.idGenerator = idGenerator;
+        this.mailSender = mailSender;
+        this.appConfig = appConfig;
     }
 
     /**
@@ -59,6 +68,16 @@ public class DatabaseService implements DSLContextGetter, UniqueIdGetter, Commun
     @Override
     public UUID getUniqueID(@NotNull final Table<?> table) {
         return idGenerator.getUniqueID(table);
+    }
+
+    @Override
+    public JavaMailSender mailSender() {
+        return mailSender;
+    }
+
+    @Override
+    public AppConfig appConfig() {
+        return appConfig;
     }
 
 }
