@@ -18,15 +18,6 @@
 package org.komunumo.configuration;
 
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
-@ConfigurationProperties(prefix = "komunumo")
-public record AppConfig(@NotNull String version,
-                        @NotNull MailConfig mail) {
-
-    @ConstructorBinding
-    @SuppressWarnings({"java:S1186", "java:S6207"}) // needed to add the `@ConstructorBinding` annotation
-    public AppConfig { }
-
-}
+public record MailConfig(@NotNull String from,
+                         @NotNull String replyTo) { }

@@ -46,6 +46,45 @@ The server runs on port 8080 by default. If you don't like it, change it using a
 KOMUNUMO_PORT=8080
 ```
 
+### Mail Configuration
+
+*Komunumo* supports sending email notifications. Configuration is done via environment variables using the `KOMUNUMO_MAIL_*` naming scheme.
+
+#### Available Environment Variables
+
+| Variable                          | Default             | Description                                                           |
+|-----------------------------------|---------------------|-----------------------------------------------------------------------|
+| `KOMUNUMO_MAIL_FROM`              | `noreply@localhost` | Sender address shown in outgoing emails (e.g. noreply@example.com).   |
+| `KOMUNUMO_MAIL_REPLY_TO`          | *(empty)*           | Optional reply-to address (e.g. `support@example.com`).               |
+| `KOMUNUMO_MAIL_HOST`              | `localhost`         | Mail server address. Use a local MTA or external SMTP provider.       |
+| `KOMUNUMO_MAIL_PORT`              | `25`                | Port for the SMTP server (e.g., `587` for STARTTLS or `465` for SSL). |
+| `KOMUNUMO_MAIL_PROTOCOL`          | `smtp`              | Protocol used for sending email. Usually `smtp`.                      |
+| `KOMUNUMO_MAIL_USERNAME`          | *(empty)*           | Username for SMTP authentication, if required.                        |
+| `KOMUNUMO_MAIL_PASSWORD`          | *(empty)*           | Password for SMTP authentication, if required.                        |
+| `KOMUNUMO_MAIL_SMTP_AUTH`         | `false`             | Whether SMTP authentication is enabled.                               |
+| `KOMUNUMO_MAIL_STARTTLS_ENABLE`   | `false`             | Enable STARTTLS encryption (recommended for port 587).                |
+| `KOMUNUMO_MAIL_STARTTLS_REQUIRED` | `false`             | Require STARTTLS (connection will fail if not supported).             |
+| `KOMUNUMO_MAIL_SSL_ENABLE`        | `false`             | Enable SSL encryption (typically for port 465).                       |
+| `KOMUNUMO_MAIL_ENCODING`          | `UTF-8`             | Default encoding for email subject and content.                       |
+
+#### Example Configuration
+
+In a `.env` file, CI system, or Docker environment:
+
+```bash
+KOMUNUMO_MAIL_FROM=noreply@example.com
+KOMUNUMO_MAIL_REPLY_TO=support@example.com
+KOMUNUMO_MAIL_HOST=smtp.example.com
+KOMUNUMO_MAIL_PORT=587
+KOMUNUMO_MAIL_USERNAME=myuser
+KOMUNUMO_MAIL_PASSWORD=secret
+KOMUNUMO_MAIL_SMTP_AUTH=true
+KOMUNUMO_MAIL_STARTTLS_ENABLE=true
+```
+
+> [!TIP]
+> If you are using a local mail relay (e.g., [Nullmailer](https://untroubled.org/nullmailer/) or [Postfix](https://www.postfix.org/)), you can often omit authentication and encryption settings.
+
 ### Database
 
 *Komunumo* needs a database to store the business data. By default, *Komunumo* comes with [MariaDB](https://mariadb.org/) drivers. MariaDB is recommended because we are using it during development, and it is highly tested with *Komunumo*. All free and open source JDBC compatible databases are supported, but you need to configure the JDBC driver dependencies accordingly. Please make sure that your database is using a Unicode character set to avoid problems storing data containing Unicode characters. The database user to access the *Komunumo* database executes automatic schema migrations and needs `ALL PRIVILEGES`.
