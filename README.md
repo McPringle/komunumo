@@ -40,22 +40,22 @@ The file `application.properties` contains only some default values. To override
 
 ### Server
 
-The server runs on port 8080 by default. If you don't like it, change it:
+The server runs on port 8080 by default. If you don't like it, change it using an environment variable:
 
 ```
-PORT=8080
+KOMUNUMO_PORT=8080
 ```
 
 ### Database
 
-*Komunumo* needs a database to store the business data. By default, *Komunumo* comes with [MariaDB](https://mariadb.org/) drivers. MariaDB is recommended because we are using it during development, and it is highly tested with *Komunumo*. All free and open source JDBC compatible databases are supported, but you need to configure the JDBC driver dependencies accordingly. Please make sure that your database is using a Unicode character set to avoid problems storing data containing Unicode characters.
+*Komunumo* needs a database to store the business data. By default, *Komunumo* comes with [MariaDB](https://mariadb.org/) drivers. MariaDB is recommended because we are using it during development, and it is highly tested with *Komunumo*. All free and open source JDBC compatible databases are supported, but you need to configure the JDBC driver dependencies accordingly. Please make sure that your database is using a Unicode character set to avoid problems storing data containing Unicode characters. The database user to access the *Komunumo* database executes automatic schema migrations and needs `ALL PRIVILEGES`.
 
-The `DB_USER` is used to access the *Komunumo* database including automatic schema migrations and needs `ALL PRIVILEGES`.
+Please configure the database connection using the following environment variables:
 
 ```
-DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone\=Europe/Zurich&allowMultiQueries=true
-DB_USER=johndoe
-DB_PASS=verysecret
+KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone\=Europe/Zurich&allowMultiQueries=true
+KOMUNUMO_DB_USER=johndoe
+KOMUNUMO_DB_PASS=verysecret
 ```
 
 The database schema will be migrated automatically by *Komunumo*.
@@ -65,7 +65,7 @@ The database schema will be migrated automatically by *Komunumo*.
 MySQL and MariaDB have a possible silent truncation problem with the `GROUP_CONCAT` command. To avoid this it is necessary, to configure these two databases to allow multi queries. Just add `allowMultiQueries=true` to the JDBC database URL like in this example (you may need to scroll the example code to the right):
 
 ```
-DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone\=Europe/Zurich&allowMultiQueries=true
+KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone\=Europe/Zurich&allowMultiQueries=true
 ```
 
 ## Copyright and License
