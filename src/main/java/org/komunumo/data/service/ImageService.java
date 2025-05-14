@@ -24,6 +24,7 @@ import org.komunumo.data.db.tables.records.ImageRecord;
 import org.komunumo.data.dto.ImageDto;
 import org.komunumo.data.service.getter.DSLContextGetter;
 import org.komunumo.data.service.getter.UniqueIdGetter;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -35,6 +36,7 @@ import static org.komunumo.data.db.tables.Event.EVENT;
 import static org.komunumo.data.db.tables.Image.IMAGE;
 import static org.komunumo.data.db.tables.User.USER;
 
+@Service
 interface ImageService extends DSLContextGetter, UniqueIdGetter {
 
     @NotNull
