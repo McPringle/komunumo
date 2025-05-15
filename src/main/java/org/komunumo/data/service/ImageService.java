@@ -24,8 +24,14 @@ import org.komunumo.data.db.Tables;
 import org.komunumo.data.db.tables.records.ImageRecord;
 import org.komunumo.data.dto.ImageDto;
 import org.komunumo.data.generator.UniqueIdGenerator;
+import org.komunumo.util.ImageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -38,6 +44,8 @@ import static org.komunumo.data.db.tables.User.USER;
 
 @Service
 public final class ImageService {
+
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ImageService.class);
 
     private final @NotNull DSLContext dsl;
     private final @NotNull UniqueIdGenerator idGenerator;
@@ -96,7 +104,23 @@ public final class ImageService {
                 .fetchStreamInto(ImageDto.class);
     }
 
+    @Scheduled(cron = "0 0 0 * * *")
+    public void cleanupOrphanedImages() {
+        LOGGER.info("Cleaning up orphaned images...");
+        findOrphanedImages().forEach(this::deleteImage);
+        LOGGER.info("Orphaned images cleaned.");
+    }
+
     public boolean deleteImage(final @NotNull ImageDto image) {
+        final var path = ImageUtil.resolveImagePath(image);
+        if (path != null) {
+            try {
+                Files.deleteIfExists(path);
+            } catch (final IOException e) {
+                LOGGER.error("Failed to delete image file: {}", path.toAbsolutePath(), e);
+            }
+        }
+
         return dsl.delete(Tables.IMAGE)
                 .where(Tables.IMAGE.ID.eq(image.id()))
                 .execute() > 0;

@@ -17,16 +17,27 @@
  */
 package org.komunumo.data.service;
 
+import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
+import org.komunumo.util.ImageUtil;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mockStatic;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class ImageServiceTest {
 
     @Autowired
@@ -86,4 +97,47 @@ class ImageServiceTest {
     void noImageWithNullId() {
         assertThat(imageService.getImage(null)).isEmpty();
     }
+
+    @Test
+    void cleanupOrphanedImages() {
+        var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp"));
+        assertThat(image).isNotNull().satisfies(testee -> {
+            assertThat(testee.id()).isNotNull();
+            assertThat(testee.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
+            assertThat(testee.filename()).isEqualTo("test.webp");
+        });
+
+        assertThat(imageService.findOrphanedImages().toList()).containsExactly(image);
+        imageService.cleanupOrphanedImages();
+        assertThat(imageService.findOrphanedImages().toList()).isEmpty();
+    }
+
+    @Test
+    void deleteUnsavedImageReturnsFalse() {
+        final var image = new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp");
+        assertThat(imageService.deleteImage(image)).isFalse();
+    }
+
+    @Test
+    void deleteImageShouldLogErrorWhenFileDeletionFails() {
+        // Arrange
+        final var image = new ImageDto(UUID.randomUUID(), ContentType.IMAGE_WEBP, "test.webp");
+        final var path = ImageUtil.resolveImagePath(image);
+        assertThat(path).isNotNull();
+
+        try (var filesMock = mockStatic(Files.class);
+             var logCaptor = LogCaptor.forClass(ImageService.class)) {
+
+            filesMock.when(() -> Files.deleteIfExists(path)).thenThrow(new IOException("Disk I/O error"));
+
+            // Act
+            imageService.deleteImage(image);
+
+            // Assert
+            final List<String> errorLogs = logCaptor.getErrorLogs();
+            assertThat(errorLogs).anySatisfy(log ->
+                    assertThat(log).isEqualTo("Failed to delete image file: " + path.toAbsolutePath()));
+        }
+    }
+
 }
