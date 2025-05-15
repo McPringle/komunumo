@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.komunumo.data.dto.ImageDto;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ImageService;
 import org.komunumo.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +38,11 @@ public final class ImageServlet extends HttpServlet {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ImageServlet.class);
 
-    private final transient @NotNull DatabaseService databaseService;
+    private final transient @NotNull ImageService imageService;
 
-    public ImageServlet(final @NotNull DatabaseService databaseService) {
+    public ImageServlet(final @NotNull ImageService imageService) {
         super();
-        this.databaseService = databaseService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -55,7 +55,9 @@ public final class ImageServlet extends HttpServlet {
             return;
         }
 
-        final ImageDto image = databaseService.getImage(imageId).orElse(null);
+        final ImageDto image = imageService
+                .getImage(imageId)
+                .orElse(null);
         if (image == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             return;

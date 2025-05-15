@@ -31,20 +31,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DemoDataServiceTest {
 
     @Autowired
-    private @NotNull DatabaseService databaseService;
+    private @NotNull CommunityService communityService;
 
     @Autowired
     private @NotNull DemoDataService demoDataService;
 
     @Test
     void createDemoData() {
-        var communityCount = databaseService.getCommunities().count();
+        var communityCount = communityService.getCommunities().count();
         assertThat(communityCount).isEqualTo(6);
 
         // should not create new data because it was already executed using the `@PostConstruct` method
         demoDataService.createDemoData();
 
-        communityCount = databaseService.getCommunities().count();
+        communityCount = communityService.getCommunities().count();
         assertThat(communityCount).isEqualTo(6);
     }
 

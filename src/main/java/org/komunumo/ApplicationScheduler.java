@@ -18,7 +18,8 @@
 package org.komunumo;
 
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ImageService;
+import org.komunumo.data.service.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,21 +30,21 @@ public final class ApplicationScheduler {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ApplicationScheduler.class);
 
-    private final @NotNull DatabaseService databaseService;
+    private final @NotNull ImageService imageService;
 
-    public ApplicationScheduler(final @NotNull DatabaseService databaseService) {
+    public ApplicationScheduler(final @NotNull ServiceProvider serviceProvider) {
         super();
-        this.databaseService = databaseService;
+        this.imageService = serviceProvider.imageService();
     }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void cleanupOrphanedImages() {
         LOGGER.info("Cleaning up orphaned images...");
-        databaseService.findOrphanedImages().forEach(image -> {
+        imageService.findOrphanedImages().forEach(image -> {
             LOGGER.info("Deleting orphaned image with ID {} from filesystem.", image.id());
             // TODO delete image from filesystem
             LOGGER.info("Deleting orphaned image with ID {} from database.", image.id());
-            databaseService.deleteImage(image);
+            imageService.deleteImage(image);
         });
         LOGGER.info("Orphaned images cleaned.");
     }

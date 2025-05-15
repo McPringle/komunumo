@@ -19,7 +19,7 @@ package org.komunumo.plugin.internal;
 
 import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ServiceProvider;
 import org.komunumo.plugin.DefaultPluginContext;
 import org.komunumo.plugin.PluginContext;
 import org.springframework.stereotype.Service;
@@ -27,16 +27,16 @@ import org.springframework.stereotype.Service;
 @Service
 public final class RunPlugins {
 
-    private final @NotNull DatabaseService databaseService;
+    private final @NotNull ServiceProvider serviceProvider;
 
-    public RunPlugins(final @NotNull DatabaseService databaseService) {
+    public RunPlugins(final @NotNull ServiceProvider serviceProvider) {
         super();
-        this.databaseService = databaseService;
+        this.serviceProvider = serviceProvider;
     }
 
     @PostConstruct
     public void runExtensions() {
-        final PluginContext context = new DefaultPluginContext(databaseService);
+        final PluginContext context = new DefaultPluginContext(serviceProvider);
         new PluginLoader().loadPlugins(context);
     }
 

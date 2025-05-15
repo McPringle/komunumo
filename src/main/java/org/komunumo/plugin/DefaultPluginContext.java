@@ -18,23 +18,23 @@
 package org.komunumo.plugin;
 
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ServiceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("ClassCanBeRecord")
 public final class DefaultPluginContext implements PluginContext {
 
-    private final DatabaseService databaseService;
+    private final ServiceProvider serviceProvider;
 
-    public DefaultPluginContext(final @NotNull DatabaseService databaseService) {
+    public DefaultPluginContext(final @NotNull ServiceProvider serviceProvider) {
         super();
-        this.databaseService = databaseService;
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
-    public @NotNull DatabaseService getDatabaseService() {
-        return databaseService;
+    public @NotNull ServiceProvider getServiceProvider() {
+        return serviceProvider;
     }
 
     @Override

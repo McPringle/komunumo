@@ -24,7 +24,7 @@ import com.vaadin.flow.theme.Theme;
 import jakarta.servlet.http.HttpServlet;
 import org.jetbrains.annotations.NotNull;
 import org.komunumo.configuration.AppConfig;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ImageService;
 import org.komunumo.ui.servlets.ImageServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -58,13 +58,14 @@ public class Application extends SpringBootServletInitializer implements AppShel
      * <p>This servlet is responsible for streaming stored image files from the file system
      * and serves images with appropriate cache headers.</p>
      *
-     * @param databaseService the service used to retrieve image metadata
+     * @param imageService the service used to retrieve image metadata
      * @return a servlet registration bean that maps {@code /images/*} to {@link ImageServlet}
      */
     @Bean
-    public @NotNull ServletRegistrationBean<@NotNull HttpServlet> imageServlet(final @NotNull DatabaseService databaseService) {
+    public @NotNull ServletRegistrationBean<@NotNull HttpServlet> imageServlet(
+            final @NotNull ImageService imageService) {
         return new ServletRegistrationBean<>(
-                new ImageServlet(databaseService),
+                new ImageServlet(imageService),
                 "/images/*"
         );
     }

@@ -40,11 +40,13 @@ public final class DemoDataService {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(DemoDataService.class);
 
-    private final @NotNull DatabaseService databaseService;
+    private final @NotNull CommunityService communityService;
+    private final @NotNull ImageService imageService;
 
-    public DemoDataService(final @NotNull DatabaseService databaseService) {
+    public DemoDataService(final @NotNull ServiceProvider serviceProvider) {
         super();
-        this.databaseService = databaseService;
+        this.communityService = serviceProvider.communityService();
+        this.imageService = serviceProvider.imageService();
     }
 
     /**
@@ -59,20 +61,20 @@ public final class DemoDataService {
     public void createDemoData() {
         LOGGER.info("Creating demo data...");
 
-        if (databaseService.getImageCount() == 0) {
+        if (imageService.getImageCount() == 0) {
             for (int i = 1; i <= 5; i++) {
                 final var filename = "demo-background-" + i + ".jpg";
-                final var image = databaseService.storeImage(new ImageDto(
+                final var image = imageService.storeImage(new ImageDto(
                         generateId(Integer.toString(i)), ContentType.IMAGE_JPEG,
                         filename));
                 storeDemoImage(image, filename);
             }
         }
 
-        if (databaseService.getCommunityCount() == 0) {
+        if (communityService.getCommunityCount() == 0) {
             for (int i = 1; i <= 6; i++) {
                 final var generatedId = generateId(Integer.toString(i));
-                databaseService.storeCommunity(new CommunityDto(
+                communityService.storeCommunity(new CommunityDto(
                         generatedId, "@demoGroup" + i, null, null,
                         "Demo Community " + i, "This is a demo community.",
                         i <= 5 ? generatedId : null)); // demo community 6+ has no image

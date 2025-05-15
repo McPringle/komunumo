@@ -21,7 +21,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ServiceProvider;
 import org.komunumo.ui.component.CommunityGrid;
 import org.komunumo.ui.website.WebsiteLayout;
 
@@ -29,10 +29,10 @@ import org.komunumo.ui.website.WebsiteLayout;
 @AnonymousAllowed
 public class HomeView extends Div {
 
-    public HomeView(final @NotNull DatabaseService databaseService) {
+    public HomeView(final @NotNull ServiceProvider serviceProvider) {
         super();
         setId("home-view");
-        add(new CommunityGrid(databaseService));
+        add(new CommunityGrid(serviceProvider));
     }
 
 }

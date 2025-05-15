@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -31,22 +31,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ApplicationSchedulerTest {
 
     @Autowired
-    private @NotNull DatabaseService databaseService;
+    private @NotNull ServiceProvider serviceProvider;
 
     @Test
     void cleanupOrphanedImages() {
-        var image = databaseService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp"));
+        final var imageService = serviceProvider.imageService();
+
+        var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp"));
         assertThat(image).isNotNull().satisfies(testee -> {
             assertThat(testee.id()).isNotNull();
             assertThat(testee.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
             assertThat(testee.filename()).isEqualTo("test.webp");
         });
 
-        final var orphanedImages = databaseService.findOrphanedImages().toList();
-        assertThat(orphanedImages).containsExactly(image);
+        assertThat(imageService.findOrphanedImages().toList()).containsExactly(image);
 
-        new ApplicationScheduler(databaseService).cleanupOrphanedImages();
-        assertThat(databaseService.findOrphanedImages().toList()).isEmpty();
+        new ApplicationScheduler(serviceProvider).cleanupOrphanedImages();
+        assertThat(imageService.findOrphanedImages().toList()).isEmpty();
     }
 
 }

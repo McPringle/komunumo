@@ -23,7 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ImageService;
 import org.komunumo.util.ImageUtil;
 import org.mockito.MockedStatic;
 
@@ -50,18 +50,18 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var databaseService = mock(DatabaseService.class);
+        final var imageService = mock(ImageService.class);
 
         when(request.getPathInfo()).thenReturn("/images/test.jpg");
 
-        final var servlet = new ImageServlet(databaseService);
+        final var servlet = new ImageServlet(imageService);
 
         // Act
         servlet.doGet(request, response);
 
         // Assert
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
-        verifyNoInteractions(databaseService);
+        verifyNoInteractions(imageService);
     }
 
     @Test
@@ -69,21 +69,21 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var databaseService = mock(DatabaseService.class);
+        final var imageService = mock(ImageService.class);
 
         final var pathInfo = "/images/afc3478d-2c92-41b5-b89f-2a9111d79c73.jpg";
         final var imageId = UUID.fromString("afc3478d-2c92-41b5-b89f-2a9111d79c73");
 
         when(request.getPathInfo()).thenReturn(pathInfo);
-        when(databaseService.getImage(imageId)).thenReturn(Optional.empty());
+        when(imageService.getImage(imageId)).thenReturn(Optional.empty());
 
-        final var servlet = new ImageServlet(databaseService);
+        final var servlet = new ImageServlet(imageService);
 
         // Act
         servlet.doGet(request, response);
 
         // Assert
-        verify(databaseService).getImage(imageId);
+        verify(imageService).getImage(imageId);
         verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 
@@ -92,16 +92,16 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var databaseService = mock(DatabaseService.class);
+        final var imageService = mock(ImageService.class);
 
         final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
         final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG, "test.jpg");
 
         when(request.getPathInfo()).thenReturn(pathInfo);
-        when(databaseService.getImage(imageId)).thenReturn(Optional.of(image));
+        when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
 
-        final var servlet = new ImageServlet(databaseService);
+        final var servlet = new ImageServlet(imageService);
 
         // Mock static method: ImageUtil.loadImage(image) → Optional.empty()
         try (MockedStatic<ImageUtil> mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
@@ -109,7 +109,7 @@ class ImageServletTest {
 
             servlet.doGet(request, response);
 
-            verify(databaseService).getImage(imageId);
+            verify(imageService).getImage(imageId);
             verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
         }
     }
@@ -122,10 +122,10 @@ class ImageServletTest {
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var databaseService = mock(DatabaseService.class);
+        final var imageService = mock(ImageService.class);
 
         when(request.getPathInfo()).thenReturn("/images/" + imageId + ".jpg");
-        when(databaseService.getImage(imageId)).thenReturn(Optional.of(image));
+        when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
 
         @SuppressWarnings("unchecked")
         final Optional<InputStream> brokenOptional = mock(Optional.class);
@@ -137,7 +137,7 @@ class ImageServletTest {
                 });
 
 
-        final var servlet = new ImageServlet(databaseService);
+        final var servlet = new ImageServlet(imageService);
 
         try (var mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
             mockedStatic.when(() -> ImageUtil.loadImage(image)).thenReturn(brokenOptional);
@@ -159,16 +159,16 @@ class ImageServletTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var outputStream = mock(ServletOutputStream.class);
-        final var databaseService = mock(DatabaseService.class);
+        final var imageService = mock(ImageService.class);
 
         when(request.getPathInfo()).thenReturn("/images/" + imageId + ".jpg");
         when(response.getOutputStream()).thenReturn(outputStream);
-        when(databaseService.getImage(imageId)).thenReturn(Optional.of(image));
+        when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
 
         // working stream that successfully calls `.transferTo(...)`
         final var inputStream = spy(new ByteArrayInputStream("demo".getBytes()));
 
-        final var servlet = new ImageServlet(databaseService);
+        final var servlet = new ImageServlet(imageService);
 
         try (var mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
             mockedStatic.when(() -> ImageUtil.loadImage(image)).thenReturn(Optional.of(inputStream));

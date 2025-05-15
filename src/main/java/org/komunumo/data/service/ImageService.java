@@ -19,11 +19,11 @@ package org.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.DSLContext;
 import org.komunumo.data.db.Tables;
 import org.komunumo.data.db.tables.records.ImageRecord;
 import org.komunumo.data.dto.ImageDto;
-import org.komunumo.data.service.getter.DSLContextGetter;
-import org.komunumo.data.service.getter.UniqueIdGetter;
+import org.komunumo.data.generator.UniqueIdGenerator;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -37,39 +37,47 @@ import static org.komunumo.data.db.tables.Image.IMAGE;
 import static org.komunumo.data.db.tables.User.USER;
 
 @Service
-interface ImageService extends DSLContextGetter, UniqueIdGetter {
+public final class ImageService {
 
-    default @NotNull ImageDto storeImage(final @NotNull ImageDto image) {
-        final ImageRecord imageRecord = dsl()
+    private final @NotNull DSLContext dsl;
+    private final @NotNull UniqueIdGenerator idGenerator;
+
+    public ImageService(final @NotNull DSLContext dsl,
+                        final @NotNull UniqueIdGenerator idGenerator) {
+        super();
+        this.dsl = dsl;
+        this.idGenerator = idGenerator;
+    }
+
+    public @NotNull ImageDto storeImage(final @NotNull ImageDto image) {
+        final ImageRecord imageRecord = dsl
                 .fetchOptional(Tables.IMAGE, Tables.IMAGE.ID.eq(image.id()))
-                .orElse(dsl().newRecord(Tables.IMAGE));
+                .orElse(dsl.newRecord(Tables.IMAGE));
         imageRecord.from(image);
         if (imageRecord.getId() == null) {
-            imageRecord.setId(getUniqueID(Tables.IMAGE));
+            imageRecord.setId(idGenerator.getUniqueID(Tables.IMAGE));
         }
         imageRecord.store();
         return imageRecord.into(ImageDto.class);
     }
 
-    default @NotNull Optional<@NotNull ImageDto> getImage(final @Nullable UUID id) {
-        return id == null ? Optional.empty() : dsl()
+    public @NotNull Optional<@NotNull ImageDto> getImage(final @Nullable UUID id) {
+        return id == null ? Optional.empty() : dsl
                 .selectFrom(IMAGE)
                 .where(IMAGE.ID.eq(id))
                 .fetchOptionalInto(ImageDto.class);
     }
 
-    default int getImageCount() {
+    public int getImageCount() {
         return Optional.ofNullable(
-                dsl()
-                        .selectCount()
+                dsl.selectCount()
                         .from(IMAGE)
                         .fetchOne(0, Integer.class)
         ).orElse(0);
     }
 
-    default @NotNull Stream<@NotNull ImageDto> findOrphanedImages() {
-        return dsl()
-                .selectFrom(IMAGE)
+    public @NotNull Stream<@NotNull ImageDto> findOrphanedImages() {
+        return dsl.selectFrom(IMAGE)
                 .whereNotExists(
                         selectOne()
                                 .from(COMMUNITY)
@@ -88,8 +96,8 @@ interface ImageService extends DSLContextGetter, UniqueIdGetter {
                 .fetchStreamInto(ImageDto.class);
     }
 
-    default boolean deleteImage(final @NotNull ImageDto image) {
-        return dsl().delete(Tables.IMAGE)
+    public boolean deleteImage(final @NotNull ImageDto image) {
+        return dsl.delete(Tables.IMAGE)
                 .where(Tables.IMAGE.ID.eq(image.id()))
                 .execute() > 0;
     }

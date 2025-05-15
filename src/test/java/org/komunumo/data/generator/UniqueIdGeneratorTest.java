@@ -23,7 +23,7 @@ import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -49,7 +49,7 @@ class UniqueIdGeneratorTest {
     private @NotNull DSLContext dsl;
 
     @Autowired
-    private @NotNull DatabaseService databaseService;
+    private @NotNull ImageService imageService;
 
     @Test
     void returnsGeneratedId() {
@@ -73,7 +73,7 @@ class UniqueIdGeneratorTest {
         final ImageDto existingImage = new ImageDto(existingId, ContentType.IMAGE_WEBP, "test.webp");
 
         try {
-            databaseService.storeImage(existingImage);
+            imageService.storeImage(existingImage);
 
             // Supplier that first returns an existing ID, then a fresh ID
             final AtomicInteger callCount = new AtomicInteger(0);
@@ -94,7 +94,7 @@ class UniqueIdGeneratorTest {
                     .isEqualTo(2);
         } finally {
             // Clean up: remove the test image from the database
-            databaseService.deleteImage(existingImage);
+            imageService.deleteImage(existingImage);
         }
     }
 

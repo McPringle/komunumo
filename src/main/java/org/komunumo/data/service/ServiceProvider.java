@@ -15,13 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.data.service.getter;
+package org.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.configuration.AppConfig;
+import org.springframework.stereotype.Component;
 
-public interface ConfigurationGetter {
+@Component
+public final class ServiceProvider {
 
-    @NotNull AppConfig appConfig();
+    private final @NotNull CommunityService communityService;
+    private final @NotNull ImageService imageService;
+
+    public ServiceProvider(final @NotNull CommunityService communityService,
+                           final @NotNull ImageService imageService) {
+        super();
+        this.communityService = communityService;
+        this.imageService = imageService;
+    }
+
+    public @NotNull CommunityService communityService() {
+        return communityService;
+    }
+
+    public @NotNull ImageService imageService() {
+        return imageService;
+    }
 
 }

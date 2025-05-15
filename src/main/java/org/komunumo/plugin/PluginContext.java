@@ -18,7 +18,7 @@
 package org.komunumo.plugin;
 
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ServiceProvider;
 import org.slf4j.Logger;
 
 public interface PluginContext {
@@ -32,8 +32,8 @@ public interface PluginContext {
     @NotNull Logger getLogger(Class<?> clazz);
 
     /**
-     * Provides access to the Komunumo database service for data operations.
+     * Provides access to the Komunumo services for data operations.
      */
-    @NotNull DatabaseService getDatabaseService();
+    @NotNull ServiceProvider getServiceProvider();
 
 }

@@ -18,7 +18,7 @@
 package org.komunumo.plugin;
 
 import org.junit.jupiter.api.Test;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ServiceProvider;
 import org.slf4j.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,17 +28,17 @@ class DefaultPluginContextTest {
 
     @Test
     void getLogger() {
-        final PluginContext context = new DefaultPluginContext(mock(DatabaseService.class));
+        final PluginContext context = new DefaultPluginContext(mock(ServiceProvider.class));
         final Logger logger = context.getLogger(DefaultPluginContextTest.class);
         assertThat(logger).isNotNull();
         assertThat(logger.getName()).isEqualTo("org.komunumo.plugin.DefaultPluginContextTest");
     }
 
     @Test
-    void getDatabaseService() {
-        final DatabaseService mockService = mock(DatabaseService.class);
+    void getServiceProvider() {
+        final ServiceProvider mockService = mock(ServiceProvider.class);
         final PluginContext context = new DefaultPluginContext(mockService);
-        assertThat(context.getDatabaseService()).isSameAs(mockService);
+        assertThat(context.getServiceProvider()).isSameAs(mockService);
     }
 
 }

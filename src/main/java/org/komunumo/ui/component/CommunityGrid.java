@@ -19,20 +19,23 @@ package org.komunumo.ui.component;
 
 import org.jetbrains.annotations.NotNull;
 import org.komunumo.data.dto.CommunityDto;
-import org.komunumo.data.service.DatabaseService;
+import org.komunumo.data.service.ServiceProvider;
 
 public class CommunityGrid extends KomunumoGrid {
 
-    public CommunityGrid(final @NotNull DatabaseService databaseService) {
-        super(databaseService.getCommunities()
-                .map(community -> mapToCard(databaseService, community))
+    public CommunityGrid(final @NotNull ServiceProvider serviceProvider) {
+        super(serviceProvider.communityService()
+                .getCommunities()
+                .map(community -> mapToCard(serviceProvider, community))
                 .toArray(CommunityCard[]::new));
         addClassName("community-grid");
     }
 
-    private static @NotNull CommunityCard mapToCard(final @NotNull DatabaseService databaseService,
-                                                    final @NotNull CommunityDto community) {
-        final var image = databaseService.getImage(community.imageId()).orElse(null);
+    private static @NotNull CommunityCard mapToCard(final @NotNull ServiceProvider serviceProvider,
+                                                   final @NotNull CommunityDto community) {
+        final var image = serviceProvider.imageService()
+                .getImage(community.imageId())
+                .orElse(null);
         return new CommunityCard(community, image);
     }
 }

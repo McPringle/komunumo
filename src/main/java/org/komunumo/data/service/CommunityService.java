@@ -18,10 +18,11 @@
 package org.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
+import org.jooq.DSLContext;
 import org.komunumo.data.db.tables.records.CommunityRecord;
 import org.komunumo.data.dto.CommunityDto;
-import org.komunumo.data.service.getter.DSLContextGetter;
-import org.komunumo.data.service.getter.UniqueIdGetter;
+import org.komunumo.data.generator.UniqueIdGenerator;
+import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -31,14 +32,25 @@ import java.util.stream.Stream;
 
 import static org.komunumo.data.db.tables.Community.COMMUNITY;
 
-interface CommunityService extends DSLContextGetter, UniqueIdGetter {
+@Service
+public final class CommunityService {
 
-    default @NotNull CommunityDto storeCommunity(final @NotNull CommunityDto community) {
-        final CommunityRecord communityRecord = dsl().fetchOptional(COMMUNITY, COMMUNITY.ID.eq(community.id()))
-                .orElse(dsl().newRecord(COMMUNITY));
+    private final @NotNull DSLContext dsl;
+    private final @NotNull UniqueIdGenerator idGenerator;
+
+    public CommunityService(final @NotNull DSLContext dsl,
+                            final @NotNull UniqueIdGenerator idGenerator) {
+        super();
+        this.dsl = dsl;
+        this.idGenerator = idGenerator;
+    }
+
+    public @NotNull CommunityDto storeCommunity(final @NotNull CommunityDto community) {
+        final CommunityRecord communityRecord = dsl.fetchOptional(COMMUNITY, COMMUNITY.ID.eq(community.id()))
+                .orElse(dsl.newRecord(COMMUNITY));
         communityRecord.from(community);
         if (communityRecord.getId() == null) {
-            communityRecord.setId(getUniqueID(COMMUNITY));
+            communityRecord.setId(idGenerator.getUniqueID(COMMUNITY));
         }
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
         if (communityRecord.getCreated() == null) {
@@ -51,29 +63,28 @@ interface CommunityService extends DSLContextGetter, UniqueIdGetter {
         return communityRecord.into(CommunityDto.class);
     }
 
-    default @NotNull Optional<@NotNull CommunityDto> getCommunity(final @NotNull UUID id) {
-        return dsl().selectFrom(COMMUNITY)
+    public @NotNull Optional<@NotNull CommunityDto> getCommunity(final @NotNull UUID id) {
+        return dsl.selectFrom(COMMUNITY)
                 .where(COMMUNITY.ID.eq(id))
                 .fetchOptionalInto(CommunityDto.class);
     }
 
-    default @NotNull Stream<@NotNull CommunityDto> getCommunities() {
-        return dsl().selectFrom(COMMUNITY)
+    public @NotNull Stream<@NotNull CommunityDto> getCommunities() {
+        return dsl.selectFrom(COMMUNITY)
                 .orderBy(COMMUNITY.NAME)
                 .fetchStreamInto(CommunityDto.class);
     }
 
-    default int getCommunityCount() {
+    public int getCommunityCount() {
         return Optional.ofNullable(
-                dsl()
-                        .selectCount()
+                dsl.selectCount()
                         .from(COMMUNITY)
                         .fetchOne(0, Integer.class)
         ).orElse(0);
     }
 
-    default boolean deleteCommunity(final @NotNull CommunityDto community) {
-        return dsl().delete(COMMUNITY)
+    public boolean deleteCommunity(final @NotNull CommunityDto community) {
+        return dsl.delete(COMMUNITY)
                 .where(COMMUNITY.ID.eq(community.id()))
                 .execute() > 0;
     }
