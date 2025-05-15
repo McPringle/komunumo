@@ -107,6 +107,24 @@ MySQL and MariaDB have a possible silent truncation problem with the `GROUP_CONC
 KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone\=Europe/Zurich&allowMultiQueries=true
 ```
 
+## Plugin System
+
+*Komunumo* supports a basic plugin mechanism for extending application behavior during startup. To implement a plugin, create a class that implements the `KomunumoPlugin` interface:
+
+```java
+public class MyPlugin implements KomunumoPlugin {
+    @Override
+    public void onApplicationStarted(final @NotNull PluginContext context) {
+        final var log = context.getLogger(MyPlugin.class);
+        final var services = context.getServiceProvider();
+        log.info("MyPlugin initialized!");
+        // Use services to interact with the application
+    }
+}
+```
+
+The `onApplicationStarted()` method is invoked after *Komunumo* has initialized but before it starts accepting requests. Currently, plugins must be part of the *Komunumo* source tree. Please add a package below `org.komunumo.plugin` for your plugin source. External JAR-based plugins are not yet supported but may be added in a future version (see issue [#105](https://github.com/McPringle/komunumo/issues/105)).
+
 ## Copyright and License
 
 [AGPL License](https://www.gnu.org/licenses/agpl-3.0.de.html)
