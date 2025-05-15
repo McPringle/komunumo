@@ -15,29 +15,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.plugin.internal;
+package org.komunumo.data.service;
 
 import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
-import org.komunumo.data.service.ServiceProvider;
 import org.komunumo.plugin.DefaultPluginContext;
-import org.komunumo.plugin.PluginContext;
+import org.komunumo.plugin.KomunumoPlugin;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public final class RunPlugins {
+public final class PluginService {
 
     private final @NotNull ServiceProvider serviceProvider;
+    private final @NotNull List<KomunumoPlugin> plugins;
 
-    public RunPlugins(final @NotNull ServiceProvider serviceProvider) {
+    public PluginService(final @NotNull ServiceProvider serviceProvider,
+                         final @NotNull List<KomunumoPlugin> plugins) {
         super();
         this.serviceProvider = serviceProvider;
+        this.plugins = plugins;
     }
 
     @PostConstruct
-    public void runExtensions() {
-        final PluginContext context = new DefaultPluginContext(serviceProvider);
-        new PluginLoader().loadPlugins(context);
+    public void initializePlugins() {
+        final var context = new DefaultPluginContext(serviceProvider);
+        plugins.forEach(plugin -> plugin.onApplicationStarted(context));
     }
 
 }
