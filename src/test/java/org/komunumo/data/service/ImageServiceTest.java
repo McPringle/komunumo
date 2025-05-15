@@ -17,6 +17,7 @@
  */
 package org.komunumo.data.service;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
@@ -29,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ImageServiceTest {
 
     @Autowired
-    private ImageService imageService;
+    private @NotNull ImageService imageService;
 
     @Test
     void happyCase() {

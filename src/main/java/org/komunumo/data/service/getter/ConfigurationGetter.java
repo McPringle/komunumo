@@ -17,10 +17,11 @@
  */
 package org.komunumo.data.service.getter;
 
+import org.jetbrains.annotations.NotNull;
 import org.komunumo.configuration.AppConfig;
 
 public interface ConfigurationGetter {
 
-    AppConfig appConfig();
+    @NotNull AppConfig appConfig();
 
 }

@@ -31,6 +31,6 @@ public interface UniqueIdGetter {
      * @param table the table for which to generate an ID
      * @return a Universally Unique Identifier (UUID, RFC 4122)
      */
-    UUID getUniqueID(@NotNull Table<?> table);
+    @NotNull UUID getUniqueID(@NotNull Table<?> table);
 
 }

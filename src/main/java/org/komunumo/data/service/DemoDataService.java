@@ -38,11 +38,11 @@ import java.util.UUID;
 @Service
 public final class DemoDataService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemoDataService.class);
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(DemoDataService.class);
 
-    private final DatabaseService databaseService;
+    private final @NotNull DatabaseService databaseService;
 
-    public DemoDataService(final @NotNull  DatabaseService databaseService) {
+    public DemoDataService(final @NotNull DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 

@@ -23,7 +23,7 @@ import org.komunumo.data.service.DatabaseService;
 
 public class CommunityGrid extends KomunumoGrid {
 
-    public CommunityGrid(final @NotNull  DatabaseService databaseService) {
+    public CommunityGrid(final @NotNull DatabaseService databaseService) {
         super(databaseService.getCommunities()
                 .map(community -> mapToCard(databaseService, community))
                 .toArray(CommunityCard[]::new));

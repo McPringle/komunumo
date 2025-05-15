@@ -34,12 +34,12 @@ import java.util.regex.Pattern;
 
 public final class ImageUtil {
 
-    private static final String IMAGE_URL = "/images";
-    private static final String RELATIVE_IMAGE_PATH = ".komunumo/data/uploads/images";
-    private static final Pattern UUID_EXTRACT_PATTERN = Pattern.compile(
+    private static final @NotNull String IMAGE_URL = "/images";
+    private static final @NotNull String RELATIVE_IMAGE_PATH = ".komunumo/data/uploads/images";
+    private static final @NotNull Pattern UUID_EXTRACT_PATTERN = Pattern.compile(
             ".*/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\\.");
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
 
     public static @Nullable String resolveImageUrl(final @Nullable ImageDto image) {
         if (image == null || image.id() == null) {
@@ -67,7 +67,7 @@ public final class ImageUtil {
 
     }
 
-    public static @NotNull Optional<InputStream> loadImage(final @Nullable ImageDto image) {
+    public static @NotNull Optional<@NotNull InputStream> loadImage(final @Nullable ImageDto image) {
         final var path = resolveImagePath(image);
         if (path == null || !Files.exists(path)) {
             return Optional.empty();

@@ -30,7 +30,7 @@ public enum ContentType {
     private final @NotNull String contentType;
     private final @NotNull String extension;
 
-    ContentType(final @NotNull  String contentType, final @NotNull  String extension) {
+    ContentType(final @NotNull String contentType, final @NotNull String extension) {
         this.contentType = contentType;
         this.extension = extension;
     }

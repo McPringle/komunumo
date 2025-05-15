@@ -38,10 +38,10 @@ public final class DatabaseService implements DSLContextGetter, UniqueIdGetter, 
     private final @NotNull JavaMailSender mailSender;
     private final @NotNull AppConfig appConfig;
 
-    public DatabaseService(final @NotNull  DSLContext dsl,
-                           final @NotNull  UniqueIdGenerator idGenerator,
-                           final @NotNull  JavaMailSender mailSender,
-                           final @NotNull  AppConfig appConfig) {
+    public DatabaseService(final @NotNull DSLContext dsl,
+                           final @NotNull UniqueIdGenerator idGenerator,
+                           final @NotNull JavaMailSender mailSender,
+                           final @NotNull AppConfig appConfig) {
         this.dsl = dsl;
         this.idGenerator = idGenerator;
         this.mailSender = mailSender;
@@ -54,7 +54,7 @@ public final class DatabaseService implements DSLContextGetter, UniqueIdGetter, 
      * @return the {@link DSLContext}
      */
     @Override
-    public DSLContext dsl() {
+    public @NotNull DSLContext dsl() {
         return dsl;
     }
 
@@ -66,17 +66,17 @@ public final class DatabaseService implements DSLContextGetter, UniqueIdGetter, 
      * @return a Universally Unique Identifier (UUID, RFC 4122)
      */
     @Override
-    public UUID getUniqueID(final @NotNull  Table<?> table) {
+    public @NotNull UUID getUniqueID(final @NotNull Table<?> table) {
         return idGenerator.getUniqueID(table);
     }
 
     @Override
-    public JavaMailSender mailSender() {
+    public @NotNull JavaMailSender mailSender() {
         return mailSender;
     }
 
     @Override
-    public AppConfig appConfig() {
+    public @NotNull AppConfig appConfig() {
         return appConfig;
     }
 

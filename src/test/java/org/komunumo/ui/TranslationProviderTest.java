@@ -18,6 +18,7 @@
 package org.komunumo.ui;
 
 import jakarta.annotation.PostConstruct;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TranslationProviderTest {
 
     @Autowired
-    private TranslationProvider translationProvider;
+    private @NotNull TranslationProvider translationProvider;
 
     @Test
     void testProviderLocales() {

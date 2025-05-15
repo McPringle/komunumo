@@ -48,12 +48,12 @@ import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 
 class ArchitectureTest {
 
-    private final JavaClasses allClasses = new ClassFileImporter()
+    private final @NotNull JavaClasses allClasses = new ClassFileImporter()
             .importPackages("org.komunumo");
-    private final JavaClasses classesWithoutTests = new ClassFileImporter()
+    private final @NotNull JavaClasses classesWithoutTests = new ClassFileImporter()
             .withImportOption(new ImportOption.DoNotIncludeTests())
             .importPackages("org.komunumo");
-    private final JavaClasses onlyTests = new ClassFileImporter()
+    private final @NotNull JavaClasses onlyTests = new ClassFileImporter()
             .withImportOption(new ImportOption.OnlyIncludeTests())
             .importPackages("org.komunumo");
 
@@ -74,7 +74,7 @@ class ArchitectureTest {
     void dtosShouldBeRecordsOrEnums() {
         ArchCondition<JavaClass> beRecordOrEnum = new ArchCondition<>("be a record or enum") {
             @Override
-            public void check(final @NotNull  JavaClass clazz, final @NotNull  ConditionEvents events) {
+            public void check(final @NotNull JavaClass clazz, final @NotNull ConditionEvents events) {
                 final var isRecord = clazz.isRecord();
                 final var isEnum = clazz.isEnum();
 

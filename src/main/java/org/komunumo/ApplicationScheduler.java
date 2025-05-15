@@ -27,11 +27,11 @@ import org.springframework.stereotype.Service;
 @Service
 public final class ApplicationScheduler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationScheduler.class);
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ApplicationScheduler.class);
 
-    private final DatabaseService databaseService;
+    private final @NotNull DatabaseService databaseService;
 
-    public ApplicationScheduler(final @NotNull  DatabaseService databaseService) {
+    public ApplicationScheduler(final @NotNull DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 

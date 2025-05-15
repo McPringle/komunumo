@@ -17,6 +17,7 @@
  */
 package org.komunumo.data.converter;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ZonedDateTimeConverterTest {
 
-    private final ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
+    private final @NotNull ZonedDateTimeConverter converter = new ZonedDateTimeConverter();
 
     @Test
     void from() {

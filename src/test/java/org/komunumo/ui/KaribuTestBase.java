@@ -26,6 +26,7 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.vaadin.flow.component.UI;
 import kotlin.jvm.functions.Function0;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +48,7 @@ import java.util.Locale;
 public abstract class KaribuTestBase {
 
     @RegisterExtension
-    protected static final GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
+    protected static final @NotNull GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
             .withConfiguration(GreenMailConfiguration.aConfig()
                     .withUser("komunumo", "s3cr3t"))
             .withPerMethodLifecycle(false);

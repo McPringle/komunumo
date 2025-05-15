@@ -24,16 +24,15 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.komunumo.configuration.AppConfig;
 import org.komunumo.ui.component.NavigationBar;
 import org.komunumo.ui.component.PageHeader;
 
 public final class WebsiteLayout extends Div implements RouterLayout {
 
-    private final UI ui;
-    private final Main main;
+    private final @NotNull UI ui;
+    private final @NotNull Main main;
 
-    public WebsiteLayout(final @NotNull  AppConfig appConfig) {
+    public WebsiteLayout() {
         ui = UI.getCurrent();
 
         addPageHeader();
@@ -52,7 +51,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     }
 
     @Override
-    public void showRouterLayoutContent(final @NotNull  HasElement content) {
+    public void showRouterLayoutContent(final @NotNull HasElement content) {
         main.removeAll();
         main.add(content.getElement().getComponent()
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -63,4 +62,5 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     public void removeRouterLayoutContent(final @Nullable HasElement oldContent) {
         main.removeAll();
     }
+
 }

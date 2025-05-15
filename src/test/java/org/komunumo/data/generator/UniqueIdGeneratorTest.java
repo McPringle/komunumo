@@ -18,6 +18,7 @@
 package org.komunumo.data.generator;
 
 import com.github.benmanes.caffeine.cache.Cache;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.ContentType;
@@ -45,10 +46,10 @@ import static org.komunumo.data.db.tables.Image.IMAGE;
 class UniqueIdGeneratorTest {
 
     @Autowired
-    private DSLContext dsl;
+    private @NotNull DSLContext dsl;
 
     @Autowired
-    private DatabaseService databaseService;
+    private @NotNull DatabaseService databaseService;
 
     @Test
     void returnsGeneratedId() {

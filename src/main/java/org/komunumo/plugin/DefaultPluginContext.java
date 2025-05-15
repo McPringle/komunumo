@@ -27,7 +27,7 @@ public final class DefaultPluginContext implements PluginContext {
 
     private final DatabaseService databaseService;
 
-    public DefaultPluginContext(final @NotNull  DatabaseService databaseService) {
+    public DefaultPluginContext(final @NotNull DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 

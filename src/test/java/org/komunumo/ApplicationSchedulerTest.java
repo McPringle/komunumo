@@ -17,6 +17,7 @@
  */
 package org.komunumo;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
@@ -30,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ApplicationSchedulerTest {
 
     @Autowired
-    private DatabaseService databaseService;
+    private @NotNull DatabaseService databaseService;
 
     @Test
     void cleanupOrphanedImages() {

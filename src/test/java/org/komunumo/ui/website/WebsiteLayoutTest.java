@@ -27,6 +27,7 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.RouterLink;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.komunumo.ui.KaribuTestBase;
@@ -47,7 +48,7 @@ import static org.mockito.Mockito.when;
 
 class WebsiteLayoutTest extends KaribuTestBase {
 
-    private WebsiteLayout websiteLayout;
+    private @NotNull WebsiteLayout websiteLayout;
 
     @BeforeEach
     void setUp() {

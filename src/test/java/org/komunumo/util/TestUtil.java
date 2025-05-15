@@ -55,8 +55,8 @@ public final class TestUtil {
      * @param expectedClasses the expected classes that must each occur exactly once
      * @throws AssertionError if any class occurs more or fewer than once, or if unexpected elements are present
      */
-    public static void assertContainsExactlyOneInstanceOf(final @NotNull  List<?> objects,
-                                                          final @NotNull  Class<?>... expectedClasses) {
+    public static void assertContainsExactlyOneInstanceOf(final @NotNull List<?> objects,
+                                                          final @NotNull Class<?>... expectedClasses) {
         assertThat(objects).hasSize(expectedClasses.length);
 
         for (final Class<?> expectedClass : expectedClasses) {
@@ -93,8 +93,8 @@ public final class TestUtil {
      * @param expectedLinks the expected links, defined as {@code Anchor} instances with text and href
      * @throws AssertionError if the number of links differs, or if any expected link is missing or duplicated
      */
-    public static void assertContainsExactlyOneRouterLinkOf(final @NotNull  List<RouterLink> routerLinks,
-                                                            final @NotNull  Anchor... expectedLinks) {
+    public static void assertContainsExactlyOneRouterLinkOf(final @NotNull List<RouterLink> routerLinks,
+                                                            final @NotNull Anchor... expectedLinks) {
         assertThat(routerLinks).hasSize(expectedLinks.length);
 
         for (final var expectedLink : expectedLinks) {
@@ -124,10 +124,9 @@ public final class TestUtil {
      * @param type the type of component to find (must not be {@code null})
      * @return the first matching component of the specified type, or {@code null} if none found
      */
-    @Nullable
     @SuppressWarnings("unchecked")
-    public static <T extends Component> T findComponent(final @NotNull  Component root,
-                                                        final @NotNull  Class<T> type) {
+    public static @Nullable <T extends Component> T findComponent(final @NotNull Component root,
+                                                        final @NotNull Class<T> type) {
         if (type.isInstance(root)) {
             return (T) root;
         }
@@ -151,18 +150,17 @@ public final class TestUtil {
      * @param type the type of components to find (must not be {@code null})
      * @return a list of all matching components of the specified type, possibly empty but never {@code null}
      */
-    @NotNull
-    public static <T extends Component> List<T> findComponents(final @NotNull  Component root,
-                                                               final @NotNull  Class<T> type) {
+    public static @NotNull <T extends Component> List<T> findComponents(final @NotNull Component root,
+                                                               final @NotNull Class<T> type) {
         final List<T> result = new ArrayList<>();
         findComponentsRecursively(root, type, result);
         return result;
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Component> void findComponentsRecursively(final @NotNull  Component component,
-                                                                        final @NotNull  Class<T> type,
-                                                                        final @NotNull  List<T> result) {
+    private static <T extends Component> void findComponentsRecursively(final @NotNull Component component,
+                                                                        final @NotNull Class<T> type,
+                                                                        final @NotNull List<T> result) {
         if (type.isInstance(component)) {
             result.add((T) component);
         }

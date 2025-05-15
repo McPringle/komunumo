@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class KomunumoCard extends Div {
 
-    protected KomunumoCard(final @NotNull  String title,
+    protected KomunumoCard(final @NotNull String title,
                            final @Nullable String imageUrl) {
         addClassName("komunumo-card");
 

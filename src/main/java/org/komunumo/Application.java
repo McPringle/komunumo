@@ -47,7 +47,7 @@ import java.util.Locale;
 @EnableConfigurationProperties(AppConfig.class)
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
-    public static void main(final @NotNull  String... args) {
+    public static void main(final @NotNull String... args) {
         Locale.setDefault(Locale.ENGLISH);
         SpringApplication.run(Application.class, args);
     }
@@ -62,7 +62,7 @@ public class Application extends SpringBootServletInitializer implements AppShel
      * @return a servlet registration bean that maps {@code /images/*} to {@link ImageServlet}
      */
     @Bean
-    public ServletRegistrationBean<HttpServlet> imageServlet(final @NotNull DatabaseService databaseService) {
+    public @NotNull ServletRegistrationBean<@NotNull HttpServlet> imageServlet(final @NotNull DatabaseService databaseService) {
         return new ServletRegistrationBean<>(
                 new ImageServlet(databaseService),
                 "/images/*"

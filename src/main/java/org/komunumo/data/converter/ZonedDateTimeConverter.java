@@ -28,26 +28,24 @@ import java.time.ZonedDateTime;
 public final class ZonedDateTimeConverter implements Converter<LocalDateTime, ZonedDateTime> {
 
     @Override
-    public ZonedDateTime from(final @Nullable LocalDateTime databaseObject) {
+    public @Nullable ZonedDateTime from(final @Nullable LocalDateTime databaseObject) {
         // DB time is interpreted as UTC
         return databaseObject == null ? null : databaseObject.atZone(ZoneOffset.UTC);
     }
 
     @Override
-    public LocalDateTime to(final @Nullable ZonedDateTime userObject) {
+    public @Nullable LocalDateTime to(final @Nullable ZonedDateTime userObject) {
         // UTC time is saved without zone
         return userObject == null ? null : userObject.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
     }
 
     @Override
-    @NotNull
-    public Class<LocalDateTime> fromType() {
+    public @NotNull Class<LocalDateTime> fromType() {
         return LocalDateTime.class;
     }
 
     @Override
-    @NotNull
-    public Class<ZonedDateTime> toType() {
+    public @NotNull Class<ZonedDateTime> toType() {
         return ZonedDateTime.class;
     }
 

@@ -29,7 +29,7 @@ import org.komunumo.ui.website.WebsiteLayout;
 @AnonymousAllowed
 public class HomeView extends Div {
 
-    public HomeView(final @NotNull  DatabaseService databaseService) {
+    public HomeView(final @NotNull DatabaseService databaseService) {
         setId("home-view");
         add(new CommunityGrid(databaseService));
     }

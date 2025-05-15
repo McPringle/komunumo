@@ -36,9 +36,9 @@ import static org.komunumo.util.ImageUtil.extractImageIdFromUrl;
 
 public final class ImageServlet extends HttpServlet {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImageServlet.class);
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ImageServlet.class);
 
-    private final transient DatabaseService databaseService;
+    private final transient @NotNull DatabaseService databaseService;
 
     public ImageServlet(final @NotNull DatabaseService databaseService) {
         this.databaseService = databaseService;

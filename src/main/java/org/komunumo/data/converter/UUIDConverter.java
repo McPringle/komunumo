@@ -17,6 +17,7 @@
  */
 package org.komunumo.data.converter;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Converter;
 
@@ -25,22 +26,22 @@ import java.util.UUID;
 public final class UUIDConverter implements Converter<String, UUID> {
 
     @Override
-    public UUID from(final @Nullable String databaseObject) {
+    public @Nullable UUID from(final @Nullable String databaseObject) {
         return databaseObject == null ? null : UUID.fromString(databaseObject);
     }
 
     @Override
-    public String to(final @Nullable UUID userObject) {
+    public @Nullable String to(final @Nullable UUID userObject) {
         return userObject == null ? null : userObject.toString();
     }
 
     @Override
-    public Class<String> fromType() {
+    public @NotNull Class<String> fromType() {
         return String.class;
     }
 
     @Override
-    public Class<UUID> toType() {
+    public @NotNull Class<UUID> toType() {
         return UUID.class;
     }
 

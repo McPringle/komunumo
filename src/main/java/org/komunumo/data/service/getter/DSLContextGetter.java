@@ -17,10 +17,11 @@
  */
 package org.komunumo.data.service.getter;
 
+import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 
 public interface DSLContextGetter {
 
-    DSLContext dsl();
+    @NotNull DSLContext dsl();
 
 }

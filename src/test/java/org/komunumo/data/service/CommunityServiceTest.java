@@ -17,6 +17,7 @@
  */
 package org.komunumo.data.service;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.CommunityDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CommunityServiceTest {
 
     @Autowired
-    private CommunityService communityService;
+    private @NotNull CommunityService communityService;
 
     @Test
     @SuppressWarnings("java:S5961")

@@ -17,10 +17,11 @@
  */
 package org.komunumo.data.service.getter;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.mail.MailSender;
 
 public interface MailSenderGetter {
 
-    MailSender mailSender();
+    @NotNull MailSender mailSender();
 
 }

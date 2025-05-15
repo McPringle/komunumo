@@ -17,14 +17,16 @@
  */
 package org.komunumo.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public final class FormatterUtil {
 
-    private static final DecimalFormat LARGE_NUMBERS = createLargeNumberFormatter();
+    private static final @NotNull DecimalFormat LARGE_NUMBERS = createLargeNumberFormatter();
 
-    private static DecimalFormat createLargeNumberFormatter() {
+    private static @NotNull DecimalFormat createLargeNumberFormatter() {
         final var formatter = (DecimalFormat) NumberFormat.getInstance();
         final var symbols = formatter.getDecimalFormatSymbols();
 
@@ -34,7 +36,7 @@ public final class FormatterUtil {
         return formatter;
     }
 
-    public static String formatNumber(final long number) {
+    public static @NotNull String formatNumber(final long number) {
         return LARGE_NUMBERS.format(number);
     }
 

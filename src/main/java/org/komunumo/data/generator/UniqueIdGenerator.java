@@ -34,27 +34,27 @@ import java.util.concurrent.locks.ReentrantLock;
 @Service
 public class UniqueIdGenerator {
 
-    private final DSLContext dsl;
-    private final IdSupplier idSupplier;
+    private final @NotNull DSLContext dsl;
+    private final @NotNull IdSupplier idSupplier;
 
     @Autowired
-    public UniqueIdGenerator(final @NotNull  DSLContext dsl) {
+    public UniqueIdGenerator(final @NotNull DSLContext dsl) {
         this(dsl, new RandomUUIDSupplier());
     }
 
-    UniqueIdGenerator(final @NotNull  DSLContext dsl, final @NotNull  IdSupplier idSupplier) {
+    UniqueIdGenerator(final @NotNull DSLContext dsl, final @NotNull IdSupplier idSupplier) {
         this.dsl = dsl;
         this.idSupplier = idSupplier;
     }
 
     // Cache for recently generated UUIDs in the format “table:id”
-    private final Cache<UUID, Boolean> idCache = Caffeine.newBuilder()
+    private final @NotNull Cache<UUID, Boolean> idCache = Caffeine.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .maximumSize(100)
             .build();
 
     // Synchronization locks per table
-    private final ConcurrentHashMap<String, ReentrantLock> tableLocks = new ConcurrentHashMap<>();
+    private final @NotNull ConcurrentHashMap<String, ReentrantLock> tableLocks = new ConcurrentHashMap<>();
 
     /**
      * Creates a unique UUID for the given table.
@@ -63,7 +63,7 @@ public class UniqueIdGenerator {
      * @param table the table for which to generate an ID
      * @return a Universally Unique Identifier (UUID, RFC 4122)
      */
-    public UUID getUniqueID(final @NotNull  Table<?> table) {
+    public @NotNull UUID getUniqueID(final @NotNull Table<?> table) {
         final var tableName = table.getName();
         final var idField = table.field("id", String.class);
 
@@ -93,9 +93,9 @@ public class UniqueIdGenerator {
     /**
      * Checks whether a UUID already exists in the table.
      */
-    private boolean idExistsInDatabase(final @NotNull  Table<?> table,
-                                       final @NotNull  Field<String> idField,
-                                       final @NotNull  UUID uuid) {
+    private boolean idExistsInDatabase(final @NotNull Table<?> table,
+                                       final @NotNull Field<String> idField,
+                                       final @NotNull UUID uuid) {
         return dsl.selectOne()
                 .from(table)
                 .where(idField.eq(uuid.toString()))
