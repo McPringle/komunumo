@@ -42,6 +42,7 @@ public final class DatabaseService implements DSLContextGetter, UniqueIdGetter, 
                            final @NotNull UniqueIdGenerator idGenerator,
                            final @NotNull JavaMailSender mailSender,
                            final @NotNull AppConfig appConfig) {
+        super();
         this.dsl = dsl;
         this.idGenerator = idGenerator;
         this.mailSender = mailSender;

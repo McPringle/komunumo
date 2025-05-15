@@ -43,6 +43,7 @@ public final class DemoDataService {
     private final @NotNull DatabaseService databaseService;
 
     public DemoDataService(final @NotNull DatabaseService databaseService) {
+        super();
         this.databaseService = databaseService;
     }
 

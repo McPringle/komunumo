@@ -25,6 +25,7 @@ import org.komunumo.ui.website.home.HomeView;
 public final class NavigationBar extends Nav {
 
     public NavigationBar() {
+        super();
         final var ui = UI.getCurrent();
         addClassName("navigation-bar");
         add(new RouterLink(ui.getTranslation("home.title"), HomeView.class));

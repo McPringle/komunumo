@@ -32,6 +32,7 @@ public final class ApplicationScheduler {
     private final @NotNull DatabaseService databaseService;
 
     public ApplicationScheduler(final @NotNull DatabaseService databaseService) {
+        super();
         this.databaseService = databaseService;
     }
 

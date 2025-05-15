@@ -30,6 +30,7 @@ public final class RunPlugins {
     private final @NotNull DatabaseService databaseService;
 
     public RunPlugins(final @NotNull DatabaseService databaseService) {
+        super();
         this.databaseService = databaseService;
     }
 

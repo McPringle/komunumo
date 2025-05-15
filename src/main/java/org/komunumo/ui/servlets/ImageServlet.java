@@ -41,6 +41,7 @@ public final class ImageServlet extends HttpServlet {
     private final transient @NotNull DatabaseService databaseService;
 
     public ImageServlet(final @NotNull DatabaseService databaseService) {
+        super();
         this.databaseService = databaseService;
     }
 

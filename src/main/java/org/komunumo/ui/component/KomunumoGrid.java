@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class KomunumoGrid extends Div {
 
     protected KomunumoGrid(final @NotNull KomunumoCard... cards) {
+        super();
         addClassName("komunumo-grid");
         add(cards);
     }

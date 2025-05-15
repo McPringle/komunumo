@@ -30,6 +30,7 @@ import org.komunumo.ui.website.WebsiteLayout;
 public class HomeView extends Div {
 
     public HomeView(final @NotNull DatabaseService databaseService) {
+        super();
         setId("home-view");
         add(new CommunityGrid(databaseService));
     }

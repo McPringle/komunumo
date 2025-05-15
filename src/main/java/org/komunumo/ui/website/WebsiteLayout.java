@@ -33,6 +33,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     private final @NotNull Main main;
 
     public WebsiteLayout() {
+        super();
         ui = UI.getCurrent();
 
         addPageHeader();

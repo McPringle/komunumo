@@ -26,6 +26,7 @@ public abstract class KomunumoCard extends Div {
 
     protected KomunumoCard(final @NotNull String title,
                            final @Nullable String imageUrl) {
+        super();
         addClassName("komunumo-card");
 
         if (imageUrl != null) {

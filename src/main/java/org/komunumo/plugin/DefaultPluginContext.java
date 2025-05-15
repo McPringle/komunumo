@@ -28,6 +28,7 @@ public final class DefaultPluginContext implements PluginContext {
     private final DatabaseService databaseService;
 
     public DefaultPluginContext(final @NotNull DatabaseService databaseService) {
+        super();
         this.databaseService = databaseService;
     }
 

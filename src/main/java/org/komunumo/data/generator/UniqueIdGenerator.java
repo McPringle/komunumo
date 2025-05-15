@@ -43,6 +43,7 @@ public class UniqueIdGenerator {
     }
 
     UniqueIdGenerator(final @NotNull DSLContext dsl, final @NotNull IdSupplier idSupplier) {
+        super();
         this.dsl = dsl;
         this.idSupplier = idSupplier;
     }
