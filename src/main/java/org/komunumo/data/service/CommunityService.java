@@ -34,7 +34,7 @@ import static org.komunumo.data.db.tables.Community.COMMUNITY;
 interface CommunityService extends DSLContextGetter, UniqueIdGetter {
 
     @NotNull
-    default CommunityDto storeCommunity(@NotNull final CommunityDto community) {
+    default CommunityDto storeCommunity(final @NotNull  CommunityDto community) {
         final CommunityRecord communityRecord = dsl().fetchOptional(COMMUNITY, COMMUNITY.ID.eq(community.id()))
                 .orElse(dsl().newRecord(COMMUNITY));
         communityRecord.from(community);
@@ -53,7 +53,7 @@ interface CommunityService extends DSLContextGetter, UniqueIdGetter {
     }
 
     @NotNull
-    default Optional<CommunityDto> getCommunity(@NotNull final UUID id) {
+    default Optional<CommunityDto> getCommunity(final @NotNull  UUID id) {
         return dsl().selectFrom(COMMUNITY)
                 .where(COMMUNITY.ID.eq(id))
                 .fetchOptionalInto(CommunityDto.class);
@@ -75,7 +75,7 @@ interface CommunityService extends DSLContextGetter, UniqueIdGetter {
         ).orElse(0);
     }
 
-    default boolean deleteCommunity(@NotNull final CommunityDto community) {
+    default boolean deleteCommunity(final @NotNull  CommunityDto community) {
         return dsl().delete(COMMUNITY)
                 .where(COMMUNITY.ID.eq(community.id()))
                 .execute() > 0;

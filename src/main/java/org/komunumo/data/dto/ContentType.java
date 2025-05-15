@@ -30,12 +30,12 @@ public enum ContentType {
     private final @NotNull String contentType;
     private final @NotNull String extension;
 
-    ContentType(@NotNull final String contentType, @NotNull final String extension) {
+    ContentType(final @NotNull  String contentType, final @NotNull  String extension) {
         this.contentType = contentType;
         this.extension = extension;
     }
 
-    public static ContentType fromContentType(@Nullable final String contentType) {
+    public static ContentType fromContentType(final @Nullable String contentType) {
         for (ContentType imageType : values()) {
             if (imageType.contentType.equals(contentType)) {
                 return imageType;

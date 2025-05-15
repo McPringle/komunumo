@@ -31,7 +31,7 @@ public final class ApplicationScheduler {
 
     private final DatabaseService databaseService;
 
-    public ApplicationScheduler(@NotNull final DatabaseService databaseService) {
+    public ApplicationScheduler(final @NotNull  DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 

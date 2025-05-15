@@ -25,12 +25,12 @@ import java.util.UUID;
 public final class UUIDConverter implements Converter<String, UUID> {
 
     @Override
-    public UUID from(@Nullable final String databaseObject) {
+    public UUID from(final @Nullable String databaseObject) {
         return databaseObject == null ? null : UUID.fromString(databaseObject);
     }
 
     @Override
-    public String to(@Nullable final UUID userObject) {
+    public String to(final @Nullable UUID userObject) {
         return userObject == null ? null : userObject.toString();
     }
 

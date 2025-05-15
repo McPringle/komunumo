@@ -74,7 +74,7 @@ class ArchitectureTest {
     void dtosShouldBeRecordsOrEnums() {
         ArchCondition<JavaClass> beRecordOrEnum = new ArchCondition<>("be a record or enum") {
             @Override
-            public void check(@NotNull final JavaClass clazz, @NotNull final ConditionEvents events) {
+            public void check(final @NotNull  JavaClass clazz, final @NotNull  ConditionEvents events) {
                 final var isRecord = clazz.isRecord();
                 final var isEnum = clazz.isEnum();
 

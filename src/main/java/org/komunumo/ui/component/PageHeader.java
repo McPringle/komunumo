@@ -25,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PageHeader extends Header {
 
-    public PageHeader(@NotNull final String title, @Nullable final String subTitle) {
+    public PageHeader(final @NotNull  String title, final @Nullable String subTitle) {
         addClassName("page-header");
         add(new H1(title));
 

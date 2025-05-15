@@ -33,7 +33,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     private final UI ui;
     private final Main main;
 
-    public WebsiteLayout(@NotNull final AppConfig appConfig) {
+    public WebsiteLayout(final @NotNull  AppConfig appConfig) {
         ui = UI.getCurrent();
 
         addPageHeader();
@@ -52,7 +52,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     }
 
     @Override
-    public void showRouterLayoutContent(@NotNull final HasElement content) {
+    public void showRouterLayoutContent(final @NotNull  HasElement content) {
         main.removeAll();
         main.add(content.getElement().getComponent()
                 .orElseThrow(() -> new IllegalArgumentException(
@@ -60,7 +60,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     }
 
     @Override
-    public void removeRouterLayoutContent(@Nullable final HasElement oldContent) {
+    public void removeRouterLayoutContent(final @Nullable HasElement oldContent) {
         main.removeAll();
     }
 }

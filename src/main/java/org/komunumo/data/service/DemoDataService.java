@@ -42,7 +42,7 @@ public final class DemoDataService {
 
     private final DatabaseService databaseService;
 
-    public DemoDataService(@NotNull final DatabaseService databaseService) {
+    public DemoDataService(final @NotNull  DatabaseService databaseService) {
         this.databaseService = databaseService;
     }
 

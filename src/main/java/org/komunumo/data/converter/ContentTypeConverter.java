@@ -25,12 +25,12 @@ import org.komunumo.data.dto.ContentType;
 public final class ContentTypeConverter implements Converter<String, ContentType> {
 
     @Override
-    public ContentType from(@Nullable final String contentType) {
+    public ContentType from(final @Nullable String contentType) {
         return contentType == null ? null : ContentType.fromContentType(contentType);
     }
 
     @Override
-    public String to(@Nullable final ContentType contentType) {
+    public String to(final @Nullable ContentType contentType) {
         return contentType == null ? null : contentType.getContentType();
     }
 

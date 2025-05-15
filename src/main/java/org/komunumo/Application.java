@@ -47,7 +47,7 @@ import java.util.Locale;
 @EnableConfigurationProperties(AppConfig.class)
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
-    public static void main(@NotNull final String... args) {
+    public static void main(final @NotNull  String... args) {
         Locale.setDefault(Locale.ENGLISH);
         SpringApplication.run(Application.class, args);
     }

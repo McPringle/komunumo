@@ -25,8 +25,8 @@ import org.komunumo.util.ImageUtil;
 
 public class CommunityCard extends KomunumoCard {
 
-    public CommunityCard(@NotNull final CommunityDto community,
-                         @Nullable final ImageDto image) {
+    public CommunityCard(final @NotNull  CommunityDto community,
+                         final @Nullable ImageDto image) {
         super(community.name(), ImageUtil.resolveImageUrl(image));
         addClassName("community-card");
     }

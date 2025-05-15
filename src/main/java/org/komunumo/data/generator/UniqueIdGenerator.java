@@ -38,11 +38,11 @@ public class UniqueIdGenerator {
     private final IdSupplier idSupplier;
 
     @Autowired
-    public UniqueIdGenerator(@NotNull final DSLContext dsl) {
+    public UniqueIdGenerator(final @NotNull  DSLContext dsl) {
         this(dsl, new RandomUUIDSupplier());
     }
 
-    UniqueIdGenerator(@NotNull final DSLContext dsl, @NotNull final IdSupplier idSupplier) {
+    UniqueIdGenerator(final @NotNull  DSLContext dsl, final @NotNull  IdSupplier idSupplier) {
         this.dsl = dsl;
         this.idSupplier = idSupplier;
     }
@@ -63,7 +63,7 @@ public class UniqueIdGenerator {
      * @param table the table for which to generate an ID
      * @return a Universally Unique Identifier (UUID, RFC 4122)
      */
-    public UUID getUniqueID(@NotNull final Table<?> table) {
+    public UUID getUniqueID(final @NotNull  Table<?> table) {
         final var tableName = table.getName();
         final var idField = table.field("id", String.class);
 
@@ -93,9 +93,9 @@ public class UniqueIdGenerator {
     /**
      * Checks whether a UUID already exists in the table.
      */
-    private boolean idExistsInDatabase(@NotNull final Table<?> table,
-                                       @NotNull final Field<String> idField,
-                                       @NotNull final UUID uuid) {
+    private boolean idExistsInDatabase(final @NotNull  Table<?> table,
+                                       final @NotNull  Field<String> idField,
+                                       final @NotNull  UUID uuid) {
         return dsl.selectOne()
                 .from(table)
                 .where(idField.eq(uuid.toString()))

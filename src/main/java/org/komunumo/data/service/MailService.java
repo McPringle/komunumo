@@ -38,10 +38,10 @@ import static org.komunumo.data.db.tables.MailTemplate.MAIL_TEMPLATE;
 @Service
 public interface MailService extends ConfigurationGetter, DSLContextGetter, MailSenderGetter {
 
-    default void sendMail(@NotNull final MailTemplateId mailTemplateId,
-                          @NotNull final Locale locale,
-                          @Nullable final Map<String, String> variables,
-                          @NotNull final String... emailAddresses) {
+    default void sendMail(final @NotNull  MailTemplateId mailTemplateId,
+                          final @NotNull  Locale locale,
+                          final @Nullable Map<String, String> variables,
+                          final @NotNull  String... emailAddresses) {
         final var mailTemplate = getMailTemplate(mailTemplateId, locale).orElseThrow();
         final var message = new SimpleMailMessage();
         message.setTo(emailAddresses);
@@ -55,8 +55,8 @@ public interface MailService extends ConfigurationGetter, DSLContextGetter, Mail
         mailSender().send(message);
     }
 
-    private String replaceVariables(@NotNull final String text,
-                                    @Nullable final Map<String, String> variables) {
+    private String replaceVariables(final @NotNull  String text,
+                                    final @Nullable Map<String, String> variables) {
         String returnValue = text;
         if (variables != null) {
             for (final var entry : variables.entrySet()) {

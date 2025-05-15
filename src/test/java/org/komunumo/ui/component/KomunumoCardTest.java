@@ -28,7 +28,7 @@ import static org.komunumo.util.TestUtil.findComponent;
 class KomunumoCardTest {
 
     private static class TestCard extends KomunumoCard {
-        public TestCard(@NotNull final String title, @Nullable final String imageUrl) {
+        public TestCard(final @NotNull  String title, final @Nullable String imageUrl) {
             super(title, imageUrl);
         }
     }

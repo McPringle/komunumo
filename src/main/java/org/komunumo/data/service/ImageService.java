@@ -40,7 +40,7 @@ import static org.komunumo.data.db.tables.User.USER;
 interface ImageService extends DSLContextGetter, UniqueIdGetter {
 
     @NotNull
-    default ImageDto storeImage(@NotNull final ImageDto image) {
+    default ImageDto storeImage(final @NotNull  ImageDto image) {
         final ImageRecord imageRecord = dsl()
                 .fetchOptional(Tables.IMAGE, Tables.IMAGE.ID.eq(image.id()))
                 .orElse(dsl().newRecord(Tables.IMAGE));
@@ -53,7 +53,7 @@ interface ImageService extends DSLContextGetter, UniqueIdGetter {
     }
 
     @NotNull
-    default Optional<ImageDto> getImage(@Nullable final UUID id) {
+    default Optional<ImageDto> getImage(final @Nullable UUID id) {
         return id == null ? Optional.empty() : dsl()
                 .selectFrom(IMAGE)
                 .where(IMAGE.ID.eq(id))
@@ -90,7 +90,7 @@ interface ImageService extends DSLContextGetter, UniqueIdGetter {
                 .fetchStreamInto(ImageDto.class);
     }
 
-    default boolean deleteImage(@NotNull final ImageDto image) {
+    default boolean deleteImage(final @NotNull  ImageDto image) {
         return dsl().delete(Tables.IMAGE)
                 .where(Tables.IMAGE.ID.eq(image.id()))
                 .execute() > 0;
