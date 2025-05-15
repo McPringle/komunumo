@@ -15,34 +15,38 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.data.service;
+package org.komunumo.plugin.demo;
 
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
+import org.komunumo.data.service.ServiceProvider;
+import org.komunumo.plugin.DefaultPluginContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class DemoDataServiceTest {
+class DemoDataPluginTest {
 
     @Autowired
-    private @NotNull CommunityService communityService;
+    private ServiceProvider serviceProvider;
 
     @Autowired
-    private @NotNull DemoDataService demoDataService;
+    private @NotNull DemoDataPlugin demoDataPlugin;
 
     @Test
     void createDemoData() {
+        final var communityService = serviceProvider.communityService();
+
         var communityCount = communityService.getCommunities().count();
         assertThat(communityCount).isEqualTo(6);
 
-        // should not create new data because it was already executed using the `@PostConstruct` method
-        demoDataService.createDemoData();
+        // should not create new data because it was already executed using the plugin interface
+        demoDataPlugin.onApplicationStarted(new DefaultPluginContext(serviceProvider));
 
         communityCount = communityService.getCommunities().count();
         assertThat(communityCount).isEqualTo(6);
@@ -50,10 +54,10 @@ class DemoDataServiceTest {
 
     @Test
     void storeDemoImageWithWarning() {
-        try (var logCaptor = LogCaptor.forClass(DemoDataService.class)) {
+        try (var logCaptor = LogCaptor.forClass(DemoDataPlugin.class)) {
             final var filename = "non-existing.gif";
             final var image = new ImageDto(null, ContentType.IMAGE_GIF, filename);
-            demoDataService.storeDemoImage(image, filename);
+            demoDataPlugin.storeDemoImage(image, filename);
             assertThat(logCaptor.getWarnLogs()).containsExactly("Demo image not found: non-existing.gif");
         }
     }

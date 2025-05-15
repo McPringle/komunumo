@@ -15,14 +15,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.komunumo.data.service;
+package org.komunumo.plugin.demo;
 
-import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.komunumo.data.dto.CommunityDto;
 import org.komunumo.data.dto.ContentType;
 import org.komunumo.data.dto.ImageDto;
+import org.komunumo.plugin.KomunumoPlugin;
+import org.komunumo.plugin.PluginContext;
 import org.komunumo.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,18 +37,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Service
-public final class DemoDataService {
+public final class DemoDataPlugin implements KomunumoPlugin {
 
-    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(DemoDataService.class);
-
-    private final @NotNull CommunityService communityService;
-    private final @NotNull ImageService imageService;
-
-    public DemoDataService(final @NotNull ServiceProvider serviceProvider) {
-        super();
-        this.communityService = serviceProvider.communityService();
-        this.imageService = serviceProvider.imageService();
-    }
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(DemoDataPlugin.class);
 
     /**
      * Initializes demo data after application startup.
@@ -57,9 +49,11 @@ public final class DemoDataService {
      * it inserts a predefined set of demo communities with predictable IDs.
      * </p>
      */
-    @PostConstruct
-    public void createDemoData() {
+    @Override
+    public void onApplicationStarted(final @NotNull PluginContext context) {
         LOGGER.info("Creating demo data...");
+        final var imageService = context.getServiceProvider().imageService();
+        final var communityService = context.getServiceProvider().communityService();
 
         if (imageService.getImageCount() == 0) {
             for (int i = 1; i <= 5; i++) {
