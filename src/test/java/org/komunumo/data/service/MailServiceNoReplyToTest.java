@@ -19,6 +19,7 @@ package org.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.komunumo.data.dto.MailFormat;
 import org.komunumo.data.dto.MailTemplateId;
 import org.komunumo.ui.KaribuTestBase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,10 @@ class MailServiceNoReplyToTest extends KaribuTestBase {
 
     @Test
     void sendMailSuccessWithoutReplyTo() {
-        mailService.sendMail(
-                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH,
+        final var result = mailService.sendMail(
+                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
                 null, "test@komunumo.org");
+        assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
             final var receivedMessage = greenMail.getReceivedMessages()[0];
             assertThat(receivedMessage.getFrom()[0])

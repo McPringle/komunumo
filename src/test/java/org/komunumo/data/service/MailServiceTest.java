@@ -18,12 +18,13 @@
 package org.komunumo.data.service;
 
 import com.icegreen.greenmail.util.GreenMailUtil;
+import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.komunumo.data.dto.MailFormat;
 import org.komunumo.data.dto.MailTemplateId;
 import org.komunumo.ui.KaribuTestBase;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Locale;
 import java.util.Map;
@@ -70,11 +71,14 @@ class MailServiceTest extends KaribuTestBase {
 
     @Test
     void sendMailSuccessWithoutVariables() {
-        mailService.sendMail(
-                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH,
+        final var result = mailService.sendMail(
+                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
                 null, "test@komunumo.org");
+        assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
             final var receivedMessage = greenMail.getReceivedMessages()[0];
+            assertThat(receivedMessage.getContentType())
+                    .isEqualTo("text/plain; charset=UTF-8");
             assertThat(receivedMessage.getFrom()[0])
                     .hasToString("sender@localhost");
             assertThat(receivedMessage.getReplyTo()[0])
@@ -92,11 +96,14 @@ class MailServiceTest extends KaribuTestBase {
 
     @Test
     void sendMailSuccessWithEmptyVariables() {
-        mailService.sendMail(
-                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH,
+        final var result = mailService.sendMail(
+                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
                 Map.of(), "test@komunumo.org");
+        assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
             final var receivedMessage = greenMail.getReceivedMessages()[0];
+            assertThat(receivedMessage.getContentType())
+                    .isEqualTo("text/plain; charset=UTF-8");
             assertThat(receivedMessage.getFrom()[0])
                     .hasToString("sender@localhost");
             assertThat(receivedMessage.getReplyTo()[0])
@@ -114,11 +121,14 @@ class MailServiceTest extends KaribuTestBase {
 
     @Test
     void sendMailSuccessWithVariables() {
-        mailService.sendMail(
-                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH,
+        final var result = mailService.sendMail(
+                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
                 Map.of("login_link", "http://localhost/foobar"), "test@komunumo.org");
+        assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
             final var receivedMessage = greenMail.getReceivedMessages()[0];
+            assertThat(receivedMessage.getContentType())
+                    .isEqualTo("text/plain; charset=UTF-8");
             assertThat(receivedMessage.getFrom()[0])
                     .hasToString("sender@localhost");
             assertThat(receivedMessage.getReplyTo()[0])
@@ -126,12 +136,51 @@ class MailServiceTest extends KaribuTestBase {
             assertThat(receivedMessage.getSubject())
                     .isEqualTo("Your Login Request at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Please click on the following link to log in to Komunumo:\r\nhttp://localhost/foobar");
+                    .isEqualTo("Please click on the following link to log in to Komunumo:\r\n" +
+                            "http://localhost/foobar");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
                     .hasToString("test@komunumo.org");
         });
+    }
+
+    @Test
+    void sendMailSuccessWithVariablesAsHtml() {
+        final var result = mailService.sendMail(
+                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.HTML,
+                Map.of("login_link", "http://localhost/foobar"), "test@komunumo.org");
+        assertThat(result).isTrue();
+        await().atMost(2, SECONDS).untilAsserted(() -> {
+            final var receivedMessage = greenMail.getReceivedMessages()[0];
+            assertThat(receivedMessage.getContentType())
+                    .isEqualTo("text/html;charset=UTF-8");
+            assertThat(receivedMessage.getFrom()[0])
+                    .hasToString("sender@localhost");
+            assertThat(receivedMessage.getReplyTo()[0])
+                    .hasToString("reply@localhost");
+            assertThat(receivedMessage.getSubject())
+                    .isEqualTo("Your Login Request at Komunumo");
+            assertThat(GreenMailUtil.getBody(receivedMessage))
+                    .isEqualTo("<p>Please click on the following link to log in to Komunumo:<br />\r\n" +
+                            "http://localhost/foobar</p>");
+            assertThat(receivedMessage.getAllRecipients())
+                    .hasSize(1);
+            assertThat(receivedMessage.getAllRecipients()[0])
+                    .hasToString("test@komunumo.org");
+        });
+    }
+
+    @Test
+    void sendMailWithErrorOnInvalidAddressFormat() {
+        try (var logCaptor = LogCaptor.forClass(MailService.class)) {
+            final var result = mailService.sendMail(
+                    MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
+                    null, "@@@");
+            assertThat(result).isFalse();
+            assertThat(logCaptor.getErrorLogs()).containsExactly(
+                    "Unable to send mail with subject 'Your Login Request at Komunumo' to [@@@]: Missing local name");
+        }
     }
 
 }
