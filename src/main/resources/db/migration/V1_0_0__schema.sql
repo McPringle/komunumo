@@ -99,3 +99,13 @@ CREATE TABLE participant (
         FOREIGN KEY (user_id)
             REFERENCES user (id)
 );
+
+CREATE TABLE global_page (
+    slot VARCHAR(255) NOT NULL,
+    language VARCHAR(2) NOT NULL,
+    created TIMESTAMP NOT NULL,
+    updated TIMESTAMP NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    markdown TEXT NOT NULL,
+    PRIMARY KEY (slot, language)
+);
