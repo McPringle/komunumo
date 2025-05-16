@@ -113,7 +113,7 @@ Vaadin web applications are full-stack and include both client-side and server-s
 | &nbsp;&nbsp;&nbsp;&nbsp;`main-layout.ts`   | Main layout Web Component (optional)        |
 | &nbsp;&nbsp;&nbsp;&nbsp;`views/`           | UI views Web Components (TypeScript / HTML) |
 | &nbsp;&nbsp;&nbsp;&nbsp;`styles/`          | Styles directory (CSS)                      |
-| `src/main/java/org/komunumo/`              | Server-side source directory                |
+| `src/main/java/app/komunumo/`              | Server-side source directory                |
 | &nbsp;&nbsp;&nbsp;&nbsp;`Application.java` | Server entrypoint                           |
 | &nbsp;&nbsp;&nbsp;&nbsp;`AppShell.java`    | application-shell configuration             |
 

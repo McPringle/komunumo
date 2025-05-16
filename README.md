@@ -123,7 +123,7 @@ public class MyPlugin implements KomunumoPlugin {
 }
 ```
 
-The `onApplicationStarted()` method is invoked after *Komunumo* has initialized but before it starts accepting requests. Currently, plugins must be part of the *Komunumo* source tree. Please add a package below `org.komunumo.plugin` for your plugin source. External JAR-based plugins are not yet supported but may be added in a future version (see issue [#105](https://github.com/McPringle/komunumo/issues/105)).
+The `onApplicationStarted()` method is invoked after *Komunumo* has initialized but before it starts accepting requests. Currently, plugins must be part of the *Komunumo* source tree. Please add a package below `app.komunumo.plugin` for your plugin source. External JAR-based plugins are not yet supported but may be added in a future version (see issue [#105](https://github.com/McPringle/komunumo/issues/105)).
 
 ## Copyright and License
 

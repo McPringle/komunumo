@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.komunumo</groupId>
+    <groupId>app.komunumo</groupId>
     <artifactId>komunumo</artifactId>
     <name>Komunumo</name>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Open Source Community Management</description>
-    <url>https://komunumo.org/</url>
+    <url>https://komunumo.app/</url>
     <inceptionYear>2017</inceptionYear>
 
     <licenses>
@@ -434,7 +434,7 @@
                     <javaVersion>${java.version}</javaVersion>
                     <failOnViolations>true</failOnViolations>
                     <includeTestClasses>true</includeTestClasses>
-                    <ignorePackages>org.komunumo.data.db</ignorePackages>
+                    <ignorePackages>app.komunumo.data.db</ignorePackages>
                 </configuration>
                 <executions>
                     <execution>
@@ -453,7 +453,7 @@
                 <version>0.8.13</version>
                 <configuration>
                     <excludes>
-                        <exclude>org/komunumo/data/db/**</exclude>
+                        <exclude>app/komunumo/data/db/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -609,18 +609,18 @@
                                     <includeExpression>(^id$|.*_id$)</includeExpression>
                                     <excludeExpression>mail_template\.id</excludeExpression>
                                     <userType>java.util.UUID</userType>
-                                    <converter>org.komunumo.data.converter.UUIDConverter</converter>
+                                    <converter>app.komunumo.data.converter.UUIDConverter</converter>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>org.komunumo.data.dto.ContentType</userType>
-                                    <converter>org.komunumo.data.converter.ContentTypeConverter</converter>
+                                    <userType>app.komunumo.data.dto.ContentType</userType>
+                                    <converter>app.komunumo.data.converter.ContentTypeConverter</converter>
                                     <includeExpression>.*\.content_type</includeExpression>
                                 </forcedType>
                                 <forcedType>
                                     <includeTypes>TIMESTAMP</includeTypes>
                                     <includeExpression>.*</includeExpression>
                                     <userType>java.time.ZonedDateTime</userType>
-                                    <converter>org.komunumo.data.converter.ZonedDateTimeConverter</converter>
+                                    <converter>app.komunumo.data.converter.ZonedDateTimeConverter</converter>
                                 </forcedType>
                             </forcedTypes>
                             <properties>
@@ -635,7 +635,7 @@
                             <javaTimeTypes>true</javaTimeTypes>
                         </generate>
                         <target>
-                            <packageName>org.komunumo.data.db</packageName>
+                            <packageName>app.komunumo.data.db</packageName>
                             <directory>target/generated-sources/jooq</directory>
                         </target>
                     </generator>
