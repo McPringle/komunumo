@@ -23,3 +23,8 @@
 
 @import "components/community-card.css";
 @import "components/community-grid.css";
+
+main {
+    width: calc(100% - 2rem);
+    padding: 1rem;
+}
