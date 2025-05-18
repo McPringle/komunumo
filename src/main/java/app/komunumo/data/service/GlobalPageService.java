@@ -17,6 +17,7 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.db.tables.records.GlobalPageRecord;
 import app.komunumo.data.dto.GlobalPageDto;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -24,8 +25,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static app.komunumo.data.db.tables.GlobalPage.GLOBAL_PAGE;
 
@@ -39,6 +45,27 @@ public final class GlobalPageService {
     public GlobalPageService(final @NotNull DSLContext dsl) {
         super();
         this.dsl = dsl;
+    }
+
+    public GlobalPageDto storeGlobalPage(final @NotNull GlobalPageDto globalPage) {
+        final var slot = globalPage.slot();
+        final var language = globalPage.language().getLanguage().toUpperCase(globalPage.language());
+        final GlobalPageRecord globalPageRecord = dsl.selectFrom(GLOBAL_PAGE)
+                .where(GLOBAL_PAGE.SLOT.eq(slot))
+                .and(GLOBAL_PAGE.LANGUAGE.eq(language))
+                .fetchOptional()
+                .orElse(dsl.newRecord(GLOBAL_PAGE));
+        globalPageRecord.from(globalPage);
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        if (globalPageRecord.getCreated() == null) {
+            globalPageRecord.setCreated(now);
+            globalPageRecord.setUpdated(now);
+        } else {
+            globalPageRecord.setUpdated(now);
+        }
+        globalPageRecord.store();
+        return globalPageRecord.into(GlobalPageDto.class);
+
     }
 
     public @NotNull Optional<@NotNull GlobalPageDto> getGlobalPage(final @NotNull String slot,
@@ -56,4 +83,32 @@ public final class GlobalPageService {
         return globalPage;
     }
 
+    public @NotNull Stream<@NotNull GlobalPageDto> getGlobalPages(final @NotNull Locale locale) {
+        final var preferredLanguage = locale.getLanguage().toUpperCase(locale);
+        final var fallbackLang = "EN";
+
+        // Load all pages in the desired language + fallback language
+        final var pages = dsl.selectFrom(GLOBAL_PAGE)
+                .where(GLOBAL_PAGE.LANGUAGE.in(preferredLanguage, fallbackLang))
+                .fetchStreamInto(GlobalPageDto.class);
+
+        // Keep only the page in the desired language per slot, or else fallback
+        final var pageMap = pages.collect(Collectors.toMap(
+                GlobalPageDto::slot,
+                Function.identity(),
+                (preferred, fallback) ->
+                        preferred.language().equals(locale) ? preferred : fallback
+        ));
+
+        return pageMap.values().stream();
+    }
+
+    public boolean deleteGlobalPage(final @NotNull GlobalPageDto globalPage) {
+        final var slot = globalPage.slot();
+        final var language = globalPage.language().getLanguage().toUpperCase(globalPage.language());
+        return dsl.delete(GLOBAL_PAGE)
+                .where(GLOBAL_PAGE.SLOT.eq(slot))
+                .and(GLOBAL_PAGE.LANGUAGE.eq(language))
+                .execute() > 0;
+    }
 }

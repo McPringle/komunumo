@@ -17,18 +17,31 @@
  */
 package app.komunumo.ui.component;
 
+import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.website.home.HomeView;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.router.RouterLink;
-import app.komunumo.ui.website.home.HomeView;
+import org.jetbrains.annotations.NotNull;
 
 public final class NavigationBar extends Nav {
 
-    public NavigationBar() {
+    public NavigationBar(final @NotNull ServiceProvider serviceProvider) {
         super();
         final var ui = UI.getCurrent();
+        final var locale = ui.getLocale();
         addClassName("navigation-bar");
         add(new RouterLink(ui.getTranslation("home.title"), HomeView.class));
+
+        serviceProvider.globalPageService()
+                .getGlobalPages(locale)
+                .forEach(this::addGlobalPage);
+    }
+
+    private void addGlobalPage(final @NotNull GlobalPageDto page) {
+        add(new Anchor("/page/" + page.slot(), page.title()));
     }
 
 }

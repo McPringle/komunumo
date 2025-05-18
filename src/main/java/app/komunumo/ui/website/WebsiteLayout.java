@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.website;
 
+import app.komunumo.data.service.ServiceProvider;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
@@ -32,12 +33,12 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     private final @NotNull UI ui;
     private final @NotNull Main main;
 
-    public WebsiteLayout() {
+    public WebsiteLayout(final @NotNull ServiceProvider serviceProvider) {
         super();
         ui = UI.getCurrent();
 
         addPageHeader();
-        addNavigationBar();
+        addNavigationBar(serviceProvider);
 
         main = new Main();
         add(main);
@@ -47,8 +48,8 @@ public final class WebsiteLayout extends Div implements RouterLayout {
         add(new PageHeader(ui.getTranslation("komunumo.title"), ui.getTranslation("komunumo.subtitle")));
     }
 
-    private void addNavigationBar() {
-        add(new NavigationBar());
+    private void addNavigationBar(final @NotNull ServiceProvider serviceProvider) {
+        add(new NavigationBar(serviceProvider));
     }
 
     @Override

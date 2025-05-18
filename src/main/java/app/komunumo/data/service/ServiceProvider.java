@@ -24,17 +24,24 @@ import org.springframework.stereotype.Component;
 public final class ServiceProvider {
 
     private final @NotNull CommunityService communityService;
+    private final @NotNull GlobalPageService globalPageService;
     private final @NotNull ImageService imageService;
 
     public ServiceProvider(final @NotNull CommunityService communityService,
+                           final @NotNull GlobalPageService globalPageService,
                            final @NotNull ImageService imageService) {
         super();
         this.communityService = communityService;
+        this.globalPageService = globalPageService;
         this.imageService = imageService;
     }
 
     public @NotNull CommunityService communityService() {
         return communityService;
+    }
+
+    public @NotNull GlobalPageService globalPageService() {
+        return globalPageService;
     }
 
     public @NotNull ImageService imageService() {
