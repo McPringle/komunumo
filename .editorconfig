@@ -6,6 +6,7 @@ end_of_line = lf
 indent_size = 4
 indent_style = space
 insert_final_newline = true
+trim_trailing_whitespace = true
 max_line_length = 120
 tab_width = 4
 ij_continuation_indent_size = 8
@@ -14,6 +15,12 @@ ij_formatter_on_tag = @formatter:on
 ij_formatter_tags_enabled = false
 ij_smart_tabs = false
 ij_wrap_on_typing = false
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.sql]
+trim_trailing_whitespace = false
 
 [*.css]
 ij_css_align_closing_brace_with_properties = false

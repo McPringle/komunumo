@@ -1,3 +1,7 @@
+-- Attention: Markdown line breaks in this file rely on two spaces at the end of a line.
+-- Please make sure your editor does not remove trailing spaces when saving!
+-- IntelliJ: Settings → Editor → General → On Save → set "Remove trailing spaces" to "None" or use .editorconfig.
+
 -- [jooq ignore start]
 
 INSERT INTO mail_template (id, language, subject, markdown)
