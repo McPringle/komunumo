@@ -40,7 +40,7 @@ class GlobalPageViewTest extends KaribuTestBase {
         assertThat(html).isNotNull();
 
         final var renderedHtml = html.getElement().getProperty("innerHTML");
-        assertThat(renderedHtml).startsWith("<h2>About <em>Komunumo</em></h2>");
+        assertThat(renderedHtml).startsWith("<h2>About</h2>");
     }
 
     @Test

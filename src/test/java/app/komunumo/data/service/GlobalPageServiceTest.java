@@ -42,7 +42,7 @@ class GlobalPageServiceTest {
         assertThat(aboutPage.slot()).isEqualTo("about");
         assertThat(aboutPage.language()).isEqualTo(Locale.ENGLISH);
         assertThat(aboutPage.title()).isEqualTo("About");
-        assertThat(aboutPage.markdown()).startsWith("## About *Komunumo*");
+        assertThat(aboutPage.markdown()).startsWith("## About");
     }
 
     @Test
@@ -51,8 +51,8 @@ class GlobalPageServiceTest {
         assertThat(aboutPage).isNotNull();
         assertThat(aboutPage.slot()).isEqualTo("about");
         assertThat(aboutPage.language()).isEqualTo(Locale.GERMAN);
-        assertThat(aboutPage.title()).isEqualTo("Über");
-        assertThat(aboutPage.markdown()).startsWith("## Über *Komunumo*");
+        assertThat(aboutPage.title()).isEqualTo("Impressum");
+        assertThat(aboutPage.markdown()).startsWith("## Impressum");
     }
 
     @Test
@@ -61,8 +61,8 @@ class GlobalPageServiceTest {
         assertThat(aboutPage).isNotNull();
         assertThat(aboutPage.slot()).isEqualTo("about");
         assertThat(aboutPage.language()).isEqualTo(Locale.GERMAN);
-        assertThat(aboutPage.title()).isEqualTo("Über");
-        assertThat(aboutPage.markdown()).startsWith("## Über *Komunumo*");
+        assertThat(aboutPage.title()).isEqualTo("Impressum");
+        assertThat(aboutPage.markdown()).startsWith("## Impressum");
     }
 
     @Test
@@ -72,7 +72,7 @@ class GlobalPageServiceTest {
         assertThat(aboutPage.slot()).isEqualTo("about");
         assertThat(aboutPage.language()).isEqualTo(Locale.ENGLISH);
         assertThat(aboutPage.title()).isEqualTo("About");
-        assertThat(aboutPage.markdown()).startsWith("## About *Komunumo*");
+        assertThat(aboutPage.markdown()).startsWith("## About");
     }
 
     @Test
