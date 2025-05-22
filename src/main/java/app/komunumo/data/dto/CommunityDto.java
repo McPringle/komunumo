@@ -31,4 +31,5 @@ public record CommunityDto(
         @NotNull String name,
         @NotNull String description,
         @Nullable UUID imageId
-) { }
+) {
+}
