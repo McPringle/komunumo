@@ -18,6 +18,7 @@
 package app.komunumo.ui.component;
 
 import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -25,10 +26,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class EventCard extends KomunumoCard {
 
-    public EventCard(final @NotNull CommunityDto community,
+    public EventCard(final @NotNull EventDto event,
                      final @Nullable ImageDto image) {
-        super("Not a " + community.name(), ImageUtil.resolveImageUrl(image));
-        addClassName("community-card");
+        super(event.title(), ImageUtil.resolveImageUrl(image));
+        addClassName("event-card");
     }
 
 }

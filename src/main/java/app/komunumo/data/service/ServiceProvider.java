@@ -51,4 +51,8 @@ public final class ServiceProvider {
         return imageService;
     }
 
+    public @NotNull EventService eventService() {
+        return eventService;
+    }
+
 }
