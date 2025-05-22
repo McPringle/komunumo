@@ -17,9 +17,8 @@
  */
 package app.komunumo.data.dto;
 
-import app.komunumo.data.db.tables.records.EventRecord;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;

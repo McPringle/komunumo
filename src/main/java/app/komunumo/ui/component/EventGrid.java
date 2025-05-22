@@ -17,7 +17,6 @@
  */
 package app.komunumo.ui.component;
 
-import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.service.ServiceProvider;
 import org.jetbrains.annotations.NotNull;
