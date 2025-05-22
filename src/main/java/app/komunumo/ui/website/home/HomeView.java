@@ -17,7 +17,10 @@
  */
 package app.komunumo.ui.website.home;
 
+import app.komunumo.ui.component.EventGrid;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +35,14 @@ public class HomeView extends Div {
     public HomeView(final @NotNull ServiceProvider serviceProvider) {
         super();
         setId("home-view");
-        add(new CommunityGrid(serviceProvider));
+
+        var ui = UI.getCurrent();
+
+        TabSheet tabSheet = new TabSheet();
+        tabSheet.add(ui.getTranslation("communities.title"), new CommunityGrid(serviceProvider));
+        tabSheet.add(ui.getTranslation("events.title"), new EventGrid(serviceProvider));
+
+        add(tabSheet);
     }
 
 }

@@ -24,14 +24,17 @@ import org.springframework.stereotype.Component;
 public final class ServiceProvider {
 
     private final @NotNull CommunityService communityService;
+    private final @NotNull EventService eventService;
     private final @NotNull GlobalPageService globalPageService;
     private final @NotNull ImageService imageService;
 
     public ServiceProvider(final @NotNull CommunityService communityService,
                            final @NotNull GlobalPageService globalPageService,
+                           final @NotNull EventService eventService,
                            final @NotNull ImageService imageService) {
         super();
         this.communityService = communityService;
+        this.eventService = eventService;
         this.globalPageService = globalPageService;
         this.imageService = imageService;
     }
@@ -46,6 +49,10 @@ public final class ServiceProvider {
 
     public @NotNull ImageService imageService() {
         return imageService;
+    }
+
+    public @NotNull EventService eventService() {
+        return eventService;
     }
 
 }

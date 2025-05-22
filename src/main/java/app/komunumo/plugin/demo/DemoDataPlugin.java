@@ -17,6 +17,7 @@
  */
 package app.komunumo.plugin.demo;
 
+import app.komunumo.data.dto.EventDto;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 import app.komunumo.data.dto.CommunityDto;
@@ -52,8 +53,10 @@ public final class DemoDataPlugin implements KomunumoPlugin {
     @Override
     public void onApplicationStarted(final @NotNull PluginContext context) {
         LOGGER.info("Creating demo data...");
+
         final var imageService = context.getServiceProvider().imageService();
         final var communityService = context.getServiceProvider().communityService();
+        final var eventService = context.getServiceProvider().eventService();
 
         if (imageService.getImageCount() == 0) {
             for (int i = 1; i <= 5; i++) {
@@ -72,6 +75,17 @@ public final class DemoDataPlugin implements KomunumoPlugin {
                         generatedId, "@demoGroup" + i, null, null,
                         "Demo Community " + i, "This is a demo community.",
                         i <= 5 ? generatedId : null)); // demo community 6+ has no image
+            }
+        }
+
+        if (eventService.getEventCount() == 0) {
+            for (int i = 1; i <= 6; i++) {
+                final var generatedId = generateId(Integer.toString(i));
+                eventService.storeEvent(new EventDto(
+                        generatedId, generatedId, null, null,
+                        "Demo Event " + i, "This is a demo event.", "Online",
+                        null, null, i <= 5 ? generatedId : null, // demo community 6+ has no image
+                        "public", "draft"));
             }
         }
 

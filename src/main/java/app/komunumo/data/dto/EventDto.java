@@ -23,13 +23,18 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public record CommunityDto(
+public record EventDto(
         @Nullable UUID id,
-        @NotNull String profile,
+        @Nullable UUID communityId,
         @Nullable ZonedDateTime created,
         @Nullable ZonedDateTime updated,
-        @NotNull String name,
+        @NotNull String title,
         @NotNull String description,
-        @Nullable UUID imageId
-) {
+        @NotNull String location,
+        @Nullable ZonedDateTime begin,
+        @Nullable ZonedDateTime end,
+        @Nullable UUID imageId,
+        @NotNull String visibility,
+        @NotNull String status
+        ) {
 }

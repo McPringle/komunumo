@@ -15,21 +15,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.ui.component;
 
+import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.dto.ImageDto;
+import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
+public class EventCard extends KomunumoCard {
 
-public record CommunityDto(
-        @Nullable UUID id,
-        @NotNull String profile,
-        @Nullable ZonedDateTime created,
-        @Nullable ZonedDateTime updated,
-        @NotNull String name,
-        @NotNull String description,
-        @Nullable UUID imageId
-) {
+    public EventCard(final @NotNull EventDto event,
+                     final @Nullable ImageDto image) {
+        super(event.title(), ImageUtil.resolveImageUrl(image));
+        addClassName("event-card");
+    }
+
 }
