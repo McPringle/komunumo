@@ -1,7 +1,6 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.EventRecord;
-import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
@@ -12,11 +11,10 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
-import static app.komunumo.data.db.tables.Community.COMMUNITY;
 import static app.komunumo.data.db.tables.Event.EVENT;
 
 @Service
-public class EventService {
+public final class EventService {
 
     private final @NotNull DSLContext dsl;
     private final @NotNull UniqueIdGenerator idGenerator;
