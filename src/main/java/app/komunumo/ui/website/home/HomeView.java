@@ -36,12 +36,10 @@ public class HomeView extends Div {
         super();
         setId("home-view");
 
-        var ui = UI.getCurrent();
-
-        TabSheet tabSheet = new TabSheet();
+        final var ui = UI.getCurrent();
+        final var tabSheet = new TabSheet();
         tabSheet.add(ui.getTranslation("communities.title"), new CommunityGrid(serviceProvider));
         tabSheet.add(ui.getTranslation("events.title"), new EventGrid(serviceProvider));
-
         add(tabSheet);
     }
 

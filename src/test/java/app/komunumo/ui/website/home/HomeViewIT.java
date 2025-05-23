@@ -17,31 +17,43 @@
  */
 package app.komunumo.ui.website.home;
 
+import app.komunumo.ui.KaribuTestBase;
+import app.komunumo.ui.component.CommunityGrid;
+import app.komunumo.ui.component.EventGrid;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.tabs.TabSheet;
 import org.junit.jupiter.api.Test;
-import app.komunumo.ui.KaribuTestBase;
-import app.komunumo.ui.component.CommunityGrid;
 
 import java.util.Objects;
 
+import static app.komunumo.util.TestUtil.findComponent;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
-import static app.komunumo.util.TestUtil.findComponent;
 
 class HomeViewIT extends KaribuTestBase {
 
     @Test
-    void homeViewTest() {
+    void homeViewHasTitle() {
         UI.getCurrent().navigate(HomeView.class);
-
         assertThat(_get(H1.class).getText()).isEqualTo("Komunumo");
         assertThat(_get(H2.class).getText()).isEqualTo("Open Source Community Management");
+    }
 
-        final var communityList = _get(CommunityGrid.class);
-        final var communityCards = communityList.getChildren().toList();
+    @Test
+    void showCommunitiesByDefault() {
+        final var ui = UI.getCurrent();
+        ui.navigate(HomeView.class);
+
+        final var tabSheet = _get(TabSheet.class);
+        final var communitiesTab = tabSheet.getSelectedTab();
+        assertThat(communitiesTab.getLabel()).isEqualTo(ui.getTranslation("communities.title"));
+
+        final var communityGrid = _get(CommunityGrid.class);
+        final var communityCards = communityGrid.getChildren().toList();
         assertThat(communityCards).hasSize(6);
 
         for (int i = 1; i <= 6; i++) {
@@ -63,6 +75,50 @@ class HomeViewIT extends KaribuTestBase {
                         .isNull();
             }
         }
+
+        final var eventGrid = _find(EventGrid.class);
+        assertThat(eventGrid).isEmpty();
+    }
+
+    @Test
+    void switchToEvents() {
+        final var ui = UI.getCurrent();
+        ui.navigate(HomeView.class);
+
+        final var tabSheet = _get(TabSheet.class);
+        final var communitiesTab = tabSheet.getSelectedTab();
+        assertThat(communitiesTab.getLabel()).isEqualTo(ui.getTranslation("communities.title"));
+
+        tabSheet.setSelectedTab(tabSheet.getTabAt(1));
+        final var eventsTab = tabSheet.getSelectedTab();
+        assertThat(eventsTab.getLabel()).isEqualTo(ui.getTranslation("events.title"));
+
+        final var eventGrid = _get(EventGrid.class);
+        final var eventCards = eventGrid.getChildren().toList();
+        assertThat(eventCards).hasSize(6);
+
+        for (int i = 1; i <= 6; i++) {
+            final var eventCard = eventCards.get(i - 1);
+            final var h3 = Objects.requireNonNull(findComponent(eventCard, H3.class));
+            assertThat(h3.getText()).isEqualTo("Demo Event " + i);
+
+            final var backgroundImage = eventCard.getElement().getStyle().get("background-image");
+            if (i <= 5) {
+                assertThat(backgroundImage)
+                        .as("background-image should be set")
+                        .isNotNull();
+                assertThat(backgroundImage)
+                        .as("expected to contain a demo background but was: " + backgroundImage)
+                        .contains(i + ".jpg");
+            } else { // demo community 6+ has no image
+                assertThat(backgroundImage)
+                        .as("there should be no background-image")
+                        .isNull();
+            }
+        }
+
+        final var communityGrid = _find(CommunityGrid.class);
+        assertThat(communityGrid).isEmpty();
     }
 
 }
