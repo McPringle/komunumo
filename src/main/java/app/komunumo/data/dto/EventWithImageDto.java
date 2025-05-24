@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,18 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.data.dto;
 
-@import "components/page-header.css";
-@import "components/navigation-bar.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@import "components/community-card.css";
-@import "components/community-grid.css";
-@import "components/event-card.css";
-@import "components/event-grid.css";
-
-main {
-    width: calc(100% - 2rem);
-    padding: 1rem;
-}
+public record EventWithImageDto(
+        @NotNull EventDto event,
+        @Nullable ImageDto image
+) { }

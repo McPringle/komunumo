@@ -27,6 +27,7 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.tabs.TabSheet;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.Objects;
 
 import static app.komunumo.util.TestUtil.findComponent;
@@ -81,7 +82,7 @@ class HomeViewIT extends KaribuTestBase {
     }
 
     @Test
-    void switchToEvents() {
+    void checkUpcomingEvents() {
         final var ui = UI.getCurrent();
         ui.navigate(HomeView.class);
 
@@ -95,21 +96,27 @@ class HomeViewIT extends KaribuTestBase {
 
         final var eventGrid = _get(EventGrid.class);
         final var eventCards = eventGrid.getChildren().toList();
-        assertThat(eventCards).hasSize(6);
+        assertThat(eventCards).hasSize(3);
 
-        for (int i = 1; i <= 6; i++) {
-            final var eventCard = eventCards.get(i - 1);
+        for (var entry : Map.of(
+                0, 3,
+                1, 5,
+                2, 6) // position and event number
+                .entrySet()) {
+            final var position = entry.getKey();
+            final var number = entry.getValue();
+            final var eventCard = eventCards.get(position);
             final var h3 = Objects.requireNonNull(findComponent(eventCard, H3.class));
-            assertThat(h3.getText()).isEqualTo("Demo Event " + i);
+            assertThat(h3.getText()).isEqualTo("Demo Event " + number);
 
             final var backgroundImage = eventCard.getElement().getStyle().get("background-image");
-            if (i <= 5) {
+            if (number <= 5) {
                 assertThat(backgroundImage)
                         .as("background-image should be set")
                         .isNotNull();
                 assertThat(backgroundImage)
                         .as("expected to contain a demo background but was: " + backgroundImage)
-                        .contains(i + ".jpg");
+                        .contains(number + ".jpg");
             } else { // demo community 6+ has no image
                 assertThat(backgroundImage)
                         .as("there should be no background-image")

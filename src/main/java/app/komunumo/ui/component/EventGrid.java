@@ -17,25 +17,18 @@
  */
 package app.komunumo.ui.component;
 
-import app.komunumo.data.dto.EventDto;
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.dto.EventWithImageDto;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class EventGrid extends KomunumoGrid {
 
-    public EventGrid(final @NotNull ServiceProvider serviceProvider) {
-        super(serviceProvider.eventService()
-                .getEvents()
-                .map(community -> mapToCard(serviceProvider, community))
+    public EventGrid(final @NotNull List<EventWithImageDto> events) {
+        super(events.stream()
+                .map(EventCard::new)
                 .toArray(EventCard[]::new));
-        addClassName("community-grid");
+        addClassName("event-grid");
     }
 
-    private static @NotNull EventCard mapToCard(final @NotNull ServiceProvider serviceProvider,
-                                                   final @NotNull EventDto event) {
-        final var image = serviceProvider.imageService()
-                .getImage(event.imageId())
-                .orElse(null);
-        return new EventCard(event, image);
-    }
 }

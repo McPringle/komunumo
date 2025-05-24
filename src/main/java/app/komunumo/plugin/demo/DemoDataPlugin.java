@@ -17,15 +17,19 @@
  */
 package app.komunumo.plugin.demo;
 
-import app.komunumo.data.dto.EventDto;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.VisibleForTesting;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ContentType;
+import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.ImageDto;
+import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.ImageService;
 import app.komunumo.plugin.KomunumoPlugin;
 import app.komunumo.plugin.PluginContext;
 import app.komunumo.util.ImageUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,6 +39,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 @Service
@@ -58,6 +65,14 @@ public final class DemoDataPlugin implements KomunumoPlugin {
         final var communityService = context.getServiceProvider().communityService();
         final var eventService = context.getServiceProvider().eventService();
 
+        createDemoImages(imageService);
+        createDemoCommunities(communityService);
+        createDemoEvents(eventService);
+
+        LOGGER.info("Demo data created.");
+    }
+
+    private void createDemoImages(final @NotNull ImageService imageService) {
         if (imageService.getImageCount() == 0) {
             for (int i = 1; i <= 5; i++) {
                 final var filename = "demo-background-" + i + ".jpg";
@@ -67,7 +82,9 @@ public final class DemoDataPlugin implements KomunumoPlugin {
                 storeDemoImage(image, filename);
             }
         }
+    }
 
+    private void createDemoCommunities(final @NotNull CommunityService communityService) {
         if (communityService.getCommunityCount() == 0) {
             for (int i = 1; i <= 6; i++) {
                 final var generatedId = generateId(Integer.toString(i));
@@ -77,19 +94,34 @@ public final class DemoDataPlugin implements KomunumoPlugin {
                         i <= 5 ? generatedId : null)); // demo community 6+ has no image
             }
         }
+    }
 
+    private void createDemoEvents(final @NotNull EventService eventService) {
         if (eventService.getEventCount() == 0) {
             for (int i = 1; i <= 6; i++) {
                 final var generatedId = generateId(Integer.toString(i));
+                final var beginDate = generateBeginDate(i);
+                final var endDate = beginDate == null ? null : beginDate.plusMinutes(45);
                 eventService.storeEvent(new EventDto(
                         generatedId, generatedId, null, null,
                         "Demo Event " + i, "This is a demo event.", "Online",
-                        null, null, i <= 5 ? generatedId : null, // demo community 6+ has no image
+                        beginDate, endDate, i <= 5 ? generatedId : null, // demo community 6+ has no image
                         "public", "draft"));
             }
         }
+    }
 
-        LOGGER.info("Demo data created.");
+    private @Nullable ZonedDateTime generateBeginDate(final int i) {
+        final var now = ZonedDateTime.now(ZoneOffset.UTC)
+                .withHour(18)
+                .truncatedTo(ChronoUnit.HOURS);
+        if (i <= 2) {
+            return now.minusDays(i);
+        } else if (i == 4) {
+            return null;
+        } else {
+            return now.plusDays(i);
+        }
     }
 
     /**

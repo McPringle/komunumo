@@ -39,7 +39,8 @@ public class HomeView extends Div {
         final var ui = UI.getCurrent();
         final var tabSheet = new TabSheet();
         tabSheet.add(ui.getTranslation("communities.title"), new CommunityGrid(serviceProvider));
-        tabSheet.add(ui.getTranslation("events.title"), new EventGrid(serviceProvider));
+        tabSheet.add(ui.getTranslation("events.title"),
+                new EventGrid(serviceProvider.eventWithImageService().getUpcomingEventsWithImages()));
         add(tabSheet);
     }
 

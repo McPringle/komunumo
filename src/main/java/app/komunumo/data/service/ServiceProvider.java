@@ -27,16 +27,19 @@ public final class ServiceProvider {
     private final @NotNull EventService eventService;
     private final @NotNull GlobalPageService globalPageService;
     private final @NotNull ImageService imageService;
+    private final @NotNull EventWithImageService eventWithImageService;
 
     public ServiceProvider(final @NotNull CommunityService communityService,
                            final @NotNull GlobalPageService globalPageService,
                            final @NotNull EventService eventService,
-                           final @NotNull ImageService imageService) {
+                           final @NotNull ImageService imageService,
+                           final @NotNull EventWithImageService eventWithImageService) {
         super();
         this.communityService = communityService;
         this.eventService = eventService;
         this.globalPageService = globalPageService;
         this.imageService = imageService;
+        this.eventWithImageService = eventWithImageService;
     }
 
     public @NotNull CommunityService communityService() {
@@ -53,6 +56,10 @@ public final class ServiceProvider {
 
     public @NotNull EventService eventService() {
         return eventService;
+    }
+
+    public @NotNull EventWithImageService eventWithImageService() {
+        return eventWithImageService;
     }
 
 }

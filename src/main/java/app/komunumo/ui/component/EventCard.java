@@ -17,17 +17,14 @@
  */
 package app.komunumo.ui.component;
 
-import app.komunumo.data.dto.EventDto;
-import app.komunumo.data.dto.ImageDto;
+import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class EventCard extends KomunumoCard {
 
-    public EventCard(final @NotNull EventDto event,
-                     final @Nullable ImageDto image) {
-        super(event.title(), ImageUtil.resolveImageUrl(image));
+    public EventCard(final @NotNull EventWithImageDto eventWithImage) {
+        super(eventWithImage.event().title(), ImageUtil.resolveImageUrl(eventWithImage.image()));
         addClassName("event-card");
     }
 
