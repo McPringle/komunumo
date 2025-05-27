@@ -19,6 +19,7 @@ package app.komunumo.ui.component;
 
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.website.community.CommunityGridView;
 import app.komunumo.ui.website.home.HomeView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
@@ -33,7 +34,9 @@ public final class NavigationBar extends Nav {
         final var ui = UI.getCurrent();
         final var locale = ui.getLocale();
         addClassName("navigation-bar");
+
         add(new RouterLink(ui.getTranslation("home.title"), HomeView.class));
+        add(new RouterLink(ui.getTranslation("communities.title"), CommunityGridView.class));
 
         serviceProvider.globalPageService()
                 .getGlobalPages(locale)

@@ -66,6 +66,12 @@ class TranslationProviderTest {
                 .isEqualTo("Overview");
     }
 
+    @Test
+    void testFallbackWhenLocaleIsNull() {
+        assertThat(translationProvider.getTranslation("home.title", null))
+                .isEqualTo("Overview");
+    }
+
     // TODO testWithPlaceholder()
 
     @Test

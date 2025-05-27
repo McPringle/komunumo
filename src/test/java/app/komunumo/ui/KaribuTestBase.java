@@ -57,22 +57,19 @@ public abstract class KaribuTestBase {
 
     @BeforeAll
     public static void discoverRoutes() {
+        Locale.setDefault(Locale.ENGLISH);
         routes = new Routes().autoDiscoverViews("app.komunumo");
     }
 
     @Autowired
     private ApplicationContext applicationContext;
 
-    /**
-     * @see org.junit.jupiter.api.BeforeEach
-     */
     @BeforeEach
     public void setup() throws FolderException {
         final Function0<UI> uiFactory = UI::new;
         final var servlet = new MockSpringServlet(routes, applicationContext, uiFactory);
         MockVaadin.setup(uiFactory, servlet);
         UI.getCurrent().setLocale(Locale.ENGLISH);
-        Locale.setDefault(Locale.ENGLISH);
         greenMail.purgeEmailFromAllMailboxes();
     }
 

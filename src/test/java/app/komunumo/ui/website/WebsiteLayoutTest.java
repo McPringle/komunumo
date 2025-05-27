@@ -88,7 +88,8 @@ class WebsiteLayoutTest extends KaribuTestBase {
 
         final var routerLinks = findComponents(navigationBar, RouterLink.class);
         assertContainsExactlyOneRouterLinkOf(routerLinks,
-                new Anchor("", "Overview"));
+                new Anchor("", "Overview"),
+                new Anchor("communities", "Communities"));
     }
 
     @Test

@@ -15,18 +15,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.website.home;
+package app.komunumo.ui.website.community;
 
 import app.komunumo.ui.KaribuTestBase;
 import app.komunumo.ui.component.CommunityGrid;
 import app.komunumo.ui.component.EventGrid;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.router.RouterLink;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
 import java.util.Objects;
 
 import static app.komunumo.util.TestUtil.findComponent;
@@ -34,43 +32,34 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HomeViewIT extends KaribuTestBase {
+class CommunityGridViewTest extends KaribuTestBase {
 
     @Test
-    void homeViewHasTitle() {
-        UI.getCurrent().navigate(HomeView.class);
-        assertThat(_get(H1.class).getText()).isEqualTo("Komunumo");
-        assertThat(_get(H2.class).getText()).isEqualTo("Open Source Community Management");
-    }
-
-    @Test
-    void checkUpcomingEvents() {
+    void showCommunities() {
         final var ui = UI.getCurrent();
-        ui.navigate(HomeView.class);
+        ui.navigate(CommunityGridView.class);
 
-        final var eventGrid = _get(EventGrid.class);
-        final var eventCards = eventGrid.getChildren().toList();
-        assertThat(eventCards).hasSize(3);
+        final var menuItem = _get(RouterLink.class,
+                spec -> spec.withText(ui.getTranslation("communities.title")));
+        assertThat(menuItem.getElement().getAttributeNames()).contains("highlight");
 
-        for (var entry : Map.of(
-                0, 3,
-                1, 5,
-                2, 6) // position and event number
-                .entrySet()) {
-            final var position = entry.getKey();
-            final var number = entry.getValue();
-            final var eventCard = eventCards.get(position);
-            final var h3 = Objects.requireNonNull(findComponent(eventCard, H3.class));
-            assertThat(h3.getText()).isEqualTo("Demo Event " + number);
+        final var communityGrid = _get(CommunityGrid.class);
+        final var communityCards = communityGrid.getChildren().toList();
+        assertThat(communityCards).hasSize(6);
 
-            final var backgroundImage = eventCard.getElement().getStyle().get("background-image");
-            if (number <= 5) {
+        for (int i = 1; i <= 6; i++) {
+            final var communityCard = communityCards.get(i - 1);
+            final var h3 = Objects.requireNonNull(findComponent(communityCard, H3.class));
+            assertThat(h3.getText()).isEqualTo("Demo Community " + i);
+
+            final var backgroundImage = communityCard.getElement().getStyle().get("background-image");
+            if (i <= 5) {
                 assertThat(backgroundImage)
                         .as("background-image should be set")
                         .isNotNull();
                 assertThat(backgroundImage)
                         .as("expected to contain a demo background but was: " + backgroundImage)
-                        .contains(number + ".jpg");
+                        .contains(i + ".jpg");
             } else { // demo community 6+ has no image
                 assertThat(backgroundImage)
                         .as("there should be no background-image")
@@ -78,8 +67,8 @@ class HomeViewIT extends KaribuTestBase {
             }
         }
 
-        final var communityGrid = _find(CommunityGrid.class);
-        assertThat(communityGrid).isEmpty();
+        final var eventGrid = _find(EventGrid.class);
+        assertThat(eventGrid).isEmpty();
     }
 
 }

@@ -15,24 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.website.home;
+package app.komunumo.ui.website.community;
 
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.component.EventGrid;
+import app.komunumo.ui.component.CommunityGrid;
 import app.komunumo.ui.website.WebsiteLayout;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
-@Route(value = "", layout = WebsiteLayout.class)
+@Route(value = "communities", layout = WebsiteLayout.class)
 @AnonymousAllowed
-public class HomeView extends Div {
+public class CommunityGridView extends HorizontalLayout {
 
-    public HomeView(final @NotNull ServiceProvider serviceProvider) {
+    public CommunityGridView(final @NotNull ServiceProvider serviceProvider) {
         super();
-        setId("home-view");
-        add(new EventGrid(serviceProvider.eventWithImageService().getUpcomingEventsWithImages()));
+        setId("community-view");
+        add(new CommunityGrid(serviceProvider));
     }
 
 }

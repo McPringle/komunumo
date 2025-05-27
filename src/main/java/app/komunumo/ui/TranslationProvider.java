@@ -19,6 +19,7 @@ package app.komunumo.ui;
 
 import com.vaadin.flow.i18n.I18NProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -44,14 +45,15 @@ public final class TranslationProvider implements I18NProvider {
 
     @Override
     public @NotNull String getTranslation(final @NotNull String key,
-                                          final @NotNull Locale locale,
+                                          final @Nullable Locale locale,
                                           final @NotNull Object... params) {
+        final var effectiveLocale = locale != null ? locale : Locale.getDefault();
         try {
-            final var bundle = ResourceBundle.getBundle(BUNDLE_PREFIX, locale);
+            final var bundle = ResourceBundle.getBundle(BUNDLE_PREFIX, effectiveLocale);
             final var value = bundle.getString(key);
             return params.length > 0 ? MessageFormat.format(value, params) : value;
         } catch (final MissingResourceException e) {
-            LOGGER.warn("Missing translation for key: {} in locale: {}", key, locale, e);
+            LOGGER.warn("Missing translation for key: {} in locale: {}", key, effectiveLocale, e);
             return "!!" + key + "!!";
         }
     }
