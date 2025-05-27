@@ -51,21 +51,21 @@ public final class ImageServlet extends HttpServlet {
         final var url = request.getPathInfo();
         final UUID imageId = extractImageIdFromUrl(url);
         if (imageId == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            redirectToNotFoundPage(request, response);
             return;
         }
 
-        final ImageDto image = imageService
-                .getImage(imageId)
-                .orElse(null);
-        if (image == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        final Optional<ImageDto> imageOpt = imageService.getImage(imageId);
+        if (imageOpt.isEmpty()) {
+            redirectToNotFoundPage(request, response);
             return;
         }
 
+        final var image = imageOpt.orElseThrow();
         final Optional<InputStream> stream = ImageUtil.loadImage(image);
         if (stream.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            LOGGER.error("Missing image on server: {}", image.id());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
 
@@ -80,4 +80,14 @@ public final class ImageServlet extends HttpServlet {
         }
     }
 
+    private void redirectToNotFoundPage(final @NotNull HttpServletRequest request,
+                                        final @NotNull HttpServletResponse response) {
+        LOGGER.warn("Requested image not found: {}", request.getPathInfo());
+        try {
+            response.sendRedirect("/error/404");
+        } catch (final IOException e) {
+            LOGGER.error("Redirect to 404 page failed", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
 }

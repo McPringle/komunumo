@@ -17,14 +17,14 @@
  */
 package app.komunumo.ui.servlets;
 
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.Test;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.util.ImageUtil;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.io.ByteArrayInputStream;
@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
@@ -46,7 +47,7 @@ import static org.mockito.Mockito.when;
 class ImageServletTest {
 
     @Test
-    void returnsNotFound_whenImageIdIsInvalid() {
+    void redirectsTo404Page_whenImageIdIsInvalid() throws IOException {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -60,12 +61,12 @@ class ImageServletTest {
         servlet.doGet(request, response);
 
         // Assert
-        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
         verifyNoInteractions(imageService);
+        verify(response).sendRedirect("/error/404");
     }
 
     @Test
-    void returnsNotFound_whenImageIsNotInDatabase() {
+    void returnsNotFound_whenImageIsNotInDatabase() throws IOException {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -84,11 +85,11 @@ class ImageServletTest {
 
         // Assert
         verify(imageService).getImage(imageId);
-        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response).sendRedirect("/error/404");
     }
 
     @Test
-    void returnsNotFound_whenImageStreamIsMissing() {
+    void setsInternalServerError_whenImageStreamIsMissing() {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -110,12 +111,12 @@ class ImageServletTest {
             servlet.doGet(request, response);
 
             verify(imageService).getImage(imageId);
-            verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+            verify(response).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     @Test
-    void returnsInternalServerError_whenStreamingFails() {
+    void setsInternalServerError_whenStreamingFails() {
         // Arrange
         final UUID imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG, "test.jpg");
@@ -183,6 +184,32 @@ class ImageServletTest {
             verify(response, never()).setStatus(HttpServletResponse.SC_NOT_FOUND);
             verify(response, never()).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Test
+    void setsInternalServerError_whenRedirectToNotFoundPageFails() throws IOException {
+        // Arrange
+        final var imageService = mock(ImageService.class);
+        final var servlet = new ImageServlet(imageService);
+
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+
+        final var pathInfo = "/images/invalid.jpg";
+        when(request.getPathInfo()).thenReturn(pathInfo);
+
+        doThrow(new IOException("Redirect failed"))
+                .when(response).sendRedirect("/error/404");
+
+        try (MockedStatic<ImageUtil> mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
+            mockedStatic.when(() -> ImageUtil.extractImageIdFromUrl(pathInfo)).thenReturn(null);
+
+            // Act
+            servlet.doGet(request, response);
+        }
+
+        // Assert
+        verify(response).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
 }
