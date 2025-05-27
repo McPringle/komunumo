@@ -39,13 +39,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.Locale;
 
 /**
- * An abstract class which sets up Spring, Karibu-Testing and your app.
- * The easiest way to use this class in your tests is having your test class to extend
+ * An abstract class which sets up Spring, Karibu-Testing and our app.
+ * The easiest way to use this class in our tests is having our test class to extend
  * this class.
  */
 @SpringBootTest
 @DirtiesContext
-public abstract class KaribuTestBase {
+public abstract class IntegrationTest {
 
     @RegisterExtension
     protected static final @NotNull GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)

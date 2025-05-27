@@ -27,6 +27,7 @@ import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -178,6 +179,15 @@ class ArchitectureTest {
                 .accessClassesThat()
                 .resideInAnyPackage("org.hamcrest..")
                 .because("Hamcrest matchers should not be used");
+        rule.check(onlyTests);
+    }
+
+    @Test
+    void onlyIntegrationTestShouldUseSpringBootTest() {
+        ArchRule rule = noClasses()
+                .that().doNotHaveSimpleName("IntegrationTest")
+                .should().beAnnotatedWith(SpringBootTest.class);
+
         rule.check(onlyTests);
     }
 

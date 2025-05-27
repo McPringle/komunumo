@@ -17,6 +17,7 @@
  */
 package app.komunumo.plugin.demo;
 
+import app.komunumo.ui.IntegrationTest;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -29,8 +30,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-class DemoDataPluginTest {
+class DemoDataPluginTest extends IntegrationTest {
 
     @Autowired
     private ServiceProvider serviceProvider;

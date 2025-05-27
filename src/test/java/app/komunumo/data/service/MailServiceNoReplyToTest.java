@@ -17,13 +17,13 @@
  */
 package app.komunumo.data.service;
 
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
-import app.komunumo.ui.KaribuTestBase;
+import app.komunumo.ui.IntegrationTest;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Locale;
 
@@ -31,10 +31,10 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-@SpringBootTest(properties = {
+@TestPropertySource(properties = {
         "komunumo.mail.replyTo="
 })
-class MailServiceNoReplyToTest extends KaribuTestBase {
+class MailServiceNoReplyToTest extends IntegrationTest {
 
     @Autowired
     private @NotNull MailService mailService;

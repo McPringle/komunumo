@@ -17,16 +17,16 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.dto.ContentType;
+import app.komunumo.data.dto.ImageDto;
+import app.komunumo.ui.IntegrationTest;
+import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import app.komunumo.data.dto.ContentType;
-import app.komunumo.data.dto.ImageDto;
-import app.komunumo.util.ImageUtil;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,9 +36,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mockStatic;
 
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
-class ImageServiceTest {
+class ImageServiceTest extends IntegrationTest {
 
     @Autowired
     private @NotNull ImageService imageService;

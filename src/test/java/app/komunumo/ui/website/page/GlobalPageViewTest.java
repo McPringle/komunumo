@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.website.page;
 
-import app.komunumo.ui.KaribuTestBase;
+import app.komunumo.ui.IntegrationTest;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
@@ -29,7 +29,7 @@ import static app.komunumo.util.TestUtil.findComponent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GlobalPageViewTest extends KaribuTestBase {
+class GlobalPageViewTest extends IntegrationTest {
 
     @Test
     void aboutPage() {

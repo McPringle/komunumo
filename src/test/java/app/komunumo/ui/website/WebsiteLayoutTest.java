@@ -30,7 +30,7 @@ import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import app.komunumo.ui.KaribuTestBase;
+import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.component.NavigationBar;
 import app.komunumo.ui.component.PageHeader;
 import app.komunumo.ui.website.home.HomeView;
@@ -46,7 +46,7 @@ import static app.komunumo.util.TestUtil.findComponents;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class WebsiteLayoutTest extends KaribuTestBase {
+class WebsiteLayoutTest extends IntegrationTest {
 
     private @NotNull WebsiteLayout websiteLayout;
 

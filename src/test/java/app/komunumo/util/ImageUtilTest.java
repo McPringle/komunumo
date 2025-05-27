@@ -20,10 +20,10 @@ package app.komunumo.util;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,8 +35,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
 
-@SpringBootTest
-class ImageUtilTest {
+class ImageUtilTest extends IntegrationTest {
 
     @Autowired
     private @NotNull ImageService imageService;

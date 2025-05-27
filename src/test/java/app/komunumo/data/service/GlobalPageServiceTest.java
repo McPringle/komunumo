@@ -18,10 +18,10 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Locale;
 import java.util.function.Function;
@@ -29,8 +29,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-class GlobalPageServiceTest {
+class GlobalPageServiceTest extends IntegrationTest {
 
     @Autowired
     private @NotNull GlobalPageService globalPageService;

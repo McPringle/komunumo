@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.website.home;
 
-import app.komunumo.ui.KaribuTestBase;
+import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.component.CommunityGrid;
 import app.komunumo.ui.component.EventGrid;
 import com.vaadin.flow.component.UI;
@@ -34,7 +34,7 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HomeViewIT extends KaribuTestBase {
+class HomeViewIT extends IntegrationTest {
 
     @Test
     void homeViewHasTitle() {

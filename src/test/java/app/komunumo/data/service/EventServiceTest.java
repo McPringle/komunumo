@@ -18,15 +18,14 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.EventDto;
+import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-class EventServiceTest {
+class EventServiceTest extends IntegrationTest {
 
     @Autowired
     private @NotNull EventService eventService;
