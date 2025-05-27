@@ -66,7 +66,7 @@ class ImageServletTest {
     }
 
     @Test
-    void returnsNotFound_whenImageIsNotInDatabase() throws IOException {
+    void redirectsTo404Page_whenImageIsNotInDatabase() throws IOException {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -89,7 +89,7 @@ class ImageServletTest {
     }
 
     @Test
-    void setsInternalServerError_whenImageStreamIsMissing() {
+    void redirectsTo500Page_whenImageStreamIsMissing() throws IOException {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -111,12 +111,12 @@ class ImageServletTest {
             servlet.doGet(request, response);
 
             verify(imageService).getImage(imageId);
-            verify(response).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            verify(response).sendRedirect("/error/500");
         }
     }
 
     @Test
-    void setsInternalServerError_whenStreamingFails() {
+    void redirectsTo500Page_whenStreamingFails() throws IOException {
         // Arrange
         final UUID imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG, "test.jpg");
@@ -147,7 +147,7 @@ class ImageServletTest {
             servlet.doGet(request, response);
 
             // Assert
-            verify(response).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            verify(response).sendRedirect("/error/500");
         }
     }
 
@@ -181,13 +181,15 @@ class ImageServletTest {
             verify(response).setContentType("image/jpeg");
             verify(response).setHeader("Cache-Control", "public, max-age=86400");
             verify(inputStream).transferTo(outputStream);
+            verify(response, never()).sendRedirect("/error/404");
+            verify(response, never()).sendRedirect("/error/500");
             verify(response, never()).setStatus(HttpServletResponse.SC_NOT_FOUND);
             verify(response, never()).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
     @Test
-    void setsInternalServerError_whenRedirectToNotFoundPageFails() throws IOException {
+    void setsNotFoundStatus_whenRedirectTo404PageFails() throws IOException {
         // Arrange
         final var imageService = mock(ImageService.class);
         final var servlet = new ImageServlet(imageService);
@@ -209,7 +211,37 @@ class ImageServletTest {
         }
 
         // Assert
-        verify(response).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        verify(response).setStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    void setsInternalServerErrorStatus_whenRedirectTo500PageFails() throws IOException {
+        // Arrange
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var imageService = mock(ImageService.class);
+
+        final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
+        final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG, "test.jpg");
+
+        when(request.getPathInfo()).thenReturn(pathInfo);
+        when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
+
+        doThrow(new IOException("Redirect failed"))
+                .when(response).sendRedirect("/error/500");
+
+        final var servlet = new ImageServlet(imageService);
+
+        // Mock static method: ImageUtil.loadImage(image) → Optional.empty()
+        try (MockedStatic<ImageUtil> mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
+            mockedStatic.when(() -> ImageUtil.loadImage(any())).thenReturn(Optional.empty());
+
+            servlet.doGet(request, response);
+
+            verify(imageService).getImage(imageId);
+            verify(response).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

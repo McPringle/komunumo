@@ -17,13 +17,13 @@
  */
 package app.komunumo.ui.servlets;
 
+import app.komunumo.data.dto.ImageDto;
+import app.komunumo.data.service.ImageService;
+import app.komunumo.util.ImageUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
-import app.komunumo.data.dto.ImageDto;
-import app.komunumo.data.service.ImageService;
-import app.komunumo.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public final class ImageServlet extends HttpServlet {
         final Optional<InputStream> stream = ImageUtil.loadImage(image);
         if (stream.isEmpty()) {
             LOGGER.error("Missing image on server: {}", image.id());
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            redirectToInternalServerErrorPage(request, response);
             return;
         }
 
@@ -76,7 +76,7 @@ public final class ImageServlet extends HttpServlet {
             input.transferTo(response.getOutputStream());
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            redirectToInternalServerErrorPage(request, response);
         }
     }
 
@@ -87,6 +87,17 @@ public final class ImageServlet extends HttpServlet {
             response.sendRedirect("/error/404");
         } catch (final IOException e) {
             LOGGER.error("Redirect to 404 page failed", e);
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
+    }
+
+    private void redirectToInternalServerErrorPage(final @NotNull HttpServletRequest request,
+                                                   final @NotNull HttpServletResponse response) {
+        LOGGER.warn("Internal Server Error handling request: {}", request.getPathInfo());
+        try {
+            response.sendRedirect("/error/500");
+        } catch (final IOException e) {
+            LOGGER.error("Redirect to 500 page failed", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
