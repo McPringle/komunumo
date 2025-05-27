@@ -40,16 +40,19 @@ class DemoDataPluginTest {
 
     @Test
     void createDemoData() {
-        final var communityService = serviceProvider.communityService();
-
-        var communityCount = communityService.getCommunities().size();
-        assertThat(communityCount).isEqualTo(6);
-
+        assertDemoDataCount();
         // should not create new data because it was already executed using the plugin interface
         demoDataPlugin.onApplicationStarted(new DefaultPluginContext(serviceProvider));
+        assertDemoDataCount();
+    }
 
-        communityCount = communityService.getCommunities().size();
-        assertThat(communityCount).isEqualTo(6);
+    private void assertDemoDataCount() {
+        assertThat(serviceProvider.communityService().getCommunityCount())
+                .isEqualTo(6);
+        assertThat(serviceProvider.eventService().getEventCount())
+                .isEqualTo(6);
+        assertThat(serviceProvider.imageService().getImageCount())
+                .isEqualTo(5);
     }
 
     @Test

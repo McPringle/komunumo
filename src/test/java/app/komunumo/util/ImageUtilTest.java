@@ -17,10 +17,13 @@
  */
 package app.komunumo.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
+import app.komunumo.data.service.ImageService;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,7 +35,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
 
+@SpringBootTest
 class ImageUtilTest {
+
+    @Autowired
+    private @NotNull ImageService imageService;
 
     @Test
     void resolveImageUrl() {
@@ -79,7 +86,7 @@ class ImageUtilTest {
         final var emptyStream = ImageUtil.loadImage(imageWithRandomId);
         assertThat(emptyStream).isEmpty();
 
-        final var existingImageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        final var existingImageId = imageService.getImages().getFirst().id();
         final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_JPEG, "c.jpg");
         final var stream = ImageUtil.loadImage(imageWithExistingId);
         assertThat(stream).isNotEmpty();

@@ -76,6 +76,11 @@ public final class ImageService {
                 .fetchOptionalInto(ImageDto.class);
     }
 
+    public List<ImageDto> getImages() {
+        return dsl.selectFrom(IMAGE)
+                .fetchInto(ImageDto.class);
+    }
+
     public int getImageCount() {
         return Optional.ofNullable(
                 dsl.selectCount()

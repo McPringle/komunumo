@@ -42,7 +42,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.UUID;
+import java.util.List;
 
 @Service
 public final class DemoDataPlugin implements KomunumoPlugin {
@@ -65,48 +65,50 @@ public final class DemoDataPlugin implements KomunumoPlugin {
         final var communityService = context.getServiceProvider().communityService();
         final var eventService = context.getServiceProvider().eventService();
 
-        createDemoImages(imageService);
-        createDemoCommunities(communityService);
-        createDemoEvents(eventService);
+        final var images = createDemoImages(imageService);
+        final var communities = createDemoCommunities(communityService, images);
+        createDemoEvents(eventService, images, communities);
 
         LOGGER.info("Demo data created.");
     }
 
-    private void createDemoImages(final @NotNull ImageService imageService) {
+    private List<ImageDto> createDemoImages(final @NotNull ImageService imageService) {
         if (imageService.getImageCount() == 0) {
             for (int i = 1; i <= 5; i++) {
                 final var filename = "demo-background-" + i + ".jpg";
-                final var image = imageService.storeImage(new ImageDto(
-                        generateId(Integer.toString(i)), ContentType.IMAGE_JPEG,
-                        filename));
+                final var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_JPEG, filename));
                 storeDemoImage(image, filename);
             }
         }
+        return imageService.getImages();
     }
 
-    private void createDemoCommunities(final @NotNull CommunityService communityService) {
+    private List<CommunityDto> createDemoCommunities(final @NotNull CommunityService communityService,
+                                       final @NotNull List<ImageDto> images) {
         if (communityService.getCommunityCount() == 0) {
             for (int i = 1; i <= 6; i++) {
-                final var generatedId = generateId(Integer.toString(i));
+                final var imageId = i <= 5 ? images.get(i - 1).id() : null; // demo community 6+ has no image
                 communityService.storeCommunity(new CommunityDto(
-                        generatedId, "@demoGroup" + i, null, null,
-                        "Demo Community " + i, "This is a demo community.",
-                        i <= 5 ? generatedId : null)); // demo community 6+ has no image
+                        null, "@demoGroup" + i, null, null,
+                        "Demo Community " + i, "This is a demo community.", imageId));
             }
         }
+        return communityService.getCommunities();
     }
 
-    private void createDemoEvents(final @NotNull EventService eventService) {
+    private void createDemoEvents(final @NotNull EventService eventService,
+                                  final @NotNull List<ImageDto> images,
+                                  final @NotNull List<CommunityDto> communities) {
         if (eventService.getEventCount() == 0) {
             for (int i = 1; i <= 6; i++) {
-                final var generatedId = generateId(Integer.toString(i));
+                final var communityId = communities.get(i - 1).id();
+                final var imageId = i <= 5 ? images.get(i - 1).id() : null; // demo community 6+ has no image
                 final var beginDate = generateBeginDate(i);
                 final var endDate = beginDate == null ? null : beginDate.plusMinutes(45);
                 eventService.storeEvent(new EventDto(
-                        generatedId, generatedId, null, null,
+                        null, communityId, null, null,
                         "Demo Event " + i, "This is a demo event.", "Online",
-                        beginDate, endDate, i <= 5 ? generatedId : null, // demo community 6+ has no image
-                        "public", "draft"));
+                        beginDate, endDate, imageId, "public", "draft"));
             }
         }
     }
@@ -122,37 +124,6 @@ public final class DemoDataPlugin implements KomunumoPlugin {
         } else {
             return now.plusDays(i);
         }
-    }
-
-    /**
-     * Generates a predictable ID based on a given part.
-     * The ID consists of repeated parts of the input,
-     * formatted to match the standard UUID structure.
-     *
-     * @param part the part to base the ID on
-     * @return an ID with a predictable pattern
-     */
-    private @NotNull UUID generateId(final String part) {
-        // Repeat the part until it reaches at least 32 characters
-        final var hexBuilder = new StringBuilder();
-        while (hexBuilder.length() < 32) {
-            hexBuilder.append(part);
-        }
-
-        // Trim to exactly 32 characters
-        final var hex = hexBuilder.substring(0, 32);
-
-        // Format the string to UUID pattern: 8-4-4-4-12
-        final var idStr = String.format(
-                "%s-%s-%s-%s-%s",
-                hex.substring(0, 8),
-                hex.substring(8, 12),
-                hex.substring(12, 16),
-                hex.substring(16, 20),
-                hex.substring(20, 32)
-        );
-
-        return UUID.fromString(idStr);
     }
 
     @VisibleForTesting

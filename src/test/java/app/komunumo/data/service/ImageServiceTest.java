@@ -76,6 +76,10 @@ class ImageServiceTest {
         assertThat(image.filename()).isEqualTo("test.svg");
         assertThat(imageService.getImageCount()).isEqualTo(6);
 
+        // read all images from the database
+        final var images = imageService.getImages();
+        assertThat(images).contains(image);
+
         // find orphaned images
         final var orphanedImages = imageService.findOrphanedImages();
         assertThat(orphanedImages).hasSize(1);

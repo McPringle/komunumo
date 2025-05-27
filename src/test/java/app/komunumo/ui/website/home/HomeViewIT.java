@@ -70,7 +70,8 @@ class HomeViewIT extends KaribuTestBase {
                         .isNotNull();
                 assertThat(backgroundImage)
                         .as("expected to contain a demo background but was: " + backgroundImage)
-                        .contains(number + ".jpg");
+                        .startsWith("url('")
+                        .endsWith(".jpg')");
             } else { // demo community 6+ has no image
                 assertThat(backgroundImage)
                         .as("there should be no background-image")

@@ -45,6 +45,7 @@ public final class EventWithImageService {
                 .from(EVENT)
                 .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
                 .where(EVENT.END.isNotNull().and(EVENT.END.gt(ZonedDateTime.now(ZoneOffset.UTC))))
+                .orderBy(EVENT.BEGIN.asc())
                 .fetch(rec -> new EventWithImageDto(
                         rec.into(EVENT).into(EventDto.class),
                         rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
