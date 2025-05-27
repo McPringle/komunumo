@@ -18,8 +18,6 @@
 package app.komunumo.ui.website.error;
 
 import app.komunumo.ui.website.WebsiteLayout;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.router.HasErrorParameter;
@@ -28,20 +26,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 
 @Route(value = "error/500", layout = WebsiteLayout.class)
-public final class InternalServerErrorView extends Div implements HasErrorParameter<Exception> {
+public final class InternalServerErrorView extends ErrorView implements HasErrorParameter<Exception> {
 
     @Override
     public int setErrorParameter(final @NotNull BeforeEnterEvent beforeEnterEvent,
                                  final @NotNull ErrorParameter<Exception> errorParameter) {
-        final var ui = beforeEnterEvent.getUI();
-        final var defaultMessage = ui.getTranslation("error.page.internal-server-error");
-        final var customMessage = errorParameter.getException().getMessage();
-
-        final var errorMessage = customMessage == null || customMessage.isBlank()
-                ? defaultMessage
-                : customMessage;
-
-        add(new H2(errorMessage));
+        addErrorMessage(beforeEnterEvent.getUI(), "internal-server-error", errorParameter);
         return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 
