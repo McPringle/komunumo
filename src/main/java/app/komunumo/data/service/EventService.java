@@ -26,9 +26,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static app.komunumo.data.db.tables.Event.EVENT;
 
@@ -71,9 +71,9 @@ public final class EventService {
                 .fetchOptionalInto(EventDto.class);
     }
 
-    public @NotNull Stream<@NotNull EventDto> getEvents() {
+    public @NotNull List<@NotNull EventDto> getEvents() {
         return dsl.selectFrom(EVENT)
-                .fetchStreamInto(EventDto.class);
+                .fetchInto(EventDto.class);
     }
 
     public int getEventCount() {

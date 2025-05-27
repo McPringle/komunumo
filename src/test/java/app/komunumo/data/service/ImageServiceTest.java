@@ -77,7 +77,7 @@ class ImageServiceTest {
         assertThat(imageService.getImageCount()).isEqualTo(6);
 
         // find orphaned images
-        final var orphanedImages = imageService.findOrphanedImages().toList();
+        final var orphanedImages = imageService.findOrphanedImages();
         assertThat(orphanedImages).hasSize(1);
         assertThat(orphanedImages.getFirst()).isEqualTo(image);
 
@@ -107,9 +107,9 @@ class ImageServiceTest {
             assertThat(testee.filename()).isEqualTo("test.webp");
         });
 
-        assertThat(imageService.findOrphanedImages().toList()).containsExactly(image);
+        assertThat(imageService.findOrphanedImages()).containsExactly(image);
         imageService.cleanupOrphanedImages();
-        assertThat(imageService.findOrphanedImages().toList()).isEmpty();
+        assertThat(imageService.findOrphanedImages()).isEmpty();
     }
 
     @Test

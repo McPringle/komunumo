@@ -27,11 +27,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static app.komunumo.data.db.tables.GlobalPage.GLOBAL_PAGE;
 
@@ -83,7 +83,7 @@ public final class GlobalPageService {
         return globalPage;
     }
 
-    public @NotNull Stream<@NotNull GlobalPageDto> getGlobalPages(final @NotNull Locale locale) {
+    public @NotNull List<@NotNull GlobalPageDto> getGlobalPages(final @NotNull Locale locale) {
         final var preferredLanguage = locale.getLanguage().toUpperCase(locale);
         final var fallbackLang = "EN";
 
@@ -100,7 +100,7 @@ public final class GlobalPageService {
                         preferred.language().equals(locale) ? preferred : fallback
         ));
 
-        return pageMap.values().stream();
+        return pageMap.values().stream().toList();
     }
 
     public boolean deleteGlobalPage(final @NotNull GlobalPageDto globalPage) {

@@ -69,7 +69,7 @@ class CommunityServiceTest {
         });
 
         // read all communities from the database
-        final var communities = communityService.getCommunities().toList();
+        final var communities = communityService.getCommunities();
         assertThat(communities).contains(community);
 
         // update the existing community

@@ -38,8 +38,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -69,6 +71,16 @@ class ArchitectureTest {
                 .check(classesWithoutTests);
     }
 
+    @Test
+    void servicesShouldNotReturnStreams() {
+        methods()
+                .that().areDeclaredInClassesThat().resideInAPackage("..data.service..")
+                .and().arePublic()
+                .and().areNotDeclaredIn(Object.class)
+                .should().notHaveRawReturnType(Stream.class)
+                .because("returning Stream from service methods may lead to unclosed JDBC resources")
+                .check(classesWithoutTests);
+    }
 
     @Test
     void dtosShouldBeRecordsOrEnums() {

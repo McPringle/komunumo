@@ -38,7 +38,7 @@ class EventServiceTest {
     @SuppressWarnings("java:S5961")
     void happyCase() {
         // get a community from the database
-        final var community = communityService.getCommunities().findFirst().orElseThrow();
+        final var community = communityService.getCommunities().getFirst();
         final var communityId = community.id();
 
         // store a new event into the database
@@ -86,7 +86,7 @@ class EventServiceTest {
         });
 
         // read all events from the database
-        final var events = eventService.getEvents().toList();
+        final var events = eventService.getEvents();
         assertThat(events).contains(event);
 
         // update the existing event

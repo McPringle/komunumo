@@ -17,14 +17,14 @@
  */
 package app.komunumo.data.service;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jooq.DSLContext;
 import app.komunumo.data.db.Tables;
 import app.komunumo.data.db.tables.records.ImageRecord;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import app.komunumo.util.ImageUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -32,15 +32,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
-import static org.jooq.impl.DSL.selectOne;
 import static app.komunumo.data.db.tables.Community.COMMUNITY;
 import static app.komunumo.data.db.tables.Event.EVENT;
 import static app.komunumo.data.db.tables.Image.IMAGE;
 import static app.komunumo.data.db.tables.User.USER;
+import static org.jooq.impl.DSL.selectOne;
 
 @Service
 public final class ImageService {
@@ -84,7 +84,7 @@ public final class ImageService {
         ).orElse(0);
     }
 
-    public @NotNull Stream<@NotNull ImageDto> findOrphanedImages() {
+    public @NotNull List<@NotNull ImageDto> findOrphanedImages() {
         return dsl.selectFrom(IMAGE)
                 .whereNotExists(
                         selectOne()
@@ -101,7 +101,7 @@ public final class ImageService {
                                 .from(USER)
                                 .where(USER.IMAGE_ID.eq(IMAGE.ID))
                 )
-                .fetchStreamInto(ImageDto.class);
+                .fetchInto(ImageDto.class);
     }
 
     @Scheduled(cron = "0 0 0 * * *")

@@ -26,6 +26,7 @@ public class CommunityGrid extends KomunumoGrid {
     public CommunityGrid(final @NotNull ServiceProvider serviceProvider) {
         super(serviceProvider.communityService()
                 .getCommunities()
+                .stream()
                 .map(community -> mapToCard(serviceProvider, community))
                 .toArray(CommunityCard[]::new));
         addClassName("community-grid");

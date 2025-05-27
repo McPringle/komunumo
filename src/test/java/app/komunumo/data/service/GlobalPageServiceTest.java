@@ -95,7 +95,7 @@ class GlobalPageServiceTest {
 
     @Test
     void getEnglishPagesOnly() {
-        final var pages = globalPageService.getGlobalPages(Locale.ENGLISH).toList();
+        final var pages = globalPageService.getGlobalPages(Locale.ENGLISH);
         assertThat(pages).hasSize(1);
 
         final var about = pages.getFirst();
@@ -110,6 +110,7 @@ class GlobalPageServiceTest {
         try {
             imprint = globalPageService.storeGlobalPage(imprint);
             final var pages = globalPageService.getGlobalPages(Locale.GERMAN)
+                    .stream()
                     .collect(toMap(GlobalPageDto::slot, Function.identity()));
             assertThat(pages).hasSize(2);
             assertThat(pages.keySet()).containsExactlyInAnyOrder("about", "contact");
@@ -129,14 +130,14 @@ class GlobalPageServiceTest {
 
     @Test
     void getSwissGermanPages() {
-        final var pages = globalPageService.getGlobalPages(Locale.forLanguageTag("de-CH")).toList();
+        final var pages = globalPageService.getGlobalPages(Locale.forLanguageTag("de-CH"));
         assertThat(pages).hasSize(1);
         assertThat(pages.getFirst().slot()).isEqualTo("about");
     }
 
     @Test
     void getItalianPagesWithEnglishFallback() {
-        final var pages = globalPageService.getGlobalPages(Locale.ITALIAN).toList();
+        final var pages = globalPageService.getGlobalPages(Locale.ITALIAN);
         assertThat(pages).hasSize(1);
 
         final var about = pages.getFirst();

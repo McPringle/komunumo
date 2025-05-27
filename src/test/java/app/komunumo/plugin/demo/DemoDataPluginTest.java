@@ -42,13 +42,13 @@ class DemoDataPluginTest {
     void createDemoData() {
         final var communityService = serviceProvider.communityService();
 
-        var communityCount = communityService.getCommunities().count();
+        var communityCount = communityService.getCommunities().size();
         assertThat(communityCount).isEqualTo(6);
 
         // should not create new data because it was already executed using the plugin interface
         demoDataPlugin.onApplicationStarted(new DefaultPluginContext(serviceProvider));
 
-        communityCount = communityService.getCommunities().count();
+        communityCount = communityService.getCommunities().size();
         assertThat(communityCount).isEqualTo(6);
     }
 

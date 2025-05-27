@@ -17,18 +17,18 @@
  */
 package app.komunumo.data.service;
 
-import org.jetbrains.annotations.NotNull;
-import org.jooq.DSLContext;
 import app.komunumo.data.db.tables.records.CommunityRecord;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
+import org.jetbrains.annotations.NotNull;
+import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 import static app.komunumo.data.db.tables.Community.COMMUNITY;
 
@@ -69,10 +69,10 @@ public final class CommunityService {
                 .fetchOptionalInto(CommunityDto.class);
     }
 
-    public @NotNull Stream<@NotNull CommunityDto> getCommunities() {
+    public @NotNull List<@NotNull CommunityDto> getCommunities() {
         return dsl.selectFrom(COMMUNITY)
                 .orderBy(COMMUNITY.NAME)
-                .fetchStreamInto(CommunityDto.class);
+                .fetchInto(CommunityDto.class);
     }
 
     public int getCommunityCount() {
