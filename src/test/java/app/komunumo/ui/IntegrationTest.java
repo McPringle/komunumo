@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui;
 
+import app.komunumo.configuration.AppConfig;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
 import com.github.mvysny.kaributesting.v10.spring.MockSpringServlet;
@@ -27,16 +28,24 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import com.vaadin.flow.component.UI;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 /**
  * An abstract class which sets up Spring, Karibu-Testing and our app.
@@ -47,6 +56,8 @@ import java.util.Locale;
 @DirtiesContext
 public abstract class IntegrationTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationTest.class);
+
     @RegisterExtension
     protected static final @NotNull GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
             .withConfiguration(GreenMailConfiguration.aConfig()
@@ -54,11 +65,40 @@ public abstract class IntegrationTest {
             .withPerMethodLifecycle(false);
 
     private static Routes routes;
+    private static Path baseDataDir;
 
     @BeforeAll
     public static void discoverRoutes() {
         Locale.setDefault(Locale.ENGLISH);
         routes = new Routes().autoDiscoverViews("app.komunumo");
+    }
+
+    @BeforeAll
+    public static void initDataDirectory(final @Autowired AppConfig appConfig) {
+        baseDataDir = appConfig.files().basedir();
+        LOGGER.info("Data directory used by tests: '{}'", baseDataDir);
+    }
+
+    @AfterAll
+    public static void cleanUpDataDirectory() throws IOException {
+        if (baseDataDir != null && Files.exists(baseDataDir)) {
+            if (baseDataDir.toString().contains(".komunumo/test")) {
+                if (!Files.exists(baseDataDir)) return;
+                try (final Stream<Path> walk = Files.walk(baseDataDir)) {
+                    walk.sorted(Comparator.reverseOrder())
+                            .forEach(path -> {
+                                try {
+                                    Files.delete(path);
+                                } catch (final IOException e) {
+                                    LOGGER.error("Failed to delete: '{}' - {}", path, e.getMessage());
+                                }
+                            });
+                }
+                LOGGER.info("Test data directory cleaned: '{}'", baseDataDir);
+            } else {
+                LOGGER.warn("Refusing to delete non-test data directory: '{}'", baseDataDir);
+            }
+        }
     }
 
     @Autowired
