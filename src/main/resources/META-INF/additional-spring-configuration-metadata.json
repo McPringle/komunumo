@@ -1,14 +1,19 @@
 {
-  "properties" : [
+  "properties": [
     {
-      "name" : "komunumo.mail.from",
-      "type" : "java.lang.String",
-      "description" : "Sender address shown in outgoing emails (e.g. noreply@example.com)."
+      "name": "komunumo.files.basedir",
+      "type": "java.lang.String",
+      "description": "Base directory for local file storage."
     },
     {
-      "name" : "komunumo.mail.reply-to",
-      "type" : "java.lang.String",
-      "description" : "Optional reply-to address (e.g. `support@example.com`)."
+      "name": "komunumo.mail.from",
+      "type": "java.lang.String",
+      "description": "Sender address shown in outgoing emails (e.g. noreply@example.com)."
+    },
+    {
+      "name": "komunumo.mail.reply-to",
+      "type": "java.lang.String",
+      "description": "Optional reply-to address (e.g. `support@example.com`)."
     }
   ]
 }

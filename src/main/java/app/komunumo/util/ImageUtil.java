@@ -17,9 +17,10 @@
  */
 package app.komunumo.util;
 
+import app.komunumo.configuration.AppConfig;
+import app.komunumo.data.dto.ImageDto;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import app.komunumo.data.dto.ImageDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,11 +36,16 @@ import java.util.regex.Pattern;
 public final class ImageUtil {
 
     private static final @NotNull String IMAGE_URL = "/images";
-    private static final @NotNull String RELATIVE_IMAGE_PATH = ".komunumo/data/uploads/images";
+    private static final @NotNull Path RELATIVE_IMAGE_PATH = Path.of("uploads", "images");
     private static final @NotNull Pattern UUID_EXTRACT_PATTERN = Pattern.compile(
             ".*/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\\.");
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
+    private static Path uploadImagePath;
+
+    public static void initialize(final @NotNull AppConfig appConfig) {
+        uploadImagePath = appConfig.files().basedir().resolve(RELATIVE_IMAGE_PATH);
+    }
 
     public static @Nullable String resolveImageUrl(final @Nullable ImageDto image) {
         if (image == null || image.id() == null) {
@@ -59,11 +65,10 @@ public final class ImageUtil {
         final String id = image.id().toString();
         final String prefix1 = id.substring(0, 2);
         final String prefix2 = id.substring(2, 4);
-        return Path.of(System.getProperty("user.home"),
-                RELATIVE_IMAGE_PATH,
-                prefix1,
-                prefix2,
-                id + image.contentType().getExtension());
+        return uploadImagePath
+                .resolve(prefix1)
+                .resolve(prefix2)
+                .resolve(id + image.contentType().getExtension());
 
     }
 
@@ -99,7 +104,7 @@ public final class ImageUtil {
         final String id = imageId.toString();
         final String prefix1 = id.substring(0, 2);
         final String prefix2 = id.substring(2, 4);
-        final Path targetDir = Path.of(System.getProperty("user.home"), RELATIVE_IMAGE_PATH, prefix1, prefix2);
+        final Path targetDir = uploadImagePath.resolve(prefix1).resolve(prefix2);
         final Path targetFile = targetDir.resolve(id + image.contentType().getExtension());
 
         Files.createDirectories(targetDir);

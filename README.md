@@ -46,6 +46,16 @@ The server runs on port 8080 by default. If you don't like it, change it using a
 KOMUNUMO_PORT=8080
 ```
 
+### File Configuration
+
+| Variable                 | Default                       | Description                            |
+|--------------------------|-------------------------------|----------------------------------------|
+| `KOMUNUMO_FILES_BASEDIR` | `${user.home}/.komunumo/data` | Base directory for local file storage. |
+
+*Komunumo* stores files on the local file system, for example uploaded images. The base directory must be writable by the application and should have sufficient disk space. To ensure data integrity, administrators are strongly advised to include this directory in regular backup routines.
+
+The placeholder `${user.home}` refers to the home directory of the system user running the application.
+
 ### Mail Configuration
 
 *Komunumo* supports sending email notifications. Configuration is done via environment variables using the `KOMUNUMO_MAIL_*` naming scheme.
