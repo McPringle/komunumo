@@ -82,6 +82,32 @@ assertThatThrownBy(() -> service.doSomethingBad())
     .isInstanceOf(IllegalArgumentException.class);
 ```
 
+#### Integration Tests
+
+All **integration** tests must extend the abstract `IntegrationTest` base class. This ensures consistent configuration of the Spring Boot context, dependency injection, and database setup across all integration tests.
+
+Do not annotate integration tests manually with `@SpringBootTest`, `@Transactional`, or other Spring annotations. This is already handled by the base class. The `IntegrationTest` also provides shared utilities and guarantees a controlled test environment.
+
+Example:
+
+```java
+class UserServiceTest extends IntegrationTest {
+
+    @Autowired
+    private UserService userService;
+
+    @Test
+    void shouldReturnUserByEmail() {
+        final var user = userService.findByEmail("demo@example.eu");
+        assertThat(user).isPresent();
+    }
+}
+
+```
+
+> [!WARNING]
+> Integration tests that do not extend `IntegrationTest` may not run correctly or may produce unforeseen errors.
+
 ## Communication
 
 ### Matrix Chat
