@@ -15,27 +15,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.configuration;
+package app.komunumo.data.dto;
 
-import app.komunumo.util.ImageUtil;
-import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.ConstructorBinding;
+import org.jetbrains.annotations.Nullable;
 
-@ConfigurationProperties(prefix = "komunumo")
-public record AppConfig(@NotNull String version,
-                        @NotNull AdminConfig admin,
-                        @NotNull FilesConfig files,
-                        @NotNull MailConfig mail) {
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
-    @ConstructorBinding
-    @SuppressWarnings({"java:S1186", "java:S6207"}) // needed to add the `@ConstructorBinding` annotation
-    public AppConfig { }
-
-    @PostConstruct
-    public void configureUtilityClasses() {
-        ImageUtil.initialize(this);
-    }
-
-}
+public record UserDto(
+        @Nullable UUID id,
+        @Nullable ZonedDateTime created,
+        @Nullable ZonedDateTime updated,
+        @NotNull String profile,
+        @NotNull String email,
+        @NotNull String name,
+        @NotNull String bio,
+        @Nullable UUID imageId,
+        @NotNull UserRole role
+) { }

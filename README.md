@@ -56,6 +56,19 @@ The server runs on port 8080 by default. If you don't like it, change it using a
 KOMUNUMO_PORT=8080
 ```
 
+### Instance Configuration
+
+When starting *Komunumo* for the first time, the system can automatically create an initial instance admin. To enable this, set the following environment variable to the email address of the admin:
+
+```
+KOMUNUMO_ADMIN_EMAIL=admin@example.eu
+```
+
+If no user with the admin role is found in the database, a new instance admin will be created with the email address given.
+
+> [!WARNING]
+> This mechanism only runs once! It will **not** overwrite or recreate users if an admin already exists.
+
 ### File Configuration
 
 | Variable                 | Default                       | Description                            |

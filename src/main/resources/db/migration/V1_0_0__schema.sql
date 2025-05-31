@@ -22,11 +22,14 @@ CREATE TABLE image (
 CREATE TABLE user (
     id VARCHAR(36) NOT NULL,
     created TIMESTAMP NOT NULL,
+    updated TIMESTAMP NOT NULL,
     profile VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL,
     bio TEXT NOT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
+    role VARCHAR(255) NOT NULL DEFAULT 'user',
+    CHECK (role IN ('admin', 'user')),
     PRIMARY KEY (id),
     UNIQUE uk_user_profile (profile),
     CONSTRAINT fk_user_image
