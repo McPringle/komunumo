@@ -15,6 +15,16 @@ With *Komunumo* you can manage your community members (including self-management
 
 We have set ourselves the goal of implementing all important [Meetup](https://www.meetup.com/) functions for communities in *Komunumo*. We strive for full compatibility with the [Fediverse](https://en.wikipedia.org/wiki/Fediverse) to ensure smooth data exchange with [Mastodon](https://en.wikipedia.org/wiki/Mastodon_(social_network)), [Mobilizon](https://en.wikipedia.org/wiki/Mobilizon), and other services using the [ActivityPub](https://en.wikipedia.org/wiki/ActivityPub) protocol.
 
+## Versioning
+
+*Komunumo* follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html). Version numbers are structured as `MAJOR.MINOR.PATCH`:
+
+- **MAJOR** versions introduce incompatible API or data changes,
+- **MINOR** versions add functionality in a backwards-compatible manner,
+- **PATCH** versions include backwards-compatible bug fixes.
+
+This versioning scheme applies to the public API, database schema, and plugin interfaces. We aim to keep upgrades predictable and manageable. Breaking changes, new features, and fixes are documented in the [CHANGELOG.md](./CHANGELOG.md) and in the [release notes](https://github.com/McPringle/komunumo/releases).
+
 ## Contributing
 
 You can find a lot of information on how you can contribute to *Komunumo* in the separate file [CONTRIBUTING.md](CONTRIBUTING.md). A curated list of contributors is available in the file [CONTRIBUTORS.md](CONTRIBUTORS.md).
