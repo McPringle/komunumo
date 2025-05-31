@@ -38,7 +38,7 @@ Questions and Answers: https://github.com/McPringle/komunumo/discussions/categor
 
 The file `application.properties` contains only some default values. To override the default values and to specify other configuration options, just set them as environment variables. The following sections describe all available configuration options. You only need to specify these options if your configuration settings differ from the defaults.
 
-### Server
+### Server Configuration
 
 The server runs on port 8080 by default. If you don't like it, change it using an environment variable:
 
