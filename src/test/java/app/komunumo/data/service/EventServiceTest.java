@@ -18,6 +18,8 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.dto.EventStatus;
+import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -43,7 +45,7 @@ class EventServiceTest extends IntegrationTest {
         // store a new event into the database
         var event = new EventDto(null, communityId, null, null,
                 "Test Event Title", "", "", null, null,
-                null, "public", "draft");
+                null, EventVisibility.PUBLIC, EventStatus.DRAFT);
         event = eventService.storeEvent(event);
         final var eventId = event.id();
         assertThat(eventId).isNotNull().satisfies(testee -> {
@@ -63,8 +65,8 @@ class EventServiceTest extends IntegrationTest {
             assertThat(testee.begin()).isNull();
             assertThat(testee.end()).isNull();
             assertThat(testee.imageId()).isNull();
-            assertThat(testee.visibility()).isEqualTo("public");
-            assertThat(testee.status()).isEqualTo("draft");
+            assertThat(testee.visibility()).isEqualTo(EventVisibility.PUBLIC);
+            assertThat(testee.status()).isEqualTo(EventStatus.DRAFT);
         });
 
         // read the event from the database
@@ -80,8 +82,8 @@ class EventServiceTest extends IntegrationTest {
             assertThat(testee.begin()).isNull();
             assertThat(testee.end()).isNull();
             assertThat(testee.imageId()).isNull();
-            assertThat(testee.visibility()).isEqualTo("public");
-            assertThat(testee.status()).isEqualTo("draft");
+            assertThat(testee.visibility()).isEqualTo(EventVisibility.PUBLIC);
+            assertThat(testee.status()).isEqualTo(EventStatus.DRAFT);
         });
 
         // read all events from the database
@@ -104,8 +106,8 @@ class EventServiceTest extends IntegrationTest {
             assertThat(testee.begin()).isNull();
             assertThat(testee.end()).isNull();
             assertThat(testee.imageId()).isNull();
-            assertThat(testee.visibility()).isEqualTo("public");
-            assertThat(testee.status()).isEqualTo("draft");
+            assertThat(testee.visibility()).isEqualTo(EventVisibility.PUBLIC);
+            assertThat(testee.status()).isEqualTo(EventStatus.DRAFT);
         });
 
         // delete the existing event

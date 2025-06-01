@@ -20,6 +20,8 @@ package app.komunumo.plugin.demo;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.dto.EventStatus;
+import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.EventService;
@@ -108,7 +110,7 @@ public final class DemoDataPlugin implements KomunumoPlugin {
                 eventService.storeEvent(new EventDto(
                         null, communityId, null, null,
                         "Demo Event " + i, "This is a demo event.", "Online",
-                        beginDate, endDate, imageId, "public", "draft"));
+                        beginDate, endDate, imageId, EventVisibility.PUBLIC, EventStatus.PUBLISHED));
             }
         }
     }

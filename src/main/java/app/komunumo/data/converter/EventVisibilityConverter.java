@@ -15,26 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.data.converter;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import app.komunumo.data.dto.EventVisibility;
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
-public record EventDto(
-        @Nullable UUID id,
-        @Nullable UUID communityId,
-        @Nullable ZonedDateTime created,
-        @Nullable ZonedDateTime updated,
-        @NotNull String title,
-        @NotNull String description,
-        @NotNull String location,
-        @Nullable ZonedDateTime begin,
-        @Nullable ZonedDateTime end,
-        @Nullable UUID imageId,
-        @NotNull EventVisibility visibility,
-        @NotNull EventStatus status
-        ) {
+public final class EventVisibilityConverter extends EnumByNameConverter<EventVisibility> {
+    public EventVisibilityConverter() {
+        super(EventVisibility.class);
+    }
 }

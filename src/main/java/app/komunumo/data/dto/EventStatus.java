@@ -17,24 +17,8 @@
  */
 package app.komunumo.data.dto;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
-public record EventDto(
-        @Nullable UUID id,
-        @Nullable UUID communityId,
-        @Nullable ZonedDateTime created,
-        @Nullable ZonedDateTime updated,
-        @NotNull String title,
-        @NotNull String description,
-        @NotNull String location,
-        @Nullable ZonedDateTime begin,
-        @Nullable ZonedDateTime end,
-        @Nullable UUID imageId,
-        @NotNull EventVisibility visibility,
-        @NotNull EventStatus status
-        ) {
+public enum EventStatus {
+    DRAFT,
+    PUBLISHED,
+    CANCELED
 }
