@@ -18,6 +18,8 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.dto.EventStatus;
+import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.data.dto.ImageDto;
 import org.jetbrains.annotations.NotNull;
@@ -41,10 +43,15 @@ public final class EventWithImageService {
     }
 
     public @NotNull List<@NotNull EventWithImageDto> getUpcomingEventsWithImages() {
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
         return dsl.select()
                 .from(EVENT)
                 .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
-                .where(EVENT.END.isNotNull().and(EVENT.END.gt(ZonedDateTime.now(ZoneOffset.UTC))))
+                .where(
+                        EVENT.END.isNotNull()
+                                .and(EVENT.END.gt(now))
+                                .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
+                                .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))
                 .orderBy(EVENT.BEGIN.asc())
                 .fetch(rec -> new EventWithImageDto(
                         rec.into(EVENT).into(EventDto.class),

@@ -18,6 +18,8 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.dto.EventStatus;
+import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +49,14 @@ class EventWithImageServiceTest extends IntegrationTest {
                 .extracting(EventWithImageDto::event)
                 .extracting(EventDto::end)
                 .allSatisfy(endDate -> assertThat(endDate).isAfter(now));
+        assertThat(upcomingEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::visibility)
+                .allSatisfy(visibility -> assertThat(visibility).isEqualTo(EventVisibility.PUBLIC));
+        assertThat(upcomingEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::status)
+                .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
     }
 
 }
