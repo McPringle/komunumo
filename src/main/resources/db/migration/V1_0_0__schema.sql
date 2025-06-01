@@ -28,8 +28,8 @@ CREATE TABLE user (
     name VARCHAR(255) NOT NULL,
     bio TEXT NOT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
-    role VARCHAR(255) NOT NULL DEFAULT 'user',
-    CHECK (role IN ('admin', 'user')),
+    role VARCHAR(255) NOT NULL DEFAULT 'USER',
+    CHECK (role IN ('ADMIN', 'USER')),
     PRIMARY KEY (id),
     UNIQUE uk_user_profile (profile),
     CONSTRAINT fk_user_image
@@ -77,10 +77,10 @@ CREATE TABLE event (
     begin TIMESTAMP DEFAULT NULL,
     end TIMESTAMP DEFAULT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
-    visibility VARCHAR(255) NOT NULL DEFAULT 'public',
-    status VARCHAR(255) NOT NULL DEFAULT 'draft',
-    CHECK (visibility IN ('public', 'private')),
-    CHECK (status IN ('draft', 'published', 'canceled')),
+    visibility VARCHAR(255) NOT NULL DEFAULT 'PUBLIC',
+    status VARCHAR(255) NOT NULL DEFAULT 'DRAFT',
+    CHECK (visibility IN ('PUBLIC', 'PRIVATE')),
+    CHECK (status IN ('DRAFT', 'PUBLISHED', 'CANCELED')),
     PRIMARY KEY (id),
     CONSTRAINT fk_event_community
         FOREIGN KEY (community_id)
