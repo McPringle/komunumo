@@ -14,6 +14,10 @@ For questions and support requests, please use
 
 ## [Unreleased]
 
+### Breaking Changes
+
+**If you have used the snapshot versions of *Komunumo* before the final release of version `1.0.0`, you will need to reset your *Komunumo* database and to empty your *Komunumo* file storage!**
+
 ### Added
 
 - Home page with a list of all upcoming events.
