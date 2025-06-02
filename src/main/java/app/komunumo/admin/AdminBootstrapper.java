@@ -55,7 +55,7 @@ public final class AdminBootstrapper {
         }
 
         final var adminUser = new UserDto(null, null, null,
-                "@admin", adminEmail, "Admin", "", null, UserRole.ADMIN);
+                "@admin", adminEmail, "Admin", "", null, UserRole.ADMIN, null);
         userService.storeUser(adminUser);
         LOGGER.info("Initial admin user created with email: {}", adminEmail);
     }

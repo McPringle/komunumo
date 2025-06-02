@@ -32,5 +32,6 @@ public record UserDto(
         @NotNull String name,
         @NotNull String bio,
         @Nullable UUID imageId,
-        @NotNull UserRole role
+        @NotNull UserRole role,
+        @Nullable String password
 ) { }

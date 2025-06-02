@@ -29,6 +29,7 @@ CREATE TABLE user (
     bio TEXT NOT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
     role VARCHAR(255) NOT NULL DEFAULT 'USER',
+    password VARCHAR(255) DEFAULT NULL,
     CHECK (role IN ('ADMIN', 'USER')),
     PRIMARY KEY (id),
     UNIQUE uk_user_profile (profile),
