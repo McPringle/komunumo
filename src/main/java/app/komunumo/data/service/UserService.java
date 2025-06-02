@@ -72,6 +72,12 @@ public final class UserService {
         ).orElse(0);
     }
 
+    public @NotNull Optional<UserDto> getUserByEmail(final @NotNull String email) {
+        return dsl.selectFrom(USER)
+                .where(USER.EMAIL.eq(email))
+                .fetchOptionalInto(UserDto.class);
+    }
+
     public boolean deleteUser(final @NotNull UserDto user) {
         return dsl.delete(USER)
                 .where(USER.ID.eq(user.id()))

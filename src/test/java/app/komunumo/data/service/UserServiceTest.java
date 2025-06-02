@@ -61,6 +61,20 @@ class UserServiceTest extends IntegrationTest {
 
         assertThat(userService.getAdminCount()).isZero();
 
+        // read user by email
+        testUser = userService.getUserByEmail("test@example.eu").orElseThrow();
+        assertThat(testUser).isNotNull().satisfies(testee -> {
+            assertThat(testee.id()).isEqualTo(testUserId);
+            assertThat(testee.profile()).isEqualTo("@testUser");
+            assertThat(testee.created()).isNotNull();
+            assertThat(testee.updated()).isNotNull();
+            assertThat(testee.updated()).isEqualTo(testee.created());
+            assertThat(testee.name()).isEqualTo("Test User");
+            assertThat(testee.bio()).isEqualTo("Test User Bio");
+            assertThat(testee.imageId()).isNull();
+            assertThat(testee.role()).isEqualTo(UserRole.USER);
+        });
+
         // updating the existing user
         testUser = new UserDto(testUserId, testUser.created(), testUser.updated(), testUser.profile(), testUser.email(),
                 "Test User Modified", testUser.bio(), testUser.imageId(), testUser.role(), testUser.password());
