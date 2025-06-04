@@ -41,38 +41,38 @@ class MailServiceTest extends IntegrationTest {
     @Test
     void getMailTemplateEnglish() {
         final var locale = Locale.ENGLISH;
-        final var mailTemplate = mailService.getMailTemplate(MailTemplateId.USER_LOGIN_CONFIRMATION, locale);
+        final var mailTemplate = mailService.getMailTemplate(MailTemplateId.NEW_PASSWORD, locale);
         assertThat(mailTemplate).isNotEmpty();
-        assertThat(mailTemplate.orElseThrow().subject()).isEqualTo("Your Login Request at Komunumo");
+        assertThat(mailTemplate.orElseThrow().subject()).isEqualTo("Your profile at Komunumo");
     }
 
     @Test
     void getMailTemplateGerman() {
         final var locale = Locale.GERMAN;
-        final var mailTemplate = mailService.getMailTemplate(MailTemplateId.USER_LOGIN_CONFIRMATION, locale);
+        final var mailTemplate = mailService.getMailTemplate(MailTemplateId.NEW_PASSWORD, locale);
         assertThat(mailTemplate).isNotEmpty();
-        assertThat(mailTemplate.orElseThrow().subject()).isEqualTo("Deine Anmeldung bei Komunumo");
+        assertThat(mailTemplate.orElseThrow().subject()).isEqualTo("Dein Profil bei Komunumo");
     }
 
     @Test
     void getMailTemplateSwissGerman() {
         final var locale = Locale.forLanguageTag("de-CH");
-        final var mailTemplate = mailService.getMailTemplate(MailTemplateId.USER_LOGIN_CONFIRMATION, locale);
+        final var mailTemplate = mailService.getMailTemplate(MailTemplateId.NEW_PASSWORD, locale);
         assertThat(mailTemplate).isNotEmpty();
-        assertThat(mailTemplate.orElseThrow().subject()).isEqualTo("Deine Anmeldung bei Komunumo");
+        assertThat(mailTemplate.orElseThrow().subject()).isEqualTo("Dein Profil bei Komunumo");
     }
 
     @Test
     void getMailTemplateItalianFails() {
         final var locale = Locale.ITALIAN;
-        final var mailTemplate = mailService.getMailTemplate(MailTemplateId.USER_LOGIN_CONFIRMATION, locale);
+        final var mailTemplate = mailService.getMailTemplate(MailTemplateId.NEW_PASSWORD, locale);
         assertThat(mailTemplate).isEmpty();
     }
 
     @Test
     void sendMailSuccessWithoutVariables() {
         final var result = mailService.sendMail(
-                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
+                MailTemplateId.NEW_PASSWORD, Locale.ENGLISH, MailFormat.MARKDOWN,
                 null, "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
@@ -84,9 +84,9 @@ class MailServiceTest extends IntegrationTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("Your Login Request at Komunumo");
+                    .isEqualTo("Your profile at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Please click on the following link to log in to Komunumo:\r\n${login_link}");
+                    .isEqualTo("Your new password to log in to Komunumo:\r\n${password}");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -97,7 +97,7 @@ class MailServiceTest extends IntegrationTest {
     @Test
     void sendMailSuccessWithEmptyVariables() {
         final var result = mailService.sendMail(
-                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
+                MailTemplateId.NEW_PASSWORD, Locale.ENGLISH, MailFormat.MARKDOWN,
                 Map.of(), "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
@@ -109,9 +109,9 @@ class MailServiceTest extends IntegrationTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("Your Login Request at Komunumo");
+                    .isEqualTo("Your profile at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Please click on the following link to log in to Komunumo:\r\n${login_link}");
+                    .isEqualTo("Your new password to log in to Komunumo:\r\n${password}");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -122,8 +122,8 @@ class MailServiceTest extends IntegrationTest {
     @Test
     void sendMailSuccessWithVariables() {
         final var result = mailService.sendMail(
-                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
-                Map.of("login_link", "http://localhost/foobar"), "test@komunumo.app");
+                MailTemplateId.NEW_PASSWORD, Locale.ENGLISH, MailFormat.MARKDOWN,
+                Map.of("password", "sEcReT"), "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
             final var receivedMessage = greenMail.getReceivedMessages()[0];
@@ -134,10 +134,9 @@ class MailServiceTest extends IntegrationTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("Your Login Request at Komunumo");
+                    .isEqualTo("Your profile at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Please click on the following link to log in to Komunumo:\r\n" +
-                            "http://localhost/foobar");
+                    .isEqualTo("Your new password to log in to Komunumo:\r\nsEcReT");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -148,8 +147,8 @@ class MailServiceTest extends IntegrationTest {
     @Test
     void sendMailSuccessWithVariablesAsHtml() {
         final var result = mailService.sendMail(
-                MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.HTML,
-                Map.of("login_link", "http://localhost/foobar"), "test@komunumo.app");
+                MailTemplateId.NEW_PASSWORD, Locale.ENGLISH, MailFormat.HTML,
+                Map.of("password", "sEcReT"), "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
             final var receivedMessage = greenMail.getReceivedMessages()[0];
@@ -160,10 +159,9 @@ class MailServiceTest extends IntegrationTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("Your Login Request at Komunumo");
+                    .isEqualTo("Your profile at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("<p>Please click on the following link to log in to Komunumo:<br />\r\n" +
-                            "http://localhost/foobar</p>");
+                    .isEqualTo("<p>Your new password to log in to Komunumo:<br />\r\nsEcReT</p>");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -175,11 +173,11 @@ class MailServiceTest extends IntegrationTest {
     void sendMailWithErrorOnInvalidAddressFormat() {
         try (var logCaptor = LogCaptor.forClass(MailService.class)) {
             final var result = mailService.sendMail(
-                    MailTemplateId.USER_LOGIN_CONFIRMATION, Locale.ENGLISH, MailFormat.MARKDOWN,
+                    MailTemplateId.NEW_PASSWORD, Locale.ENGLISH, MailFormat.MARKDOWN,
                     null, "@@@");
             assertThat(result).isFalse();
             assertThat(logCaptor.getErrorLogs()).containsExactly(
-                    "Unable to send mail with subject 'Your Login Request at Komunumo' to [@@@]: Missing local name");
+                    "Unable to send mail with subject 'Your profile at Komunumo' to [@@@]: Missing local name");
         }
     }
 

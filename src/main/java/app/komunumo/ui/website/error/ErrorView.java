@@ -21,8 +21,10 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.ErrorParameter;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
+@AnonymousAllowed
 public abstract class ErrorView extends Div {
 
     /**

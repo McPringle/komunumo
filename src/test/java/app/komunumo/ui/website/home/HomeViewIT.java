@@ -17,24 +17,42 @@
  */
 package app.komunumo.ui.website.home;
 
+import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.service.SecurityService;
+import app.komunumo.data.service.UserService;
 import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.component.CommunityGrid;
 import app.komunumo.ui.component.EventGrid;
+import app.komunumo.ui.component.NavigationBar;
+import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.router.RouterLink;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 import java.util.Objects;
 
+import static app.komunumo.util.TestUtil.assertContainsExactlyOneRouterLinkOf;
 import static app.komunumo.util.TestUtil.findComponent;
+import static app.komunumo.util.TestUtil.findComponents;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HomeViewIT extends IntegrationTest {
+
+    @Autowired
+    private @NotNull UserService userService;
+
+    @Autowired
+    private @NotNull SecurityService securityService;
 
     @Test
     void homeViewHasTitle() {
@@ -81,6 +99,42 @@ class HomeViewIT extends IntegrationTest {
 
         final var communityGrid = _find(CommunityGrid.class);
         assertThat(communityGrid).isEmpty();
+    }
+
+    @Test
+    void checkLoginLogout() {
+        final var password = securityService.generateRandomPassword();
+        final var encodedPassword = securityService.encodePassword(password);
+        final var testUser = userService.storeUser(new UserDto(null, null, null,
+                "@loginLogoutTest", "login-logout-test@localhost", "Test User", "", null,
+                UserRole.USER, encodedPassword));
+
+        assertThat(securityService.isUserLoggedIn()).isFalse();
+        checkLoginLogoutLink(new Anchor("login", "Login"));
+        login(testUser);
+        assertThat(securityService.isUserLoggedIn()).isTrue();
+        checkLoginLogoutLink(new Anchor("logout", "Logout"));
+        logout();
+        assertThat(securityService.isUserLoggedIn()).isFalse();
+        checkLoginLogoutLink(new Anchor("login", "Login"));
+
+        userService.deleteUser(testUser);
+    }
+
+    private void checkLoginLogoutLink(final @NotNull Anchor loginLogoutLink) {
+        final var uiParent = UI.getCurrent()
+                .getCurrentView()
+                .getParent().orElseThrow()
+                .getParent().orElseThrow();
+        final var websiteLayout = (WebsiteLayout) uiParent;
+
+        final var navigationBar = findComponent(websiteLayout, NavigationBar.class);
+        assertThat(navigationBar).isNotNull();
+        final var routerLinks = findComponents(navigationBar, RouterLink.class);
+        assertContainsExactlyOneRouterLinkOf(routerLinks,
+                new Anchor("", "Overview"),
+                new Anchor("communities", "Communities"),
+                loginLogoutLink);
     }
 
 }

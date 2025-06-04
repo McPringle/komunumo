@@ -15,17 +15,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.ui.website.login;
 
-import org.junit.jupiter.api.Test;
+import app.komunumo.security.SecurityConfig;
+import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 
-import static org.assertj.core.api.Assertions.assertThat;
+@Route(SecurityConfig.LOGIN_URL)
+@AnonymousAllowed
+public class LoginView extends VerticalLayout {
 
-class MailTemplateIdTest {
+    public LoginView() {
+        setSizeFull();
+        setAlignItems(Alignment.CENTER);
+        setJustifyContentMode(JustifyContentMode.CENTER);
 
-    @Test
-    void name() {
-        assertThat(MailTemplateId.NEW_PASSWORD).hasToString("NEW_PASSWORD");
+        var login = new LoginForm();
+        login.setAction(SecurityConfig.LOGIN_URL);
+        add(login);
     }
 
 }

@@ -15,17 +15,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
 
-import org.junit.jupiter.api.Test;
+package app.komunumo.ui.website.login;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import app.komunumo.security.AuthenticatedUser;
+import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.Route;
+import jakarta.annotation.security.PermitAll;
+import org.jetbrains.annotations.NotNull;
 
-class MailTemplateIdTest {
+@Route("logout")
+@PermitAll
+public class LogoutView extends Composite<VerticalLayout> {
 
-    @Test
-    void name() {
-        assertThat(MailTemplateId.NEW_PASSWORD).hasToString("NEW_PASSWORD");
+    public LogoutView(final @NotNull AuthenticatedUser authenticatedUser) {
+        authenticatedUser.logout();
     }
 
 }

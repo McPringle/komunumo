@@ -18,5 +18,5 @@
 package app.komunumo.data.dto;
 
 public enum MailTemplateId {
-    USER_LOGIN_CONFIRMATION
+    NEW_PASSWORD
 }

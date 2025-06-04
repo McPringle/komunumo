@@ -18,8 +18,13 @@
 package app.komunumo.admin;
 
 import app.komunumo.configuration.AppConfig;
+import app.komunumo.data.dto.MailFormat;
+import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.service.MailService;
+import app.komunumo.data.service.SecurityService;
+import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -28,6 +33,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+import java.util.Map;
+
 @Component
 public final class AdminBootstrapper {
 
@@ -35,11 +43,15 @@ public final class AdminBootstrapper {
 
     private final @NotNull String adminEmail;
     private final @NotNull UserService userService;
+    private final @NotNull SecurityService securityService;
+    private final @NotNull MailService mailService;
 
     public AdminBootstrapper(final @NotNull AppConfig appConfig,
-                             final @NotNull UserService userService) {
+                             final @NotNull ServiceProvider serviceProvider) {
         this.adminEmail = appConfig.admin().email();
-        this.userService = userService;
+        this.userService = serviceProvider.userService();
+        this.securityService = serviceProvider.securityService();
+        this.mailService = serviceProvider.mailService();
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -54,9 +66,16 @@ public final class AdminBootstrapper {
             return;
         }
 
+        final var password = securityService.generateRandomPassword();
+        final var passwordHash = securityService.encodePassword(password);
+
         final var adminUser = new UserDto(null, null, null,
-                "@admin", adminEmail, "Admin", "", null, UserRole.ADMIN, null);
+                "@admin", adminEmail, "Admin", "", null, UserRole.ADMIN, passwordHash);
         userService.storeUser(adminUser);
+
+        mailService.sendMail(MailTemplateId.NEW_PASSWORD, Locale.getDefault(), MailFormat.MARKDOWN,
+                Map.of("password", password), adminEmail);
+
         LOGGER.info("Initial admin user created with email: {}", adminEmail);
     }
 

@@ -23,23 +23,37 @@ import org.springframework.stereotype.Component;
 @Component
 public final class ServiceProvider {
 
+    private final @NotNull SecurityService securityService;
     private final @NotNull CommunityService communityService;
     private final @NotNull EventService eventService;
     private final @NotNull GlobalPageService globalPageService;
     private final @NotNull ImageService imageService;
     private final @NotNull EventWithImageService eventWithImageService;
+    private final @NotNull UserService userService;
+    private final @NotNull MailService mailService;
 
-    public ServiceProvider(final @NotNull CommunityService communityService,
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    public ServiceProvider(final @NotNull SecurityService securityService,
+                           final @NotNull CommunityService communityService,
                            final @NotNull GlobalPageService globalPageService,
                            final @NotNull EventService eventService,
                            final @NotNull ImageService imageService,
-                           final @NotNull EventWithImageService eventWithImageService) {
+                           final @NotNull EventWithImageService eventWithImageService,
+                           final @NotNull UserService userService,
+                           final @NotNull MailService mailService) {
         super();
+        this.securityService = securityService;
         this.communityService = communityService;
         this.eventService = eventService;
         this.globalPageService = globalPageService;
         this.imageService = imageService;
         this.eventWithImageService = eventWithImageService;
+        this.userService = userService;
+        this.mailService = mailService;
+    }
+
+    public @NotNull SecurityService securityService() {
+        return securityService;
     }
 
     public @NotNull CommunityService communityService() {
@@ -60,6 +74,14 @@ public final class ServiceProvider {
 
     public @NotNull EventWithImageService eventWithImageService() {
         return eventWithImageService;
+    }
+
+    public @NotNull UserService userService() {
+        return userService;
+    }
+
+    public @NotNull MailService mailService() {
+        return mailService;
     }
 
 }

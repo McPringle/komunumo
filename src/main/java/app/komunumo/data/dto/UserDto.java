@@ -33,5 +33,5 @@ public record UserDto(
         @NotNull String bio,
         @Nullable UUID imageId,
         @NotNull UserRole role,
-        @Nullable String password
+        @Nullable String passwordHash
 ) { }

@@ -77,7 +77,7 @@ class UserServiceTest extends IntegrationTest {
 
         // updating the existing user
         testUser = new UserDto(testUserId, testUser.created(), testUser.updated(), testUser.profile(), testUser.email(),
-                "Test User Modified", testUser.bio(), testUser.imageId(), testUser.role(), testUser.password());
+                "Test User Modified", testUser.bio(), testUser.imageId(), testUser.role(), testUser.passwordHash());
         testUser = userService.storeUser(testUser);
         assertThat(testUser).isNotNull().satisfies(testee -> {
             assertThat(testee.id()).isEqualTo(testUserId);
