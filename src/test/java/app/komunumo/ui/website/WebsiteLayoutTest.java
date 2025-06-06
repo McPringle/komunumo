@@ -89,7 +89,8 @@ class WebsiteLayoutTest extends IntegrationTest {
         final var routerLinks = findComponents(navigationBar, RouterLink.class);
         assertContainsExactlyOneRouterLinkOf(routerLinks,
                 new Anchor("", "Overview"),
-                new Anchor("communities", "Communities"));
+                new Anchor("communities", "Communities"),
+                new Anchor("login", "Login"));
     }
 
     @Test

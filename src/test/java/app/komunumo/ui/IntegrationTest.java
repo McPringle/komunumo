@@ -18,6 +18,10 @@
 package app.komunumo.ui;
 
 import app.komunumo.configuration.AppConfig;
+import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
+import app.komunumo.security.AuthenticatedUser;
+import com.github.mvysny.fakeservlet.FakeRequest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
 import com.github.mvysny.kaributesting.v10.spring.MockSpringServlet;
@@ -26,6 +30,7 @@ import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.server.VaadinServletRequest;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
@@ -38,12 +43,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -104,6 +114,9 @@ public abstract class IntegrationTest {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private AuthenticatedUser authenticatedUser;
+
     @BeforeEach
     public void setup() throws FolderException {
         final Function0<UI> uiFactory = UI::new;
@@ -119,6 +132,46 @@ public abstract class IntegrationTest {
     @AfterEach
     public void tearDown() {
         MockVaadin.tearDown();
+    }
+
+    /**
+     * Logs in a user for integration tests by setting the Spring Security context and
+     * updating the Vaadin mock request accordingly.
+     *
+     * @param user the user to log in
+     */
+    protected void login(final @NotNull UserDto user) {
+        final var roles = List.of(user.role());
+        final var authorities = roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .toList();
+
+        // create a Spring Security user (UserDetails)
+        final var userDetails = new User(user.email(), user.passwordHash(), authorities);
+
+        // create the authentication token
+        final var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // make ViewAccessChecker work
+        final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();
+        request.setUserPrincipalInt(authentication);
+        request.setUserInRole((principal, role) -> roles.contains(UserRole.valueOf(role)));
+
+        UI.getCurrent().getPage().reload();
+    }
+
+    /**
+     * Logout a previously logged-in user.
+     */
+    protected void logout() {
+        if (VaadinServletRequest.getCurrent() != null) {
+            final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();
+            request.setUserPrincipalInt(null);
+            request.setUserInRole((principal, role) -> false);
+        }
+        authenticatedUser.logout();
+        UI.getCurrent().getPage().reload();
     }
 
 }

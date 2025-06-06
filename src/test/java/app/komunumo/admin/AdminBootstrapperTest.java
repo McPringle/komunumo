@@ -22,6 +22,9 @@ import app.komunumo.configuration.AppConfig;
 import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.service.MailService;
+import app.komunumo.data.service.SecurityService;
+import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -39,14 +42,13 @@ class AdminBootstrapperTest {
 
     @Test
     void shouldCreateAdminIfNoneExistsAndEmailIsSet() {
-        final var userService = mock(UserService.class);
-        when(userService.getAdminCount()).thenReturn(0);
+        final var serviceProvider = mockServiceProvider(0);
         final var appConfig = createAppConfig("admin@example.eu");
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
+        final var bootstrapper = new AdminBootstrapper(appConfig, serviceProvider);
         bootstrapper.createInitialAdminIfMissing();
 
-        verify(userService).storeUser(argThat(user ->
+        verify(serviceProvider.userService()).storeUser(argThat(user ->
                 user.email().equals("admin@example.eu") &&
                         user.role() == UserRole.ADMIN &&
                         user.profile().equals("@admin")
@@ -55,26 +57,39 @@ class AdminBootstrapperTest {
 
     @Test
     void shouldSkipCreationIfAdminAlreadyExists() {
-        final var userService = mock(UserService.class);
-        when(userService.getAdminCount()).thenReturn(1);
+        final var serviceProvider = mockServiceProvider(1);
         final var appConfig = createAppConfig("admin@example.eu");
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
+        final var bootstrapper = new AdminBootstrapper(appConfig, serviceProvider);
         bootstrapper.createInitialAdminIfMissing();
 
-        verify(userService, never()).storeUser(any());
+        verify(serviceProvider.userService(), never()).storeUser(any());
     }
 
     @Test
     void shouldSkipCreationIfNoEmailSet() {
-        final var userService = mock(UserService.class);
-        when(userService.getAdminCount()).thenReturn(0);
+        final var serviceProvider = mockServiceProvider(0);
         final var appConfig = createAppConfig("");
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
+        final var bootstrapper = new AdminBootstrapper(appConfig, serviceProvider);
         bootstrapper.createInitialAdminIfMissing();
 
-        verify(userService, never()).storeUser(any());
+        verify(serviceProvider.userService(), never()).storeUser(any());
+    }
+
+    private ServiceProvider mockServiceProvider(final int adminCount) {
+        final var userService = mock(UserService.class);
+        when(userService.getAdminCount()).thenReturn(adminCount);
+        final var securityService = mock(SecurityService.class);
+        when(securityService.generateRandomPassword()).thenReturn("randomPassword");
+        when(securityService.encodePassword("randomPassword")).thenReturn("encodedPassword");
+        final var mailService = mock(MailService.class);
+        when(mailService.sendMail(any(), any(), any(), any(), any())).thenReturn(true);
+        final var serviceProvider = mock(ServiceProvider.class);
+        when(serviceProvider.userService()).thenReturn(userService);
+        when(serviceProvider.securityService()).thenReturn(securityService);
+        when(serviceProvider.mailService()).thenReturn(mailService);
+        return serviceProvider;
     }
 
     private AppConfig createAppConfig(final @NotNull String email) {

@@ -43,7 +43,7 @@ CREATE TABLE user (
     bio TEXT NOT NULL,
     image_id VARCHAR(36) DEFAULT NULL,
     role VARCHAR(255) NOT NULL DEFAULT 'USER',
-    password VARCHAR(255) DEFAULT NULL,
+    password_hash VARCHAR(255) DEFAULT NULL,
     CHECK (role IN ('ADMIN', 'USER')),
     PRIMARY KEY (id),
     UNIQUE uk_user_profile (profile),
@@ -137,8 +137,8 @@ CREATE TABLE global_page (
 -- [jooq ignore start]
 
 INSERT INTO mail_template (id, language, subject, markdown)
-VALUES ('USER_LOGIN_CONFIRMATION','DE','Deine Anmeldung bei Komunumo', 'Bitte klicke auf den folgenden Link, um dich bei Komunumo anzumelden:\n${login_link}'),
-       ('USER_LOGIN_CONFIRMATION','EN','Your Login Request at Komunumo', 'Please click on the following link to log in to Komunumo:\n${login_link}');
+VALUES ('NEW_PASSWORD','DE','Dein Profil bei Komunumo', 'Dein neues Passwort, um dich bei Komunumo anzumelden:\n${password}'),
+       ('NEW_PASSWORD','EN','Your profile at Komunumo', 'Your new password to log in to Komunumo:\n${password}');
 
 INSERT INTO global_page (slot, language, created, updated, title, markdown)
 VALUES

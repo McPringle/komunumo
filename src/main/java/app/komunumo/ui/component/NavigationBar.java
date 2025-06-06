@@ -21,6 +21,8 @@ import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.website.community.CommunityGridView;
 import app.komunumo.ui.website.home.HomeView;
+import app.komunumo.ui.website.login.LoginView;
+import app.komunumo.ui.website.login.LogoutView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Nav;
@@ -41,6 +43,13 @@ public final class NavigationBar extends Nav {
         serviceProvider.globalPageService()
                 .getGlobalPages(locale)
                 .forEach(this::addGlobalPage);
+
+        final var securityService = serviceProvider.securityService();
+        if (securityService.isUserLoggedIn()) {
+            add(new RouterLink(ui.getTranslation("logout.title"), LogoutView.class));
+        } else {
+            add(new RouterLink(ui.getTranslation("login.title"), LoginView.class));
+        }
     }
 
     private void addGlobalPage(final @NotNull GlobalPageDto page) {
