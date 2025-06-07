@@ -23,6 +23,7 @@ For questions and support requests, please use
 - Home page with a list of all upcoming events.
 - Community page with a list of all communities.
 - Storing and retrieving images for communities and events.
+- Cleaning up orphaned images.
 - Demo Plugin to create demo data for tests and new instances.
 - About page with information about the instance.
 - Create instance admin on first start.

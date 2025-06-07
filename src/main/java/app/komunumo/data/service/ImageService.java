@@ -113,7 +113,16 @@ public final class ImageService {
     public void cleanupOrphanedImages() {
         LOGGER.info("Cleaning up orphaned images...");
         findOrphanedImages().forEach(this::deleteImage);
+        ImageUtil.cleanupOrphanedImageFiles(this);
         LOGGER.info("Orphaned images cleaned.");
+    }
+
+    public List<UUID> getAllImageIds() {
+        return dsl.select(IMAGE.ID)
+                .from(IMAGE)
+                .stream()
+                .map(r -> r.get(IMAGE.ID))
+                .toList();
     }
 
     public boolean deleteImage(final @NotNull ImageDto image) {

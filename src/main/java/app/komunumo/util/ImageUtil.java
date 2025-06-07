@@ -19,6 +19,7 @@ package app.komunumo.util;
 
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.ImageDto;
+import app.komunumo.data.service.ImageService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -29,9 +30,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public final class ImageUtil {
 
@@ -111,6 +115,49 @@ public final class ImageUtil {
         Files.move(path, targetFile, StandardCopyOption.REPLACE_EXISTING);
 
         LOGGER.info("Stored image '{}' as '{}'", path.toAbsolutePath(), targetFile.toAbsolutePath());
+    }
+
+    public static void cleanupOrphanedImageFiles(final @NotNull ImageService imageService) {
+        try {
+            final List<UUID> knownImageIds = imageService.getAllImageIds();
+            try (var files = Files.walk(uploadImagePath)) {
+                files
+                        .filter(Files::isRegularFile)
+                        .forEach(path -> {
+                            final var filename = path.getFileName().toString();
+                            final int dotIndex = filename.lastIndexOf('.');
+                            final var uuidPart = filename.substring(0, dotIndex);
+                            try {
+                                final var imageId = UUID.fromString(uuidPart);
+                                if (!knownImageIds.contains(imageId)) {
+                                    Files.delete(path);
+                                    LOGGER.info("Deleted orphaned image file: {}", path);
+                                }
+                            } catch (final @NotNull IllegalArgumentException e) {
+                                LOGGER.warn("Skipping file with invalid UUID: {}", filename);
+                            } catch (final @NotNull IOException e) {
+                                LOGGER.warn("Could not delete file {}: {}", path, e.getMessage());
+                            }
+                        });
+            }
+
+            try (var dirs = Files.walk(uploadImagePath)) {
+                dirs.sorted(Comparator.reverseOrder())
+                        .filter(Files::isDirectory)
+                        .forEach(dir -> {
+                            try (Stream<Path> entries = Files.list(dir)) {
+                                if (entries.findAny().isEmpty()) {
+                                    Files.delete(dir);
+                                    LOGGER.info("Deleted empty directory: {}", dir);
+                                }
+                            } catch (final @NotNull IOException e) {
+                                LOGGER.warn("Could not inspect or delete directory {}: {}", dir, e.getMessage());
+                            }
+                        });
+            }
+        } catch (final @NotNull Exception e) {
+            LOGGER.error("Error while cleaning up orphaned image files: {}", e.getMessage(), e);
+        }
     }
 
     private ImageUtil() {
