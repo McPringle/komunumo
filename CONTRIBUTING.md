@@ -88,14 +88,14 @@ assertThatThrownBy(() -> service.doSomethingBad())
 
 #### Integration Tests
 
-All **integration** tests must extend the abstract `IntegrationTest` base class. This ensures consistent configuration of the Spring Boot context, dependency injection, and database setup across all integration tests.
+All **integration** tests must extend the abstract `IntegrationTest` or `BrowserTest` base class. This ensures consistent configuration of the Spring Boot context, dependency injection, and database setup across all integration tests. Extend from the `IntegrationTest` class for tests that do not require a browser using [Karibu Testing](https://github.com/mvysny/karibu-testing), or from the `BrowserTest` class for tests that need to interact with the UI in a browser environment using [Playwright](https://playwright.dev/).
 
-Do not annotate integration tests manually with `@SpringBootTest`, `@Transactional`, or other Spring annotations. This is already handled by the base class. The `IntegrationTest` also provides shared utilities and guarantees a controlled test environment.
+Do not annotate integration tests manually with `@SpringBootTest`, `@Transactional`, or other Spring annotations. This is already handled by the base class. The base classes also provide shared utilities and guarantees a controlled test environment. All integration test classes should be named with the `IT` suffix to distinguish them from unit tests.
 
 Example:
 
 ```java
-class UserServiceTest extends IntegrationTest {
+class UserServiceIT extends IntegrationTest {
 
     @Autowired
     private UserService userService;
@@ -110,7 +110,7 @@ class UserServiceTest extends IntegrationTest {
 ```
 
 > [!WARNING]
-> Integration tests that do not extend `IntegrationTest` may not run correctly or may produce unforeseen errors.
+> Integration tests that do not extend `IntegrationTest` or `BrowserTest` may not run correctly or may produce unforeseen errors.
 
 ## Communication
 
