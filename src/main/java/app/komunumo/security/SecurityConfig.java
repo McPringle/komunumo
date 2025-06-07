@@ -70,6 +70,12 @@ public class SecurityConfig extends VaadinWebSecurity {
      * bypassing the security filter chain. This is typically used for serving
      * static resources or custom servlets that do not require authentication.</p>
      *
+     * <p>Spring Security does not recommend ignoring request matchers.
+     * However, using authorizeHttpRequests(...).permitAll() before Vaadin's
+     * setLoginView() causes startup exceptions due to the ordering of matchers.</p>
+     *
+     * <p>This customizer is a workaround to avoid conflicts with VaadinWebSecurity.</p>
+     *
      * @return a {@link WebSecurityCustomizer} that excludes specified paths from security
      */
     @Bean

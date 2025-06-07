@@ -42,7 +42,7 @@ import static app.komunumo.data.db.tables.Image.IMAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class UniqueIdGeneratorTest extends IntegrationTest {
+class UniqueIdGeneratorIT extends IntegrationTest {
 
     @Autowired
     private @NotNull DSLContext dsl;

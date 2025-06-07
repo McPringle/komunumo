@@ -26,11 +26,10 @@ import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.plugin.DefaultPluginContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DemoDataPluginTest extends IntegrationTest {
+class DemoDataPluginIT extends IntegrationTest {
 
     @Autowired
     private ServiceProvider serviceProvider;

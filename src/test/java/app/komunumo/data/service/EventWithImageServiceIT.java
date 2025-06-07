@@ -31,7 +31,7 @@ import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EventWithImageServiceTest extends IntegrationTest {
+class EventWithImageServiceIT extends IntegrationTest {
 
     @Autowired
     private @NotNull EventWithImageService eventWithImageService;

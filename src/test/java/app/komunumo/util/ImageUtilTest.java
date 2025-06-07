@@ -17,126 +17,131 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.data.dto.ContentType;
-import app.komunumo.data.dto.ImageDto;
+import app.komunumo.configuration.AppConfig;
+import app.komunumo.configuration.FilesConfig;
 import app.komunumo.data.service.ImageService;
-import app.komunumo.ui.IntegrationTest;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.mockStatic;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-class ImageUtilTest extends IntegrationTest {
+class ImageUtilTest {
 
-    @Autowired
-    private @NotNull ImageService imageService;
+    @TempDir
+    private Path tempDir;
 
-    @Test
-    void resolveImageUrl() {
-        assertThat(ImageUtil.resolveImageUrl(null)).isNull();
+    private Path uploadImagePath;
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG, "a.jpg");
-        assertThat(ImageUtil.resolveImageUrl(imageWithoutId)).isNull();
-
-        final var imageId = UUID.randomUUID();
-        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG, "b.jpg");
-        assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo("/images/" + imageId + ".jpg");
+    @BeforeEach
+    @SuppressWarnings("DataFlowIssue")
+    void setUp() {
+        final var filesConfig = new FilesConfig(tempDir);
+        final var appConfig = new AppConfig(null, null, filesConfig, null);
+        ImageUtil.initialize(appConfig);
+        uploadImagePath = tempDir.resolve("uploads/images");
     }
 
     @Test
-    void resolveImagePath() {
-        assertThat(ImageUtil.resolveImagePath(null)).isNull();
+    void shouldDeleteOrphanedFilesAndEmptyDirectories() throws IOException {
+        final var known = UUID.randomUUID();
+        final var orphan = java.util.UUID.randomUUID();
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG, "a.jpg");
-        assertThat(ImageUtil.resolveImagePath(imageWithoutId)).isNull();
+        final var knownDir = uploadImagePath.resolve(known.toString().substring(0, 2))
+                .resolve(known.toString().substring(2, 4));
+        final var orphanDir = uploadImagePath.resolve(orphan.toString().substring(0, 2))
+                .resolve(orphan.toString().substring(2, 4));
+        Files.createDirectories(knownDir);
+        Files.createDirectories(orphanDir);
 
-        final var imageId = UUID.randomUUID();
-        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG, "b.jpg");
-        final var path = ImageUtil.resolveImagePath(imageWithId);
-        assertThat(path).isNotNull();
-        assertThat(path.toString()).endsWith("/images/" + getSubFolder(imageId) + "/" + imageId + ".jpg");
-    }
+        final var knownFile = knownDir.resolve(known + ".jpg");
+        final var orphanFile = orphanDir.resolve(orphan + ".png");
 
-    private static String getSubFolder(final @NotNull UUID imageId) {
-        final String id = imageId.toString();
-        final String prefix1 = id.substring(0, 2);
-        final String prefix2 = id.substring(2, 4);
-        return prefix1 + "/" + prefix2;
-    }
+        Files.createFile(knownFile);
+        Files.createFile(orphanFile);
 
-    @Test
-    void loadImage() {
-        assertThat(ImageUtil.loadImage(null)).isEmpty();
+        final var imageService = mock(ImageService.class);
+        when(imageService.getAllImageIds()).thenReturn(List.of(UUID.fromString(known.toString())));
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG, "a.jpg");
-        assertThat(ImageUtil.loadImage(imageWithoutId)).isEmpty();
+        ImageUtil.cleanupOrphanedImageFiles(imageService);
 
-        final var randomImageId = UUID.randomUUID();
-        final var imageWithRandomId = new ImageDto(randomImageId, ContentType.IMAGE_JPEG, "b.jpg");
-        final var emptyStream = ImageUtil.loadImage(imageWithRandomId);
-        assertThat(emptyStream).isEmpty();
-
-        final var existingImageId = imageService.getImages().getFirst().id();
-        final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_JPEG, "c.jpg");
-        final var stream = ImageUtil.loadImage(imageWithExistingId);
-        assertThat(stream).isNotEmpty();
+        assertThat(Files.exists(knownFile)).isTrue();
+        assertThat(Files.exists(orphanFile)).isFalse();
+        assertThat(Files.exists(orphanDir)).isFalse(); // has been emptied → deleted
+        assertThat(Files.exists(knownDir)).isTrue();   // contains known file → remains
     }
 
     @Test
-    @SuppressWarnings("resource")
-    void loadImageWithException() {
-        // Arrange
-        final var image = new ImageDto(
-                UUID.fromString("11111111-1111-1111-1111-111111111111"),
-                ContentType.IMAGE_JPEG,
-                "broken.jpg"
-        );
+    void shouldSkipInvalidUuidFilenames() throws IOException {
+        final var dir = Files.createDirectories(uploadImagePath.resolve("xx/yy"));
+        final var file = dir.resolve("not-a-uuid.jpg");
+        Files.createFile(file);
 
-        final var path = Path.of("/fake/path.jpg");
+        final var imageService = mock(ImageService.class);
+        when(imageService.getAllImageIds()).thenReturn(List.of());
 
-        // Mock resolveImagePath(...) to return the fake path
-        try (var mockedImageUtil = mockStatic(ImageUtil.class, CALLS_REAL_METHODS);
-             var mockedFiles = mockStatic(Files.class)) {
+        ImageUtil.cleanupOrphanedImageFiles(imageService);
 
-            mockedImageUtil.when(() -> ImageUtil.resolveImagePath(image)).thenReturn(path);
-            mockedFiles.when(() -> Files.exists(path)).thenReturn(true);
-            mockedFiles.when(() -> Files.newInputStream(path)).thenThrow(new IOException("simulated failure"));
-
-            // Act
-            var result = ImageUtil.loadImage(image);
-
-            // Assert
-            assertThat(result).isEmpty();
-        }
+        assertThat(Files.exists(file)).isTrue(); // file name is not a UUID → remains
     }
 
     @Test
-    void extractImageIdFromUrl() {
-        assertThat(ImageUtil.extractImageIdFromUrl("")).isNull();
-        assertThat(ImageUtil.extractImageIdFromUrl(" ")).isNull();
-        assertThat(ImageUtil.extractImageIdFromUrl("/images/test.jpg")).isNull();
-        assertThat(ImageUtil.extractImageIdFromUrl("/images/11111111-1111-1111-1111-111111111111.jpg"))
-                .isEqualTo(UUID.fromString("11111111-1111-1111-1111-111111111111"));
-        assertThat(ImageUtil.extractImageIdFromUrl("/images/afc3478d-2c92-41b5-b89f-2a9111d79c73.jpg"))
-                .isEqualTo(UUID.fromString("afc3478d-2c92-41b5-b89f-2a9111d79c73"));
+    void shouldHandleDeleteFileIOException() throws IOException {
+        final var uuid = UUID.randomUUID();
+        final var dir = Files.createDirectories(uploadImagePath
+                .resolve(uuid.toString().substring(0, 2))
+                .resolve(uuid.toString().substring(2, 4)));
+        final var file = dir.resolve(uuid + ".jpg");
+        Files.createFile(file);
+
+        final var imageService = mock(ImageService.class);
+        when(imageService.getAllImageIds()).thenReturn(List.of());
+
+        var spy = Mockito.mockStatic(Files.class, Mockito.CALLS_REAL_METHODS);
+        spy.when(() -> Files.delete(Mockito.eq(file)))
+                .thenThrow(new IOException("Mocked delete failure"));
+
+        assertThatCode(() -> ImageUtil.cleanupOrphanedImageFiles(imageService))
+                .doesNotThrowAnyException();
+
+        spy.close();
     }
 
     @Test
-    void storeImageWithException() {
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG, "a.jpg");
-        final var testPath = Path.of(".");
-        assertThatThrownBy(() -> ImageUtil.storeImage(imageWithoutId, testPath))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("ImageDto must have an ID!");
+    void shouldHandleUnreadableDirectory() throws IOException {
+        final var dir = Files.createDirectories(uploadImagePath.resolve("unreadable"));
+        Files.createFile(dir.resolve(UUID.randomUUID() + ".jpg"));
+
+        final var imageService = mock(ImageService.class);
+        when(imageService.getAllImageIds()).thenReturn(List.of());
+
+        var spy = Mockito.mockStatic(Files.class, Mockito.CALLS_REAL_METHODS);
+        spy.when(() -> Files.delete(Mockito.eq(dir)))
+                .thenThrow(new IOException("Mocked delete failure"));
+
+        assertThatCode(() -> ImageUtil.cleanupOrphanedImageFiles(imageService))
+                .doesNotThrowAnyException();
+
+        spy.close();
+    }
+
+    @Test
+    void shouldHandleMissingBaseDirectoryGracefully() {
+        final var imageService = mock(ImageService.class);
+        when(imageService.getAllImageIds()).thenReturn(List.of());
+
+        assertThatCode(() -> ImageUtil.cleanupOrphanedImageFiles(imageService))
+                .doesNotThrowAnyException();
     }
 
 }
