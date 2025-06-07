@@ -34,19 +34,23 @@ A commit message consists of the following parts:
 - `fix(event): correct date formatting in export fixes #456`
 - `chore: add missing license headers to source files resolves #789`
 
-### Common `type` values:
+#### Common `type` values:
 
-| Type       | Purpose                                             |
-|------------|-----------------------------------------------------|
-| `feat`     | Introduce a new feature                             |
-| `fix`      | Fix a bug                                           |
-| `docs`     | Documentation-only changes                          |
-| `style`    | Code style changes (formatting, missing semicolons) |
-| `refactor` | Code refactoring without functional change          |
-| `test`     | Add or update tests                                 |
-| `chore`    | Maintenance tasks like configs, license, etc.       |
-| `build`    | Changes to the build system or dependencies         |
-| `ci`       | Changes to CI configuration                         |
+| Type       | Purpose                                                               |
+|------------|-----------------------------------------------------------------------|
+| `feat`     | Introduce a new feature                                               |
+| `fix`      | Fix a bug                                                             |
+| `docs`     | Documentation-only changes                                            |
+| `style`    | Code style changes (formatting, whitespace, missing semicolons, etc.) |
+| `refactor` | Code refactoring without functional change                            |
+| `perf`     | Improve performance without changing features or behavior             |
+| `test`     | Add or update tests                                                   |
+| `build`    | Changes to the build system, packaging or dependencies (e.g. Maven)   |
+| `ci`       | Changes to CI/CD configuration (e.g. GitHub Actions, Woodpecker)      |
+| `chore`    | Maintenance tasks (configs, license, release meta, etc.)              |
+| `revert`   | Revert a previous commit                                              |
+| `deps`     | Add, update, or remove dependencies                                   |
+| `security` | Address security issues or vulnerabilities                            |
 
 > [!TIP]
 > For more information, see [conventionalcommits.org](https://www.conventionalcommits.org/)
