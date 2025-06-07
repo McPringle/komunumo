@@ -34,7 +34,7 @@ import static org.awaitility.Awaitility.await;
 @TestPropertySource(properties = {
         "komunumo.mail.replyTo="
 })
-class MailServiceNoReplyToTest extends IntegrationTest {
+class MailServiceNoReplyToIT extends IntegrationTest {
 
     @Autowired
     private @NotNull MailService mailService;

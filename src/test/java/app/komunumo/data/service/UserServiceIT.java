@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserServiceTest extends IntegrationTest {
+class UserServiceIT extends IntegrationTest {
 
     @Autowired
     private @NotNull UserService userService;

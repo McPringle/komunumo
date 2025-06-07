@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mockStatic;
 
-class ImageUtilTest extends IntegrationTest {
+class ImageUtilIT extends IntegrationTest {
 
     @Autowired
     private @NotNull ImageService imageService;

@@ -28,7 +28,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class LoginFlowTest extends BrowserTest {
+class LoginFlowIT extends BrowserTest {
 
     private UserDto testUser;
 

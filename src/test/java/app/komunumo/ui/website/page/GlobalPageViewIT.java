@@ -29,7 +29,7 @@ import static app.komunumo.util.TestUtil.findComponent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GlobalPageViewTest extends IntegrationTest {
+class GlobalPageViewIT extends IntegrationTest {
 
     @Test
     void aboutPage() {

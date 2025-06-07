@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
-class ImageServiceTest extends IntegrationTest {
+class ImageServiceIT extends IntegrationTest {
 
     @Autowired
     private @NotNull ImageService imageService;

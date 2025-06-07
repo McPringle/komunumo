@@ -28,8 +28,8 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(TranslationProviderTest.TestLocaleConfiguration.class)
-class TranslationProviderTest extends IntegrationTest {
+@Import(TranslationProviderIT.TestLocaleConfiguration.class)
+class TranslationProviderIT extends IntegrationTest {
 
     @Autowired
     private @NotNull TranslationProvider translationProvider;

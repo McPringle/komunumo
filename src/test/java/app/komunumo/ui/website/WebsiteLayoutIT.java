@@ -46,7 +46,7 @@ import static app.komunumo.util.TestUtil.findComponents;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class WebsiteLayoutTest extends IntegrationTest {
+class WebsiteLayoutIT extends IntegrationTest {
 
     private @NotNull WebsiteLayout websiteLayout;
 

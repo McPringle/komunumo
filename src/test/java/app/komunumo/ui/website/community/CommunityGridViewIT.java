@@ -32,7 +32,7 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CommunityGridViewTest extends IntegrationTest {
+class CommunityGridViewIT extends IntegrationTest {
 
     @Test
     void showCommunities() {

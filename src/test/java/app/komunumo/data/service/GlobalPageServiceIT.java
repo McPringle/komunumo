@@ -29,7 +29,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GlobalPageServiceTest extends IntegrationTest {
+class GlobalPageServiceIT extends IntegrationTest {
 
     @Autowired
     private @NotNull GlobalPageService globalPageService;

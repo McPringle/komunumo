@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CommunityServiceTest extends IntegrationTest {
+class CommunityServiceIT extends IntegrationTest {
 
     @Autowired
     private @NotNull CommunityService communityService;

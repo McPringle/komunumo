@@ -33,7 +33,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-class MailServiceTest extends IntegrationTest {
+class MailServiceIT extends IntegrationTest {
 
     @Autowired
     private @NotNull MailService mailService;
