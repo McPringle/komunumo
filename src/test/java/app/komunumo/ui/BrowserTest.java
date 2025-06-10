@@ -49,6 +49,7 @@ public abstract class BrowserTest {
     private static final Path SCREENSHOT_DIR = Path.of("target/playwright-screenshots");
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmssSSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(BrowserTest.class);
+    private static final int PORT = 8081;
 
     private ConfigurableApplicationContext context;
     private Playwright playwright;
@@ -61,7 +62,7 @@ public abstract class BrowserTest {
     @BeforeAll
     void startAppAndBrowser() {
         context = SpringApplication.run(Application.class,
-                "--server.port=8081", "--spring.profiles.active=test");
+                "--server.port=" + PORT, "--spring.profiles.active=test");
         playwright = Playwright.create();
         browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(true));
 
@@ -84,6 +85,18 @@ public abstract class BrowserTest {
     @AfterEach
     void closePage() {
         page.close();
+    }
+
+    /**
+     * <p>Returns the HTTP port on which the Spring Boot application is currently running.</p>
+     *
+     * </p>This is useful for constructing URLs in integration tests that perform real HTTP requests
+     * against the running application (e.g. API endpoint tests).</p>
+     *
+     * @return the configured server port, e.g. {@code 8081}
+     */
+    protected int getPort() {
+        return PORT;
     }
 
     protected Page getPage() {
