@@ -99,6 +99,15 @@ public abstract class BrowserTest {
         return PORT;
     }
 
+    /**
+     * <p>Returns the current Playwright {@link Page} instance used in the test.</p>
+     *
+     * <p>This page is created before each test and closed afterwards.
+     * It can be used to interact with the browser, navigate to URLs,
+     * or assert the presence of elements on the page.</p>
+     *
+     * @return the current {@link Page} instance
+     */
     protected Page getPage() {
         return page;
     }
@@ -142,6 +151,15 @@ public abstract class BrowserTest {
         }
     }
 
+    /**
+     * <p>Asserts that an anchor link with the given {@code href} is visible on the current page.</p>
+     *
+     * <p>This method searches for an {@code <a>} tag with the specified {@code href} attribute
+     * and fails the test if the element is not visible.</p>
+     *
+     * @param href the target {@code href} attribute value (e.g. {@code "/login"})
+     * @throws AssertionError if the element is not found or not visible
+     */
     protected void assertLinkIsVisible(final @NotNull String href) {
         assertThat(page.locator("a[href='%s']".formatted(href)).isVisible()).isTrue();
     }
