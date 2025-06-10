@@ -27,4 +27,5 @@ For questions and support requests, please use
 - Demo Plugin to create demo data for tests and new instances.
 - About page with information about the instance.
 - Create instance admin on first start.
+- Health check endpoint to check the health of the instance.
 - 100% test coverage for the Komunumo app.

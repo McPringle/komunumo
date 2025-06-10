@@ -18,6 +18,10 @@
 package app.komunumo.ui;
 
 import app.komunumo.Application;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
@@ -29,6 +33,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -59,6 +64,12 @@ public abstract class BrowserTest {
     private Path screenshotDir;
     private Page.ScreenshotOptions screenshotOptions;
 
+    @RegisterExtension
+    protected static final @NotNull GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
+            .withConfiguration(GreenMailConfiguration.aConfig()
+                    .withUser("komunumo", "s3cr3t"))
+            .withPerMethodLifecycle(false);
+
     @BeforeAll
     void startAppAndBrowser() {
         context = SpringApplication.run(Application.class,
@@ -78,7 +89,8 @@ public abstract class BrowserTest {
     }
 
     @BeforeEach
-    void openPage() {
+    void openPage() throws FolderException {
+        greenMail.purgeEmailFromAllMailboxes();
         page = browser.newPage();
     }
 

@@ -84,6 +84,7 @@ public class SecurityConfig extends VaadinWebSecurity {
         return web -> web.ignoring()
                 .requestMatchers(
                         "/.well-known/**",
+                        "/actuator/health",
                         "/images/**");
     }
 
