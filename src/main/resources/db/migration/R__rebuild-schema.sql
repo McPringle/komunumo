@@ -144,48 +144,48 @@ INSERT INTO global_page (slot, language, created, updated, title, markdown)
 VALUES
 -- English version
 ('about', 'EN', NOW(), NOW(), 'About',
- '## About
- 
- Organization  
- Firstname Lastname  
- Street and No.  
- ZIP City  
- Country
- 
- E-Mail: [email@example.eu](mailto:email@example.eu)
- 
- Platform of the EU Commission for online dispute resolution:  
- [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
- 
- ---
- 
- For more information about the software used on this website, *Komunumo*, please visit the website: [https://komunumo.app](https://komunumo.app)'),
+'## About
+
+Organization  
+Firstname Lastname  
+Street and No.  
+ZIP City  
+Country
+
+E-Mail: [email@example.eu](mailto:email@example.eu)
+
+Platform of the EU Commission for online dispute resolution:  
+[https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
+
+---
+
+For more information about the software used on this website, *Komunumo*, please visit the website: [https://komunumo.app](https://komunumo.app)'),
 
 -- German version
 ('about', 'DE', NOW(), NOW(), 'Impressum',
- '## Impressum
- 
- **Angaben gemäß § 5 TMG:**
- 
- Organisation  
- Vorname Nachname  
- Strasse und Nr.  
- PLZ Ort  
- Land
- 
- E-Mail: [email@example.eu](mailto:email@example.eu)
- 
- **Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:**  
- Vorname Nachname (Anschrift wie oben)
- 
- Keine Umsatzsteuer-Identifikationsnummer vorhanden.  
- Nicht eingetragen im Handelsregister.
- 
- Plattform der EU-Kommission zur Online-Streitbeilegung:  
- [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
- 
- ---
- 
- Für mehr Informationen über die auf dieser Webseite verwendete Software, *Komunumo*, besuche bitte die Website: [https://komunumo.app](https://komunumo.app)');
+'## Impressum
+
+**Angaben gemäß § 5 TMG:**
+
+Organisation  
+Vorname Nachname  
+Strasse und Nr.  
+PLZ Ort  
+Land
+
+E-Mail: [email@example.eu](mailto:email@example.eu)
+
+**Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:**  
+Vorname Nachname (Anschrift wie oben)
+
+Keine Umsatzsteuer-Identifikationsnummer vorhanden.  
+Nicht eingetragen im Handelsregister.
+
+Plattform der EU-Kommission zur Online-Streitbeilegung:  
+[https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
+
+---
+
+Für mehr Informationen über die auf dieser Webseite verwendete Software, *Komunumo*, besuche bitte die Website: [https://komunumo.app](https://komunumo.app)');
 
 -- [jooq ignore stop]
