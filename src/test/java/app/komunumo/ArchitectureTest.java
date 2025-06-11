@@ -39,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -227,6 +228,39 @@ class ArchitectureTest {
                 }
             }
         }
+    }
+
+    @Test
+    void localeGetLanguageShouldOnlyBeUsedInLocaleUtil() {
+        final var forbiddenMethod = "getLanguage";
+        final var allowedClass = "app.komunumo.util.LocaleUtil";
+
+        final var onlyLocaleUtilMayCallGetLanguage = new ArchCondition<JavaClass>(
+                "only LocaleUtil may call Locale.getLanguage()") {
+            @Override
+            public void check(final @NotNull JavaClass clazz, final @NotNull ConditionEvents events) {
+                if (clazz.getName().equals(allowedClass)) {
+                    return;
+                }
+
+                clazz.getMethodCallsFromSelf().forEach(call -> {
+                    final var target = call.getTarget();
+                    if (target.getOwner().isEquivalentTo(Locale.class)
+                            && target.getName().equals(forbiddenMethod)
+                            && target.getRawParameterTypes().isEmpty()) {
+                        events.add(SimpleConditionEvent.violated(
+                                call,
+                                "Forbidden call to Locale.getLanguage() in class " + clazz.getName() +
+                                        ": use LocaleUtil.getLanguageCode(Locale) instead"));
+                    }
+                });
+            }
+        };
+
+        classes()
+                .should(onlyLocaleUtilMayCallGetLanguage)
+                .because("Locale.getLanguage() should not be used directly – use LocaleUtil.getLanguageCode() instead")
+                .check(allClasses);
     }
 
 }

@@ -21,6 +21,7 @@ import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplate;
 import app.komunumo.data.dto.MailTemplateId;
+import app.komunumo.util.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
@@ -114,10 +115,10 @@ public final class MailService {
 
     public @NotNull Optional<@NotNull MailTemplate> getMailTemplate(final @NotNull MailTemplateId mailTemplateId,
                                                             final @NotNull Locale locale) {
-        final var language = locale.getLanguage().toUpperCase(locale);
+        final var languageCode = LocaleUtil.getLanguageCode(locale);
         return dsl.selectFrom(MAIL_TEMPLATE)
                 .where(MAIL_TEMPLATE.ID.eq(mailTemplateId.name()))
-                .and(MAIL_TEMPLATE.LANGUAGE.eq(language))
+                .and(MAIL_TEMPLATE.LANGUAGE.eq(languageCode))
                 .fetchOptionalInto(MailTemplate.class);
     }
 

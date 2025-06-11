@@ -19,6 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.GlobalPageRecord;
 import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.util.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
@@ -49,10 +50,10 @@ public final class GlobalPageService {
 
     public GlobalPageDto storeGlobalPage(final @NotNull GlobalPageDto globalPage) {
         final var slot = globalPage.slot();
-        final var language = globalPage.language().getLanguage().toUpperCase(globalPage.language());
+        final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());
         final GlobalPageRecord globalPageRecord = dsl.selectFrom(GLOBAL_PAGE)
                 .where(GLOBAL_PAGE.SLOT.eq(slot))
-                .and(GLOBAL_PAGE.LANGUAGE.eq(language))
+                .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode))
                 .fetchOptional()
                 .orElse(dsl.newRecord(GLOBAL_PAGE));
         globalPageRecord.from(globalPage);
@@ -70,13 +71,13 @@ public final class GlobalPageService {
 
     public @NotNull Optional<@NotNull GlobalPageDto> getGlobalPage(final @NotNull String slot,
                                                                    final @NotNull Locale locale) {
-        final var language = locale.getLanguage().toUpperCase(locale);
+        final var languageCode = LocaleUtil.getLanguageCode(locale);
         final var globalPage = dsl.selectFrom(GLOBAL_PAGE)
                 .where(GLOBAL_PAGE.SLOT.eq(slot))
-                .and(GLOBAL_PAGE.LANGUAGE.eq(language))
+                .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode))
                 .fetchOptionalInto(GlobalPageDto.class);
 
-        if (globalPage.isEmpty() && !language.equalsIgnoreCase("en")) {
+        if (globalPage.isEmpty() && !languageCode.equals("EN")) {
             return getGlobalPage(slot, Locale.ENGLISH);
         }
 
@@ -84,12 +85,12 @@ public final class GlobalPageService {
     }
 
     public @NotNull List<@NotNull GlobalPageDto> getGlobalPages(final @NotNull Locale locale) {
-        final var preferredLanguage = locale.getLanguage().toUpperCase(locale);
-        final var fallbackLang = "EN";
+        final var preferredLanguageCode = LocaleUtil.getLanguageCode(locale);
+        final var fallbackLanguageCode = "EN";
 
         // Load all pages in the desired language + fallback language
         final var pages = dsl.selectFrom(GLOBAL_PAGE)
-                .where(GLOBAL_PAGE.LANGUAGE.in(preferredLanguage, fallbackLang))
+                .where(GLOBAL_PAGE.LANGUAGE.in(preferredLanguageCode, fallbackLanguageCode))
                 .fetchStreamInto(GlobalPageDto.class);
 
         // Keep only the page in the desired language per slot, or else fallback
@@ -105,10 +106,10 @@ public final class GlobalPageService {
 
     public boolean deleteGlobalPage(final @NotNull GlobalPageDto globalPage) {
         final var slot = globalPage.slot();
-        final var language = globalPage.language().getLanguage().toUpperCase(globalPage.language());
+        final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());
         return dsl.delete(GLOBAL_PAGE)
                 .where(GLOBAL_PAGE.SLOT.eq(slot))
-                .and(GLOBAL_PAGE.LANGUAGE.eq(language))
+                .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode))
                 .execute() > 0;
     }
 }
