@@ -37,6 +37,7 @@ public abstract class AbstractView extends VerticalLayout implements HasDynamicT
      *                             must not be {@code null}
      */
     protected AbstractView(final @NotNull ConfigurationService configurationService) {
+        super();
         this.configurationService = configurationService;
     }
 

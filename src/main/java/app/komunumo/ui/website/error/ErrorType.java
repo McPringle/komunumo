@@ -15,30 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.ui.website.error;
 
-package app.komunumo.ui.website.login;
-
-import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.security.AuthenticatedUser;
-import app.komunumo.ui.component.AbstractView;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.router.Route;
-import jakarta.annotation.security.PermitAll;
 import org.jetbrains.annotations.NotNull;
 
-@Route("logout")
-@PermitAll
-public final class LogoutView extends AbstractView {
+enum ErrorType {
+        NOT_FOUND("not-found"),
+        INTERNAL_SERVER_ERROR("internal-server-error");
 
-    public LogoutView(final @NotNull ConfigurationService configurationService,
-                      final @NotNull AuthenticatedUser authenticatedUser) {
-        super(configurationService);
-        authenticatedUser.logout();
+        private final @NotNull String translationKey;
+
+        ErrorType(final @NotNull String translationKey) {
+            this.translationKey = translationKey;
+        }
+
+        @NotNull String getTranslationKey() {
+            return translationKey;
+        }
     }
-
-    @Override
-    protected @NotNull String getViewTitle() {
-        return getTranslation(UI.getCurrent().getLocale(), "logout.title");
-    }
-
-}

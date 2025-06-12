@@ -31,6 +31,7 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -99,6 +100,15 @@ class HomeViewIT extends IntegrationTest {
 
         final var communityGrid = _find(CommunityGrid.class);
         assertThat(communityGrid).isEmpty();
+    }
+
+    @Test
+    void checkPageTitle() {
+        final var ui = UI.getCurrent();
+        ui.navigate(HomeView.class);
+        final var view = (HasDynamicTitle) ui.getCurrentView();
+        assertThat(view.getPageTitle())
+                .isEqualTo("Komunumo – Open Source Community Manager");
     }
 
     @Test

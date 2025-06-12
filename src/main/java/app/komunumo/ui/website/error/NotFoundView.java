@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.website.error;
 
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
@@ -29,10 +30,14 @@ import org.jetbrains.annotations.NotNull;
 @Route(value = "error/404", layout = WebsiteLayout.class)
 public final class NotFoundView extends ErrorView implements HasErrorParameter<NotFoundException> {
 
+    public NotFoundView(final @NotNull ConfigurationService configurationService) {
+        super(ErrorType.NOT_FOUND, configurationService);
+    }
+
     @Override
     public int setErrorParameter(final @NotNull BeforeEnterEvent beforeEnterEvent,
                                  final @NotNull ErrorParameter<NotFoundException> errorParameter) {
-        addErrorMessage(beforeEnterEvent.getUI(), "not-found", errorParameter);
+        addErrorMessage(beforeEnterEvent.getUI(), errorParameter);
         return HttpServletResponse.SC_NOT_FOUND;
     }
 

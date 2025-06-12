@@ -17,17 +17,21 @@
  */
 package app.komunumo.ui.website.login;
 
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.security.SecurityConfig;
+import app.komunumo.ui.component.AbstractView;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.LoginForm;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import org.jetbrains.annotations.NotNull;
 
 @Route(SecurityConfig.LOGIN_URL)
 @AnonymousAllowed
-public class LoginView extends VerticalLayout {
+public final class LoginView extends AbstractView {
 
-    public LoginView() {
+    public LoginView(final @NotNull ConfigurationService configurationService) {
+        super(configurationService);
         setSizeFull();
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
@@ -35,6 +39,11 @@ public class LoginView extends VerticalLayout {
         var login = new LoginForm();
         login.setAction(SecurityConfig.LOGIN_URL);
         add(login);
+    }
+
+    @Override
+    protected @NotNull String getViewTitle() {
+        return getTranslation(UI.getCurrent().getLocale(), "login.title");
     }
 
 }

@@ -18,9 +18,9 @@
 package app.komunumo.ui.website.page;
 
 import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.component.AbstractView;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class GlobalPageViewIT extends IntegrationTest {
     void aboutPage() {
         UI.getCurrent().navigate("page/about");
 
-        final var div = _get(Div.class, spec -> spec.withClasses("global-page-view"));
+        final var div = _get(AbstractView.class, spec -> spec.withClasses("global-page-view"));
         final var html = findComponent(div, Html.class);
         assertThat(html).isNotNull();
 

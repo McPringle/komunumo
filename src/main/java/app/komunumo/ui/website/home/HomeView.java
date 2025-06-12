@@ -17,22 +17,39 @@
  */
 package app.komunumo.ui.website.home;
 
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.component.EventGrid;
 import app.komunumo.ui.website.WebsiteLayout;
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.HasDynamicTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_SLOGAN;
+
 @Route(value = "", layout = WebsiteLayout.class)
 @AnonymousAllowed
-public class HomeView extends Div {
+public final class HomeView extends VerticalLayout implements HasDynamicTitle {
+
+    private final transient @NotNull ConfigurationService configurationService;
 
     public HomeView(final @NotNull ServiceProvider serviceProvider) {
         super();
+        this.configurationService = serviceProvider.configurationService();
         setId("home-view");
         add(new EventGrid(serviceProvider.eventWithImageService().getUpcomingEventsWithImages()));
+    }
+
+    @Override
+    public @NotNull String getPageTitle() {
+        final var locale = UI.getCurrent().getLocale();
+        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
+        final var instanceSlogan = configurationService.getConfiguration(INSTANCE_SLOGAN, locale);
+        return "%s – %s".formatted(instanceName, instanceSlogan);
     }
 
 }

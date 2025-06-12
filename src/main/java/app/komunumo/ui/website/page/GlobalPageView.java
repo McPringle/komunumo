@@ -17,11 +17,11 @@
  */
 package app.komunumo.ui.website.page;
 
-import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.component.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.NotFoundException;
@@ -31,21 +31,21 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Locale;
-
 import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;
 
 @Route(value = "page/:slot", layout = WebsiteLayout.class)
 @AnonymousAllowed
-public final class GlobalPageView extends Div implements BeforeEnterObserver {
+public final class GlobalPageView extends AbstractView implements BeforeEnterObserver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalPageView.class);
 
     private final transient @NotNull GlobalPageService globalPageService;
 
-    public GlobalPageView(final @NotNull GlobalPageService globalPageService) {
-        super();
-        this.globalPageService = globalPageService;
+    private @NotNull String pageTitle = "";
+
+    public GlobalPageView(final @NotNull ServiceProvider serviceProvider) {
+        super(serviceProvider.configurationService());
+        this.globalPageService = serviceProvider.globalPageService();
         addClassName("global-page-view");
     }
 
@@ -56,22 +56,19 @@ public final class GlobalPageView extends Div implements BeforeEnterObserver {
         final var ui = beforeEnterEvent.getUI();
         final var locale = ui.getLocale();
 
-        globalPageService.getGlobalPage(slot, locale)
-                .ifPresentOrElse(
-                        this::showPage,
-                        () -> pageNotFound(beforeEnterEvent, slot, locale));
+        globalPageService.getGlobalPage(slot, locale).ifPresentOrElse(globalPage -> {
+            final var html = convertMarkdownToHtml(globalPage.markdown());
+            add(new Html("<div>%s</div>".formatted(html)));
+            pageTitle = globalPage.title();
+        }, () -> {
+            LOGGER.warn("No global page found with slot '{}' and locale '{}'!", slot, locale);
+            beforeEnterEvent.rerouteToError(NotFoundException.class);
+        });
     }
 
-    private void showPage(final @NotNull GlobalPageDto page) {
-        final var html = convertMarkdownToHtml(page.markdown());
-        add(new Html("<div>%s</div>".formatted(html)));
-    }
-
-    private void pageNotFound(final @NotNull BeforeEnterEvent beforeEnterEvent,
-                              final @NotNull String slot,
-                              final @NotNull Locale locale) {
-        LOGGER.warn("No global page found with slot '{}' and locale '{}'!", slot, locale);
-        beforeEnterEvent.rerouteToError(NotFoundException.class);
+    @Override
+    protected @NotNull String getViewTitle() {
+        return pageTitle;
     }
 
 }

@@ -17,24 +17,35 @@
  */
 package app.komunumo.ui.website.error;
 
+import app.komunumo.data.service.ConfigurationService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class InternalServerErrorViewTest {
 
+    private static ConfigurationService configurationService;
+
+    @BeforeAll
+    static void setUp() {
+        configurationService = mock(ConfigurationService.class);
+        when(configurationService.getConfiguration(any(), any())).thenReturn("Komunumo Test");
+    }
+
     @Test
     void showsDefaultMessageWhenNoCustomMessageGiven() {
         // Arrange
-        var view = new InternalServerErrorView();
+        var view = new InternalServerErrorView(configurationService);
 
         var beforeEnterEvent = mock(BeforeEnterEvent.class);
         var ui = InternalServerErrorViewTest.TestUIProvider.mockUiWithTranslation(
@@ -56,7 +67,7 @@ class InternalServerErrorViewTest {
     @Test
     void showsDefaultMessageWhenEmptyCustomMessageProvided() {
         // Arrange
-        var view = new InternalServerErrorView();
+        var view = new InternalServerErrorView(configurationService);
 
         var beforeEnterEvent = mock(BeforeEnterEvent.class);
         var ui = InternalServerErrorViewTest.TestUIProvider.mockUiWithTranslation(
@@ -78,7 +89,7 @@ class InternalServerErrorViewTest {
     @Test
     void showsCustomMessageWhenProvided() {
         // Arrange
-        var view = new InternalServerErrorView();
+        var view = new InternalServerErrorView(configurationService);
 
         var beforeEnterEvent = mock(BeforeEnterEvent.class);
         var ui = InternalServerErrorViewTest.TestUIProvider.mockUiWithTranslation(

@@ -17,15 +17,36 @@
  */
 package app.komunumo.ui.website.error;
 
+import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.ui.component.AbstractView;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
 @AnonymousAllowed
-public abstract class ErrorView extends Div {
+abstract class ErrorView extends AbstractView {
+
+    private final @NotNull ErrorType errorType;
+
+    /**
+     * <p>Creates a new view instance with access to the configuration service for
+     * retrieving localized configuration values such as the instance name.</p>
+     *
+     * @param configurationService the configuration service used to resolve the instance name;
+     *                             must not be {@code null}
+     */
+    protected ErrorView(final @NotNull ErrorType errorType,
+                        final @NotNull ConfigurationService configurationService) {
+        super(configurationService);
+        this.errorType = errorType;
+    }
+
+    @Override
+    protected @NotNull String getViewTitle() {
+        return getTranslation(UI.getCurrent().getLocale(), "error.page." + errorType.getTranslationKey());
+    }
 
     /**
      * <p>Adds an error message to the view based on the given translation key and exception.</p>
@@ -34,13 +55,11 @@ public abstract class ErrorView extends Div {
      * Otherwise, a localized fallback message is retrieved using the translation key.</p>
      *
      * @param ui             the current UI instance used for translation
-     * @param translationKey the key suffix used to look up the default error message
      * @param errorParameter the parameter containing the exception that triggered the error
      */
     protected void addErrorMessage(final @NotNull UI ui,
-                                   final @NotNull String translationKey,
                                    final @NotNull ErrorParameter<? extends Exception> errorParameter) {
-        final var defaultMessage = ui.getTranslation("error.page.%s".formatted(translationKey));
+        final var defaultMessage = ui.getTranslation("error.page.%s".formatted(errorType.getTranslationKey()));
         final var customMessage = errorParameter.getException().getMessage();
         final var errorMessage = customMessage == null || customMessage.isBlank()
                 ? defaultMessage

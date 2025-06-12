@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 @Component
 public final class ServiceProvider {
 
+    private final @NotNull ConfigurationService configurationService;
     private final @NotNull SecurityService securityService;
     private final @NotNull CommunityService communityService;
     private final @NotNull EventService eventService;
@@ -33,7 +34,8 @@ public final class ServiceProvider {
     private final @NotNull MailService mailService;
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    public ServiceProvider(final @NotNull SecurityService securityService,
+    public ServiceProvider(final @NotNull ConfigurationService configurationService,
+                           final @NotNull SecurityService securityService,
                            final @NotNull CommunityService communityService,
                            final @NotNull GlobalPageService globalPageService,
                            final @NotNull EventService eventService,
@@ -42,6 +44,7 @@ public final class ServiceProvider {
                            final @NotNull UserService userService,
                            final @NotNull MailService mailService) {
         super();
+        this.configurationService = configurationService;
         this.securityService = securityService;
         this.communityService = communityService;
         this.eventService = eventService;
@@ -50,6 +53,10 @@ public final class ServiceProvider {
         this.eventWithImageService = eventWithImageService;
         this.userService = userService;
         this.mailService = mailService;
+    }
+
+    public @NotNull ConfigurationService configurationService() {
+        return configurationService;
     }
 
     public @NotNull SecurityService securityService() {

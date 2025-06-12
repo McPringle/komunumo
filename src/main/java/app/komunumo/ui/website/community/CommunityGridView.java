@@ -18,21 +18,26 @@
 package app.komunumo.ui.website.community;
 
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.component.AbstractView;
 import app.komunumo.ui.component.CommunityGrid;
 import app.komunumo.ui.website.WebsiteLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
 @Route(value = "communities", layout = WebsiteLayout.class)
 @AnonymousAllowed
-public class CommunityGridView extends HorizontalLayout {
+public final class CommunityGridView extends AbstractView {
 
     public CommunityGridView(final @NotNull ServiceProvider serviceProvider) {
-        super();
+        super(serviceProvider.configurationService());
         setId("community-view");
         add(new CommunityGrid(serviceProvider));
     }
 
+    @Override
+    protected @NotNull String getViewTitle() {
+        return getTranslation(UI.getCurrent().getLocale(), "communities.title");
+    }
 }
