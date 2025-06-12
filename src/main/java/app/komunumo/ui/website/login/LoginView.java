@@ -22,6 +22,7 @@ import app.komunumo.security.SecurityConfig;
 import app.komunumo.ui.component.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,16 @@ public final class LoginView extends AbstractView {
         setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
 
-        var login = new LoginForm();
+        final var locale = UI.getCurrent().getLocale();
+        final var i18n = LoginI18n.createDefault();
+        i18n.getForm().setTitle(getTranslation(locale, "login.title"));
+        i18n.getForm().setUsername(getTranslation(locale, "login.form.email"));
+        i18n.getForm().setPassword(getTranslation(locale, "login.form.password"));
+        i18n.getForm().setSubmit(getTranslation(locale, "login.form.submit"));
+        i18n.getForm().setForgotPassword(getTranslation(locale, "login.form.forgot-password"));
+
+        final var login = new LoginForm();
+        login.setI18n(i18n);
         login.setAction(SecurityConfig.LOGIN_URL);
         add(login);
     }
