@@ -59,7 +59,7 @@ class HomeViewIT extends IntegrationTest {
     void homeViewHasTitle() {
         UI.getCurrent().navigate(HomeView.class);
         assertThat(_get(H1.class).getText()).isEqualTo("Komunumo");
-        assertThat(_get(H2.class).getText()).isEqualTo("Open Source Community Management");
+        assertThat(_get(H2.class).getText()).isEqualTo("Open Source Community Manager");
     }
 
     @Test

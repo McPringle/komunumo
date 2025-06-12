@@ -40,7 +40,7 @@ class PageHeaderTest {
 
     @Test
     void titleWithSubtitle() {
-        final var header = new PageHeader("Komunumo", "Open Source Community Management");
+        final var header = new PageHeader("Komunumo", "Open Source Community Manager");
         assertThat(header.getClassNames()).contains("page-header");
 
         final var h1 = findComponent(header, H1.class);
@@ -49,7 +49,7 @@ class PageHeaderTest {
 
         final var h2 = findComponent(header, H2.class);
         assertThat(h2).isNotNull();
-        assertThat(h2.getText()).isEqualTo("Open Source Community Management");
+        assertThat(h2.getText()).isEqualTo("Open Source Community Manager");
     }
 
 }

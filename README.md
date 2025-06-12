@@ -9,7 +9,7 @@
 
 ## About
 
-You are are community leader? *Komunumo* makes your life a lot easier! Eveything you need to run your community in one place, for free! *Komunumo* is an open source community management software which assists you in all tasks managing a community like a user group or a meetup.
+You are are community leader? *Komunumo* makes your life a lot easier! Eveything you need to run your community in one place, for free! *Komunumo* is an open source community manager software which assists you in all tasks managing a community like a user group or a meetup.
 
 With *Komunumo* you can manage your community members (including self-management), organize events (including registration), send out newsletters, manage your sponsors, and a lot more.
 

@@ -78,7 +78,7 @@ class WebsiteLayoutIT extends IntegrationTest {
 
         final var h2 = findComponent(header, H2.class);
         assertThat(h2).isNotNull();
-        assertThat(h2.getText()).isEqualTo("Open Source Community Management");
+        assertThat(h2.getText()).isEqualTo("Open Source Community Manager");
     }
 
     @Test
