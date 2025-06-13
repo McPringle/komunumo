@@ -21,12 +21,13 @@ package app.komunumo.ui.website.login;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.security.AuthenticatedUser;
 import app.komunumo.ui.component.AbstractView;
+import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import org.jetbrains.annotations.NotNull;
 
-@Route("logout")
+@Route(value = "logout", layout = WebsiteLayout.class)
 @PermitAll
 public final class LogoutView extends AbstractView {
 
