@@ -61,7 +61,7 @@ public final class ImageService {
                 .fetchOptional(Tables.IMAGE, Tables.IMAGE.ID.eq(image.id()))
                 .orElse(dsl.newRecord(Tables.IMAGE));
         imageRecord.from(image);
-        if (imageRecord.getId() == null) {
+        if (imageRecord.getId() == null) { // NOSONAR (false positive: ID may be null for new images)
             imageRecord.setId(idGenerator.getUniqueID(Tables.IMAGE));
         }
         imageRecord.store();

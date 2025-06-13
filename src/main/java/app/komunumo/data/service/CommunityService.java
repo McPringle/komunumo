@@ -49,11 +49,11 @@ public final class CommunityService {
         final CommunityRecord communityRecord = dsl.fetchOptional(COMMUNITY, COMMUNITY.ID.eq(community.id()))
                 .orElse(dsl.newRecord(COMMUNITY));
         communityRecord.from(community);
-        if (communityRecord.getId() == null) {
+        if (communityRecord.getId() == null) { // NOSONAR (false positive: ID may be null for new communities)
             communityRecord.setId(idGenerator.getUniqueID(COMMUNITY));
         }
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        if (communityRecord.getCreated() == null) {
+        if (communityRecord.getCreated() == null) { // NOSONAR (false positive: date may be null for new communities)
             communityRecord.setCreated(now);
             communityRecord.setUpdated(now);
         } else {

@@ -50,12 +50,12 @@ public final class EventService {
                 .orElse(dsl.newRecord(EVENT));
         eventRecord.from(event);
 
-        if (eventRecord.getId() == null) {
+        if (eventRecord.getId() == null) { // NOSONAR (false positive: ID may be null for new events)
             eventRecord.setId(idGenerator.getUniqueID(EVENT));
         }
 
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        if (eventRecord.getCreated() == null) {
+        if (eventRecord.getCreated() == null) { // NOSONAR (false positive: date may be null for new events)
             eventRecord.setCreated(now);
             eventRecord.setUpdated(now);
         } else {

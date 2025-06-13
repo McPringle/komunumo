@@ -58,7 +58,7 @@ public final class GlobalPageService {
                 .orElse(dsl.newRecord(GLOBAL_PAGE));
         globalPageRecord.from(globalPage);
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        if (globalPageRecord.getCreated() == null) {
+        if (globalPageRecord.getCreated() == null) { // NOSONAR (false positive: date may be null for new global pages)
             globalPageRecord.setCreated(now);
             globalPageRecord.setUpdated(now);
         } else {

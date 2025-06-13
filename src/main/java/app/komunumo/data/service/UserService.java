@@ -48,12 +48,12 @@ public final class UserService {
                 .orElse(dsl.newRecord(USER));
         userRecord.from(user);
 
-        if (userRecord.getId() == null) {
+        if (userRecord.getId() == null) { // NOSONAR (false positive: ID may be null for new users)
             userRecord.setId(idGenerator.getUniqueID(USER));
         }
 
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        if (userRecord.getCreated() == null) {
+        if (userRecord.getCreated() == null) { // NOSONAR (false positive: date may be null for new users)
             userRecord.setCreated(now);
             userRecord.setUpdated(now);
         } else {
