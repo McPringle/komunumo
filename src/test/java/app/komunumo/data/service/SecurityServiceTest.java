@@ -54,7 +54,7 @@ class SecurityServiceTest {
     @ValueSource(booleans = {true, false})
     void isUserLoggedInReturnsExpectedValue(final boolean expected) {
         final var authenticatedUser = mock(AuthenticatedUser.class);
-        when(authenticatedUser.isUserLoggedIn()).thenReturn(expected);
+        when(authenticatedUser.isLoggedIn()).thenReturn(expected);
         final var userService = mock(UserService.class);
         final var passwordEncoder = mock(PasswordEncoder.class);
 

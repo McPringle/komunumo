@@ -52,7 +52,7 @@ public final class SecurityService implements UserDetailsService {
     }
 
     public boolean isUserLoggedIn() {
-        return authenticatedUser.isUserLoggedIn();
+        return authenticatedUser.isLoggedIn();
     }
 
     @Override

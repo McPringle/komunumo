@@ -45,7 +45,7 @@ public final class AuthenticatedUser {
                 .flatMap(authentication -> userService.getUserByEmail(authentication.getName()));
     }
 
-    public boolean isUserLoggedIn() {
+    public boolean isLoggedIn() {
         return getLoggedInUser().isPresent();
     }
 
