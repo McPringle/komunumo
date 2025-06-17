@@ -47,11 +47,16 @@ public final class TranslationProvider implements I18NProvider {
     public @NotNull String getTranslation(final @NotNull String key,
                                           final @Nullable Locale locale,
                                           final @NotNull Object... params) {
-        final var effectiveLocale = locale != null ? locale : Locale.getDefault();
+        if (locale == null) {
+            LOGGER.info("No locale set for key '{}', fallback to english", key);
+        }
+        final var effectiveLocale = locale != null ? locale : Locale.ENGLISH;
         try {
             final var bundle = ResourceBundle.getBundle(BUNDLE_PREFIX, effectiveLocale);
             final var value = bundle.getString(key);
-            return params.length > 0 ? MessageFormat.format(value, params) : value;
+            final var translation = params.length > 0 ? MessageFormat.format(value, params) : value;
+            LOGGER.info("Translation for key '{}' in locale '{}' is: {}", key, effectiveLocale, translation);
+            return  translation;
         } catch (final MissingResourceException e) {
             LOGGER.warn("Missing translation for key: {} in locale: {}", key, effectiveLocale, e);
             return "!!" + key + "!!";
