@@ -17,50 +17,31 @@
  */
 package app.komunumo.ui;
 
-import com.vaadin.flow.i18n.I18NProvider;
+import com.vaadin.flow.i18n.DefaultI18NProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 
 @Component
-public final class TranslationProvider implements I18NProvider {
+public final class TranslationProvider extends DefaultI18NProvider {
 
-    public static final @NotNull String BUNDLE_PREFIX = "i18n.messages";
-    private static final @NotNull List<Locale> SUPPORTED_LOCALES = List.of(Locale.ENGLISH, Locale.GERMAN);
-    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(TranslationProvider.class);
+    private static final @NotNull List<Locale> SUPPORTED_LOCALES = List.of(
+            Locale.ENGLISH, Locale.GERMAN);
 
-    @Override
-    public @NotNull List<Locale> getProvidedLocales() {
-        return SUPPORTED_LOCALES;
+    public TranslationProvider() {
+        super(SUPPORTED_LOCALES);
     }
 
     @Override
     public @NotNull String getTranslation(final @NotNull String key,
                                           final @Nullable Locale locale,
                                           final @NotNull Object... params) {
-        if (locale == null) {
-            LOGGER.info("No locale set for key '{}', fallback to english", key);
-        }
         final var effectiveLocale = locale != null ? locale : Locale.ENGLISH;
-        try {
-            final var bundle = ResourceBundle.getBundle(BUNDLE_PREFIX, effectiveLocale);
-            final var value = bundle.getString(key);
-            final var translation = params.length > 0 ? MessageFormat.format(value, params) : value;
-            LOGGER.info("Translation for key '{}' in locale '{}' is: {}", key, effectiveLocale, translation);
-            return  translation;
-        } catch (final MissingResourceException e) {
-            LOGGER.warn("Missing translation for key: {} in locale: {}", key, effectiveLocale, e);
-            return "!!" + key + "!!";
-        }
+        return super.getTranslation(key, effectiveLocale, params);
     }
 
 }

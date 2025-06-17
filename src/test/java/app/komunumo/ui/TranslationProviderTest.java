@@ -17,22 +17,21 @@
  */
 package app.komunumo.ui;
 
-import jakarta.annotation.PostConstruct;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Import;
 
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(TranslationProviderIT.TestLocaleConfiguration.class)
-class TranslationProviderIT extends IntegrationTest {
+class TranslationProviderTest {
 
-    @Autowired
-    private @NotNull TranslationProvider translationProvider;
+    private TranslationProvider translationProvider;
+
+    @BeforeEach
+    void setUp() {
+        this.translationProvider = new TranslationProvider();
+    }
 
     @Test
     void testProviderLocales() {
@@ -81,17 +80,9 @@ class TranslationProviderIT extends IntegrationTest {
     @Test
     void testMissingTranslation() {
         assertThat(translationProvider.getTranslation("test.missing.translation", Locale.ENGLISH))
-                .isEqualTo("!!test.missing.translation!!");
-    }
-
-    @TestConfiguration
-    public static class TestLocaleConfiguration {
-
-        @PostConstruct
-        public void setDefaultLocale() {
-            Locale.setDefault(Locale.ENGLISH);
-        }
-
+                .isEqualTo("!en: test.missing.translation");
+        assertThat(translationProvider.getTranslation("test.missing.translation", Locale.GERMAN))
+                .isEqualTo("!de: test.missing.translation");
     }
 
 }
