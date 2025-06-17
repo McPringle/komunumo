@@ -17,15 +17,15 @@
  */
 package app.komunumo;
 
+import app.komunumo.configuration.AppConfig;
+import app.komunumo.data.service.ImageService;
+import app.komunumo.ui.servlets.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import jakarta.servlet.http.HttpServlet;
 import org.jetbrains.annotations.NotNull;
-import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.service.ImageService;
-import app.komunumo.ui.servlets.ImageServlet;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,8 +33,6 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
-import java.util.Locale;
 
 /**
  * The entry point of the Spring Boot application.
@@ -48,7 +46,6 @@ import java.util.Locale;
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
     public static void main(final @NotNull String... args) {
-        Locale.setDefault(Locale.ENGLISH);
         SpringApplication.run(Application.class, args);
     }
 

@@ -34,6 +34,7 @@ public final class TranslationProvider extends DefaultI18NProvider {
 
     public TranslationProvider() {
         super(SUPPORTED_LOCALES);
+        Locale.setDefault(Locale.ENGLISH);
     }
 
     @Override

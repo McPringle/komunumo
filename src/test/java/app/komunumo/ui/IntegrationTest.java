@@ -79,7 +79,6 @@ public abstract class IntegrationTest {
 
     @BeforeAll
     public static void discoverRoutes() {
-        Locale.setDefault(Locale.ENGLISH);
         routes = new Routes().autoDiscoverViews("app.komunumo");
     }
 
