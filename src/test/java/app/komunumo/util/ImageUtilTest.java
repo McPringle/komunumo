@@ -17,8 +17,10 @@
  */
 package app.komunumo.util;
 
+import app.komunumo.configuration.AdminConfig;
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.configuration.FilesConfig;
+import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.service.ImageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,10 +46,11 @@ class ImageUtilTest {
     private Path uploadImagePath;
 
     @BeforeEach
-    @SuppressWarnings("DataFlowIssue")
     void setUp() {
+        final var adminConfig = new AdminConfig("admin@foo.bar");
         final var filesConfig = new FilesConfig(tempDir);
-        final var appConfig = new AppConfig(null, null, filesConfig, null);
+        final var mailConfig = new MailConfig("noreply@foo.bar", "support@foo.bar");
+        final var appConfig = new AppConfig("0.0.0", adminConfig, filesConfig, mailConfig);
         ImageUtil.initialize(appConfig);
         uploadImagePath = tempDir.resolve("uploads/images");
     }
