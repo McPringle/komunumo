@@ -90,7 +90,7 @@ class WebsiteLayoutIT extends IntegrationTest {
 
         final var anchor = findComponent(footer, Anchor.class);
         assertThat(anchor).isNotNull();
-        assertThat(anchor.getText()).startsWith("Komunumo Version ");
+        assertThat(anchor.getText()).contains("Komunumo · Version");
     }
 
     @Test
