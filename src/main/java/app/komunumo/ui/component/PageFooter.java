@@ -17,9 +17,12 @@
  */
 package app.komunumo.ui.component;
 
-import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Footer;
 import org.jetbrains.annotations.NotNull;
+
+import java.time.Year;
 
 public final class PageFooter extends Footer {
 
@@ -27,8 +30,9 @@ public final class PageFooter extends Footer {
         super();
         addClassName("page-footer");
 
-        final var footerString = "Komunumo Version %s".formatted(version);
-        add(new Text(footerString));
+        final var ui = UI.getCurrent();
+        final var komunumoFooter = ui.getTranslation("komunumo.footer", version, Year.now());
+        add(new Anchor("/page/about", komunumoFooter));
     }
 
 }
