@@ -19,6 +19,7 @@ package app.komunumo.ui.component;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.AnchorTarget;
 import com.vaadin.flow.component.html.Footer;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,7 @@ public final class PageFooter extends Footer {
         addClassName("page-footer");
 
         final var komunumoFooter = ui.getTranslation("komunumo.footer", version, Year.now());
-        add(new Anchor("https://komunumo.app/", komunumoFooter));
+        add(new Anchor("https://komunumo.app/", komunumoFooter, AnchorTarget.BLANK));
     }
 
 }
