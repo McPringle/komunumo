@@ -87,7 +87,10 @@ class WebsiteLayoutIT extends IntegrationTest {
     void testPageFooter() {
         final var footer = findComponent(websiteLayout, Footer.class);
         assertThat(footer).isNotNull();
-        assertThat(footer.getText()).startsWith("Komunumo Version ");
+
+        final var anchor = findComponent(footer, Anchor.class);
+        assertThat(anchor).isNotNull();
+        assertThat(anchor.getText()).startsWith("Komunumo Version ");
     }
 
     @Test
