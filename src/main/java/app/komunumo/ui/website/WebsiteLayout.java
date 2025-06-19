@@ -18,6 +18,9 @@
 package app.komunumo.ui.website;
 
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.component.NavigationBar;
+import app.komunumo.ui.component.PageFooter;
+import app.komunumo.ui.component.PageHeader;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
@@ -25,8 +28,6 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import app.komunumo.ui.component.NavigationBar;
-import app.komunumo.ui.component.PageHeader;
 
 public final class WebsiteLayout extends Div implements RouterLayout {
 
@@ -42,14 +43,23 @@ public final class WebsiteLayout extends Div implements RouterLayout {
 
         main = new Main();
         add(main);
+
+        addFooter(serviceProvider);
     }
 
     private void addPageHeader() {
-        add(new PageHeader(ui.getTranslation("komunumo.title"), ui.getTranslation("komunumo.subtitle")));
+        final var instanceTitle = ui.getTranslation("komunumo.title");
+        final var instanceSubtitle = ui.getTranslation("komunumo.subtitle");
+        add(new PageHeader(instanceTitle, instanceSubtitle));
     }
 
     private void addNavigationBar(final @NotNull ServiceProvider serviceProvider) {
         add(new NavigationBar(serviceProvider));
+    }
+
+    private void addFooter(final @NotNull ServiceProvider serviceProvider) {
+        final var komunumoVersion = serviceProvider.getAppConfig().version();
+        add(new PageFooter(komunumoVersion));
     }
 
     @Override

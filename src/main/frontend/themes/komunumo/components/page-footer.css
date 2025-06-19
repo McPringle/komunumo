@@ -16,18 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "components/page-header.css";
-@import "components/page-footer.css";
-@import "components/navigation-bar.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
-
-@import "components/community-card.css";
-@import "components/community-grid.css";
-@import "components/event-card.css";
-@import "components/event-grid.css";
-
-main {
-    width: calc(100% - 2rem);
+.page-footer {
     padding: 1rem;
+    border-top: 1px solid darkgray;
+    font-style: italic;
+    font-size: var(--lumo-font-size-s);
 }

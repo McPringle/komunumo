@@ -17,9 +17,11 @@
  */
 package app.komunumo.ui.website;
 
+import app.komunumo.ui.component.PageFooter;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
@@ -64,7 +66,7 @@ class WebsiteLayoutIT extends IntegrationTest {
     void testLayoutContent() {
         final var components = websiteLayout.getChildren().toList();
         assertContainsExactlyOneInstanceOf(components,
-                PageHeader.class, NavigationBar.class, Main.class);
+                PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
     }
 
     @Test
@@ -79,6 +81,13 @@ class WebsiteLayoutIT extends IntegrationTest {
         final var h2 = findComponent(header, H2.class);
         assertThat(h2).isNotNull();
         assertThat(h2.getText()).isEqualTo("Open Source Community Manager");
+    }
+
+    @Test
+    void testPageFooter() {
+        final var footer = findComponent(websiteLayout, Footer.class);
+        assertThat(footer).isNotNull();
+        assertThat(footer.getText()).startsWith("Komunumo Version ");
     }
 
     @Test

@@ -17,12 +17,14 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.configuration.AppConfig;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class ServiceProvider {
 
+    private final @NotNull AppConfig appConfig;
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull SecurityService securityService;
     private final @NotNull CommunityService communityService;
@@ -34,7 +36,8 @@ public final class ServiceProvider {
     private final @NotNull MailService mailService;
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    public ServiceProvider(final @NotNull ConfigurationService configurationService,
+    public ServiceProvider(final @NotNull AppConfig appConfig,
+                           final @NotNull ConfigurationService configurationService,
                            final @NotNull SecurityService securityService,
                            final @NotNull CommunityService communityService,
                            final @NotNull GlobalPageService globalPageService,
@@ -44,6 +47,7 @@ public final class ServiceProvider {
                            final @NotNull UserService userService,
                            final @NotNull MailService mailService) {
         super();
+        this.appConfig = appConfig;
         this.configurationService = configurationService;
         this.securityService = securityService;
         this.communityService = communityService;
@@ -53,6 +57,10 @@ public final class ServiceProvider {
         this.eventWithImageService = eventWithImageService;
         this.userService = userService;
         this.mailService = mailService;
+    }
+
+    public @NotNull AppConfig getAppConfig() {
+        return appConfig;
     }
 
     public @NotNull ConfigurationService configurationService() {
