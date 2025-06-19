@@ -6,7 +6,6 @@
     "@polymer/polymer": "3.5.2",
     "@vaadin/bundles": "24.8.0",
     "@vaadin/common-frontend": "0.0.19",
-    "@vaadin/cookie-consent": "24.8.0",
     "@vaadin/polymer-legacy-adapter": "24.8.0",
     "@vaadin/react-components": "24.8.0",
     "@vaadin/vaadin-development-mode-detector": "2.0.7",
@@ -60,15 +59,13 @@
     "date-fns": "$date-fns",
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
-    "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
-    "@vaadin/cookie-consent": "$@vaadin/cookie-consent"
+    "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles"
   },
   "vaadin": {
     "dependencies": {
       "@polymer/polymer": "3.5.2",
       "@vaadin/bundles": "24.8.0",
       "@vaadin/common-frontend": "0.0.19",
-      "@vaadin/cookie-consent": "24.8.0",
       "@vaadin/polymer-legacy-adapter": "24.8.0",
       "@vaadin/react-components": "24.8.0",
       "@vaadin/vaadin-development-mode-detector": "2.0.7",
@@ -105,6 +102,6 @@
       "workbox-core": "7.3.0",
       "workbox-precaching": "7.3.0"
     },
-    "hash": "77cc0805f5254d55eaa0a6801ceeb4338688aa7dc93b37153de514a4d7d6ec94"
+    "hash": "c52a6e710b8052a2f9e89d000adaee1e44f0b890e27472cadeecaaa9b004e38f"
   }
 }
