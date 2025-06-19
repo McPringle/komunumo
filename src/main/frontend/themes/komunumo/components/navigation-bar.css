@@ -17,8 +17,8 @@
  */
 .navigation-bar {
     display: flex;
-    gap: 1em;
-    padding: 1em;
+    gap: var(--lumo-space-m);
+    padding: var(--lumo-space-m);
     background-color: var(--lumo-base-color);
     border-bottom: 1px solid var(--lumo-contrast-10pct);
 }

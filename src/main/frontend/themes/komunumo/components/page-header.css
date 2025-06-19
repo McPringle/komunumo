@@ -17,6 +17,6 @@
  */
 
 .page-header {
-    padding: 1rem;
+    padding: var(--lumo-space-m);
     border-bottom: 1px solid darkgray;
 }

@@ -20,5 +20,5 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    gap: 1rem;
+    gap: var(--lumo-space-m);
 }

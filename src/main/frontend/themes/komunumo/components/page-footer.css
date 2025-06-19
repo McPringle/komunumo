@@ -17,7 +17,7 @@
  */
 
 .page-footer {
-    padding: 1rem;
+    padding: var(--lumo-space-m);
     border-top: 1px solid darkgray;
     cursor: pointer;
     font-style: italic;

@@ -28,6 +28,5 @@
 @import "components/event-grid.css";
 
 main {
-    width: calc(100% - 2rem);
-    padding: 1rem;
+    width: 100%;
 }
