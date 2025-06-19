@@ -26,11 +26,11 @@ import java.time.Year;
 
 public final class PageFooter extends Footer {
 
-    public PageFooter(final @NotNull String version) {
+    public PageFooter(final @NotNull UI ui,
+                      final @NotNull String version) {
         super();
         addClassName("page-footer");
 
-        final var ui = UI.getCurrent();
         final var komunumoFooter = ui.getTranslation("komunumo.footer", version, Year.now());
         add(new Anchor("/page/about", komunumoFooter));
     }

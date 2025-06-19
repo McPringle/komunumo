@@ -59,7 +59,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
 
     private void addFooter(final @NotNull ServiceProvider serviceProvider) {
         final var komunumoVersion = serviceProvider.getAppConfig().version();
-        add(new PageFooter(komunumoVersion));
+        add(new PageFooter(ui, komunumoVersion));
     }
 
     @Override
