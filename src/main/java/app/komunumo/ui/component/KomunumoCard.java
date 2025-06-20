@@ -17,26 +17,58 @@
  */
 package app.komunumo.ui.component;
 
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
+import app.komunumo.data.dto.ImageDto;
+import app.komunumo.util.ImageUtil;
+import com.vaadin.flow.component.card.Card;
+import com.vaadin.flow.component.card.CardVariant;
+import com.vaadin.flow.component.html.Image;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class KomunumoCard extends Div {
+/**
+ * <p>Abstract base class for cards used in Komunumo's UI, based on Vaadin's {@link Card} component.</p>
+ *
+ * <p>Adds common styling and support for a title and optional media content (image).</p>
+ */
+public abstract class KomunumoCard extends Card {
 
-    protected KomunumoCard(final @NotNull String title,
-                           final @Nullable String imageUrl) {
+    /**
+     * <p>Creates a new {@code KomunumoCard} with default styling and no content.</p>
+     *
+     * <p>Applies the CSS class {@code komunumo-card} and the Lumo theme variants:
+     * {@code outlined}, {@code elevated}, and {@code cover-media}.</p>
+     */
+    protected KomunumoCard() {
         super();
         addClassName("komunumo-card");
+        addThemeVariants(CardVariant.LUMO_OUTLINED, CardVariant.LUMO_ELEVATED, CardVariant.LUMO_COVER_MEDIA);
+    }
 
-        if (imageUrl != null) {
-            getStyle().set("background-image", "url('" + imageUrl + "')");
+    /**
+     * <p>Creates a new {@code KomunumoCard} with the given title and optional image.</p>
+     *
+     * @param title the title text to display in the card (used also as {@code alt} text if an image is present); must not be {@code null}
+     * @param image an optional image to display as media content; may be {@code null}
+     */
+    protected KomunumoCard(final @NotNull String title, final @Nullable ImageDto image) {
+        this();
+        setTitle(title);
+        setImage(image, title);
+    }
+
+    /**
+     * <p>Sets the image content of the card using the given {@link ImageDto} and {@code alt} text.</p>
+     *
+     * <p>If the {@code image} is {@code null}, no image is added. Otherwise, a new {@link Image}
+     * component is created and added to the card's media slot.</p>
+     *
+     * @param image   the image to display; may be {@code null}
+     * @param altText the alternative text for the image; must not be {@code null}
+     */
+    public void setImage(final @Nullable ImageDto image, final @NotNull String altText) {
+        if (image != null) {
+            setMedia(new Image(ImageUtil.resolveImageUrl(image), altText));
         }
-
-        final var overlay = new Div();
-        overlay.addClassName("overlay");
-        overlay.add(new H3(title));
-        add(overlay);
     }
 
 }

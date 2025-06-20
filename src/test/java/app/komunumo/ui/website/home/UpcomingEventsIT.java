@@ -15,36 +15,46 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.website.community;
+package app.komunumo.ui.website.home;
 
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CommunityGridViewIT extends BrowserTest {
+class UpcomingEventsIT extends BrowserTest {
 
     @Test
-    void showCommunities() {
+    void checkUpcomingEvents() {
         final var page = getPage();
 
-        page.navigate("http://localhost:8081/communities");
+        page.navigate("http://localhost:8081/");
         page.waitForSelector("h1:has-text('Komunumo')");
-        captureScreenshot("community-grid-view");
-        assertThat(page.title()).isEqualTo("Communities – Komunumo");
+        captureScreenshot("upcoming-events-view");
+        assertThat(page.title()).isEqualTo("Komunumo – Open Source Community Manager");
 
-        assertThat(page.locator("a[href='communities']").getAttribute("highlight")).isNotNull().isBlank();
+        assertThat(page.locator("a[href='']").getAttribute("highlight")).isNotNull().isBlank();
 
-        final var communityCards = page.locator("vaadin-card");
-        assertThat(communityCards.count()).isEqualTo(6);
+        final var eventCards = page.locator("vaadin-card");
+        assertThat(eventCards.count()).isEqualTo(3);
 
-        for (int i = 1; i <= 6; i++) {
-            final var communityCard = communityCards.nth(i - 1);
-            final var title = communityCard.locator("div[slot='title']");
-            assertThat(title.textContent()).isEqualTo("Demo Community " + i);
+        for (var entry : Map.of(
+                0, 3,
+                1, 5,
+                2, 6) // position and event number
+                .entrySet()) {
+            final var position = entry.getKey();
+            final var number = entry.getValue();
+            final var eventCard = eventCards.nth(position);
 
-            final var image = communityCard.locator("img[slot='media']");
-            if (i <= 5) {
+            final var title = eventCard.locator("div[slot='title']");
+            assertThat(title.textContent()).isEqualTo("Demo Event " + number);
+
+
+            final var image = eventCard.locator("img[slot='media']");
+            if (number <= 5) {
                 assertThat(image.count())
                         .as("image should be set")
                         .isEqualTo(1);
@@ -58,8 +68,8 @@ class CommunityGridViewIT extends BrowserTest {
                 final var imageAlt = image.getAttribute("alt");
                 assertThat(imageAlt)
                         .as("expected to contain an alt text but was: " + imageSrc)
-                        .isEqualTo("Demo Community " + i);
-            } else { // demo community 6+ has no image
+                        .isEqualTo("Demo Event " + number);
+            } else { // demo event 6+ has no image
                 assertThat(image.count())
                         .as("there should be no image")
                         .isZero();

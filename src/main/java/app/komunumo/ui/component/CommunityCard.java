@@ -17,17 +17,16 @@
  */
 package app.komunumo.ui.component;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ImageDto;
-import app.komunumo.util.ImageUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CommunityCard extends KomunumoCard {
 
     public CommunityCard(final @NotNull CommunityDto community,
                          final @Nullable ImageDto image) {
-        super(community.name(), ImageUtil.resolveImageUrl(image));
+        super(community.name(), image);
         addClassName("community-card");
     }
 
