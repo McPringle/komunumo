@@ -40,8 +40,12 @@ class CommunityGridViewIT extends BrowserTest {
 
         for (int i = 1; i <= 6; i++) {
             final var communityCard = communityCards.nth(i - 1);
+
             final var title = communityCard.locator("div[slot='title']");
             assertThat(title.textContent()).isEqualTo("Demo Community " + i);
+
+            final var subtitle = communityCard.locator("div[slot='subtitle']");
+            assertThat(subtitle.textContent()).isEqualTo("@demoCommunity" + i);
 
             final var image = communityCard.locator("img[slot='media']");
             if (i <= 5) {

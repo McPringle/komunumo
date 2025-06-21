@@ -19,6 +19,7 @@ package app.komunumo.ui.component;
 
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ImageDto;
+import com.vaadin.flow.component.html.Div;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +29,7 @@ public class CommunityCard extends KomunumoCard {
                          final @Nullable ImageDto image) {
         super(community.name(), image);
         addClassName("community-card");
+        setSubtitle(new Div(community.profile()));
     }
 
 }
