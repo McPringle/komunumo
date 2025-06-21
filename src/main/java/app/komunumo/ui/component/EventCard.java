@@ -17,7 +17,11 @@
  */
 package app.komunumo.ui.component;
 
+import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventWithImageDto;
+import app.komunumo.util.DateTimeUtil;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Div;
 import org.jetbrains.annotations.NotNull;
 
 public class EventCard extends KomunumoCard {
@@ -25,6 +29,21 @@ public class EventCard extends KomunumoCard {
     public EventCard(final @NotNull EventWithImageDto eventWithImage) {
         super(eventWithImage.event().title(), eventWithImage.image());
         addClassName("event-card");
+        addBeginDateAndTime(eventWithImage.event());
+    }
+
+    private void addBeginDateAndTime(final @NotNull EventDto event) {
+        final var dateTime = event.begin();
+        if (dateTime != null) {
+            final var ui = UI.getCurrent();
+            final var locale = ui.getLocale();
+
+            ui.getPage().retrieveExtendedClientDetails(details -> {
+                final var timeZoneId = details.getTimeZoneId();
+                final var localizedDateTime = DateTimeUtil.getLocalizedDateTimeString(timeZoneId, locale, dateTime);
+                setSubtitle(new Div(localizedDateTime));
+            });
+        }
     }
 
 }
