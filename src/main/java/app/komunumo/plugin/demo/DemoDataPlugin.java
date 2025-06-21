@@ -91,7 +91,7 @@ public final class DemoDataPlugin implements KomunumoPlugin {
             for (int i = 1; i <= 6; i++) {
                 final var imageId = i <= 5 ? images.get(i - 1).id() : null; // demo community 6+ has no image
                 communityService.storeCommunity(new CommunityDto(
-                        null, "@demoGroup" + i, null, null,
+                        null, "@demoCommunity" + i, null, null,
                         "Demo Community " + i, "This is a demo community.", imageId));
             }
         }
