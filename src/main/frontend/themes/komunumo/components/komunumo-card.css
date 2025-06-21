@@ -18,4 +18,9 @@
 
 .komunumo-card {
     width: 400px;
+    transition: transform 0.3s ease;
+}
+
+.komunumo-card:hover {
+    transform: scale(1.03);
 }
