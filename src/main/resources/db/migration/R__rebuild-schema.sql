@@ -158,9 +158,8 @@ E-Mail: [email@example.eu](mailto:email@example.eu)
 Platform of the EU Commission for online dispute resolution:  
 [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
 
----
-
-For more information about the software used on this website, *Komunumo*, please visit the website: [https://komunumo.app](https://komunumo.app)'),
+This website is powered by *Komunumo*. For more information, please visit the project website:  
+[https://komunumo.app](https://komunumo.app)'),
 
 -- German version
 ('about', 'DE', NOW(), NOW(), 'Impressum',
@@ -185,8 +184,7 @@ Nicht eingetragen im Handelsregister.
 Plattform der EU-Kommission zur Online-Streitbeilegung:  
 [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
 
----
-
-Für mehr Informationen über die auf dieser Webseite verwendete Software, *Komunumo*, besuche bitte die Website: [https://komunumo.app](https://komunumo.app)');
+Diese Webseite wird mit *Komunumo* betrieben. Für mehr Informationen besuche bitte die Webseite des Projekts:  
+[https://komunumo.app](https://komunumo.app)');
 
 -- [jooq ignore stop]
