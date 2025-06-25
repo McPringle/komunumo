@@ -22,6 +22,8 @@ import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.component.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.NotFoundException;
@@ -41,12 +43,15 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
 
     private final transient @NotNull GlobalPageService globalPageService;
 
+    private final @NotNull HtmlContainer pageContent = new Div();
+
     private @NotNull String pageTitle = "";
 
     public GlobalPageView(final @NotNull ServiceProvider serviceProvider) {
         super(serviceProvider.configurationService());
         this.globalPageService = serviceProvider.globalPageService();
         addClassName("global-page-view");
+        add(pageContent);
     }
 
     @Override
@@ -58,7 +63,8 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
 
         globalPageService.getGlobalPage(slot, locale).ifPresentOrElse(globalPage -> {
             final var html = convertMarkdownToHtml(globalPage.markdown());
-            add(new Html("<div>%s</div>".formatted(html)));
+            pageContent.removeAll();
+            pageContent.add(new Html("<div>%s</div>".formatted(html)));
             pageTitle = globalPage.title();
         }, () -> {
             LOGGER.warn("No global page found with slot '{}' and locale '{}'!", slot, locale);
