@@ -57,9 +57,9 @@ error-screenshots/
 /types.d.ts
 /src/main/frontend/index.html
 
-# Files used by Docker and MariaDB to run the database locally
-/.env
-/.mariadb/data
+# Local data from development tools
+#/dev-tools/mailpit-data
+#/dev-tools/mariadb-data
 
 # Temporary Codecov files
 codecov
