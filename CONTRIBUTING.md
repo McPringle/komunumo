@@ -2,6 +2,15 @@
 
 **In this document you will find a lot of information on how you can contribute to *Komunumo*.**
 
+- [How to contribute](#how-to-contribute)
+- [Quickstart for Local Development](#quickstart-for-local-development)
+- [Communication](#communication)
+- [Architecture](#architecture)
+- [Database](#database)
+- [Build](#build)
+- [Running and debugging](#running-and-debugging)
+- [Running using Docker](#running-using-docker)
+
 ## How to contribute
 
 ### Good first issues
