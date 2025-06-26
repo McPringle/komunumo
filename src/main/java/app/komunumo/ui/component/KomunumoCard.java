@@ -68,6 +68,8 @@ public abstract class KomunumoCard extends Card {
     public void setImage(final @Nullable ImageDto image, final @NotNull String altText) {
         if (image != null) {
             setMedia(new Image(ImageUtil.resolveImageUrl(image), altText));
+        } else {
+            setMedia(new Image("/placeholder-400x225.jpg", "Placeholder Image"));
         }
     }
 
