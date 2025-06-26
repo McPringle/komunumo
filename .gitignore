@@ -58,8 +58,8 @@ error-screenshots/
 /src/main/frontend/index.html
 
 # Local data from development tools
-#/dev-tools/mailpit-data
-#/dev-tools/mariadb-data
+/dev-tools/mailpit-data
+/dev-tools/mariadb-data
 
 # Temporary Codecov files
 codecov
