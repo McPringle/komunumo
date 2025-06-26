@@ -1,0 +1,2 @@
+This directory is used by the Mailpit SMTP server which can be run locally using Docker Compose.
+Don't delete it and don't commit its contents.

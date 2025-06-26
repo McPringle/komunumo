@@ -1,0 +1,46 @@
+services:
+
+  mariadb:
+    image: docker.io/mariadb:lts
+    container_name: mariadb
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: true
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+    volumes:
+      - type: bind
+        source: ${MARIADB_DATA}
+        target: /var/lib/mysql
+
+  adminer:
+    image: docker.io/adminer
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - "4000:8080"
+    depends_on:
+      - mariadb
+
+  mailpit:
+    image: docker.io/axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      MP_DATABASE: ${MP_DATABASE}
+      MP_MAX_MESSAGES: ${MP_MAX_MESSAGES}
+      MP_SMTP_AUTH_ACCEPT_ANY: ${MP_SMTP_AUTH_ACCEPT_ANY}
+      MP_SMTP_AUTH_ALLOW_INSECURE: ${MP_SMTP_AUTH_ALLOW_INSECURE}
+      MP_SMTP_TLS_CERT: ${MP_SMTP_TLS_CERT}
+      MP_SMTP_TLS_KEY: ${MP_SMTP_TLS_KEY}
+      MP_SMTP_RELAY_CONFIG: ${MP_SMTP_RELAY_CONFIG}
+    volumes:
+      - type: bind
+        source: ${MAILPIT_DATA}
+        target: /data

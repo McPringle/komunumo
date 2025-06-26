@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# Check which container tool is available
+if command -v podman >/dev/null 2>&1; then
+    CMD="podman"
+elif command -v docker >/dev/null 2>&1; then
+    CMD="docker"
+else
+    echo "Error: Neither 'podman' nor 'docker' is installed or available in PATH." >&2
+    exit 1
+fi
+
+# Guard variable to ensure cleanup only runs once
+cleaned_up=false
+
+# Ensure compose down is run on exit (e.g. Ctrl+C or script exit)
+cleanup() {
+    if [ "$cleaned_up" = false ]; then
+        $CMD compose down
+        cleaned_up=true
+    fi
+}
+
+# Set traps
+trap cleanup INT TERM EXIT
+
+# Run the compose commands
+$CMD compose up -d
+$CMD compose logs -f
