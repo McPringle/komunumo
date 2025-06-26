@@ -112,6 +112,103 @@ class UserServiceIT extends IntegrationTest {
 > [!WARNING]
 > Integration tests that do not extend `IntegrationTest` or `BrowserTest` may not run correctly or may produce unforeseen errors.
 
+## Quickstart for Local Development
+
+This guide helps you get *Komunumo* up and running on your local machine for development purposes.
+
+### Prerequisites
+
+Make sure the following tools are installed:
+
+- Git
+- Java LTS (currently version 21) - check with `java -version`
+- Podman or Docker
+
+### Clone and Verify
+
+1. Fork the [Komunumo repository](https://github.com/McPringle/komunumo) on GitHub.
+2. Clone your fork locally:
+
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/komunumo.git
+   cd komunumo
+   ```
+
+3. Run all tests to verify that everything works:
+
+   ```bash
+   ./mvnw verify
+   ```
+
+### Start Required Services
+
+*Komunumo* needs a database and a mail server to run. For local development, you can start both using a helper script:
+
+```bash
+cd ./dev-tools
+./runServices
+```
+
+This script starts the following containers using Podman or Docker (whichever is available):
+
+- MariaDB on Port 3306 with persistent data in `mariadb-data`.  
+  The database user will be `komunumo` with the password `komunumo`. The database name is also `komunumo`.
+- Adminer (database web UI) on port [4000](http://localhost:4000/)
+- Mailpit (SMTP server) on port 1025, web UI on port [8025](http://localhost:8025), persistent data in `mailpit-data`
+
+**Important:** This setup is for development only and not suitable for production use.
+
+#### Adminer Login Information
+
+| Field    | Value           |
+|----------|-----------------|
+| System   | MySQL / MariaDB |
+| Server   | mariadb         |
+| User     | komunumo        |
+| Password | komunumo        |
+| Database | komunumo        |
+
+After starting the script, logs will be shown. To stop the services, press `Ctrl+C`. This stops all containers as well.
+
+### Configure Environment Variables
+
+*Komunumo* is configured using environment variables. At minimum, the following must be set:
+
+```env
+KOMUNUMO_ADMIN_EMAIL=root@localhost
+KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone=Europe/Zurich&allowMultiQueries=true
+KOMUNUMO_DB_USER=komunumo
+KOMUNUMO_DB_PASS=komunumo
+KOMUNUMO_MAIL_HOST=localhost
+KOMUNUMO_MAIL_PORT=1025
+```
+
+If you're in a different timezone, adjust the `serverTimezone` parameter accordingly.
+You can define these variables via your IDE, or directly in your shell.
+
+### Run Komunumo
+
+You can run *Komunumo* either via your IDE or the command line. On the command line, use the Maven Wrapper:
+
+```bash
+./mvnw
+```
+
+This runs the `app.komunumo.Application` main class.
+
+### Open in Browser
+
+Once the application is running, open your browser and navigate to:
+
+http://localhost:8080/
+
+Make sure JavaScript is enabled.
+
+### Stop Komunumo
+
+- In your IDE: use the stop button
+- In the terminal: press `Ctrl+C`
+
 ## Communication
 
 ### Matrix Chat
