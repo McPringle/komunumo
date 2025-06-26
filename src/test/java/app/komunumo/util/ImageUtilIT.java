@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +50,7 @@ class ImageUtilIT extends IntegrationTest {
 
         final var imageId = UUID.randomUUID();
         final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG, "b.jpg");
-        assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo("/images/" + imageId + ".jpg");
+        assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo(File.separator + "images" + File.separator + imageId + ".jpg");
     }
 
     @Test
@@ -63,14 +64,14 @@ class ImageUtilIT extends IntegrationTest {
         final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG, "b.jpg");
         final var path = ImageUtil.resolveImagePath(imageWithId);
         assertThat(path).isNotNull();
-        assertThat(path.toString()).endsWith("/images/" + getSubFolder(imageId) + "/" + imageId + ".jpg");
+        assertThat(path.toString()).endsWith(File.separator + "images" + File.separator + getSubFolder(imageId) + File.separator + imageId + ".jpg");
     }
 
     private static String getSubFolder(final @NotNull UUID imageId) {
         final String id = imageId.toString();
         final String prefix1 = id.substring(0, 2);
         final String prefix2 = id.substring(2, 4);
-        return prefix1 + "/" + prefix2;
+        return prefix1 + File.separator + prefix2;
     }
 
     @Test
