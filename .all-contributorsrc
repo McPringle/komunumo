@@ -8,7 +8,7 @@
   ],
   "imageSize": 100,
   "commit": true,
-  "commitConvention": "gitmoji",
+  "commitConvention": "angular",
   "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg?style=flat-square)](#contributors)",
   "contributors": [
     {
@@ -46,6 +46,15 @@
       "name": "big-phoot",
       "avatar_url": "https://avatars.githubusercontent.com/u/20629857?v=4",
       "profile": "https://github.com/big-phoot",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "syrotkin",
+      "name": "syrotkin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2456857?v=4",
+      "profile": "https://github.com/syrotkin",
       "contributions": [
         "code"
       ]
