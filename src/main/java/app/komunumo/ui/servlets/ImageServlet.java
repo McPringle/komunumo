@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.servlets;
 
+import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.util.ImageUtil;
@@ -29,12 +30,25 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import static app.komunumo.util.ImageUtil.extractImageIdFromUrl;
 
 public final class ImageServlet extends HttpServlet {
+
+    private static final @NotNull String PLACEHOLDER_SVG_CODE = """
+            <svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">
+                <rect width="100%%" height="100%%" fill="#d0d7de" />
+            </svg>""";
+
+    private static final @NotNull Pattern PLACEHOLDER_URL_PATTERN =
+            Pattern.compile("^/placeholder-(\\d+)x(\\d+)\\.svg$");
+
+    private static final long IMAGE_CACHE_DURATION = 86400; // 24 hours in seconds
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ImageServlet.class);
 
@@ -49,6 +63,23 @@ public final class ImageServlet extends HttpServlet {
     protected void doGet(final @NotNull HttpServletRequest request,
                          final @NotNull HttpServletResponse response) {
         final var url = request.getPathInfo();
+
+        if (url == null) {
+            redirectToNotFoundPage(request, response);
+            return;
+        }
+
+        final var placeholderMatcher = PLACEHOLDER_URL_PATTERN.matcher(url);
+        if (placeholderMatcher.find()) {
+            final var width = Integer.parseInt(placeholderMatcher.group(1));
+            final var height = Integer.parseInt(placeholderMatcher.group(2));
+            if (width > 0 && height > 0) {
+                final var imageDimension = new ImageDimension(width, height);
+                generatePlaceholderImage(imageDimension, request, response);
+                return;
+            }
+        }
+
         final UUID imageId = extractImageIdFromUrl(url);
         if (imageId == null) {
             redirectToNotFoundPage(request, response);
@@ -70,12 +101,29 @@ public final class ImageServlet extends HttpServlet {
         }
 
         response.setContentType(image.contentType().getContentType());
-        response.setHeader("Cache-Control", "public, max-age=86400"); // allow caching for 24h
+        response.setHeader("Cache-Control", "public, max-age=" + IMAGE_CACHE_DURATION);
         try (InputStream input = stream.orElseThrow(() ->
                 new IOException("Unable to stream image from request '%s'!".formatted(request.getPathInfo())))) {
             input.transferTo(response.getOutputStream());
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
+            redirectToInternalServerErrorPage(request, response);
+        }
+    }
+
+    private void generatePlaceholderImage(final @NotNull ImageDimension dimension,
+                                          final @NotNull HttpServletRequest request,
+                                          final @NotNull HttpServletResponse response) {
+        final var placeholderImage = String.format(PLACEHOLDER_SVG_CODE, dimension.width, dimension.height);
+
+        response.setContentType(ContentType.IMAGE_SVG.getContentType());
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setHeader("Cache-Control", "public, max-age=" + IMAGE_CACHE_DURATION);
+
+        try (PrintWriter out = response.getWriter()) {
+            out.write(placeholderImage);
+        } catch (final IOException e) {
+            LOGGER.error("Unable to stream placeholder image: {}", e.getMessage(), e);
             redirectToInternalServerErrorPage(request, response);
         }
     }
@@ -101,4 +149,7 @@ public final class ImageServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
+
+    private record ImageDimension(int width, int height) { }
+
 }

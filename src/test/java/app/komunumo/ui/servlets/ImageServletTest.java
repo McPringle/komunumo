@@ -30,10 +30,14 @@ import org.mockito.MockedStatic;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -45,6 +49,25 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class ImageServletTest {
+
+    @Test
+    void redirectsTo404Page_whenUrlIsNull() throws IOException {
+        // Arrange
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var imageService = mock(ImageService.class);
+
+        when(request.getPathInfo()).thenReturn(null);
+
+        final var servlet = new ImageServlet(imageService);
+
+        // Act
+        servlet.doGet(request, response);
+
+        // Assert
+        verifyNoInteractions(imageService);
+        verify(response).sendRedirect("/error/404");
+    }
 
     @Test
     void redirectsTo404Page_whenImageIdIsInvalid() throws IOException {
@@ -242,6 +265,133 @@ class ImageServletTest {
             verify(imageService).getImage(imageId);
             verify(response).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Test
+    void redirectsTo404Page_whenPlaceholderImageDimensionsAreZero() throws IOException {
+        // Arrange
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var imageService = mock(ImageService.class);
+
+        when(request.getPathInfo()).thenReturn("/placeholder-000x000.svg");
+
+        final var servlet = new ImageServlet(imageService);
+
+        // Act
+        servlet.doGet(request, response);
+
+        // Assert
+        verifyNoInteractions(imageService);
+        verify(response).sendRedirect("/error/404");
+    }
+
+    @Test
+    void redirectsTo404Page_whenPlaceholderImageWidthIsZero() throws IOException {
+        // Arrange
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var imageService = mock(ImageService.class);
+
+        when(request.getPathInfo()).thenReturn("/placeholder-100x000.svg");
+
+        final var servlet = new ImageServlet(imageService);
+
+        // Act
+        servlet.doGet(request, response);
+
+        // Assert
+        verifyNoInteractions(imageService);
+        verify(response).sendRedirect("/error/404");
+    }
+
+    @Test
+    void redirectsTo404Page_whenPlaceholderImageHeightIsZero() throws IOException {
+        // Arrange
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var imageService = mock(ImageService.class);
+
+        when(request.getPathInfo()).thenReturn("/placeholder-000x100.svg");
+
+        final var servlet = new ImageServlet(imageService);
+
+        // Act
+        servlet.doGet(request, response);
+
+        // Assert
+        verifyNoInteractions(imageService);
+        verify(response).sendRedirect("/error/404");
+    }
+
+    @Test
+    void redirectsTo404Page_whenPlaceholderImageDimensionNotFound() throws IOException {
+        // Arrange
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var imageService = mock(ImageService.class);
+
+        when(request.getPathInfo()).thenReturn("/placeholder.svg");
+
+        // Act
+        final var servlet = new ImageServlet(imageService);
+        servlet.doGet(request, response);
+
+        // Assert
+        verifyNoInteractions(imageService);
+        verify(response).sendRedirect("/error/404");
+    }
+
+    @Test
+    void redirectsTo500Page_whenPrintWriterThrowsIOException() throws IOException {
+        // Arrange
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var imageService = mock(ImageService.class);
+        final var printWriter = mock(PrintWriter.class);
+
+        when(request.getPathInfo()).thenReturn("/placeholder-100x200.svg");
+        when(response.getWriter()).thenReturn(printWriter);
+        doThrow(new IOException("Writing failed"))
+                .when(printWriter).write(anyString());
+
+        // Act
+        final var servlet = new ImageServlet(imageService);
+        servlet.doGet(request, response);
+
+        // Assert
+        verifyNoInteractions(imageService);
+        verify(response).sendRedirect("/error/500");
+    }
+
+    @Test
+    void streamsPlaceholderSuccessfully() throws IOException {
+        // Arrange
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var imageService = mock(ImageService.class);
+        final var stringWriter = new StringWriter();
+
+        when(request.getPathInfo()).thenReturn("/placeholder-100x200.svg");
+        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
+
+        // Act
+        final var servlet = new ImageServlet(imageService);
+        servlet.doGet(request, response);
+
+        // Assert
+        verify(response).setContentType("image/svg+xml");
+        verify(response).setHeader("Cache-Control", "public, max-age=86400");
+        verify(response, never()).sendRedirect("/error/404");
+        verify(response, never()).sendRedirect("/error/500");
+        verify(response, never()).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+        final var output = stringWriter.toString();
+        assertThat(output)
+                .startsWith("<svg xmlns=\"http://www.w3.org/2000/svg\"")
+                .contains("width=\"100\" height=\"200\"")
+                .endsWith("</svg>");
     }
 
 }

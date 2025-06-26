@@ -57,16 +57,24 @@ class CommunityGridViewIT extends BrowserTest {
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
                         .startsWith("/images/")
-                        .endsWith(".jpg");
+                        .endsWith(".jpg")
+                        .doesNotContain("placeholder");
 
                 final var imageAlt = image.getAttribute("alt");
                 assertThat(imageAlt)
                         .as("expected to contain an alt text but was: " + imageSrc)
                         .isEqualTo("Demo Community " + i);
-            } else { // demo community 6+ has no image
-                assertThat(image.count())
-                        .as("there should be no image")
-                        .isZero();
+            } else { // demo community 6+ has a placeholder image
+                final var imageSrc = image.getAttribute("src");
+                assertThat(imageSrc)
+                        .as("expected to contain an image but was: " + imageSrc)
+                        .startsWith("/images/placeholder")
+                        .endsWith(".svg");
+
+                final var imageAlt = image.getAttribute("alt");
+                assertThat(imageAlt)
+                        .as("expected to contain an alt text but was: " + imageSrc)
+                        .isEqualTo("Placeholder Image");
             }
         }
     }
