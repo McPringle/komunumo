@@ -43,6 +43,7 @@ public final class ImageServlet extends HttpServlet {
     private static final @NotNull String PLACEHOLDER_SVG_CODE = """
             <svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">
                 <rect width="100%%" height="100%%" fill="#d0d7de" />
+                <rect x="%d" y="%d" width="%d" height="%d" stroke="#aaaaaa" stroke-width="1" fill="#d0d7de" />
             </svg>""";
 
     private static final @NotNull Pattern PLACEHOLDER_URL_PATTERN =
@@ -114,12 +115,47 @@ public final class ImageServlet extends HttpServlet {
     private void generatePlaceholderImage(final @NotNull ImageDimension dimension,
                                           final @NotNull HttpServletRequest request,
                                           final @NotNull HttpServletResponse response) {
-        final var placeholderImage = String.format(PLACEHOLDER_SVG_CODE, dimension.width, dimension.height);
+        // maximum permitted size (33% of the dimension)
+        final int percentage = 33;
+        final int maxLogoHeight = percentage * dimension.height / 100;
+        final int maxLogoWidth = percentage * dimension.width / 100;
 
+        // original aspect ratio
+        final double aspectRatio = 370.0 / 257.0;
+
+        // calculate scaled height and width, limited to both dimensions
+        final int logoHeightByHeight = maxLogoHeight;
+        final int logoWidthByHeight = (int) Math.round(logoHeightByHeight * aspectRatio);
+
+        int logoWidthByWidth = maxLogoWidth;
+        int logoHeightByWidth = (int) Math.round(logoWidthByWidth / aspectRatio);
+
+        int logoWidth;
+        int logoHeight;
+
+        // choose the variant that fits in both directions
+        if (logoWidthByHeight <= maxLogoWidth) {
+            logoWidth = logoWidthByHeight;
+            logoHeight = logoHeightByHeight;
+        } else {
+            logoWidth = logoWidthByWidth;
+            logoHeight = logoHeightByWidth;
+        }
+
+        // centering
+        final int logoPositionX = (dimension.width - logoWidth) / 2;
+        final int logoPositionY = (dimension.height - logoHeight) / 2;
+
+        // generate the placeholder SVG code
+        final var placeholderImage = String.format(PLACEHOLDER_SVG_CODE, dimension.width, dimension.height,
+                logoPositionX, logoPositionY, logoWidth, logoHeight);
+
+        // set response headers
         response.setContentType(ContentType.IMAGE_SVG.getContentType());
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setHeader("Cache-Control", "public, max-age=" + IMAGE_CACHE_DURATION);
 
+        // stream the placeholder image
         try (PrintWriter out = response.getWriter()) {
             out.write(placeholderImage);
         } catch (final IOException e) {
