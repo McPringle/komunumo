@@ -20,6 +20,7 @@ package app.komunumo.ui.website.home;
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,7 +63,7 @@ class UpcomingEventsIT extends BrowserTest {
                 final var imageSrc = image.getAttribute("src");
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
-                        .startsWith("/images/")
+                        .startsWith(File.separator + "images" + File.separator)
                         .endsWith(".jpg")
                         .doesNotContain("placeholder");
 
