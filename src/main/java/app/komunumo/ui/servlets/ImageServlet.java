@@ -32,22 +32,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static app.komunumo.util.ImageUtil.extractImageIdFromUrl;
+import static app.komunumo.util.ResourceUtil.getResourceAsString;
+import static app.komunumo.util.TemplateUtil.replaceVariables;
 
 public final class ImageServlet extends HttpServlet {
 
-    private static final @NotNull String PLACEHOLDER_SVG_CODE = """
-            <svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">
-                <rect width="100%%" height="100%%" fill="#d0d7de" />
-                <rect x="%d" y="%d" width="%d" height="%d" stroke="#aaaaaa" stroke-width="1" fill="#d0d7de" />
+    private static final @NotNull String PLACEHOLDER_IMAGE_FILE = "/META-INF/resources/images/placeholder.svg";
+
+    private static final @NotNull String FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE = """
+            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <svg xmlns="http://www.w3.org/2000/svg" width="${imageWidth}" height="${imageHeight}">
+                <rect width="100%" height="100%" fill="#d0d7de" />
             </svg>""";
 
     private static final @NotNull Pattern PLACEHOLDER_URL_PATTERN =
             Pattern.compile("^/placeholder-(\\d+)x(\\d+)\\.svg$");
+
+    private static final int KOMUNUMO_LOGO_WIDTH = 370;
+    private static final int KOMUNUMO_LOGO_HEIGHT = 257;
+    private static final double KOMUNUMO_LOGO_ASPECT_RATIO = (double) KOMUNUMO_LOGO_WIDTH / KOMUNUMO_LOGO_HEIGHT;
 
     private static final long IMAGE_CACHE_DURATION = 86400; // 24 hours in seconds
 
@@ -55,9 +64,17 @@ public final class ImageServlet extends HttpServlet {
 
     private final transient @NotNull ImageService imageService;
 
+    private final @NotNull String placeholderImageTemplate;
+
     public ImageServlet(final @NotNull ImageService imageService) {
+        this(imageService, PLACEHOLDER_IMAGE_FILE);
+    }
+
+    public ImageServlet(final @NotNull ImageService imageService,
+                        final @NotNull String placeholderImageFile) {
         super();
         this.imageService = imageService;
+        this.placeholderImageTemplate = getResourceAsString(placeholderImageFile, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);
     }
 
     @Override
@@ -120,35 +137,31 @@ public final class ImageServlet extends HttpServlet {
         final int maxLogoHeight = percentage * dimension.height / 100;
         final int maxLogoWidth = percentage * dimension.width / 100;
 
-        // original aspect ratio
-        final double aspectRatio = 370.0 / 257.0;
-
         // calculate scaled height and width, limited to both dimensions
-        final int logoHeightByHeight = maxLogoHeight;
-        final int logoWidthByHeight = (int) Math.round(logoHeightByHeight * aspectRatio);
-
-        int logoWidthByWidth = maxLogoWidth;
-        int logoHeightByWidth = (int) Math.round(logoWidthByWidth / aspectRatio);
-
-        int logoWidth;
-        int logoHeight;
+        final int logoWidthByHeight = (int) Math.round(maxLogoHeight * KOMUNUMO_LOGO_ASPECT_RATIO);
+        final int logoHeightByWidth = (int) Math.round(maxLogoWidth / KOMUNUMO_LOGO_ASPECT_RATIO);
 
         // choose the variant that fits in both directions
+        int logoHeight;
         if (logoWidthByHeight <= maxLogoWidth) {
-            logoWidth = logoWidthByHeight;
-            logoHeight = logoHeightByHeight;
+            logoHeight = maxLogoHeight;
         } else {
-            logoWidth = logoWidthByWidth;
             logoHeight = logoHeightByWidth;
         }
 
         // centering
-        final int logoPositionX = (dimension.width - logoWidth) / 2;
-        final int logoPositionY = (dimension.height - logoHeight) / 2;
+        final double logoScalingFactor = (double) logoHeight / KOMUNUMO_LOGO_HEIGHT;
+        final double logoPositionX = (dimension.width - logoScalingFactor * KOMUNUMO_LOGO_WIDTH) / 2.0;
+        final double logoPositionY = (dimension.height - logoScalingFactor * KOMUNUMO_LOGO_HEIGHT) / 2.0;
 
         // generate the placeholder SVG code
-        final var placeholderImage = String.format(PLACEHOLDER_SVG_CODE, dimension.width, dimension.height,
-                logoPositionX, logoPositionY, logoWidth, logoHeight);
+        final var variables = Map.of(
+                "imageWidth", String.valueOf(dimension.width),
+                "imageHeight", String.valueOf(dimension.height),
+                "logoPositionX", String.valueOf(logoPositionX),
+                "logoPositionY", String.valueOf(logoPositionY),
+                "logoScalingFactor", String.valueOf(logoScalingFactor));
+        final var placeholderImage = replaceVariables(placeholderImageTemplate, variables);
 
         // set response headers
         response.setContentType(ContentType.IMAGE_SVG.getContentType());

@@ -32,6 +32,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -388,9 +392,60 @@ class ImageServletTest {
         verify(response, never()).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         final var output = stringWriter.toString();
-        assertThat(output)
-                .startsWith("<svg xmlns=\"http://www.w3.org/2000/svg\"")
+        assertThat(output.trim())
+                .startsWith("<?xml")
+                .contains("<svg xmlns=\"http://www.w3.org/2000/svg\"")
                 .contains("width=\"100\" height=\"200\"")
+                .contains("<g id=\"Logo\"")
+                .endsWith("</svg>");
+    }
+
+    /**
+     * <p>Tests the behavior of {@link ImageServlet#getPlaceholderImageTemplate()}
+     * when the SVG template file is missing.</p>
+     *
+     * <p>This test temporarily renames the {@code placeholder.svg} resource in the {@code target/classes} directory
+     * to simulate its absence on the classpath.</p>
+     *
+     * <p><strong>WARNING:</strong> This test modifies files in the compiled output directory. It must not run in parallel
+     * with other tests, as it may interfere with concurrent accesses to the same resource file.</p>
+     *
+     * <ul>
+     *     <li>Make sure this test is not executed concurrently with others (e.g. avoid parallel builds).</li>
+     *     <li>The test restores the original file in a {@code finally} block to ensure cleanup.</li>
+     * </ul>
+     */
+    @Test
+    void usesFallback_whenPlaceholderImageTemplateFileIsMissing() throws IOException, URISyntaxException {
+        // Arrange
+        final var imageService = mock(ImageService.class);
+
+        // Act
+        final var request = mock(HttpServletRequest.class);
+        final var response = mock(HttpServletResponse.class);
+        final var writer = new StringWriter();
+
+        when(request.getPathInfo()).thenReturn("/placeholder-200x500.svg");
+        when(response.getWriter()).thenReturn(new PrintWriter(writer));
+
+        final var servlet = new ImageServlet(imageService,
+                "/META-INF/resources/images/non-existing.svg");
+        servlet.doGet(request, response);
+
+        // Assert
+        verify(response).setContentType("image/svg+xml");
+        verify(response).setHeader("Cache-Control", "public, max-age=86400");
+        verify(response, never()).sendRedirect("/error/404");
+        verify(response, never()).sendRedirect("/error/500");
+        verify(response, never()).setStatus(HttpServletResponse.SC_NOT_FOUND);
+        verify(response, never()).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+        final var output = writer.toString();
+        assertThat(output.trim())
+                .startsWith("<?xml")
+                .contains("<svg xmlns=\"http://www.w3.org/2000/svg\"")
+                .contains("width=\"200\" height=\"500\"")
+                .doesNotContain("<g id=\"Logo\"")
                 .endsWith("</svg>");
     }
 
