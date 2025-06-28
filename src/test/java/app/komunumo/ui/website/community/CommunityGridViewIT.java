@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.File;
+
 class CommunityGridViewIT extends BrowserTest {
 
     @Test
@@ -56,7 +58,7 @@ class CommunityGridViewIT extends BrowserTest {
                 final var imageSrc = image.getAttribute("src");
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
-                        .startsWith("/images/")
+                        .startsWith(File.separator + "images" + File.separator)
                         .endsWith(".jpg")
                         .doesNotContain("placeholder");
 
