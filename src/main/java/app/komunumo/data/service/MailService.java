@@ -35,13 +35,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static app.komunumo.data.db.tables.MailTemplate.MAIL_TEMPLATE;
 import static app.komunumo.data.dto.MailFormat.HTML;
 import static app.komunumo.data.dto.MailFormat.MARKDOWN;
 import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;
+import static app.komunumo.util.TemplateUtil.replaceVariables;
 
 @Service
 public final class MailService {
@@ -98,19 +97,6 @@ public final class MailService {
                     subject, emailAddresses, e.getMessage(), e);
             return false;
         }
-    }
-
-    private @NotNull String replaceVariables(final @NotNull String text,
-                                    final @Nullable Map<String, String> variables) {
-        String returnValue = text;
-        if (variables != null) {
-            for (final var entry : variables.entrySet()) {
-                final var regex = Pattern.quote("${%s}".formatted(entry.getKey()));
-                final var value = Matcher.quoteReplacement(variables.get(entry.getKey()));
-                returnValue = returnValue.replaceAll(regex, value);
-            }
-        }
-        return returnValue;
     }
 
     public @NotNull Optional<@NotNull MailTemplate> getMailTemplate(final @NotNull MailTemplateId mailTemplateId,
