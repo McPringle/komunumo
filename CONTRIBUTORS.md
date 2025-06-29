@@ -16,6 +16,9 @@ Special thanks for all these wonderful people who had helped this project so far
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mavilov"><img src="https://avatars.githubusercontent.com/u/2605764?v=4?s=100" width="100px;" alt="Maksim Avilov"/><br /><sub><b>Maksim Avilov</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=mavilov" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/emilycares"><img src="https://avatars.githubusercontent.com/u/23267682?v=4?s=100" width="100px;" alt="Emily Meier"/><br /><sub><b>Emily Meier</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=emilycares" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://nberth.space/"><img src="https://avatars.githubusercontent.com/u/842515?v=4?s=100" width="100px;" alt="Nicolas Berthier"/><br /><sub><b>Nicolas Berthier</b></sub></a><br /><a href="#tool-nberth" title="Tools">🔧</a></td>
+    </tr>
   </tbody>
 </table>
 
