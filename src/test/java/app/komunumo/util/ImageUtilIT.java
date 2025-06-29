@@ -51,7 +51,7 @@ class ImageUtilIT extends IntegrationTest {
 
         final var imageId = UUID.randomUUID();
         final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG, "b.jpg");
-        assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo(separator + "images" + separator + imageId + ".jpg");
+        assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo("/images/" + imageId + ".jpg");
     }
 
     @Test

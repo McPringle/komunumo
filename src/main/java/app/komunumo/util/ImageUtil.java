@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 
 public final class ImageUtil {
 
-    private static final @NotNull String IMAGE_URL = "/images";
+    private static final @NotNull String IMAGE_URL_PREFIX = "/images/";
     private static final @NotNull Path RELATIVE_IMAGE_PATH = Path.of("uploads", "images");
     private static final @NotNull Pattern UUID_EXTRACT_PATTERN = Pattern.compile(
             ".*/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\\.");
@@ -56,10 +56,7 @@ public final class ImageUtil {
             return null;
         }
         final String id = image.id().toString();
-        return Path.of(IMAGE_URL,
-                id + image.contentType().getExtension())
-                .toString();
-
+        return IMAGE_URL_PREFIX + id + image.contentType().getExtension();
     }
 
     public static @Nullable Path resolveImagePath(final @Nullable ImageDto image) {
