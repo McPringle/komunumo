@@ -13,6 +13,7 @@ Special thanks for all these wonderful people who had helped this project so far
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/simasch"><img src="https://avatars.githubusercontent.com/u/593352?v=4?s=100" width="100px;" alt="Simon Martinelli"/><br /><sub><b>Simon Martinelli</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/pulls?q=is%3Apr+reviewed-by%3Asimasch" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/big-phoot"><img src="https://avatars.githubusercontent.com/u/20629857?v=4?s=100" width="100px;" alt="big-phoot"/><br /><sub><b>big-phoot</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=big-phoot" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/syrotkin"><img src="https://avatars.githubusercontent.com/u/2456857?v=4?s=100" width="100px;" alt="syrotkin"/><br /><sub><b>syrotkin</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=syrotkin" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mavilov"><img src="https://avatars.githubusercontent.com/u/2605764?v=4?s=100" width="100px;" alt="Maksim Avilov"/><br /><sub><b>Maksim Avilov</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=mavilov" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
