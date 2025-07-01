@@ -132,8 +132,8 @@ public final class ImageServlet extends HttpServlet {
     private void generatePlaceholderImage(final @NotNull ImageDimension dimension,
                                           final @NotNull HttpServletRequest request,
                                           final @NotNull HttpServletResponse response) {
-        // maximum permitted size (33% of the dimension)
-        final int percentage = 33;
+        // maximum permitted size (50% of the dimension)
+        final int percentage = 50;
         final int maxLogoHeight = percentage * dimension.height / 100;
         final int maxLogoWidth = percentage * dimension.width / 100;
 
