@@ -144,8 +144,10 @@ VALUES ('NEW_PASSWORD','DE','Dein Profil bei Komunumo', 'Dein neues Passwort, um
 INSERT INTO global_page (slot, language, created, updated, title, markdown)
 VALUES
 -- English version
-('about', 'EN', NOW(), NOW(), 'About',
-'## About
+('imprint', 'EN', NOW(), NOW(), 'Legal Notice',
+'## Legal Notice
+
+**Information in accordance with Section 5 of the German Digital Services Act (DDG):**
 
 Organization  
 Firstname Lastname  
@@ -155,21 +157,27 @@ Country
 
 E-Mail: [email@example.eu](mailto:email@example.eu)
 
-Platform of the EU Commission for online dispute resolution:  
+**Responsible for content according to Section 18 (2) of the German State Media Treaty (MStV):**  
+Firstname Lastname (same address as above)
+
+No VAT ID available.  
+Not registered in the commercial register.
+
+EU Commission’s platform for online dispute resolution:  
 [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
 
-This website is powered by *Komunumo*. For more information, please visit the project website:  
+This website is powered by *Komunumo*. For more information about the project, visit:  
 [https://komunumo.app](https://komunumo.app)'),
 
 -- German version
-('about', 'DE', NOW(), NOW(), 'Impressum',
+('imprint', 'DE', NOW(), NOW(), 'Impressum',
 '## Impressum
 
-**Angaben gemäß § 5 TMG:**
+**Angaben gemäß § 5 Digitale-Dienste-Gesetz (DDG):**
 
 Organisation  
 Vorname Nachname  
-Strasse und Nr.  
+Straße und Nr.  
 PLZ Ort  
 Land
 
@@ -184,7 +192,7 @@ Nicht eingetragen im Handelsregister.
 Plattform der EU-Kommission zur Online-Streitbeilegung:  
 [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
 
-Diese Webseite wird mit *Komunumo* betrieben. Für mehr Informationen besuche bitte die Webseite des Projekts:  
+Diese Website wird mit *Komunumo* betrieben. Weitere Informationen zum Projekt findest du unter:  
 [https://komunumo.app](https://komunumo.app)');
 
 -- [jooq ignore stop]

@@ -32,15 +32,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GlobalPageViewIT extends IntegrationTest {
 
     @Test
-    void aboutPage() {
-        UI.getCurrent().navigate("page/about");
+    void imprintPage() {
+        UI.getCurrent().navigate("page/imprint");
 
         final var div = _get(AbstractView.class, spec -> spec.withClasses("global-page-view"));
         final var html = findComponent(div, Html.class);
         assertThat(html).isNotNull();
 
         final var renderedHtml = html.getElement().getProperty("innerHTML");
-        assertThat(renderedHtml).startsWith("<h2>About</h2>");
+        assertThat(renderedHtml).startsWith("<h2>Legal Notice</h2>");
     }
 
     @Test

@@ -35,61 +35,61 @@ class GlobalPageServiceIT extends IntegrationTest {
     private @NotNull GlobalPageService globalPageService;
 
     @Test
-    void getAboutPageInEnglishSuccess() {
-        final var aboutPage = globalPageService.getGlobalPage("about", Locale.ENGLISH).orElseThrow();
-        assertThat(aboutPage).isNotNull();
-        assertThat(aboutPage.slot()).isEqualTo("about");
-        assertThat(aboutPage.language()).isEqualTo(Locale.ENGLISH);
-        assertThat(aboutPage.title()).isEqualTo("About");
-        assertThat(aboutPage.markdown()).startsWith("## About");
+    void getImprintPageInEnglishSuccess() {
+        final var imprintPage = globalPageService.getGlobalPage("imprint", Locale.ENGLISH).orElseThrow();
+        assertThat(imprintPage).isNotNull();
+        assertThat(imprintPage.slot()).isEqualTo("imprint");
+        assertThat(imprintPage.language()).isEqualTo(Locale.ENGLISH);
+        assertThat(imprintPage.title()).isEqualTo("Legal Notice");
+        assertThat(imprintPage.markdown()).startsWith("## Legal Notice");
     }
 
     @Test
-    void getAboutPageInGermanSuccess() {
-        final var aboutPage = globalPageService.getGlobalPage("about", Locale.GERMAN).orElseThrow();
-        assertThat(aboutPage).isNotNull();
-        assertThat(aboutPage.slot()).isEqualTo("about");
-        assertThat(aboutPage.language()).isEqualTo(Locale.GERMAN);
-        assertThat(aboutPage.title()).isEqualTo("Impressum");
-        assertThat(aboutPage.markdown()).startsWith("## Impressum");
+    void getImprintPageInGermanSuccess() {
+        final var imprintPage = globalPageService.getGlobalPage("imprint", Locale.GERMAN).orElseThrow();
+        assertThat(imprintPage).isNotNull();
+        assertThat(imprintPage.slot()).isEqualTo("imprint");
+        assertThat(imprintPage.language()).isEqualTo(Locale.GERMAN);
+        assertThat(imprintPage.title()).isEqualTo("Impressum");
+        assertThat(imprintPage.markdown()).startsWith("## Impressum");
     }
 
     @Test
-    void getAboutPageInSwissGermanFallbackToGerman() {
-        final var aboutPage = globalPageService.getGlobalPage("about", Locale.forLanguageTag("de-CH")).orElseThrow();
-        assertThat(aboutPage).isNotNull();
-        assertThat(aboutPage.slot()).isEqualTo("about");
-        assertThat(aboutPage.language()).isEqualTo(Locale.GERMAN);
-        assertThat(aboutPage.title()).isEqualTo("Impressum");
-        assertThat(aboutPage.markdown()).startsWith("## Impressum");
+    void getImprintPageInSwissGermanFallbackToGerman() {
+        final var imprintPage = globalPageService.getGlobalPage("imprint", Locale.forLanguageTag("de-CH")).orElseThrow();
+        assertThat(imprintPage).isNotNull();
+        assertThat(imprintPage.slot()).isEqualTo("imprint");
+        assertThat(imprintPage.language()).isEqualTo(Locale.GERMAN);
+        assertThat(imprintPage.title()).isEqualTo("Impressum");
+        assertThat(imprintPage.markdown()).startsWith("## Impressum");
     }
 
     @Test
-    void getAboutPageInItalianFallbackToEnglish() {
-        final var aboutPage = globalPageService.getGlobalPage("about", Locale.ITALIAN).orElseThrow();
-        assertThat(aboutPage).isNotNull();
-        assertThat(aboutPage.slot()).isEqualTo("about");
-        assertThat(aboutPage.language()).isEqualTo(Locale.ENGLISH);
-        assertThat(aboutPage.title()).isEqualTo("About");
-        assertThat(aboutPage.markdown()).startsWith("## About");
+    void getImprintPageInItalianFallbackToEnglish() {
+        final var imprintPage = globalPageService.getGlobalPage("imprint", Locale.ITALIAN).orElseThrow();
+        assertThat(imprintPage).isNotNull();
+        assertThat(imprintPage.slot()).isEqualTo("imprint");
+        assertThat(imprintPage.language()).isEqualTo(Locale.ENGLISH);
+        assertThat(imprintPage.title()).isEqualTo("Legal Notice");
+        assertThat(imprintPage.markdown()).startsWith("## Legal Notice");
     }
 
     @Test
     void getNonExistingEnglishPageIsEmpty() {
-        final var aboutPage = globalPageService.getGlobalPage("non-existing", Locale.ENGLISH);
-        assertThat(aboutPage).isEmpty();
+        final var nonExistingPage = globalPageService.getGlobalPage("non-existing", Locale.ENGLISH);
+        assertThat(nonExistingPage).isEmpty();
     }
 
     @Test
     void getNonExistingGermanPageIsEmpty() {
-        final var aboutPage = globalPageService.getGlobalPage("non-existing", Locale.GERMAN);
-        assertThat(aboutPage).isEmpty();
+        final var nonExistingPage = globalPageService.getGlobalPage("non-existing", Locale.GERMAN);
+        assertThat(nonExistingPage).isEmpty();
     }
 
     @Test
     void getNonExistingItalianPageIsEmpty() {
-        final var aboutPage = globalPageService.getGlobalPage("non-existing", Locale.ITALIAN);
-        assertThat(aboutPage).isEmpty();
+        final var nonExistingPage = globalPageService.getGlobalPage("non-existing", Locale.ITALIAN);
+        assertThat(nonExistingPage).isEmpty();
     }
 
     @Test
@@ -97,32 +97,32 @@ class GlobalPageServiceIT extends IntegrationTest {
         final var pages = globalPageService.getGlobalPages(Locale.ENGLISH);
         assertThat(pages).hasSize(1);
 
-        final var about = pages.getFirst();
-        assertThat(about.slot()).isEqualTo("about");
-        assertThat(about.language()).isEqualTo(Locale.ENGLISH);
+        final var imprintPage = pages.getFirst();
+        assertThat(imprintPage.slot()).isEqualTo("imprint");
+        assertThat(imprintPage.language()).isEqualTo(Locale.ENGLISH);
     }
 
     @Test
     void getGermanPagesWithEnglishFallback() {
-        var imprint = new GlobalPageDto("contact", Locale.ENGLISH, null, null,
+        var contactPage = new GlobalPageDto("contact", Locale.ENGLISH, null, null,
                 "Contact", "## Contact"); // to test english fallback
         try {
-            imprint = globalPageService.storeGlobalPage(imprint);
+            contactPage = globalPageService.storeGlobalPage(contactPage);
             final var pages = globalPageService.getGlobalPages(Locale.GERMAN)
                     .stream()
                     .collect(toMap(GlobalPageDto::slot, Function.identity()));
             assertThat(pages).hasSize(2);
-            assertThat(pages.keySet()).containsExactlyInAnyOrder("about", "contact");
+            assertThat(pages.keySet()).containsExactlyInAnyOrder("imprint", "contact");
 
-            final var about = pages.get("about");
-            assertThat(about.slot()).isEqualTo("about");
-            assertThat(about.language()).isEqualTo(Locale.GERMAN);
+            final var imprintPage = pages.get("imprint");
+            assertThat(imprintPage.slot()).isEqualTo("imprint");
+            assertThat(imprintPage.language()).isEqualTo(Locale.GERMAN);
 
-            final var contact = pages.get("contact");
-            assertThat(contact.slot()).isEqualTo("contact");
-            assertThat(contact.language()).isEqualTo(Locale.ENGLISH);
+            contactPage = pages.get("contact");
+            assertThat(contactPage.slot()).isEqualTo("contact");
+            assertThat(contactPage.language()).isEqualTo(Locale.ENGLISH);
         } finally {
-            final var returnValue = globalPageService.deleteGlobalPage(imprint);
+            final var returnValue = globalPageService.deleteGlobalPage(contactPage);
             assertThat(returnValue).isTrue();
         }
     }
@@ -131,7 +131,7 @@ class GlobalPageServiceIT extends IntegrationTest {
     void getSwissGermanPages() {
         final var pages = globalPageService.getGlobalPages(Locale.forLanguageTag("de-CH"));
         assertThat(pages).hasSize(1);
-        assertThat(pages.getFirst().slot()).isEqualTo("about");
+        assertThat(pages.getFirst().slot()).isEqualTo("imprint");
     }
 
     @Test
@@ -139,9 +139,9 @@ class GlobalPageServiceIT extends IntegrationTest {
         final var pages = globalPageService.getGlobalPages(Locale.ITALIAN);
         assertThat(pages).hasSize(1);
 
-        final var about = pages.getFirst();
-        assertThat(about.slot()).isEqualTo("about");
-        assertThat(about.language()).isEqualTo(Locale.ENGLISH);
+        final var imprintPage = pages.getFirst();
+        assertThat(imprintPage.slot()).isEqualTo("imprint");
+        assertThat(imprintPage.language()).isEqualTo(Locale.ENGLISH);
     }
 
     @Test
