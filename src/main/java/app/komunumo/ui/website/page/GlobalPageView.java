@@ -21,9 +21,9 @@ import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.component.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.NotFoundException;
@@ -32,8 +32,6 @@ import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;
 
 @Route(value = "page/:slot", layout = WebsiteLayout.class)
 @AnonymousAllowed
@@ -62,9 +60,8 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
         final var locale = ui.getLocale();
 
         globalPageService.getGlobalPage(slot, locale).ifPresentOrElse(globalPage -> {
-            final var html = convertMarkdownToHtml(globalPage.markdown());
             pageContent.removeAll();
-            pageContent.add(new Html("<div>%s</div>".formatted(html)));
+            pageContent.add(new Markdown(globalPage.markdown()));
             pageTitle = globalPage.title();
         }, () -> {
             LOGGER.warn("No global page found with slot '{}' and locale '{}'!", slot, locale);

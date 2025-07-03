@@ -19,10 +19,10 @@ package app.komunumo.ui.website.page;
 
 import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.component.AbstractView;
-import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.component.markdown.Markdown;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.findComponent;
@@ -35,12 +35,10 @@ class GlobalPageViewIT extends IntegrationTest {
     void imprintPage() {
         UI.getCurrent().navigate("page/imprint");
 
-        final var div = _get(AbstractView.class, spec -> spec.withClasses("global-page-view"));
-        final var html = findComponent(div, Html.class);
-        assertThat(html).isNotNull();
-
-        final var renderedHtml = html.getElement().getProperty("innerHTML");
-        assertThat(renderedHtml).startsWith("<h2>Legal Notice</h2>");
+        final var view = _get(AbstractView.class, spec -> spec.withClasses("global-page-view"));
+        final var component = findComponent(view, Markdown.class);
+        assertThat(component).isNotNull();
+        assertThat(component.getContent()).startsWith("## Legal Notice");
     }
 
     @Test
