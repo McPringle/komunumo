@@ -164,10 +164,7 @@ No VAT ID available.
 Not registered in the commercial register.
 
 EU Commission’s platform for online dispute resolution:  
-[https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
-
-This website is powered by *Komunumo*. For more information about the project, visit:  
-[https://komunumo.app](https://komunumo.app)'),
+[https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)'),
 
 -- German version
 ('imprint', 'DE', NOW(), NOW(), 'Impressum',
@@ -190,9 +187,6 @@ Keine Umsatzsteuer-Identifikationsnummer vorhanden.
 Nicht eingetragen im Handelsregister.
 
 Plattform der EU-Kommission zur Online-Streitbeilegung:  
-[https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)
-
-Diese Website wird mit *Komunumo* betrieben. Weitere Informationen zum Projekt findest du unter:  
-[https://komunumo.app](https://komunumo.app)');
+[https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)');
 
 -- [jooq ignore stop]
