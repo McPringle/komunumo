@@ -6,7 +6,7 @@
     <groupId>app.komunumo</groupId>
     <artifactId>komunumo</artifactId>
     <name>Komunumo</name>
-    <version>1.0.0-${buildtype}-${maven.build.timestamp}</version>
+    <version>1.0.0-${buildtype}.${maven.build.timestamp}</version>
     <packaging>jar</packaging>
     <description>Open Source Community Manager</description>
     <url>https://komunumo.app/</url>
