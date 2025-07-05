@@ -19,7 +19,6 @@
 .page-footer {
     padding: var(--lumo-space-m);
     border-top: 1px solid darkgray;
-    cursor: pointer;
     font-style: italic;
     font-size: var(--lumo-font-size-s);
 }
