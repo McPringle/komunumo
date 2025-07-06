@@ -24,88 +24,40 @@ import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 class InternalServerErrorViewTest {
 
-    private static ConfigurationService configurationService;
+    @Test
+    void checkErrorMessage() {
 
-    @BeforeAll
-    static void setUp() {
-        configurationService = mock(ConfigurationService.class);
+        // Arrange
+        final var ui = TestUIProvider.mockUiWithTranslation("error.page.internal-server-error", "Test Error Message");
+        final var beforeEnterEvent = mock(BeforeEnterEvent.class);
+        when(beforeEnterEvent.getUI()).thenReturn(ui);
+        final var configurationService = mock(ConfigurationService.class);
         when(configurationService.getConfiguration(any(), any())).thenReturn("Komunumo Test");
-    }
 
-    @Test
-    void showsDefaultMessageWhenNoCustomMessageGiven() {
-        // Arrange
-        var view = new InternalServerErrorView(configurationService);
+        try (var mockedStatic = mockStatic(UI.class)) {
+            mockedStatic.when(UI::getCurrent).thenReturn(ui);
 
-        var beforeEnterEvent = mock(BeforeEnterEvent.class);
-        var ui = InternalServerErrorViewTest.TestUIProvider.mockUiWithTranslation(
-                "error.page.internal-server-error", "Default Error Message");
-        when(beforeEnterEvent.getUI()).thenReturn(ui);
+            // Act
+            final var view = new InternalServerErrorView(configurationService);
+            final var errorParameter = new ErrorParameter<>(Exception.class, new Exception());
+            final var status = view.setErrorParameter(beforeEnterEvent, errorParameter);
 
-        var errorParameter = new ErrorParameter<>(Exception.class,
-                new Exception());
-
-        // Act
-        var status = view.setErrorParameter(beforeEnterEvent, errorParameter);
-
-        // Assert
-        var h2 = (H2) view.getChildren().findFirst().orElseThrow();
-        assertThat(h2.getText()).isEqualTo("Default Error Message");
-        assertThat(status).isEqualTo(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    }
-
-    @Test
-    void showsDefaultMessageWhenEmptyCustomMessageProvided() {
-        // Arrange
-        var view = new InternalServerErrorView(configurationService);
-
-        var beforeEnterEvent = mock(BeforeEnterEvent.class);
-        var ui = InternalServerErrorViewTest.TestUIProvider.mockUiWithTranslation(
-                "error.page.internal-server-error", "Default Error Message");
-        when(beforeEnterEvent.getUI()).thenReturn(ui);
-
-        var errorParameter = new ErrorParameter<>(Exception.class,
-                new Exception(""));
-
-        // Act
-        var status = view.setErrorParameter(beforeEnterEvent, errorParameter);
-
-        // Assert
-        var h2 = (H2) view.getChildren().findFirst().orElseThrow();
-        assertThat(h2.getText()).isEqualTo("Default Error Message");
-        assertThat(status).isEqualTo(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    }
-
-    @Test
-    void showsCustomMessageWhenProvided() {
-        // Arrange
-        var view = new InternalServerErrorView(configurationService);
-
-        var beforeEnterEvent = mock(BeforeEnterEvent.class);
-        var ui = InternalServerErrorViewTest.TestUIProvider.mockUiWithTranslation(
-                "error.page.internal-server-error", "Default Error Message");
-        when(beforeEnterEvent.getUI()).thenReturn(ui);
-
-        var errorParameter = new ErrorParameter<>(Exception.class,
-                new Exception("Custom Error Message"));
-
-        // Act
-        var status = view.setErrorParameter(beforeEnterEvent, errorParameter);
-
-        // Assert
-        var h2 = (H2) view.getChildren().findFirst().orElseThrow();
-        assertThat(h2.getText()).isEqualTo("Custom Error Message");
-        assertThat(status).isEqualTo(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            // Assert
+            final var h2 = (H2) view.getChildren().findFirst().orElseThrow();
+            assertThat(h2.getText()).isEqualTo("Test Error Message");
+            assertThat(view.getViewTitle()).isEqualTo("Test Error Message");
+            assertThat(status).isEqualTo(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     private static class TestUIProvider {

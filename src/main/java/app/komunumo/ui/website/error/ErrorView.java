@@ -21,18 +21,16 @@ import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.component.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
 @AnonymousAllowed
 abstract class ErrorView extends AbstractView {
 
-    private final @NotNull ErrorType errorType;
+    private final @NotNull String viewTitle;
 
     /**
-     * <p>Creates a new view instance with access to the configuration service for
-     * retrieving localized configuration values such as the instance name.</p>
+     * <p>Creates a new error view based on the provided error type with access to the configuration service.</p>
      *
      * @param configurationService the configuration service used to resolve the instance name;
      *                             must not be {@code null}
@@ -40,31 +38,14 @@ abstract class ErrorView extends AbstractView {
     protected ErrorView(final @NotNull ErrorType errorType,
                         final @NotNull ConfigurationService configurationService) {
         super(configurationService);
-        this.errorType = errorType;
+        final var ui = UI.getCurrent();
+        this.viewTitle = ui.getTranslation("error.page." + errorType.getTranslationKey());
+        add(new H2(viewTitle));
     }
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation(UI.getCurrent().getLocale(), "error.page." + errorType.getTranslationKey());
-    }
-
-    /**
-     * <p>Adds an error message to the view based on the given translation key and exception.</p>
-     *
-     * <p>If the exception contains a non-blank message, it is displayed directly.
-     * Otherwise, a localized fallback message is retrieved using the translation key.</p>
-     *
-     * @param ui             the current UI instance used for translation
-     * @param errorParameter the parameter containing the exception that triggered the error
-     */
-    protected void addErrorMessage(final @NotNull UI ui,
-                                   final @NotNull ErrorParameter<? extends Exception> errorParameter) {
-        final var defaultMessage = ui.getTranslation("error.page.%s".formatted(errorType.getTranslationKey()));
-        final var customMessage = errorParameter.getException().getMessage();
-        final var errorMessage = customMessage == null || customMessage.isBlank()
-                ? defaultMessage
-                : customMessage;
-        add(new H2(errorMessage));
+        return viewTitle;
     }
 
 }

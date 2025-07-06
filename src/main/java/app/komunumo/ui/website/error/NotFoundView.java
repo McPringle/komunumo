@@ -37,7 +37,6 @@ public final class NotFoundView extends ErrorView implements HasErrorParameter<N
     @Override
     public int setErrorParameter(final @NotNull BeforeEnterEvent beforeEnterEvent,
                                  final @NotNull ErrorParameter<NotFoundException> errorParameter) {
-        addErrorMessage(beforeEnterEvent.getUI(), errorParameter);
         return HttpServletResponse.SC_NOT_FOUND;
     }
 

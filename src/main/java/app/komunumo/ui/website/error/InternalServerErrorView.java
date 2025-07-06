@@ -36,7 +36,6 @@ public final class InternalServerErrorView extends ErrorView implements HasError
     @Override
     public int setErrorParameter(final @NotNull BeforeEnterEvent beforeEnterEvent,
                                  final @NotNull ErrorParameter<Exception> errorParameter) {
-        addErrorMessage(beforeEnterEvent.getUI(), errorParameter);
         return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
 
