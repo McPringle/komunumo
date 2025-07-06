@@ -22,6 +22,7 @@ import app.komunumo.util.ImageUtil;
 import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.card.CardVariant;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.dom.DomEventListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +72,22 @@ public abstract class KomunumoCard extends Card {
         } else {
             setMedia(new Image("/images/placeholder-400x225.svg", "Placeholder Image"));
         }
+    }
+
+    /**
+     * <p>Registers a click listener on this card and automatically adds the
+     * {@code clickable} CSS class to indicate interactivity (e.g., via cursor styling).</p>
+     *
+     * <p>The listener will be invoked whenever a {@code click} DOM event is fired
+     * on this component.</p>
+     *
+     * @param listener the DOM event listener to handle click events, must not be {@code null}
+     */
+    protected void addClickListener(final @NotNull DomEventListener listener) {
+        addClassName("clickable");
+        getElement()
+                .addEventListener("click", listener)
+                .setFilter("event.button === 0");
     }
 
 }

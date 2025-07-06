@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,16 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.util;
 
-.komunumo-card {
-    width: 400px;
-    transition: transform 0.3s ease;
-}
+import app.komunumo.data.dto.CommunityDto;
+import org.junit.jupiter.api.Test;
 
-.komunumo-card:hover {
-    transform: scale(1.03);
-}
+import static org.assertj.core.api.Assertions.assertThat;
 
-.komunumo-card.clickable {
-    cursor: pointer;
+class LinkUtilTest {
+
+    @Test
+    void getCommunityLink() {
+        final var community = new CommunityDto(null, "@test", null, null,
+                "Test Community Name", "Test Community Description", null);
+        final var link = LinkUtil.getLink(community);
+        assertThat(link).isEqualTo("/communities/@test");
+    }
+
 }

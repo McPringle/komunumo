@@ -79,4 +79,32 @@ class CommunityGridViewIT extends BrowserTest {
         }
     }
 
+    @Test
+    void clickOnCommunityCard() {
+        final var page = getPage();
+
+        page.navigate("http://localhost:8081/communities");
+        page.waitForSelector("h1:has-text('Komunumo')");
+        captureScreenshot("community-grid-view");
+
+        final var communityCards = page.locator("vaadin-card");
+        assertThat(communityCards.count()).isNotZero();
+
+        final var communityCard = communityCards.first();
+        final var subtitle = communityCard.locator("div[slot='subtitle']");
+        assertThat(subtitle.textContent()).isEqualTo("@demoCommunity1");
+
+        // Klick auf die Karte
+        communityCard.click();
+
+        // Warten, bis die neue Seite geladen ist
+        page.waitForURL("**/communities/@demoCommunity1");
+
+        // Optional: Screenshot und weitere Assertions
+        captureScreenshot("community-detail-view");
+
+        assertThat(page.url()).contains("/communities/@demoCommunity1");
+        page.waitForSelector("h2:has-text('Page not found')"); // not implemented yet
+    }
+
 }
