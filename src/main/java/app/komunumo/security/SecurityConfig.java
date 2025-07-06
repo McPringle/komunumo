@@ -61,8 +61,9 @@ public class SecurityConfig extends VaadinWebSecurity {
      */
     @Override
     protected void configure(final @NotNull HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll());
         super.configure(http);
-        setLoginView(http, LoginView.class, LOGOUT_SUCCESS_URL); // falls Logout-Redirect
+        setLoginView(http, LoginView.class, LOGOUT_SUCCESS_URL);
     }
 
     /**
