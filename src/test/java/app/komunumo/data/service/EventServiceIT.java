@@ -20,10 +20,14 @@ package app.komunumo.data.service;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
+import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -116,6 +120,29 @@ class EventServiceIT extends IntegrationTest {
 
         // delete the non-existing event (was already deleted before)
         assertThat(eventService.deleteEvent(event)).isFalse();
+    }
+
+    @Test
+    void getUpcomingEventsWithImages() {
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        final var upcomingEvents = eventService.getUpcomingEventsWithImage();
+        assertThat(upcomingEvents).hasSize(3);
+        assertThat(upcomingEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::title)
+                .containsExactly("Demo Event 3", "Demo Event 5", "Demo Event 6");
+        assertThat(upcomingEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::end)
+                .allSatisfy(endDate -> assertThat(endDate).isAfter(now));
+        assertThat(upcomingEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::visibility)
+                .allSatisfy(visibility -> assertThat(visibility).isEqualTo(EventVisibility.PUBLIC));
+        assertThat(upcomingEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::status)
+                .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
     }
 
 }

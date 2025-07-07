@@ -31,7 +31,6 @@ public final class ServiceProvider {
     private final @NotNull EventService eventService;
     private final @NotNull GlobalPageService globalPageService;
     private final @NotNull ImageService imageService;
-    private final @NotNull EventWithImageService eventWithImageService;
     private final @NotNull UserService userService;
     private final @NotNull MailService mailService;
 
@@ -43,7 +42,6 @@ public final class ServiceProvider {
                            final @NotNull GlobalPageService globalPageService,
                            final @NotNull EventService eventService,
                            final @NotNull ImageService imageService,
-                           final @NotNull EventWithImageService eventWithImageService,
                            final @NotNull UserService userService,
                            final @NotNull MailService mailService) {
         super();
@@ -54,7 +52,6 @@ public final class ServiceProvider {
         this.eventService = eventService;
         this.globalPageService = globalPageService;
         this.imageService = imageService;
-        this.eventWithImageService = eventWithImageService;
         this.userService = userService;
         this.mailService = mailService;
     }
@@ -85,10 +82,6 @@ public final class ServiceProvider {
 
     public @NotNull EventService eventService() {
         return eventService;
-    }
-
-    public @NotNull EventWithImageService eventWithImageService() {
-        return eventWithImageService;
     }
 
     public @NotNull UserService userService() {

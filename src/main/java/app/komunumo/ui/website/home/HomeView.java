@@ -41,7 +41,7 @@ public final class HomeView extends VerticalLayout implements HasDynamicTitle {
         super();
         this.configurationService = serviceProvider.configurationService();
         setId("home-view");
-        add(new EventGrid(serviceProvider.eventWithImageService().getUpcomingEventsWithImages()));
+        add(new EventGrid(serviceProvider.eventService().getUpcomingEventsWithImage()));
     }
 
     @Override

@@ -19,6 +19,10 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.EventRecord;
 import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.dto.EventStatus;
+import app.komunumo.data.dto.EventVisibility;
+import app.komunumo.data.dto.EventWithImageDto;
+import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -31,6 +35,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static app.komunumo.data.db.tables.Event.EVENT;
+import static app.komunumo.data.db.tables.Image.IMAGE;
 
 @Service
 public final class EventService {
@@ -74,6 +79,23 @@ public final class EventService {
     public @NotNull List<@NotNull EventDto> getEvents() {
         return dsl.selectFrom(EVENT)
                 .fetchInto(EventDto.class);
+    }
+
+    public @NotNull List<@NotNull EventWithImageDto> getUpcomingEventsWithImage() {
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        return dsl.select()
+                .from(EVENT)
+                .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
+                .where(
+                        EVENT.END.isNotNull()
+                                .and(EVENT.END.gt(now))
+                                .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
+                                .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))
+                .orderBy(EVENT.BEGIN.asc())
+                .fetch(rec -> new EventWithImageDto(
+                        rec.into(EVENT).into(EventDto.class),
+                        rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
+                ));
     }
 
     public int getEventCount() {
