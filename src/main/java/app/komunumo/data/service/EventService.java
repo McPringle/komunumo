@@ -65,7 +65,7 @@ public final class EventService {
         return eventRecord.into(EventDto.class);
     }
 
-    public @NotNull Optional<@NotNull EventDto> getEvent(final @NotNull UUID id) {
+    public @NotNull Optional<EventDto> getEvent(final @NotNull UUID id) {
         return dsl.selectFrom(EVENT)
                 .where(EVENT.ID.eq(id))
                 .fetchOptionalInto(EventDto.class);

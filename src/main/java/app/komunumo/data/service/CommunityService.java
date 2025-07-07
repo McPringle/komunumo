@@ -67,13 +67,13 @@ public final class CommunityService {
         return communityRecord.into(CommunityDto.class);
     }
 
-    public @NotNull Optional<@NotNull CommunityDto> getCommunity(final @NotNull UUID id) {
+    public @NotNull Optional<CommunityDto> getCommunity(final @NotNull UUID id) {
         return dsl.selectFrom(COMMUNITY)
                 .where(COMMUNITY.ID.eq(id))
                 .fetchOptionalInto(CommunityDto.class);
     }
 
-    public @NotNull Optional<@NotNull CommunityWithImageDto> getCommunityWithImage(final @NotNull String profile) {
+    public @NotNull Optional<CommunityWithImageDto> getCommunityWithImage(final @NotNull String profile) {
         return dsl.select()
                 .from(Tables.COMMUNITY)
                 .leftJoin(IMAGE).on(Tables.COMMUNITY.IMAGE_ID.eq(IMAGE.ID))

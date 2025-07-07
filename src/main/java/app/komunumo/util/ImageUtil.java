@@ -73,7 +73,7 @@ public final class ImageUtil {
 
     }
 
-    public static @NotNull Optional<@NotNull InputStream> loadImage(final @Nullable ImageDto image) {
+    public static @NotNull Optional<InputStream> loadImage(final @Nullable ImageDto image) {
         final var path = resolveImagePath(image);
         if (path == null || !Files.exists(path)) {
             return Optional.empty();

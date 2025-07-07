@@ -99,7 +99,7 @@ public final class MailService {
         }
     }
 
-    public @NotNull Optional<@NotNull MailTemplate> getMailTemplate(final @NotNull MailTemplateId mailTemplateId,
+    public @NotNull Optional<MailTemplate> getMailTemplate(final @NotNull MailTemplateId mailTemplateId,
                                                             final @NotNull Locale locale) {
         final var languageCode = LocaleUtil.getLanguageCode(locale);
         return dsl.selectFrom(MAIL_TEMPLATE)

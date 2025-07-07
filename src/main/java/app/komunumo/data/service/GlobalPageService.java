@@ -69,7 +69,7 @@ public final class GlobalPageService {
 
     }
 
-    public @NotNull Optional<@NotNull GlobalPageDto> getGlobalPage(final @NotNull String slot,
+    public @NotNull Optional<GlobalPageDto> getGlobalPage(final @NotNull String slot,
                                                                    final @NotNull Locale locale) {
         final var languageCode = LocaleUtil.getLanguageCode(locale);
         final var globalPage = dsl.selectFrom(GLOBAL_PAGE)

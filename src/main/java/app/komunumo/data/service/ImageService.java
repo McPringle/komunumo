@@ -68,7 +68,7 @@ public final class ImageService {
         return imageRecord.into(ImageDto.class);
     }
 
-    public @NotNull Optional<@NotNull ImageDto> getImage(final @Nullable UUID id) {
+    public @NotNull Optional<ImageDto> getImage(final @Nullable UUID id) {
         return id == null ? Optional.empty() : dsl
                 .selectFrom(IMAGE)
                 .where(IMAGE.ID.eq(id))
