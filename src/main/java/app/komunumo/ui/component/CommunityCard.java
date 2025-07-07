@@ -17,20 +17,19 @@
  */
 package app.komunumo.ui.component;
 
-import app.komunumo.data.dto.CommunityDto;
-import app.komunumo.data.dto.ImageDto;
+import app.komunumo.data.dto.CommunityWithImageDto;
 import app.komunumo.util.LinkUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class CommunityCard extends KomunumoCard {
 
-    public CommunityCard(final @NotNull CommunityDto community,
-                         final @Nullable ImageDto image) {
-        super(community.name(), image);
+    public CommunityCard(final @NotNull CommunityWithImageDto communityWithImage) {
+        super(communityWithImage.community().name(), communityWithImage.image());
         addClassName("community-card");
+
+        final var community = communityWithImage.community();
         setSubtitle(new Div(community.profile()));
         addClickListener((event -> UI.getCurrent().navigate(LinkUtil.getLink(community))));
     }

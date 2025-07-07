@@ -91,6 +91,17 @@ public final class CommunityService {
                 .fetchInto(CommunityDto.class);
     }
 
+    public @NotNull List<@NotNull CommunityWithImageDto> getCommunitiesWithImage() {
+        return dsl.select()
+                .from(COMMUNITY)
+                .leftJoin(IMAGE).on(COMMUNITY.IMAGE_ID.eq(IMAGE.ID))
+                .orderBy(COMMUNITY.NAME.asc())
+                .fetch(rec -> new CommunityWithImageDto(
+                        rec.into(COMMUNITY).into(CommunityDto.class),
+                        rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
+                ));
+    }
+
     public int getCommunityCount() {
         return Optional.ofNullable(
                 dsl.selectCount()

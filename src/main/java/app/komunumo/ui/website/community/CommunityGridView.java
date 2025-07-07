@@ -33,7 +33,8 @@ public final class CommunityGridView extends AbstractView {
     public CommunityGridView(final @NotNull ServiceProvider serviceProvider) {
         super(serviceProvider.configurationService());
         setId("community-view");
-        add(new CommunityGrid(serviceProvider));
+        final var communities = serviceProvider.communityService().getCommunitiesWithImage();
+        add(new CommunityGrid(communities));
     }
 
     @Override
