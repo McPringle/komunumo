@@ -22,6 +22,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.component.html.Paragraph;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.findComponent;
@@ -38,6 +39,10 @@ class CommunityDetailViewIT extends IntegrationTest {
         final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
         assertThat(h2).isNotNull();
         assertThat(h2.getText()).isEqualTo("Demo Community 1");
+
+        final var created = _get(Paragraph.class, spec -> spec.withClasses("community-created"));
+        assertThat(created).isNotNull();
+        assertThat(created.getText()).isEqualTo("created moments ago");
 
         final var image = _get(Image.class, spec -> spec.withClasses("community-image"));
         assertThat(image).isNotNull();

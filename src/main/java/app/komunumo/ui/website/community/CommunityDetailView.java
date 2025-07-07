@@ -35,6 +35,7 @@ import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
+import org.ocpsoft.prettytime.PrettyTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +98,13 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         final var profile = new Paragraph(community.profile());
         profile.addClassName("community-profile");
         pageContent.add(profile);
+
+        final var prettyTime = new PrettyTime(locale);
+        final var createdText = getTranslation(locale, "communities.details.created",
+                prettyTime.format(community.created()));
+        final var created = new Paragraph(createdText);
+        created.addClassName("community-created");
+        pageContent.add(created);
 
         final var description = new Markdown(community.description());
         description.addClassName("community-description");
