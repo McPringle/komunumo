@@ -17,8 +17,11 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.db.Tables;
 import app.komunumo.data.db.tables.records.CommunityRecord;
 import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.data.dto.CommunityWithImageDto;
+import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -31,6 +34,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static app.komunumo.data.db.tables.Community.COMMUNITY;
+import static app.komunumo.data.db.tables.Image.IMAGE;
 
 @Service
 public final class CommunityService {
@@ -67,6 +71,18 @@ public final class CommunityService {
         return dsl.selectFrom(COMMUNITY)
                 .where(COMMUNITY.ID.eq(id))
                 .fetchOptionalInto(CommunityDto.class);
+    }
+
+    public @NotNull Optional<@NotNull CommunityWithImageDto> getCommunityWithImage(final @NotNull String profile) {
+        return dsl.select()
+                .from(Tables.COMMUNITY)
+                .leftJoin(IMAGE).on(Tables.COMMUNITY.IMAGE_ID.eq(IMAGE.ID))
+                .where(COMMUNITY.PROFILE.eq(profile))
+                .fetchOptional()
+                .map(rec -> new CommunityWithImageDto(
+                        rec.into(COMMUNITY).into(CommunityDto.class),
+                        rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
+                ));
     }
 
     public @NotNull List<@NotNull CommunityDto> getCommunities() {
