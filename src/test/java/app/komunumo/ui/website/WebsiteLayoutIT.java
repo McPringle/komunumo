@@ -64,22 +64,21 @@ class WebsiteLayoutIT extends IntegrationTest {
     }
 
     @Test
-    void testLayoutBanner()  {
-        final var components = websiteLayout.getChildren().toList();
-        // FIXME: Write a better assertion
-        assertContainsExactlyOneInstanceOf(components,
-                Banner.class, PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
-    }
-
-
-
-
-
-    @Test
     void testLayoutContent() {
         final var components = websiteLayout.getChildren().toList();
         assertContainsExactlyOneInstanceOf(components,
                 Banner.class, PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
+    }
+
+    @Test
+    void testBanner()  {
+        final var banner = findComponent(websiteLayout, Banner.class);
+        assertThat(banner).isNotNull();
+
+        final var paragraph = findComponent(banner, Paragraph.class);
+        assertThat(paragraph).isNotNull();
+        assertThat(paragraph.getText())
+                .isEqualTo("Demo mode enabled: Any data entered will be deleted at the top of every hour!");
     }
 
     @Test

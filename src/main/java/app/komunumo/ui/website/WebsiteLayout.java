@@ -40,7 +40,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
         ui = UI.getCurrent();
 
         if (serviceProvider.getAppConfig().demo().enabled()) {
-            add(new Banner());
+            add(new Banner(ui.getTranslation("demo.mode.enabled")));
         }
 
         addPageHeader();
