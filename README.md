@@ -79,6 +79,17 @@ If no user with the admin role is found in the database, a new instance admin wi
 
 The placeholder `${user.home}` refers to the home directory of the system user running the application.
 
+### Demo Mode Configuration
+
+*Komunumo* can be started in demo mode, which will automatically populate the database with sample users, events, and other data. This allows you to explore the application without needing to create content manually. This is useful for testing and demonstration purposes. To enable demo mode, set the following environment variable:
+
+```
+KOMUNUMO_DEMO_MODE=true
+```
+
+> [!WARNING]
+> When demo mode is enabled, any data entered will be deleted at each start of the server and at the top of every hour! This ensures a consistent state for repeated testing and demonstrations.
+
 ### Mail Configuration
 
 *Komunumo* supports sending email notifications. Configuration is done via environment variables using the `KOMUNUMO_MAIL_*` naming scheme.

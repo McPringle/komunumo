@@ -1,24 +1,29 @@
 {
-  "properties" : [
+  "properties": [
     {
-      "name" : "komunumo.admin.email",
-      "type" : "java.lang.String",
-      "description" : "Email address of the instance admin."
+      "name": "komunumo.admin.email",
+      "type": "java.lang.String",
+      "description": "Email address of the instance admin."
     },
     {
-      "name" : "komunumo.files.basedir",
-      "type" : "java.lang.String",
-      "description" : "Base directory for local file storage."
+      "name": "komunumo.demo.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable demo mode with sample data and hourly reset."
     },
     {
-      "name" : "komunumo.mail.from",
-      "type" : "java.lang.String",
-      "description" : "Sender address shown in outgoing emails (e.g. noreply@example.com)."
+      "name": "komunumo.files.basedir",
+      "type": "java.lang.String",
+      "description": "Base directory for local file storage."
     },
     {
-      "name" : "komunumo.mail.reply-to",
-      "type" : "java.lang.String",
-      "description" : "Optional reply-to address (e.g. `support@example.com`)."
+      "name": "komunumo.mail.from",
+      "type": "java.lang.String",
+      "description": "Sender address shown in outgoing emails (e.g. noreply@example.com)."
+    },
+    {
+      "name": "komunumo.mail.reply-to",
+      "type": "java.lang.String",
+      "description": "Optional reply-to address (e.g. `support@example.com`)."
     }
   ]
 }

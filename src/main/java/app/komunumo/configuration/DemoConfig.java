@@ -15,15 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.plugin;
+package app.komunumo.configuration;
 
-public interface KomunumoPlugin {
-
-    /**
-     * Called after application startup to initialize the plugin.
-     *
-     * @param context the context providing access to Komunumo services
-     */
-    void onApplicationStarted(PluginContext context);
-
-}
+public record DemoConfig(boolean enabled) { }
