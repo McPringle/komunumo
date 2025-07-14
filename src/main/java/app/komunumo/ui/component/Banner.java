@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,19 +15,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.ui.component;
 
-@import "components/page-header.css";
-@import "components/page-footer.css";
-@import "components/navigation-bar.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Paragraph;
 
-@import "components/community-card.css";
-@import "components/community-grid.css";
-@import "components/event-card.css";
-@import "components/event-grid.css";
-@import "components/banner.css";
+public class Banner extends Div {
 
-main {
-    width: 100%;
+    public Banner() {
+        super();
+        addClassName("banner");
+        add(new Paragraph("Demo Modus!"));
+    }
 }

@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.website;
 
+import app.komunumo.ui.component.Banner;
 import app.komunumo.ui.component.PageFooter;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
@@ -63,10 +64,22 @@ class WebsiteLayoutIT extends IntegrationTest {
     }
 
     @Test
+    void testLayoutBanner()  {
+        final var components = websiteLayout.getChildren().toList();
+        // FIXME: Write a better assertion
+        assertContainsExactlyOneInstanceOf(components,
+                Banner.class, PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
+    }
+
+
+
+
+
+    @Test
     void testLayoutContent() {
         final var components = websiteLayout.getChildren().toList();
         assertContainsExactlyOneInstanceOf(components,
-                PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
+                Banner.class, PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
     }
 
     @Test
