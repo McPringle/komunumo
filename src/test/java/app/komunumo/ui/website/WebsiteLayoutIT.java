@@ -30,10 +30,8 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.testbench.unit.internal.LocatorKt;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.component.NavigationBar;
@@ -81,8 +79,7 @@ class WebsiteLayoutIT extends IntegrationTest {
     void testLayoutContent() {
         final var components = websiteLayout.getChildren().toList();
         assertContainsExactlyOneInstanceOf(components,
-                PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
-
+                Banner.class, PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
     }
 
     @Test
