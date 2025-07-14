@@ -23,7 +23,7 @@ We have set ourselves the goal of implementing all important [Meetup](https://ww
 - **MINOR** versions add functionality in a backwards-compatible manner,
 - **PATCH** versions include backwards-compatible bug fixes.
 
-This versioning scheme applies to the public API, database schema, and plugin interfaces. We aim to keep upgrades predictable and manageable. Breaking changes, new features, and fixes are documented in the [CHANGELOG.md](./CHANGELOG.md) and in the [release notes](https://github.com/McPringle/komunumo/releases).
+This versioning scheme applies to the public API, database schema, and plugin interfaces. We aim to keep upgrades predictable and manageable. Breaking changes, new features, and fixes are documented in the [CHANGELOG.md](CHANGELOG.md) and in the [release notes](https://github.com/McPringle/komunumo/releases).
 
 ## Contributing
 
