@@ -24,7 +24,7 @@ For questions and support requests, please use
 - Community page with a list of all communities.
 - Storing and retrieving images for communities and events.
 - Cleaning up orphaned images.
-- Demo Plugin to create demo data for tests and new instances.
+- Demo mode with sample data and hourly reset.
 - About page with information about the instance.
 - Create instance admin on first start.
 - Login with email and password authentication.
