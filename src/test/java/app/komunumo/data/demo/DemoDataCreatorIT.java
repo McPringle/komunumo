@@ -15,52 +15,49 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.plugin.demo;
+package app.komunumo.data.demo;
 
-import app.komunumo.ui.IntegrationTest;
-import nl.altindag.log.LogCaptor;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.plugin.DefaultPluginContext;
+import app.komunumo.ui.IntegrationTest;
+import nl.altindag.log.LogCaptor;
+import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-class DemoDataPluginIT extends IntegrationTest {
+class DemoDataCreatorIT extends IntegrationTest {
 
     @Autowired
     private ServiceProvider serviceProvider;
 
     @Autowired
-    private @NotNull DemoDataPlugin demoDataPlugin;
+    private @NotNull DemoDataCreator demoDataCreator;
 
     @Test
-    void createDemoData() {
+    void resetDemoData() {
         assertDemoDataCount();
-        // should not create new data because it was already executed using the plugin interface
-        demoDataPlugin.onApplicationStarted(new DefaultPluginContext(serviceProvider));
+        demoDataCreator.resetDemoData();
         assertDemoDataCount();
     }
 
     private void assertDemoDataCount() {
-        assertThat(serviceProvider.communityService().getCommunityCount())
+        Assertions.assertThat(serviceProvider.communityService().getCommunityCount())
                 .isEqualTo(6);
-        assertThat(serviceProvider.eventService().getEventCount())
+        Assertions.assertThat(serviceProvider.eventService().getEventCount())
                 .isEqualTo(6);
-        assertThat(serviceProvider.imageService().getImageCount())
+        Assertions.assertThat(serviceProvider.imageService().getImageCount())
                 .isEqualTo(5);
     }
 
     @Test
     void storeDemoImageWithWarning() {
-        try (var logCaptor = LogCaptor.forClass(DemoDataPlugin.class)) {
+        try (var logCaptor = LogCaptor.forClass(DemoDataCreator.class)) {
             final var filename = "non-existing.gif";
             final var image = new ImageDto(null, ContentType.IMAGE_GIF, filename);
-            demoDataPlugin.storeDemoImage(image, filename);
-            assertThat(logCaptor.getWarnLogs()).containsExactly("Demo image not found: non-existing.gif");
+            demoDataCreator.storeDemoImage(image, filename);
+            Assertions.assertThat(logCaptor.getWarnLogs()).containsExactly("Demo image not found: non-existing.gif");
         }
     }
 
