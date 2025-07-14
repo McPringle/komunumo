@@ -188,9 +188,14 @@ KOMUNUMO_ADMIN_EMAIL=root@localhost
 KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone=Europe/Zurich&allowMultiQueries=true
 KOMUNUMO_DB_USER=komunumo
 KOMUNUMO_DB_PASS=komunumo
+KOMUNUMO_DEMO_ENABLED=true
 KOMUNUMO_MAIL_HOST=localhost
 KOMUNUMO_MAIL_PORT=1025
 ```
+
+> [!WARNING]
+> When demo mode is enabled (`KOMUNUMO_DEMO_ENABLED=true`), any data entered will be deleted at each start of the server and at the top of every hour! This ensures a consistent state for repeated testing and demonstrations.
+
 
 If you're in a different timezone, adjust the `serverTimezone` parameter accordingly.
 You can define these variables via your IDE, or directly in your shell.

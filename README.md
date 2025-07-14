@@ -84,7 +84,7 @@ The placeholder `${user.home}` refers to the home directory of the system user r
 *Komunumo* can be started in demo mode, which will automatically populate the database with sample users, events, and other data. This allows you to explore the application without needing to create content manually. This is useful for testing and demonstration purposes. To enable demo mode, set the following environment variable:
 
 ```
-KOMUNUMO_DEMO_MODE=true
+KOMUNUMO_DEMO_ENABLED=true
 ```
 
 > [!WARNING]
