@@ -30,7 +30,7 @@ import static app.komunumo.util.TestUtil.findComponent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(properties = "komunumo.demo.enabled=false")
-class WebsiteLayoutProductionIT extends IntegrationTest {
+class WebsiteLayoutNoBannerIT extends IntegrationTest {
 
     private @NotNull WebsiteLayout websiteLayout;
 
