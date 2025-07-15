@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.website;
 
-import app.komunumo.ui.component.Banner;
+import app.komunumo.ui.component.InfoBanner;
 import app.komunumo.ui.component.PageFooter;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
@@ -67,15 +67,15 @@ class WebsiteLayoutIT extends IntegrationTest {
     void testLayoutContent() {
         final var components = websiteLayout.getChildren().toList();
         assertContainsExactlyOneInstanceOf(components,
-                Banner.class, PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
+                InfoBanner.class, PageHeader.class, NavigationBar.class, Main.class, PageFooter.class);
     }
 
     @Test
     void testBanner()  {
-        final var banner = findComponent(websiteLayout, Banner.class);
-        assertThat(banner).isNotNull();
+        final var infoBanner = findComponent(websiteLayout, InfoBanner.class);
+        assertThat(infoBanner).isNotNull();
 
-        final var paragraph = findComponent(banner, Paragraph.class);
+        final var paragraph = findComponent(infoBanner, Paragraph.class);
         assertThat(paragraph).isNotNull();
         assertThat(paragraph.getText())
                 .isEqualTo("Demo mode enabled: Any data entered will be deleted at the top of every hour!");

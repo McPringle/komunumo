@@ -18,7 +18,7 @@
 package app.komunumo.ui.website;
 
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.component.Banner;
+import app.komunumo.ui.component.InfoBanner;
 import app.komunumo.ui.component.NavigationBar;
 import app.komunumo.ui.component.PageFooter;
 import app.komunumo.ui.component.PageHeader;
@@ -40,7 +40,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
         ui = UI.getCurrent();
 
         if (serviceProvider.getAppConfig().demo().enabled()) {
-            add(new Banner(ui.getTranslation("demo.mode.enabled")));
+            add(new InfoBanner(ui.getTranslation("demo.mode.enabled")));
         }
 
         addPageHeader();

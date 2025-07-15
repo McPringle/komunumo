@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,12 +15,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.ui.component;
 
-.banner {
-    display: flex;
-    justify-content: center;
-    justify-items: center;
-    background-color: yellow;
-    box-shadow: var(--lumo-box-shadow-s);
-    font-size: var(--lumo-font-size-xl);
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Paragraph;
+import org.jetbrains.annotations.NotNull;
+
+public class InfoBanner extends Div {
+
+    public InfoBanner(final @NotNull String message) {
+        super();
+        addClassName("info-banner");
+        add(new Paragraph(message));
+    }
+
 }
