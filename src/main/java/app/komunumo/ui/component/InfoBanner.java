@@ -18,7 +18,7 @@
 package app.komunumo.ui.component;
 
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.markdown.Markdown;
 import org.jetbrains.annotations.NotNull;
 
 public class InfoBanner extends Div {
@@ -26,7 +26,7 @@ public class InfoBanner extends Div {
     public InfoBanner(final @NotNull String message) {
         super();
         addClassName("info-banner");
-        add(new Paragraph(message));
+        add(new Markdown(message));
     }
 
 }

@@ -28,6 +28,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
@@ -75,10 +76,10 @@ class WebsiteLayoutIT extends IntegrationTest {
         final var infoBanner = findComponent(websiteLayout, InfoBanner.class);
         assertThat(infoBanner).isNotNull();
 
-        final var paragraph = findComponent(infoBanner, Paragraph.class);
-        assertThat(paragraph).isNotNull();
-        assertThat(paragraph.getText())
-                .isEqualTo("Demo mode enabled: Any data entered will be deleted at the top of every hour!");
+        final var markdown = findComponent(infoBanner, Markdown.class);
+        assertThat(markdown).isNotNull();
+        assertThat(markdown.getContent())
+                .isEqualTo("**Demo Mode:** Any data entered will be deleted at the top of every hour!");
     }
 
     @Test
