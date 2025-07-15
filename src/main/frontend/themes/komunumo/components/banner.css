@@ -21,5 +21,6 @@
     justify-content: center;
     justify-items: center;
     background-color: yellow;
+    box-shadow: var(--lumo-box-shadow-s);
     font-size: var(--lumo-font-size-xl);
 }
