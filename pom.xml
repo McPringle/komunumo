@@ -702,6 +702,7 @@
                 <executions>
                     <execution>
                         <id>check-license</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
