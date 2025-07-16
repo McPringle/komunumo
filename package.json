@@ -61,7 +61,6 @@
     "@vaadin/vaadin-themable-mixin": "$@vaadin/vaadin-themable-mixin",
     "@vaadin/vaadin-lumo-styles": "$@vaadin/vaadin-lumo-styles",
     "@vaadin/vaadin-material-styles": "$@vaadin/vaadin-material-styles",
-    "@vaadin/cookie-consent": "$@vaadin/cookie-consent",
     "@vaadin/a11y-base": "24.8.3",
     "@vaadin/accordion": "24.8.3",
     "@vaadin/app-layout": "24.8.3",
@@ -120,7 +119,8 @@
     "@vaadin/upload": "24.8.3",
     "@vaadin/router": "2.0.0",
     "@vaadin/vertical-layout": "24.8.3",
-    "@vaadin/virtual-list": "24.8.3"
+    "@vaadin/virtual-list": "24.8.3",
+    "@vaadin/cookie-consent": "$@vaadin/cookie-consent"
   },
   "vaadin": {
     "dependencies": {
