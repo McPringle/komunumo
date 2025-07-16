@@ -17,27 +17,6 @@
  */
 package app.komunumo.configuration;
 
-import app.komunumo.util.ImageUtil;
-import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
-@ConfigurationProperties(prefix = "komunumo")
-public record AppConfig(@NotNull String version,
-                        @NotNull AdminConfig admin,
-                        @NotNull CustomConfig custom,
-                        @NotNull DemoConfig demo,
-                        @NotNull FilesConfig files,
-                        @NotNull MailConfig mail) {
-
-    @ConstructorBinding
-    @SuppressWarnings({"java:S1186", "java:S6207"}) // needed to add the `@ConstructorBinding` annotation
-    public AppConfig { }
-
-    @PostConstruct
-    public void configureUtilityClasses() {
-        ImageUtil.initialize(this);
-    }
-
-}
+public record CustomConfig(@NotNull String styles) { }
