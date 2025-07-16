@@ -83,7 +83,12 @@ public final class DemoDataCreator {
         final var images = createDemoImages(imageService);
         final var communities = createDemoCommunities(communityService, images);
         createDemoEvents(eventService, images, communities);
-        LOGGER.info("Demo data created.");    }
+        LOGGER.info("Demo data created.");
+
+        LOGGER.info("Cleaning up orphaned image files...");
+        ImageUtil.cleanupOrphanedImageFiles(imageService);
+        LOGGER.info("Orphaned image files cleaned up.");
+    }
 
     private List<ImageDto> createDemoImages(final @NotNull ImageService imageService) {
         for (int i = 1; i <= 5; i++) {
