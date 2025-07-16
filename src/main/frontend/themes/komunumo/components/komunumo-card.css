@@ -18,10 +18,11 @@
 
 .komunumo-card {
     width: 400px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .komunumo-card:hover {
+    box-shadow: var(--lumo-box-shadow-s);
     transform: scale(1.03);
 }
 
