@@ -19,6 +19,7 @@ Special thanks for all these wonderful people who had helped this project so far
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://nberth.space/"><img src="https://avatars.githubusercontent.com/u/842515?v=4?s=100" width="100px;" alt="Nicolas Berthier"/><br /><sub><b>Nicolas Berthier</b></sub></a><br /><a href="#tool-nberth" title="Tools">🔧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/leem53"><img src="https://avatars.githubusercontent.com/u/45996424?v=4?s=100" width="100px;" alt="Lennart Emmerich"/><br /><sub><b>Lennart Emmerich</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=leem53" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.bendisposto.de/"><img src="https://avatars.githubusercontent.com/u/333953?v=4?s=100" width="100px;" alt="Jens Bendisposto"/><br /><sub><b>Jens Bendisposto</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=bendisposto" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
