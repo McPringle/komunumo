@@ -20,8 +20,8 @@
     display: flex;
     justify-content: center;
     justify-items: center;
-    background-color: lightyellow;
-    color: darkred;
+    background-color: var(--lumo-warning-color-10pct);
+    color: var(--lumo-warning-text-color);
     box-shadow: var(--lumo-box-shadow-s);
     font-size: var(--lumo-font-size-xl);
 }
