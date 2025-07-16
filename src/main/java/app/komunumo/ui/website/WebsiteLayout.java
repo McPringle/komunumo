@@ -39,6 +39,16 @@ public final class WebsiteLayout extends Div implements RouterLayout {
         super();
         ui = UI.getCurrent();
 
+        final var customStyles = serviceProvider.getAppConfig().custom().styles();
+        if (!customStyles.isBlank()) {
+            ui.getPage().executeJs("""
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = $0;
+                document.head.appendChild(link);
+                """, customStyles);
+        }
+
         if (serviceProvider.getAppConfig().demo().enabled()) {
             add(new InfoBanner(ui.getTranslation("demo.mode.enabled")));
         }

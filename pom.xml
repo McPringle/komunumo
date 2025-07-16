@@ -694,6 +694,7 @@
                             </includes>
                             <excludes>
                                 <exclude>**/generated/**</exclude>
+                                <exclude>src/test/resources/**</exclude>
                             </excludes>
                         </licenseSet>
                     </licenseSets>

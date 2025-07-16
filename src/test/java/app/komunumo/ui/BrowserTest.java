@@ -45,6 +45,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -70,10 +72,22 @@ public abstract class BrowserTest {
                     .withUser("komunumo", "s3cr3t"))
             .withPerMethodLifecycle(false);
 
+    protected String[] getProperties() {
+        return new String[] { };
+    }
+
     @BeforeAll
     void startAppAndBrowser() {
-        context = SpringApplication.run(Application.class,
-                "--server.port=" + PORT, "--spring.profiles.active=test");
+        final var properties = getProperties();
+        final String[] args = Stream.concat(
+                Stream.of(
+                        "--server.port=" + PORT,
+                        "--spring.profiles.active=test"
+                ),
+                Arrays.stream(properties)
+        ).toArray(String[]::new);
+
+        context = SpringApplication.run(Application.class, args);
         playwright = Playwright.create();
         browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(true));
 
