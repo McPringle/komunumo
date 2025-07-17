@@ -151,6 +151,11 @@ MySQL and MariaDB have a possible silent truncation problem with the `GROUP_CONC
 KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone\=Europe/Zurich&allowMultiQueries=true
 ```
 
+### Custom Styles Configuration
+
+The visual style of *Komunumo* can be customized by the instance maintainer using custom CSS variables.  
+For details on how to configure and apply custom styles, see the [Style Guide](STYLEGUIDE.md).
+
 ## Copyright and License
 
 [AGPL License](https://www.gnu.org/licenses/agpl-3.0.de.html)
