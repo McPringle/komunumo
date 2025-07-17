@@ -90,6 +90,62 @@ KOMUNUMO_DEMO_ENABLED=true
 > [!WARNING]
 > When demo mode is enabled, any data entered will be deleted at each start of the server and at the top of every hour! This ensures a consistent state for repeated testing and demonstrations.
 
+#### Providing Custom Demo Data
+
+If you prefer not to use the default demo data, you can provide your own JSON file containing demo events. The file must be publicly accessible over HTTPS and contain valid JSON in the expected format. To use your own demo data, set the following environment variable:
+
+```
+KOMUNUMO_DEMO_JSON=https://example.com/events.json
+```
+
+The structure of the JSON file must follow the expected format used by *Komunumo* for demo data. The file should contain an array of community, event, and image objects. Here is an example of the expected JSON structure:
+
+```json
+{
+    "communities": [
+        {
+            "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+            "profile": "@demo@example.com",
+            "name": "Demo Community",
+            "description": "A description of the demo community.",
+            "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795"
+        }
+    ],
+    "events": [
+        {
+            "eventId": "07fe5b04-0ea1-43b7-a63a-f4d8b8c29ed6",
+            "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+            "title": "Demo Event",
+            "description": "A description of the demo event.",
+            "location": "Somewhere",
+            "begin": "2025-08-06T18:00:00+02:00[Europe/Zurich]",
+            "end": "2025-08-06T20:00:00+02:00[Europe/Zurich]",
+            "imageId": "4ca05a55-de1e-4571-a833-c9e5e4f4bfba",
+            "visibility": "PUBLIC",
+            "status": "PUBLISHED"
+        }
+    ],
+    "images": [
+        {
+            "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
+            "contentType": "image/jpeg",
+            "url": "https://example.com/images/demo-community.jpg"
+        },
+        {
+            "imageId": "4ca05a55-de1e-4571-a833-c9e5e4f4bfba",
+            "contentType": "image/jpeg",
+            "url": "https://example.com/images/demo-event.jpg"
+        }
+    ]
+}
+```
+
+- The `communityId`, `eventId`, and `imageId` fields must be valid UUIDs.
+- The `begin` and `end` fields in the `events` object must be in ISO 8601 format with a timezone offset, such as `2025-08-06T18:00:00+02:00[Europe/Zurich]`. This ensures correct interpretation of event times, including proper handling of daylight saving time.
+- The `imageId` fields in the `communities` and `events` objects must refer to the IDs of the images in the `images` array. The `url` field in each image object must point to a publicly accessible image file. If the `imageId` is blank, the community or event will not have an image associated with it.
+- The `visibility` field in the `events` object can be set to `PUBLIC` or `PRIVATE`, to define the visibility of the event.
+- The `status` field can be set to `DRAFT`, `PUBLISHED`, or `CANCELED` to reflect the current state of the event.
+
 ### Mail Configuration
 
 *Komunumo* supports sending email notifications. Configuration is done via environment variables using the `KOMUNUMO_MAIL_*` naming scheme.
