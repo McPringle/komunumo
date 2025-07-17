@@ -51,7 +51,7 @@ class ImageUtilTest {
     void setUp() {
         final var adminConfig = new AdminConfig("admin@foo.bar");
         final var customConfig = new CustomConfig("");
-        final var demoConfig = new DemoConfig(false);
+        final var demoConfig = new DemoConfig(false, "");
         final var filesConfig = new FilesConfig(tempDir);
         final var mailConfig = new MailConfig("noreply@foo.bar", "support@foo.bar");
         final var appConfig = new AppConfig("0.0.0",

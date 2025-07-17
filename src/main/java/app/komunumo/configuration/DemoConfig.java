@@ -17,4 +17,6 @@
  */
 package app.komunumo.configuration;
 
-public record DemoConfig(boolean enabled) { }
+import org.jetbrains.annotations.NotNull;
+
+public record DemoConfig(boolean enabled, @NotNull String json) { }

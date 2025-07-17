@@ -98,7 +98,7 @@ class AdminBootstrapperTest {
         final var version = "0.0.0";
         final var admin = new AdminConfig(email);
         final var custom = new CustomConfig("");
-        final var demo = new DemoConfig(false);
+        final var demo = new DemoConfig(false, "");
         final var files = new FilesConfig(Path.of("/tmp"));
         final var mail = new MailConfig("", "");
         return new AppConfig(version, admin, custom, demo, files, mail);
