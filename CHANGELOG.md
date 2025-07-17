@@ -28,5 +28,6 @@ For questions and support requests, please use
 - About page with information about the instance.
 - Create instance admin on first start.
 - Login with email and password authentication.
+- Add support for custom CSS styling and a Style Guide.
 - Health check endpoint to check the health of the instance.
 - 100% test coverage for the Komunumo app.
