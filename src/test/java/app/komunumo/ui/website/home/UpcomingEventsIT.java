@@ -54,11 +54,11 @@ class UpcomingEventsIT extends BrowserTest {
 
 
             final var image = eventCard.locator("img[slot='media']");
-            if (number <= 5) {
-                assertThat(image.count())
-                        .as("image should be set")
-                        .isEqualTo(1);
+            assertThat(image.count())
+                    .as("image should be set")
+                    .isEqualTo(1);
 
+            if (number <= 5) {
                 final var imageSrc = image.getAttribute("src");
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
