@@ -54,10 +54,14 @@ public final class DemoDataCreator {
 
     private final @NotNull ServiceProvider serviceProvider;
     private final boolean enabled;
+    private final @NotNull String demoDataUrl;
 
     public DemoDataCreator(final @NotNull ServiceProvider serviceProvider) {
         this.serviceProvider = serviceProvider;
-        this.enabled = serviceProvider.getAppConfig().demo().enabled();
+
+        final var demoConfig = serviceProvider.getAppConfig().demo();
+        this.enabled = demoConfig.enabled();
+        this.demoDataUrl = demoConfig.json();
     }
 
     @PostConstruct
@@ -80,10 +84,17 @@ public final class DemoDataCreator {
 
 
         LOGGER.info("Creating demo data...");
-        final var images = createDemoImages(imageService);
-        final var communities = createDemoCommunities(communityService, images);
-        createDemoEvents(eventService, images, communities);
-        LOGGER.info("Demo data created.");
+        if (demoDataUrl.isBlank()) {
+            final var images = createDemoImages(imageService);
+            final var communities = createDemoCommunities(communityService, images);
+            createDemoEvents(eventService, images, communities);
+        } else {
+            final var demoDataImporter = new DemoDataImporter(demoDataUrl);
+            demoDataImporter.importImages(imageService);
+            demoDataImporter.importCommunities(communityService);
+            demoDataImporter.importEvents(eventService);
+            LOGGER.info("Demo data created.");
+        }
 
         LOGGER.info("Cleaning up orphaned image files...");
         ImageUtil.cleanupOrphanedImageFiles(imageService);
