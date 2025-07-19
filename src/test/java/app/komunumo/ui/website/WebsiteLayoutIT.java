@@ -79,7 +79,7 @@ class WebsiteLayoutIT extends IntegrationTest {
         final var markdown = findComponent(infoBanner, Markdown.class);
         assertThat(markdown).isNotNull();
         assertThat(markdown.getContent())
-                .isEqualTo("**Demo Mode:** Any data entered will be deleted at the top of every hour!");
+                .isEqualTo("**Demo Mode:** All data will be reset at the top of every hour!");
     }
 
     @Test
