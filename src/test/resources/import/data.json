@@ -1,0 +1,61 @@
+{
+  "communities": [
+    {
+      "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+      "profile": "@demo1@example.com",
+      "name": "Demo Community 1",
+      "description": "A description of the demo community.",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795"
+    },
+    {
+      "communityId": "5a6f6a65-0d3a-4b8b-ba3e-3506810a9dac",
+      "profile": "@demo2@example.com",
+      "name": "Demo Community 2",
+      "description": "A description of the demo community.",
+      "imageId": ""
+    }
+  ],
+  "events": [
+    {
+      "eventId": "07fe5b04-0ea1-43b7-a63a-f4d8b8c29ed6",
+      "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+      "title": "Demo Event 1",
+      "description": "A description of the demo event.",
+      "location": "Somewhere",
+      "begin": "2030-01-01T18:00:00+02:00[Europe/Zurich]",
+      "end": "2030-01-01T20:00:00+02:00[Europe/Zurich]",
+      "imageId": "4ca05a55-de1e-4571-a833-c9e5e4f4bfba",
+      "visibility": "PUBLIC",
+      "status": "PUBLISHED"
+    },
+    {
+      "eventId": "03950951-39e1-429a-b702-5bf210960495",
+      "communityId": "5a6f6a65-0d3a-4b8b-ba3e-3506810a9dac",
+      "title": "Demo Event 2",
+      "description": "A description of the demo event.",
+      "location": "Somewhere",
+      "begin": "2030-01-02T18:00:00+02:00[Europe/Zurich]",
+      "end": "2030-01-02T20:00:00+02:00[Europe/Zurich]",
+      "imageId": "",
+      "visibility": "PUBLIC",
+      "status": "PUBLISHED"
+    }
+  ],
+  "images": [
+    {
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
+      "contentType": "image/png",
+      "url": "http://localhost:8082/import/test.png"
+    },
+    {
+      "imageId": "4ca05a55-de1e-4571-a833-c9e5e4f4bfba",
+      "contentType": "image/png",
+      "url": "http://localhost:8082/import/test.png"
+    },
+    {
+      "imageId": "d7bd2d09-3310-4e37-ad0a-c7c4c43389ad",
+      "contentType": "image/png",
+      "url": "http://localhost:8082/import/non-existing.png"
+    }
+  ]
+}
