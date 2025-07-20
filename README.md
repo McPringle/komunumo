@@ -7,6 +7,24 @@
 
 *Komunumo* is an esperanto noun with a meaning of *community*.
 
+## Table of Contents
+
+- [About](#about)
+- [Versioning](#versioning)
+- [Contributing](#contributing)
+- [Communication](#communication)
+    - [Matrix Chat](#matrix-chat)
+    - [GitHub Discussions](#github-discussions)
+- [Configuration](#configuration)
+    - [Server Configuration](#server-configuration)
+    - [Instance Configuration](#instance-configuration)
+    - [File Configuration](#file-configuration)
+    - [Demo Mode Configuration](#demo-mode-configuration)
+    - [Mail Configuration](#mail-configuration)
+    - [Database Configuration](#database-configuration)
+    - [Custom Styles Configuration](#custom-styles-configuration)
+- [Copyright and License](#copyright-and-license)
+
 ## About
 
 You are a community leader? *Komunumo* makes your life a lot easier! Everything you need to run your community in one place, for free! *Komunumo* is an open source community manager software which assists you in all tasks managing a community like a user group or a meetup.
