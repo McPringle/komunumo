@@ -24,7 +24,11 @@ import app.komunumo.util.ImageUtil;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 
 import java.io.ByteArrayInputStream;
@@ -50,33 +54,22 @@ import static org.mockito.Mockito.when;
 
 class ImageServletTest {
 
-    @Test
-    void redirectsTo404Page_whenUrlIsNull() throws IOException {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {
+            "/images/test.jpg",
+            "/placeholder.svg",
+            "/placeholder-000x000.svg",
+            "/placeholder-100x000.svg",
+            "/placeholder-000x100.svg"
+    })
+    void redirectsTo404Page_whenRequestIsInvalid(final @Nullable String pathInfo) throws IOException {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var imageService = mock(ImageService.class);
 
-        when(request.getPathInfo()).thenReturn(null);
-
-        final var servlet = new ImageServlet(imageService);
-
-        // Act
-        servlet.doGet(request, response);
-
-        // Assert
-        verifyNoInteractions(imageService);
-        verify(response).sendRedirect("/error/404");
-    }
-
-    @Test
-    void redirectsTo404Page_whenImageIdIsInvalid() throws IOException {
-        // Arrange
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
-
-        when(request.getPathInfo()).thenReturn("/images/test.jpg");
+        when(request.getPathInfo()).thenReturn(pathInfo);
 
         final var servlet = new ImageServlet(imageService);
 
@@ -265,81 +258,6 @@ class ImageServletTest {
             verify(imageService).getImage(imageId);
             verify(response).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @Test
-    void redirectsTo404Page_whenPlaceholderImageDimensionsAreZero() throws IOException {
-        // Arrange
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
-
-        when(request.getPathInfo()).thenReturn("/placeholder-000x000.svg");
-
-        final var servlet = new ImageServlet(imageService);
-
-        // Act
-        servlet.doGet(request, response);
-
-        // Assert
-        verifyNoInteractions(imageService);
-        verify(response).sendRedirect("/error/404");
-    }
-
-    @Test
-    void redirectsTo404Page_whenPlaceholderImageWidthIsZero() throws IOException {
-        // Arrange
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
-
-        when(request.getPathInfo()).thenReturn("/placeholder-100x000.svg");
-
-        final var servlet = new ImageServlet(imageService);
-
-        // Act
-        servlet.doGet(request, response);
-
-        // Assert
-        verifyNoInteractions(imageService);
-        verify(response).sendRedirect("/error/404");
-    }
-
-    @Test
-    void redirectsTo404Page_whenPlaceholderImageHeightIsZero() throws IOException {
-        // Arrange
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
-
-        when(request.getPathInfo()).thenReturn("/placeholder-000x100.svg");
-
-        final var servlet = new ImageServlet(imageService);
-
-        // Act
-        servlet.doGet(request, response);
-
-        // Assert
-        verifyNoInteractions(imageService);
-        verify(response).sendRedirect("/error/404");
-    }
-
-    @Test
-    void redirectsTo404Page_whenPlaceholderImageDimensionNotFound() throws IOException {
-        // Arrange
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
-
-        when(request.getPathInfo()).thenReturn("/placeholder.svg");
-
-        // Act
-        final var servlet = new ImageServlet(imageService);
-        servlet.doGet(request, response);
-
-        // Assert
-        verifyNoInteractions(imageService);
-        verify(response).sendRedirect("/error/404");
     }
 
     @Test
