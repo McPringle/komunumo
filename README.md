@@ -69,6 +69,15 @@ If no user with the admin role is found in the database, a new instance admin wi
 > [!WARNING]
 > This mechanism only runs once! It will **not** overwrite or recreate users if an admin already exists.
 
+#### Name and Slogan
+
+The default name of the instance is *Komunumo* and the default slogan is *Open Source Community Manager*. You can change this to a more suitable name for your instance by setting the following environment variables:
+
+```
+KOMUNUMO_INSTANCE_NAME=My Community
+KOMUNUMO_INSTANCE_SLOGAN=My Slogan
+```
+
 ### File Configuration
 
 | Variable                 | Default                       | Description                            |

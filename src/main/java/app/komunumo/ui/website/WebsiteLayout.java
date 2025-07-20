@@ -53,7 +53,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
             add(new InfoBanner(ui.getTranslation("demo.mode.enabled")));
         }
 
-        addPageHeader();
+        addPageHeader(serviceProvider);
         addNavigationBar(serviceProvider);
 
         main = new Main();
@@ -62,10 +62,11 @@ public final class WebsiteLayout extends Div implements RouterLayout {
         addFooter(serviceProvider);
     }
 
-    private void addPageHeader() {
-        final var instanceTitle = ui.getTranslation("komunumo.title");
-        final var instanceSubtitle = ui.getTranslation("komunumo.subtitle");
-        add(new PageHeader(instanceTitle, instanceSubtitle));
+    private void addPageHeader(final @NotNull ServiceProvider serviceProvider) {
+        final var instanceConfig = serviceProvider.getAppConfig().instance();
+        final var instanceTitle = instanceConfig.name();
+        final var instanceSlogan = instanceConfig.slogan();
+        add(new PageHeader(instanceTitle, instanceSlogan));
     }
 
     private void addNavigationBar(final @NotNull ServiceProvider serviceProvider) {

@@ -15,24 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.component;
+package app.komunumo.configuration;
 
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public final class PageHeader extends Header {
-
-    public PageHeader(final @NotNull String title, final @Nullable String slogan) {
-        super();
-        addClassName("page-header");
-        add(new H1(title));
-
-        if (slogan != null) {
-            add(new H2(slogan));
-        }
-    }
-
-}
+public record InstanceConfig(@NotNull String name, @NotNull String slogan) { }

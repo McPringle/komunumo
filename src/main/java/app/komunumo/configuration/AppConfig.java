@@ -29,6 +29,7 @@ public record AppConfig(@NotNull String version,
                         @NotNull CustomConfig custom,
                         @NotNull DemoConfig demo,
                         @NotNull FilesConfig files,
+                        @NotNull InstanceConfig instance,
                         @NotNull MailConfig mail) {
 
     @ConstructorBinding

@@ -26,6 +26,16 @@
       "description" : "Base directory for local file storage."
     },
     {
+      "name" : "komunumo.instance.name",
+      "type" : "java.lang.String",
+      "description" : "The name for this instance."
+    },
+    {
+      "name" : "komunumo.instance.slogan",
+      "type" : "java.lang.String",
+      "description" : "the slogan for this instance."
+    },
+    {
       "name" : "komunumo.mail.from",
       "type" : "java.lang.String",
       "description" : "Sender address shown in outgoing emails (e.g. noreply@example.com)."
