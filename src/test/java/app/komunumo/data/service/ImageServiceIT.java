@@ -47,32 +47,28 @@ class ImageServiceIT extends IntegrationTest {
         assertThat(imageService.getImageCount()).isEqualTo(5);
 
         // store new image
-        var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp"));
+        var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP));
         final var imageId = image.id();
         assertThat(imageId).isNotNull();
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
-        assertThat(image.filename()).isEqualTo("test.webp");
         assertThat(imageService.getImageCount()).isEqualTo(6);
 
         // read the image from the database
         image = imageService.getImage(imageId).orElseThrow();
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
-        assertThat(image.filename()).isEqualTo("test.webp");
         assertThat(imageService.getImageCount()).isEqualTo(6);
 
         // update existing image
-        image = imageService.storeImage(new ImageDto(image.id(), ContentType.IMAGE_SVG, "test.svg"));
+        image = imageService.storeImage(new ImageDto(image.id(), ContentType.IMAGE_SVG));
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_SVG);
-        assertThat(image.filename()).isEqualTo("test.svg");
         assertThat(imageService.getImageCount()).isEqualTo(6);
 
         // read the image from the database
         image = imageService.getImage(imageId).orElseThrow();
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_SVG);
-        assertThat(image.filename()).isEqualTo("test.svg");
         assertThat(imageService.getImageCount()).isEqualTo(6);
 
         // read all images from the database
@@ -103,11 +99,10 @@ class ImageServiceIT extends IntegrationTest {
 
     @Test
     void cleanupOrphanedImages() {
-        var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp"));
+        var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP));
         assertThat(image).isNotNull().satisfies(testee -> {
             assertThat(testee.id()).isNotNull();
             assertThat(testee.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
-            assertThat(testee.filename()).isEqualTo("test.webp");
         });
 
         assertThat(imageService.findOrphanedImages()).containsExactly(image);
@@ -117,14 +112,14 @@ class ImageServiceIT extends IntegrationTest {
 
     @Test
     void deleteUnsavedImageReturnsFalse() {
-        final var image = new ImageDto(null, ContentType.IMAGE_WEBP, "test.webp");
+        final var image = new ImageDto(null, ContentType.IMAGE_WEBP);
         assertThat(imageService.deleteImage(image)).isFalse();
     }
 
     @Test
     void deleteImageShouldLogErrorWhenFileDeletionFails() {
         // Arrange
-        final var image = new ImageDto(UUID.randomUUID(), ContentType.IMAGE_WEBP, "test.webp");
+        final var image = new ImageDto(UUID.randomUUID(), ContentType.IMAGE_WEBP);
         final var path = ImageUtil.resolveImagePath(image);
         assertThat(path).isNotNull();
 

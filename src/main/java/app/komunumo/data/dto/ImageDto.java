@@ -24,6 +24,5 @@ import java.util.UUID;
 
 public record ImageDto(
         @Nullable UUID id,
-        @NotNull ContentType contentType,
-        @NotNull String filename
+        @NotNull ContentType contentType
 ) { }

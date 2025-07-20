@@ -75,7 +75,7 @@ public final class DemoDataImporter {
                 final var path = DownloadUtil.downloadFile(url);
 
                 if (path != null) {
-                    final var image = new ImageDto(imageId, contentType, url);
+                    final var image = new ImageDto(imageId, contentType);
                     try {
                         ImageUtil.storeImage(image, path);
                         imageService.storeImage(image);

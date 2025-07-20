@@ -55,7 +55,7 @@ class DemoDataCreatorIT extends IntegrationTest {
     void storeDemoImageWithWarning() {
         try (var logCaptor = LogCaptor.forClass(DemoDataCreator.class)) {
             final var filename = "non-existing.gif";
-            final var image = new ImageDto(null, ContentType.IMAGE_GIF, filename);
+            final var image = new ImageDto(null, ContentType.IMAGE_GIF);
             demoDataCreator.storeDemoImage(image, filename);
             Assertions.assertThat(logCaptor.getWarnLogs()).containsExactly("Demo image not found: non-existing.gif");
         }

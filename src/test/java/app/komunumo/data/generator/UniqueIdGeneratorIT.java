@@ -69,7 +69,7 @@ class UniqueIdGeneratorIT extends IntegrationTest {
         // Arrange
         final UUID existingId = UUID.randomUUID();
         final UUID freshId = UUID.randomUUID();
-        final ImageDto existingImage = new ImageDto(existingId, ContentType.IMAGE_WEBP, "test.webp");
+        final ImageDto existingImage = new ImageDto(existingId, ContentType.IMAGE_WEBP);
 
         try {
             imageService.storeImage(existingImage);

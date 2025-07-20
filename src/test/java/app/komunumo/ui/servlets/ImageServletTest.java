@@ -124,7 +124,7 @@ class ImageServletTest {
 
         final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
         final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
-        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG, "test.jpg");
+        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG);
 
         when(request.getPathInfo()).thenReturn(pathInfo);
         when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
@@ -146,7 +146,7 @@ class ImageServletTest {
     void redirectsTo500Page_whenStreamingFails() throws IOException {
         // Arrange
         final UUID imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
-        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG, "test.jpg");
+        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -182,7 +182,7 @@ class ImageServletTest {
     void streamsImageSuccessfully_whenAllConditionsAreMet() throws IOException {
         // Arrange
         final UUID imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
-        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG, "test.jpg");
+        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -250,7 +250,7 @@ class ImageServletTest {
 
         final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
         final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
-        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG, "test.jpg");
+        final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG);
 
         when(request.getPathInfo()).thenReturn(pathInfo);
         when(imageService.getImage(imageId)).thenReturn(Optional.of(image));

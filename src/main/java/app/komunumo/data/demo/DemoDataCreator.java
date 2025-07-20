@@ -104,7 +104,7 @@ public final class DemoDataCreator {
     private List<ImageDto> createDemoImages(final @NotNull ImageService imageService) {
         for (int i = 1; i <= 5; i++) {
             final var filename = "demo-background-" + i + ".jpg";
-            final var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_JPEG, filename));
+            final var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_JPEG));
             storeDemoImage(image, filename);
         }
         return imageService.getImages();

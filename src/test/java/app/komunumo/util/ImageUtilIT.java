@@ -25,7 +25,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,11 +45,11 @@ class ImageUtilIT extends IntegrationTest {
     void resolveImageUrl() {
         assertThat(ImageUtil.resolveImageUrl(null)).isNull();
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG, "a.jpg");
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
         assertThat(ImageUtil.resolveImageUrl(imageWithoutId)).isNull();
 
         final var imageId = UUID.randomUUID();
-        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG, "b.jpg");
+        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG);
         assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo("/images/" + imageId + ".jpg");
     }
 
@@ -58,11 +57,11 @@ class ImageUtilIT extends IntegrationTest {
     void resolveImagePath() {
         assertThat(ImageUtil.resolveImagePath(null)).isNull();
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG, "a.jpg");
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
         assertThat(ImageUtil.resolveImagePath(imageWithoutId)).isNull();
 
         final var imageId = UUID.randomUUID();
-        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG, "b.jpg");
+        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG);
         final var path = ImageUtil.resolveImagePath(imageWithId);
         assertThat(path).isNotNull();
         assertThat(path.toString()).endsWith(separator + "images" + separator + getSubFolder(imageId) + separator + imageId + ".jpg");
@@ -79,16 +78,16 @@ class ImageUtilIT extends IntegrationTest {
     void loadImage() {
         assertThat(ImageUtil.loadImage(null)).isEmpty();
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG, "a.jpg");
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
         assertThat(ImageUtil.loadImage(imageWithoutId)).isEmpty();
 
         final var randomImageId = UUID.randomUUID();
-        final var imageWithRandomId = new ImageDto(randomImageId, ContentType.IMAGE_JPEG, "b.jpg");
+        final var imageWithRandomId = new ImageDto(randomImageId, ContentType.IMAGE_JPEG);
         final var emptyStream = ImageUtil.loadImage(imageWithRandomId);
         assertThat(emptyStream).isEmpty();
 
         final var existingImageId = imageService.getImages().getFirst().id();
-        final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_JPEG, "c.jpg");
+        final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_JPEG);
         final var stream = ImageUtil.loadImage(imageWithExistingId);
         assertThat(stream).isNotEmpty();
     }
@@ -99,8 +98,7 @@ class ImageUtilIT extends IntegrationTest {
         // Arrange
         final var image = new ImageDto(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
-                ContentType.IMAGE_JPEG,
-                "broken.jpg"
+                ContentType.IMAGE_JPEG
         );
 
         final var path = Path.of("/fake/path.jpg");
@@ -134,7 +132,7 @@ class ImageUtilIT extends IntegrationTest {
 
     @Test
     void storeImageWithException() {
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG, "a.jpg");
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
         final var testPath = Path.of(".");
         assertThatThrownBy(() -> ImageUtil.storeImage(imageWithoutId, testPath))
                 .isInstanceOf(IllegalArgumentException.class)
