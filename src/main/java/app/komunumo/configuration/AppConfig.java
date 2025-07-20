@@ -25,7 +25,6 @@ import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 @ConfigurationProperties(prefix = "komunumo")
 public record AppConfig(@NotNull String version,
-                        @NotNull CustomConfig custom,
                         @NotNull DemoConfig demo,
                         @NotNull FilesConfig files,
                         @NotNull InstanceConfig instance,

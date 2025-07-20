@@ -1,13 +1,13 @@
 # Style Guide
 
-**This document provides information on how to customize the style of *Komunumo*.**
+**This document provides information on how to customize the style of your *Komunumo* instance.**
 
-## Configuring Custom Styles
+## Configuring Instance Styles
 
-To configure custom styles, set the environment variable `KOMUNUMO_CUSTOM_STYLES` to the URL of your custom CSS file. This file must be accessible via HTTPS and contain valid CSS.
+To configure custom styling, set the environment variable `KOMUNUMO_INSTANCE_STYLES` to the URL of your custom CSS file. This file must be accessible via HTTPS and contain valid CSS.
 
 ```
-KOMUNUMO_CUSTOM_STYLES=https://static.example.com/custom.css
+KOMUNUMO_INSTANCE_STYLES=https://static.example.com/custom.css
 ```
 
 The maintainer of the *Komunumo* instance is responsible for hosting the custom CSS file as well as any additional resources referenced within it, such as background images, fonts, or logos. All resources must be accessible via HTTPS.

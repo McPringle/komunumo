@@ -27,7 +27,7 @@ class WebsiteLayoutCustomStylesIT extends BrowserTest {
     @Override
     protected String[] getProperties() {
         return new String[] {
-                "--komunumo.custom.styles=http://localhost:8082/custom-styles/styles.css"
+                "--komunumo.instance.styles=http://localhost:8082/custom-styles/styles.css"
         };
     }
 

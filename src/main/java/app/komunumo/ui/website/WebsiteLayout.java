@@ -39,7 +39,7 @@ public final class WebsiteLayout extends Div implements RouterLayout {
         super();
         ui = UI.getCurrent();
 
-        final var customStyles = serviceProvider.getAppConfig().custom().styles();
+        final var customStyles = serviceProvider.getAppConfig().instance().styles();
         if (!customStyles.isBlank()) {
             ui.getPage().executeJs("""
                 const link = document.createElement('link');

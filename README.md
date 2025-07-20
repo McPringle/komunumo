@@ -22,7 +22,6 @@
     - [Demo Mode Configuration](#demo-mode-configuration)
     - [Mail Configuration](#mail-configuration)
     - [Database Configuration](#database-configuration)
-    - [Custom Styles Configuration](#custom-styles-configuration)
 - [Copyright and License](#copyright-and-license)
 
 ## About
@@ -97,6 +96,11 @@ The default name of the instance is *Komunumo* and the default slogan is *Open S
 KOMUNUMO_INSTANCE_NAME=My Community
 KOMUNUMO_INSTANCE_SLOGAN=My Slogan
 ```
+
+#### Styles
+
+The visual style of *Komunumo* can be customized by the instance maintainer using custom CSS variables.  
+For details on how to configure and apply custom styles, see the [Style Guide](STYLEGUIDE.md).
 
 ### File Configuration
 
@@ -235,11 +239,6 @@ MySQL and MariaDB have a possible silent truncation problem with the `GROUP_CONC
 ```
 KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone\=Europe/Zurich&allowMultiQueries=true
 ```
-
-### Custom Styles Configuration
-
-The visual style of *Komunumo* can be customized by the instance maintainer using custom CSS variables.  
-For details on how to configure and apply custom styles, see the [Style Guide](STYLEGUIDE.md).
 
 ## Copyright and License
 

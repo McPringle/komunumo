@@ -1,11 +1,6 @@
 {
   "properties" : [
     {
-      "name" : "komunumo.custom.styles",
-      "type" : "java.lang.String",
-      "description" : "An external link to a stylesheet for custom CSS styles."
-    },
-    {
       "name" : "komunumo.demo.enabled",
       "type" : "java.lang.Boolean",
       "description" : "Enable demo mode with sample data and hourly reset."
@@ -34,6 +29,11 @@
       "name" : "komunumo.instance.slogan",
       "type" : "java.lang.String",
       "description" : "The slogan for this instance."
+    },
+    {
+      "name" : "komunumo.instance.styles",
+      "type" : "java.lang.String",
+      "description" : "An external link to a stylesheet for custom CSS styles."
     },
     {
       "name" : "komunumo.mail.from",

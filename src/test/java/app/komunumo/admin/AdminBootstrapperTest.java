@@ -18,7 +18,6 @@
 package app.komunumo.admin;
 
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.configuration.CustomConfig;
 import app.komunumo.configuration.DemoConfig;
 import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.InstanceConfig;
@@ -96,12 +95,11 @@ class AdminBootstrapperTest {
 
     private AppConfig createAppConfig(final @NotNull String email) {
         final var version = "0.0.0";
-        final var custom = new CustomConfig("");
-        final var demo = new DemoConfig(false, "");
-        final var files = new FilesConfig(Path.of("/tmp"));
-        final var instance = new InstanceConfig("", "", email);
-        final var mail = new MailConfig("", "");
-        return new AppConfig(version, custom, demo, files, instance, mail);
+        final var demoConfig = new DemoConfig(false, "");
+        final var filesConfig = new FilesConfig(Path.of("/tmp"));
+        final var instanceConfig = new InstanceConfig("", "", email, "");
+        final var mailConfig = new MailConfig("", "");
+        return new AppConfig(version, demoConfig, filesConfig, instanceConfig, mailConfig);
     }
 
 }
