@@ -26,5 +26,6 @@ For questions and support requests, please use [GitHub Discussions](https://gith
 - Create instance admin on first start.
 - Login with email and password authentication.
 - Add support for custom CSS styling and a Style Guide.
+- Add import of custom demo communities, events, and images.
 - Health check endpoint to check the health of the instance.
 - 100% test coverage for the Komunumo app.
