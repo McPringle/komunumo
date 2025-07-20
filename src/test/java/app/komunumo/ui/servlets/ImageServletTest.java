@@ -32,10 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -401,8 +397,7 @@ class ImageServletTest {
     }
 
     /**
-     * <p>Tests the behavior of {@link ImageServlet#getPlaceholderImageTemplate()}
-     * when the SVG template file is missing.</p>
+     * <p>Tests the behavior of {@link ImageServlet} when the placeholder SVG template file is missing.</p>
      *
      * <p>This test temporarily renames the {@code placeholder.svg} resource in the {@code target/classes} directory
      * to simulate its absence on the classpath.</p>
@@ -416,7 +411,7 @@ class ImageServletTest {
      * </ul>
      */
     @Test
-    void usesFallback_whenPlaceholderImageTemplateFileIsMissing() throws IOException, URISyntaxException {
+    void usesFallback_whenPlaceholderImageTemplateFileIsMissing() throws IOException {
         // Arrange
         final var imageService = mock(ImageService.class);
 
