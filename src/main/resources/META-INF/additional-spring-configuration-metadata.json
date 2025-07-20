@@ -33,7 +33,7 @@
     {
       "name" : "komunumo.instance.slogan",
       "type" : "java.lang.String",
-      "description" : "the slogan for this instance."
+      "description" : "The slogan for this instance."
     },
     {
       "name" : "komunumo.mail.from",
