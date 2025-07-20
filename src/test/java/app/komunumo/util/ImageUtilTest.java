@@ -17,7 +17,6 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.configuration.AdminConfig;
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.configuration.CustomConfig;
 import app.komunumo.configuration.DemoConfig;
@@ -50,14 +49,13 @@ class ImageUtilTest {
 
     @BeforeEach
     void setUp() {
-        final var adminConfig = new AdminConfig("admin@foo.bar");
         final var customConfig = new CustomConfig("");
         final var demoConfig = new DemoConfig(false, "");
         final var filesConfig = new FilesConfig(tempDir);
         final var mailConfig = new MailConfig("noreply@foo.bar", "support@foo.bar");
-        final var instanceConfig = new InstanceConfig("", "");
+        final var instanceConfig = new InstanceConfig("", "", "admin@foo.bar");
         final var appConfig = new AppConfig("0.0.0",
-                adminConfig, customConfig, demoConfig, filesConfig, instanceConfig, mailConfig);
+                customConfig, demoConfig, filesConfig, instanceConfig, mailConfig);
         ImageUtil.initialize(appConfig);
         uploadImagePath = tempDir.resolve("uploads/images");
     }

@@ -58,10 +58,12 @@ KOMUNUMO_PORT=8080
 
 ### Instance Configuration
 
+#### Admin
+
 When starting *Komunumo* for the first time, the system can automatically create an initial instance admin. To enable this, set the following environment variable to the email address of the admin:
 
 ```
-KOMUNUMO_ADMIN_EMAIL=admin@example.eu
+KOMUNUMO_INSTANCE_ADMIN=admin@example.eu
 ```
 
 If no user with the admin role is found in the database, a new instance admin will be created with the email address given.

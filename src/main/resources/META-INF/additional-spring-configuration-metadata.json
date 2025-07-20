@@ -1,11 +1,6 @@
 {
   "properties" : [
     {
-      "name" : "komunumo.admin.email",
-      "type" : "java.lang.String",
-      "description" : "Email address of the instance admin."
-    },
-    {
       "name" : "komunumo.custom.styles",
       "type" : "java.lang.String",
       "description" : "An external link to a stylesheet for custom CSS styles."
@@ -24,6 +19,11 @@
       "name" : "komunumo.files.basedir",
       "type" : "java.lang.String",
       "description" : "Base directory for local file storage."
+    },
+    {
+      "name" : "komunumo.instance.admin",
+      "type" : "java.lang.String",
+      "description" : "Email address of the instance admin."
     },
     {
       "name" : "komunumo.instance.name",
