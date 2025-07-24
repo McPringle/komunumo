@@ -21,6 +21,11 @@
       "description" : "Email address of the instance admin."
     },
     {
+      "name" : "komunumo.instance.hide-communities",
+      "type" : "java.lang.Boolean",
+      "description" : "Hide the communities from the user interface (true/false)."
+    },
+    {
       "name" : "komunumo.instance.name",
       "type" : "java.lang.String",
       "description" : "The name for this instance."

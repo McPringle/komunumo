@@ -102,6 +102,14 @@ KOMUNUMO_INSTANCE_SLOGAN=My Slogan
 The visual style of *Komunumo* can be customized by the instance maintainer using custom CSS variables.  
 For details on how to configure and apply custom styles, see the [Style Guide](STYLEGUIDE.md).
 
+#### Communities
+
+If you run your own instance and only have a single community, you can configure *Komunumo* to hide the community selection from users. This is useful if you want to use *Komunumo* as a simple event management system without requiring users to deal with communities. By default, this option is disabled (`false`), meaning the communities page remains accessible and users can choose a community.
+
+```
+KOMUNUMO_INSTANCE_HIDE_COMMUNITIES=true
+```
+
 ### File Configuration
 
 | Variable                 | Default                       | Description                            |

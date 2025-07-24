@@ -38,7 +38,10 @@ public final class NavigationBar extends Nav {
         addClassName("navigation-bar");
 
         add(new RouterLink(ui.getTranslation("home.title"), HomeView.class));
-        add(new RouterLink(ui.getTranslation("communities.title"), CommunityGridView.class));
+
+        if (!serviceProvider.getAppConfig().instance().hideCommunities()) {
+            add(new RouterLink(ui.getTranslation("communities.title"), CommunityGridView.class));
+        }
 
         serviceProvider.globalPageService()
                 .getGlobalPages(locale)
