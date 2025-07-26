@@ -26,16 +26,6 @@
       "description" : "Hide the communities from the user interface (true/false)."
     },
     {
-      "name" : "komunumo.instance.name",
-      "type" : "java.lang.String",
-      "description" : "The name for this instance."
-    },
-    {
-      "name" : "komunumo.instance.slogan",
-      "type" : "java.lang.String",
-      "description" : "The slogan for this instance."
-    },
-    {
       "name" : "komunumo.instance.styles",
       "type" : "java.lang.String",
       "description" : "An external link to a stylesheet for custom CSS styles."

@@ -19,6 +19,5 @@ package app.komunumo.configuration;
 
 import org.jetbrains.annotations.NotNull;
 
-public record InstanceConfig(@NotNull String name, @NotNull String slogan,
-                             @NotNull String admin, @NotNull String styles,
+public record InstanceConfig(@NotNull String admin, @NotNull String styles,
                              boolean hideCommunities) { }

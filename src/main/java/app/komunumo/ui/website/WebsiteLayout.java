@@ -30,6 +30,9 @@ import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_SLOGAN;
+
 public final class WebsiteLayout extends Div implements RouterLayout {
 
     private final @NotNull UI ui;
@@ -63,9 +66,9 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     }
 
     private void addPageHeader(final @NotNull ServiceProvider serviceProvider) {
-        final var instanceConfig = serviceProvider.getAppConfig().instance();
-        final var instanceTitle = instanceConfig.name();
-        final var instanceSlogan = instanceConfig.slogan();
+        final var configurationService = serviceProvider.configurationService();
+        final var instanceTitle = configurationService.getConfiguration(INSTANCE_NAME);
+        final var instanceSlogan = configurationService.getConfiguration(INSTANCE_SLOGAN);
         add(new PageHeader(instanceTitle, instanceSlogan));
     }
 
