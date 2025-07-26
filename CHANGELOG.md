@@ -11,21 +11,8 @@ For questions and support requests, please use [GitHub Discussions](https://gith
 
 ## [Unreleased]
 
+🎉 First stable release of *Komunumo* 🎉
+
 ### Breaking Changes
 
 **If you have used the snapshot versions of *Komunumo* before the final release of version `1.0.0`, you will need to reset your *Komunumo* database and to empty your *Komunumo* file storage!**
-
-### Added
-
-- Home page with a list of all upcoming events.
-- Community page with a list of all communities.
-- Storing and retrieving images for communities and events.
-- Cleaning up orphaned images.
-- Demo mode with sample data and hourly reset.
-- About page with information about the instance.
-- Create instance admin on first start.
-- Login with email and password authentication.
-- Add support for custom CSS styling and a Style Guide.
-- Add import of custom demo communities, events, and images.
-- Health check endpoint to check the health of the instance.
-- 100% test coverage for the Komunumo app.
