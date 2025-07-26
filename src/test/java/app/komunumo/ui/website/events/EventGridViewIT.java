@@ -32,9 +32,9 @@ class EventGridViewIT extends BrowserTest {
         final var page = getPage();
 
         page.navigate("http://localhost:8081/events/");
-        page.waitForSelector("h1:has-text('Komunumo')");
+        page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("upcoming-events-view");
-        assertThat(page.title()).isEqualTo("Events – Komunumo");
+        assertThat(page.title()).isEqualTo("Events – Your Instance Name");
 
         assertThat(page.locator("a[href='events']").getAttribute("highlight")).isNotNull().isBlank();
 
@@ -99,7 +99,7 @@ class EventGridViewIT extends BrowserTest {
         final var page = getPage();
 
         page.navigate("http://localhost:8081/events");
-        page.waitForSelector("h1:has-text('Komunumo')");
+        page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("event-grid-view");
 
         final var eventCards = page.locator("vaadin-card");

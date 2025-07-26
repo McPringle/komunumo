@@ -45,7 +45,7 @@ class ConfigurationServiceIT extends IntegrationTest {
     @Test
     void shouldReturnDefaultValueIfNoValueExists() {
         final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME);
-        assertThat(value).isEqualTo("Komunumo");
+        assertThat(value).isEqualTo("Your Instance Name");
     }
 
     @Test
@@ -75,7 +75,7 @@ class ConfigurationServiceIT extends IntegrationTest {
     @Test
     void shouldReturnDefaultIfNothingIsSet() {
         final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ITALIAN);
-        assertThat(value).isEqualTo("Open Source Community Manager");
+        assertThat(value).isEqualTo("Your Instance Slogan");
     }
 
     @Test

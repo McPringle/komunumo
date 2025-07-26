@@ -29,9 +29,9 @@ class CommunityGridViewIT extends BrowserTest {
         final var page = getPage();
 
         page.navigate("http://localhost:8081/communities");
-        page.waitForSelector("h1:has-text('Komunumo')");
+        page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("community-grid-view");
-        assertThat(page.title()).isEqualTo("Communities – Komunumo");
+        assertThat(page.title()).isEqualTo("Communities – Your Instance Name");
 
         assertThat(page.locator("a[href='communities']").getAttribute("highlight")).isNotNull().isBlank();
 
@@ -84,7 +84,7 @@ class CommunityGridViewIT extends BrowserTest {
         final var page = getPage();
 
         page.navigate("http://localhost:8081/communities");
-        page.waitForSelector("h1:has-text('Komunumo')");
+        page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("community-grid-view");
 
         final var communityCards = page.locator("vaadin-card");

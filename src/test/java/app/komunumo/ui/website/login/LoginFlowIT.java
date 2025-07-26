@@ -52,7 +52,7 @@ class LoginFlowIT extends BrowserTest {
         final var page = getPage();
 
         page.navigate("http://localhost:8081/");
-        page.waitForSelector("h1:has-text('Komunumo')");
+        page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("home-before-login");
 
         assertLinkIsVisible("login");
@@ -65,7 +65,7 @@ class LoginFlowIT extends BrowserTest {
         captureScreenshot("login");
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in")).click();
 
-        page.waitForSelector("h1:has-text('Komunumo')");
+        page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("home-after-login");
         assertLinkIsVisible("logout");
 

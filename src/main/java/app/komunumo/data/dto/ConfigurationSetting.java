@@ -18,10 +18,11 @@
 package app.komunumo.data.dto;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public enum ConfigurationSetting {
-    INSTANCE_NAME("instance.name", "Komunumo"),
-    INSTANCE_SLOGAN("instance.slogan", "Open Source Community Manager");
+    INSTANCE_NAME("instance.name", "Your Instance Name"),
+    INSTANCE_SLOGAN("instance.slogan", "Your Instance Slogan"),;
 
     private final String setting;
     private final String defaultValue;
@@ -29,6 +30,15 @@ public enum ConfigurationSetting {
     ConfigurationSetting(final @NotNull String setting, final @NotNull String defaultValue) {
         this.setting = setting;
         this.defaultValue = defaultValue;
+    }
+
+    public static ConfigurationSetting fromString(final @Nullable String settingString) {
+        for (ConfigurationSetting setting : values()) {
+            if (setting.setting.equals(settingString)) {
+                return setting;
+            }
+        }
+        throw new IllegalArgumentException("Unknown setting: " + settingString);
     }
 
     public String setting() {

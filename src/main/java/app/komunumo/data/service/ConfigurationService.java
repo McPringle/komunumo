@@ -92,6 +92,15 @@ public final class ConfigurationService {
         cache.asMap().keySet().removeIf(cacheKey -> cacheKey.setting().equals(setting));
     }
 
+    public void clearCache() {
+        cache.invalidateAll();
+    }
+
+    public void deleteAllSettings() {
+        dsl.delete(CONFIG).execute();
+        clearCache();
+    }
+
     private record CacheKey(@NotNull ConfigurationSetting setting, @Nullable String language) { }
 
 }

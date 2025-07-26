@@ -72,11 +72,13 @@ public final class DemoDataCreator {
             return;
         }
 
+        final var configurationService = serviceProvider.configurationService();
         final var imageService = serviceProvider.imageService();
         final var communityService = serviceProvider.communityService();
         final var eventService = serviceProvider.eventService();
 
         LOGGER.info("Deleting existing data...");
+        configurationService.deleteAllSettings();
         eventService.getEvents().forEach(eventService::deleteEvent);
         communityService.getCommunities().forEach(communityService::deleteCommunity);
         imageService.getImages().forEach(imageService::deleteImage);
@@ -90,6 +92,7 @@ public final class DemoDataCreator {
             createDemoEvents(eventService, images, communities);
         } else {
             final var demoDataImporter = new DemoDataImporter(demoDataUrl);
+            demoDataImporter.importSettings(configurationService);
             demoDataImporter.importImages(imageService);
             demoDataImporter.importCommunities(communityService);
             demoDataImporter.importEvents(eventService);

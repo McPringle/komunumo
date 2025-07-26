@@ -89,11 +89,11 @@ class WebsiteLayoutIT extends IntegrationTest {
 
         final var h1 = findComponent(header, H1.class);
         assertThat(h1).isNotNull();
-        assertThat(h1.getText()).isEqualTo("Komunumo");
+        assertThat(h1.getText()).isEqualTo("Your Instance Name");
 
         final var h2 = findComponent(header, H2.class);
         assertThat(h2).isNotNull();
-        assertThat(h2.getText()).isEqualTo("Open Source Community Manager");
+        assertThat(h2.getText()).isEqualTo("Your Instance Slogan");
     }
 
     @Test

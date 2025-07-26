@@ -40,7 +40,7 @@ class DemoDataCreatorJsonIT extends BrowserTest {
         final var page = getPage();
 
         page.navigate("http://localhost:8081/");
-        page.waitForSelector("h1:has-text('Komunumo')");
+        page.waitForSelector("h1:has-text('Komunumo Test')");
         captureScreenshot("home-page-with-demo-data");
 
         final var eventCards = page.locator("vaadin-card");

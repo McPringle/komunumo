@@ -31,9 +31,9 @@ class UpcomingEventsIT extends BrowserTest {
         final var page = getPage();
 
         page.navigate("http://localhost:8081/");
-        page.waitForSelector("h1:has-text('Komunumo')");
+        page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("upcoming-events-view");
-        assertThat(page.title()).isEqualTo("Komunumo – Open Source Community Manager");
+        assertThat(page.title()).isEqualTo("Your Instance Name – Your Instance Slogan");
 
         assertThat(page.locator("a[href='']").getAttribute("highlight")).isNotNull().isBlank();
 

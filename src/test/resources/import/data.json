@@ -1,4 +1,16 @@
 {
+  "settings": [
+    {
+      "setting": "instance.name",
+      "language": "en",
+      "value": "Komunumo Test"
+    },
+    {
+      "setting": "instance.slogan",
+      "language": "en",
+      "value": "This is a local test instance of Komunumo."
+    }
+  ],
   "communities": [
     {
       "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",

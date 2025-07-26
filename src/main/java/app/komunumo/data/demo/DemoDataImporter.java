@@ -18,12 +18,14 @@
 package app.komunumo.data.demo;
 
 import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.util.DownloadUtil;
@@ -36,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 @SuppressWarnings("java:S1192") // Suppressing "String literals should not be duplicated" because of different contexts
@@ -53,7 +56,8 @@ public final class DemoDataImporter {
         try {
             final String json = DownloadUtil.getString(demoDataUrl);
             final JSONObject jsonObject = new JSONObject(json);
-            LOGGER.info("Successfully loaded {} communities, {} events, and {} images",
+            LOGGER.info("Successfully loaded {} settings, {} communities, {} events, and {} images",
+                    jsonObject.getJSONArray("settings").length(),
                     jsonObject.getJSONArray("communities").length(),
                     jsonObject.getJSONArray("events").length(),
                     jsonObject.getJSONArray("images").length());
@@ -62,6 +66,22 @@ public final class DemoDataImporter {
             LOGGER.warn("Failed to download demo data: {}", e.getMessage());
         }
         return new JSONObject();
+    }
+
+    public void importSettings(final @NotNull ConfigurationService configurationService) {
+        if (demoData.has("settings")) {
+            demoData.getJSONArray("settings").forEach(object -> {
+                final var jsonObject = (JSONObject) object;
+                final var setting = ConfigurationSetting.fromString(jsonObject.getString("setting"));
+                final var locale = Locale.forLanguageTag(jsonObject.getString("language"));
+                final var value = jsonObject.getString("value");
+
+                configurationService.setConfiguration(setting, locale, value);
+            });
+            configurationService.clearCache();
+        } else {
+            LOGGER.warn("No settings found in demo data.");
+        }
     }
 
     public void importImages(final @NotNull ImageService imageService) {

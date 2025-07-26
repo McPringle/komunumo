@@ -51,8 +51,8 @@ class HomeViewIT extends IntegrationTest {
     @Test
     void homeViewHasTitle() {
         UI.getCurrent().navigate(HomeView.class);
-        assertThat(_get(H1.class).getText()).isEqualTo("Komunumo");
-        assertThat(_get(H2.class).getText()).isEqualTo("Open Source Community Manager");
+        assertThat(_get(H1.class).getText()).isEqualTo("Your Instance Name");
+        assertThat(_get(H2.class).getText()).isEqualTo("Your Instance Slogan");
     }
 
     @Test
@@ -61,7 +61,7 @@ class HomeViewIT extends IntegrationTest {
         ui.navigate(HomeView.class);
         final var view = (HasDynamicTitle) ui.getCurrentView();
         assertThat(view.getPageTitle())
-                .isEqualTo("Komunumo – Open Source Community Manager");
+                .isEqualTo("Your Instance Name – Your Instance Slogan");
     }
 
     @Test
