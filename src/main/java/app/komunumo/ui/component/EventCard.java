@@ -20,6 +20,7 @@ package app.komunumo.ui.component;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.util.DateTimeUtil;
+import app.komunumo.util.LinkUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ public class EventCard extends KomunumoCard {
         super(eventWithImage.event().title(), eventWithImage.image());
         addClassName("event-card");
         addBeginDateAndTime(eventWithImage.event());
+        addClickListener((event -> UI.getCurrent().navigate(LinkUtil.getLink(eventWithImage.event()))));
     }
 
     private void addBeginDateAndTime(final @NotNull EventDto event) {

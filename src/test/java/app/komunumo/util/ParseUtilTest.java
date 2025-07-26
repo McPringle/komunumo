@@ -17,34 +17,34 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.data.dto.CommunityDto;
-import app.komunumo.data.dto.EventDto;
-import app.komunumo.data.dto.EventStatus;
-import app.komunumo.data.dto.EventVisibility;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-class LinkUtilTest {
+class ParseUtilTest {
 
     @Test
-    void getEventLink() {
-        final var event = new EventDto(UUID.fromString("8232a4f1-3f02-4db3-bf78-18387734c81c"),
-                UUID.fromString("e315c669-95ac-4231-96b6-55fb4c30e0e2"), null, null,
-                "Test Event Title", "Test Event Description", "", null, null, null,
-                EventVisibility.PUBLIC, EventStatus.PUBLISHED);
-        final var link = LinkUtil.getLink(event);
-        assertThat(link).isEqualTo("/events/8232a4f1-3f02-4db3-bf78-18387734c81c");
+    void parseUUID() {
+        assertThat(ParseUtil.parseUUID("8232a4f1-3f02-4db3-bf78-18387734c81c"))
+                .isPresent()
+                .hasValue(UUID.fromString("8232a4f1-3f02-4db3-bf78-18387734c81c"));
+        assertThat(ParseUtil.parseUUID("invalid-uuid")).isEmpty();
+        assertThat(ParseUtil.parseUUID("")).isEmpty();
+        assertThat(ParseUtil.parseUUID((String) null)).isEmpty();
     }
 
     @Test
-    void getCommunityLink() {
-        final var community = new CommunityDto(null, "@test", null, null,
-                "Test Community Name", "Test Community Description", null);
-        final var link = LinkUtil.getLink(community);
-        assertThat(link).isEqualTo("/communities/@test");
+    void testParseUUID() {
+        assertThat(ParseUtil.parseUUID(Optional.of("8232a4f1-3f02-4db3-bf78-18387734c81c")))
+                .isPresent()
+                .hasValue(UUID.fromString("8232a4f1-3f02-4db3-bf78-18387734c81c"));
+        assertThat(ParseUtil.parseUUID(Optional.of("invalid-uuid"))).isEmpty();
+        assertThat(ParseUtil.parseUUID(Optional.of(""))).isEmpty();
+        assertThat(ParseUtil.parseUUID(Optional.empty())).isEmpty();
     }
 
 }

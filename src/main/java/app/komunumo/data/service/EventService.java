@@ -76,6 +76,19 @@ public final class EventService {
                 .fetchOptionalInto(EventDto.class);
     }
 
+    public @NotNull Optional<EventWithImageDto> getEventWithImage(final @NotNull UUID id) {
+        return dsl.select()
+                .from(EVENT)
+                .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
+                .where(EVENT.ID.eq(id)
+                        .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
+                        .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))
+                .fetchOptional(rec -> new EventWithImageDto(
+                        rec.into(EVENT).into(EventDto.class),
+                        rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
+                ));
+    }
+
     public @NotNull List<@NotNull EventDto> getEvents() {
         return dsl.selectFrom(EVENT)
                 .fetchInto(EventDto.class);

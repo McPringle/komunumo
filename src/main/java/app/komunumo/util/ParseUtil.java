@@ -17,21 +17,29 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.data.dto.CommunityDto;
-import app.komunumo.data.dto.EventDto;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class LinkUtil {
+import java.util.Optional;
+import java.util.UUID;
 
-    public static @NotNull String getLink(final @NotNull EventDto event) {
-        return "/events/" + event.id();
+public final class ParseUtil {
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    public static Optional<UUID> parseUUID(final @NotNull Optional<String> optional) {
+        return optional.flatMap(ParseUtil::parseUUID);
     }
 
-    public static @NotNull String getLink(final @NotNull CommunityDto community) {
-        return "/communities/" + community.profile();
+    @SuppressWarnings("DataFlowIssue")
+    public static Optional<UUID> parseUUID(final @Nullable String id) {
+        try {
+            return Optional.of(UUID.fromString(id));
+        } catch (IllegalArgumentException | NullPointerException e) {
+            return Optional.empty();
+        }
     }
 
-    private LinkUtil() {
+    private ParseUtil() {
         throw new IllegalStateException("Utility class");
     }
 

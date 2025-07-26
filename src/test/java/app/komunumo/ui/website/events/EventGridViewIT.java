@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.website.events;
 
+import app.komunumo.data.service.EventService;
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
 
@@ -83,6 +84,37 @@ class EventGridViewIT extends BrowserTest {
                         .isEqualTo("Placeholder Image");
             }
         }
+    }
+
+    @Test
+    void clickOnEventCard() {
+        final var eventService = getBean(EventService.class);
+        final var testEvent = eventService.getUpcomingEventsWithImage()
+                .stream()
+                .filter(eventWithImage -> eventWithImage.event().title().equals("Demo Event 3"))
+                .findAny()
+                .orElseThrow()
+                .event();
+
+        final var page = getPage();
+
+        page.navigate("http://localhost:8081/events");
+        page.waitForSelector("h1:has-text('Komunumo')");
+        captureScreenshot("event-grid-view");
+
+        final var eventCards = page.locator("vaadin-card");
+        assertThat(eventCards.count()).isNotZero();
+
+        final var eventCard = eventCards.first();
+        final var title = eventCard.locator("div[slot='title']");
+        assertThat(title.textContent()).isEqualTo("Demo Event 3");
+
+        eventCard.click();
+        page.waitForURL("**/events/" + testEvent.id());
+        captureScreenshot("event-detail-view");
+
+        assertThat(page.url()).contains("/events/" + testEvent.id());
+        page.waitForSelector("h2:has-text('Demo Event 3')");
     }
 
 }
