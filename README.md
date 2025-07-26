@@ -130,10 +130,22 @@ If you prefer not to use the default demo data, you can provide your own JSON fi
 KOMUNUMO_DEMO_JSON=https://example.com/events.json
 ```
 
-The structure of the JSON file must follow the expected format used by *Komunumo* for demo data. The file should contain an array of community, event, and image objects. Here is an example of the expected JSON structure:
+The structure of the JSON file must follow the expected format used by *Komunumo* for demo data. The file should contain an array of setting, community, event, and image objects. Here is an example of the expected JSON structure:
 
 ```json
 {
+    "settings": [
+        {
+            "setting": "instance.name",
+            "language": "en",
+            "value": "Komunumo Demo"
+        },
+        {
+            "setting": "instance.slogan",
+            "language": "en",
+            "value": "This is a demo instance of Komunumo."
+        }
+    ],
     "communities": [
         {
             "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
@@ -172,6 +184,7 @@ The structure of the JSON file must follow the expected format used by *Komunumo
 }
 ```
 
+- The `settings` array contains key-value pairs for instance settings, such as the instance name and slogan. The `language` field specifies the language of the setting.
 - The `communityId`, `eventId`, and `imageId` fields must be valid UUIDs.
 - The `begin` and `end` fields in the `events` object must be in ISO 8601 format with a timezone offset, such as `2025-08-06T18:00:00+02:00[Europe/Zurich]`. This ensures correct interpretation of event times, including proper handling of daylight saving time.
 - The `imageId` fields in the `communities` and `events` objects must refer to the IDs of the images in the `images` array. The `url` field in each image object must point to a publicly accessible image file. If the `imageId` is blank, the community or event will not have an image associated with it.
