@@ -58,8 +58,8 @@ class UpcomingEventsIT extends BrowserTest {
                     .as("image should be set")
                     .isEqualTo(1);
 
+            final var imageSrc = image.getAttribute("src");
             if (number <= 5) {
-                final var imageSrc = image.getAttribute("src");
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
                         .startsWith("/images/")
@@ -71,7 +71,6 @@ class UpcomingEventsIT extends BrowserTest {
                         .as("expected to contain an alt text but was: " + imageSrc)
                         .isEqualTo("Demo Event " + number);
             } else { // demo event 6+ has a placeholder image
-                final var imageSrc = image.getAttribute("src");
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
                         .startsWith("/images/placeholder")
