@@ -17,17 +17,13 @@
  */
 package app.komunumo.ui.website.home;
 
-import app.komunumo.data.service.SecurityService;
-import app.komunumo.data.service.UserService;
 import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.component.NavigationBar;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouterLink;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
 import static app.komunumo.util.TestUtil.assertContainsExactlyOneRouterLinkOf;
@@ -37,12 +33,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(properties = "komunumo.instance.hide-communities=true")
 class HideCommunitiesIT extends IntegrationTest {
-
-    @Autowired
-    private @NotNull UserService userService;
-
-    @Autowired
-    private @NotNull SecurityService securityService;
 
     @Test
     void checkCommunityLinkNotVisible() {
