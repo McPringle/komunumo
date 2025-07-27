@@ -17,6 +17,8 @@
  */
 package app.komunumo.util;
 
+import com.vaadin.flow.server.VaadinSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,9 +29,19 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 class DateTimeUtilTest {
+
+    private VaadinSession mockSession;
+
+    @BeforeEach
+    void setup() {
+        mockSession = mock(VaadinSession.class);
+        VaadinSession.setCurrent(mockSession);
+    }
 
     @ParameterizedTest
     @MethodSource("provideTestData_getLocalizedDateTime")
@@ -103,10 +115,31 @@ class DateTimeUtilTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("provideTestData_getLocalizedDateTimeString")
+    void getLocalizedDateTimeStringWithoutZoneIdAndLocale(final ZoneId zoneId,
+                                                          final Locale locale,
+                                                          final ZonedDateTime inputDateTime,
+                                                          final String expectedPart) {
+        when(mockSession.getAttribute("CLIENT_LOCALE")).thenReturn(locale);
+        try (var mockedTimeZoneUtil = mockStatic(TimeZoneUtil.class)) {
+            mockedTimeZoneUtil.when(TimeZoneUtil::getClientTimeZone).thenAnswer(invocation -> zoneId);
+            final var formatted = DateTimeUtil.getLocalizedDateTimeString(inputDateTime);
+            assertThat(formatted)
+                    .as("Formatted string for zone %s and locale %s", zoneId, locale)
+                    .isEqualTo(expectedPart);
+        }
+    }
+
     private static Stream<Arguments> provideTestData_getLocalizedDateTimeString() {
         final var baseTime = ZonedDateTime.of(2025, 6, 25, 20, 0, 0, 0, ZoneId.of("UTC"));
 
         return Stream.of(
+                Arguments.of(
+                        ZoneId.of("Europe/Berlin"),
+                        Locale.GERMANY,
+                        null,
+                        ""),
                 Arguments.of(
                         ZoneId.of("Europe/Zurich"),
                         Locale.GERMANY,

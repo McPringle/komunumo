@@ -37,9 +37,7 @@ public class EventCard extends KomunumoCard {
     private void addBeginDateAndTime(final @NotNull EventDto event) {
         final var dateTime = event.begin();
         if (dateTime != null) {
-            final var ui = UI.getCurrent();
-            final var locale = ui.getLocale();
-            final var localizedDateTime = DateTimeUtil.getLocalizedDateTimeString(dateTime, locale);
+            final var localizedDateTime = DateTimeUtil.getLocalizedDateTimeString(dateTime);
             setSubtitle(new Div(localizedDateTime));
         }
     }

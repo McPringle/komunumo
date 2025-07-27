@@ -22,6 +22,7 @@ import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.component.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
+import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.ImageUtil;
 import app.komunumo.util.ParseUtil;
 import com.vaadin.flow.component.HtmlContainer;
@@ -36,9 +37,11 @@ import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
 import java.util.Locale;
 
 @Route(value = "events/:eventId", layout = WebsiteLayout.class)
@@ -101,19 +104,23 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         location.addClassName("event-location");
         pageContent.add(location);
 
-        final var beginDate = new Paragraph(
-                getTranslation(locale, "event.details.beginDate") + ": " + event.begin());
-        beginDate.addClassName("event-date-begin");
-        pageContent.add(beginDate);
-
-        final var endDate = new Paragraph(
-                getTranslation(locale, "event.details.endDate") + ": " + event.end());
-        endDate.addClassName("event-date-end");
-        pageContent.add(endDate);
+        addDateTimeText(event.begin(), locale, "event.details.beginDate", "event-date-begin");
+        addDateTimeText(event.end(), locale, "event.details.endDate", "event-date-end");
 
         final var description = new Markdown(event.description());
         description.addClassName("event-description");
         pageContent.add(description);
+    }
+
+    private void addDateTimeText(final @Nullable ZonedDateTime dateTime,
+                                 final @NotNull Locale locale,
+                                 final @NotNull String translationKey,
+                                 final @NotNull String className) {
+        final var label = getTranslation(locale, translationKey);
+        final var localizedEndDate = DateTimeUtil.getLocalizedDateTimeString(dateTime, locale);
+        final var paragraph = new Paragraph(label + ": " + localizedEndDate);
+        paragraph.addClassName(className);
+        pageContent.add(paragraph);
     }
 
     @Override

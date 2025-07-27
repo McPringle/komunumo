@@ -100,7 +100,8 @@ public final class EventService {
                 .from(EVENT)
                 .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
                 .where(
-                        EVENT.END.isNotNull()
+                        EVENT.BEGIN.isNotNull()
+                                .and(EVENT.END.isNotNull())
                                 .and(EVENT.END.gt(now))
                                 .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
                                 .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))

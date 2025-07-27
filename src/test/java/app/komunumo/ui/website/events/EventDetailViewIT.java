@@ -19,6 +19,7 @@ package app.komunumo.ui.website.events;
 
 import app.komunumo.data.service.EventService;
 import app.komunumo.ui.IntegrationTest;
+import app.komunumo.util.DateTimeUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -61,11 +62,11 @@ class EventDetailViewIT extends IntegrationTest {
 
         final var beginDate = _get(Paragraph.class, spec -> spec.withClasses("event-date-begin"));
         assertThat(beginDate).isNotNull();
-        assertThat(beginDate.getText()).isEqualTo("Begin: " + testEvent.begin().toString());
+        assertThat(beginDate.getText()).isEqualTo("Begin: " + DateTimeUtil.getLocalizedDateTimeString(testEvent.begin()));
 
         final var endDate = _get(Paragraph.class, spec -> spec.withClasses("event-date-end"));
         assertThat(endDate).isNotNull();
-        assertThat(endDate.getText()).isEqualTo("End: " + testEvent.end().toString());
+        assertThat(endDate.getText()).isEqualTo("End: " + DateTimeUtil.getLocalizedDateTimeString(testEvent.end()));
 
         final var description = _get(Markdown.class, spec -> spec.withClasses("event-description"));
         assertThat(description).isNotNull();

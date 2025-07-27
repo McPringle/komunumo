@@ -34,11 +34,28 @@
  */
 package app.komunumo.util;
 
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.server.VaadinSession;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
 public final class LocaleUtil {
+
+    private static final String SESSION_LOCALE_KEY = "CLIENT_LOCALE";
+
+    public static void detectClientLocale(final @NotNull UI ui) {
+        VaadinSession.getCurrent().setAttribute(SESSION_LOCALE_KEY, ui.getLocale());
+    }
+
+    public static @NotNull Locale getClientLocale() {
+        final var value = VaadinSession.getCurrent().getAttribute(SESSION_LOCALE_KEY);
+        if (value instanceof Locale locale) {
+            return locale;
+        }
+        return Locale.getDefault();
+    }
 
     public static @Nullable String getLanguageCode(final @Nullable Locale locale) {
         return locale == null ? null : locale.getLanguage().toUpperCase(Locale.ROOT);

@@ -18,6 +18,7 @@
 package app.komunumo.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -32,7 +33,11 @@ public final class DateTimeUtil {
         return getLocalizedDateTime(dateTime, TimeZoneUtil.getClientTimeZone());
     }
 
-    public static @NotNull String getLocalizedDateTimeString(final @NotNull ZonedDateTime dateTime,
+    public static @NotNull String getLocalizedDateTimeString(final @Nullable ZonedDateTime dateTime) {
+        return getLocalizedDateTimeString(dateTime, LocaleUtil.getClientLocale());
+    }
+
+    public static @NotNull String getLocalizedDateTimeString(final @Nullable ZonedDateTime dateTime,
                                                              final @NotNull Locale locale) {
         return getLocalizedDateTimeString(dateTime, TimeZoneUtil.getClientTimeZone(), locale);
     }
@@ -42,9 +47,13 @@ public final class DateTimeUtil {
         return dateTime.withZoneSameInstant(zoneId);
     }
 
-    public static @NotNull String getLocalizedDateTimeString(final @NotNull ZonedDateTime dateTime,
+    public static @NotNull String getLocalizedDateTimeString(final @Nullable ZonedDateTime dateTime,
                                                              final @NotNull ZoneId zoneId,
                                                              final @NotNull Locale locale) {
+        if (dateTime == null) {
+            return "";
+        }
+
         final var localizedDateTime = getLocalizedDateTime(dateTime, zoneId);
         final var zoneText = localizedDateTime.getZone().getDisplayName(TextStyle.SHORT, locale);
 

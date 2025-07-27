@@ -17,6 +17,7 @@
  */
 package app.komunumo.admin;
 
+import app.komunumo.util.LocaleUtil;
 import app.komunumo.util.TimeZoneUtil;
 import com.vaadin.flow.server.ServiceInitEvent;
 import com.vaadin.flow.server.VaadinServiceInitListener;
@@ -28,7 +29,11 @@ public final class UIInitListener implements VaadinServiceInitListener {
 
     @Override
     public void serviceInit(final @NotNull ServiceInitEvent event) {
-        event.getSource().addUIInitListener(initEvent -> TimeZoneUtil.detectClientTimeZone(initEvent.getUI()));
+        event.getSource().addUIInitListener(initEvent -> {
+            final var ui = initEvent.getUI();
+            TimeZoneUtil.detectClientTimeZone(ui);
+            LocaleUtil.detectClientLocale(ui);
+        });
     }
 
 }
