@@ -27,34 +27,49 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mockStatic;
 
 class DateTimeUtilTest {
 
     @ParameterizedTest
-    @MethodSource("provideDateTimeConversionCases")
-    void shouldConvertToTargetTimeZone(final String targetTimeZone,
-                                       final ZonedDateTime input,
-                                       final ZonedDateTime expected) {
-        final var actual = DateTimeUtil.getLocalizedDateTime(targetTimeZone, input);
+    @MethodSource("provideTestData_getLocalizedDateTime")
+    void getLocalizedDateTimeWithZoneId(final ZoneId targetTimeZone,
+                                        final ZonedDateTime input,
+                                        final ZonedDateTime expected) {
+        final var actual = DateTimeUtil.getLocalizedDateTime(input, targetTimeZone);
         assertThat(actual)
                 .as("Expected dateTime in zone %s", targetTimeZone)
                 .isEqualTo(expected);
     }
 
-    private static Stream<Arguments> provideDateTimeConversionCases() {
+    @ParameterizedTest
+    @MethodSource("provideTestData_getLocalizedDateTime")
+    void getLocalizedDateTimeWithoutZoneId(final ZoneId targetTimeZone,
+                                           final ZonedDateTime input,
+                                           final ZonedDateTime expected) {
+        try (var mockedTimeZoneUtil = mockStatic(TimeZoneUtil.class)) {
+            mockedTimeZoneUtil.when(TimeZoneUtil::getClientTimeZone).thenAnswer(invocation -> targetTimeZone);
+            final var actual = DateTimeUtil.getLocalizedDateTime(input);
+            assertThat(actual)
+                    .as("Expected dateTime in zone %s", targetTimeZone)
+                    .isEqualTo(expected);
+        }
+    }
+
+    private static Stream<Arguments> provideTestData_getLocalizedDateTime() {
         return Stream.of(
                 Arguments.of(
-                        "UTC",
+                        ZoneId.of("UTC"),
                         ZonedDateTime.of(2025, 6, 21, 10, 0, 0, 0, ZoneId.of("Europe/Zurich")),
                         ZonedDateTime.of(2025, 6, 21, 8, 0, 0, 0, ZoneId.of("UTC"))
                 ),
                 Arguments.of(
-                        "America/New_York",
+                        ZoneId.of("America/New_York"),
                         ZonedDateTime.of(2025, 12, 24, 18, 30, 0, 0, ZoneId.of("Europe/Berlin")),
                         ZonedDateTime.of(2025, 12, 24, 12, 30, 0, 0, ZoneId.of("America/New_York"))
                 ),
                 Arguments.of(
-                        "Asia/Tokyo",
+                        ZoneId.of("Asia/Tokyo"),
                         ZonedDateTime.of(2025, 3, 15, 8, 0, 0, 0, ZoneId.of("Europe/London")),
                         ZonedDateTime.of(2025, 3, 15, 17, 0, 0, 0, ZoneId.of("Asia/Tokyo"))
                 )
@@ -62,24 +77,51 @@ class DateTimeUtilTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideLocalizedDateTimeStrings")
-    void shouldFormatLocalizedDateTimeCorrectly(final String zoneId,
-                                                final Locale locale,
-                                                final ZonedDateTime inputDateTime,
-                                                final String expectedPart) {
-        final var formatted = DateTimeUtil.getLocalizedDateTimeString(zoneId, locale, inputDateTime);
+    @MethodSource("provideTestData_getLocalizedDateTimeString")
+    void getLocalizedDateTimeStringWithZoneId(final ZoneId zoneId,
+                                              final Locale locale,
+                                              final ZonedDateTime inputDateTime,
+                                              final String expectedPart) {
+        final var formatted = DateTimeUtil.getLocalizedDateTimeString(inputDateTime, zoneId, locale);
         assertThat(formatted)
                 .as("Formatted string for zone %s and locale %s", zoneId, locale)
                 .isEqualTo(expectedPart);
     }
 
-    private static Stream<Arguments> provideLocalizedDateTimeStrings() {
+    @ParameterizedTest
+    @MethodSource("provideTestData_getLocalizedDateTimeString")
+    void getLocalizedDateTimeStringWithoutZoneId(final ZoneId zoneId,
+                                                 final Locale locale,
+                                                 final ZonedDateTime inputDateTime,
+                                                 final String expectedPart) {
+        try (var mockedTimeZoneUtil = mockStatic(TimeZoneUtil.class)) {
+            mockedTimeZoneUtil.when(TimeZoneUtil::getClientTimeZone).thenAnswer(invocation -> zoneId);
+            final var formatted = DateTimeUtil.getLocalizedDateTimeString(inputDateTime, locale);
+            assertThat(formatted)
+                    .as("Formatted string for zone %s and locale %s", zoneId, locale)
+                    .isEqualTo(expectedPart);
+        }
+    }
+
+    private static Stream<Arguments> provideTestData_getLocalizedDateTimeString() {
         final var baseTime = ZonedDateTime.of(2025, 6, 25, 20, 0, 0, 0, ZoneId.of("UTC"));
 
         return Stream.of(
-                Arguments.of("Europe/Zurich", Locale.GERMANY, baseTime, "Mittwoch, 25. Juni 2025, 22:00 MEZ"),
-                Arguments.of("America/New_York", Locale.US, baseTime, "Wednesday, June 25, 2025, 4:00 PM ET"),
-                Arguments.of("Asia/Tokyo", Locale.JAPAN, baseTime, "2025年6月26日木曜日 5:00 GMT+09:00")
+                Arguments.of(
+                        ZoneId.of("Europe/Zurich"),
+                        Locale.GERMANY,
+                        baseTime,
+                        "Mittwoch, 25. Juni 2025, 22:00 MEZ"),
+                Arguments.of(
+                        ZoneId.of("America/New_York"),
+                        Locale.US,
+                        baseTime,
+                        "Wednesday, June 25, 2025, 4:00 PM ET"),
+                Arguments.of(
+                        ZoneId.of("Asia/Tokyo"),
+                        Locale.JAPAN,
+                        baseTime,
+                        "2025年6月26日木曜日 5:00 GMT+09:00")
         );
     }
 

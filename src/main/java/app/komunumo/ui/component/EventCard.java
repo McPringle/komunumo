@@ -39,12 +39,8 @@ public class EventCard extends KomunumoCard {
         if (dateTime != null) {
             final var ui = UI.getCurrent();
             final var locale = ui.getLocale();
-
-            ui.getPage().retrieveExtendedClientDetails(details -> {
-                final var timeZoneId = details.getTimeZoneId();
-                final var localizedDateTime = DateTimeUtil.getLocalizedDateTimeString(timeZoneId, locale, dateTime);
-                setSubtitle(new Div(localizedDateTime));
-            });
+            final var localizedDateTime = DateTimeUtil.getLocalizedDateTimeString(dateTime, locale);
+            setSubtitle(new Div(localizedDateTime));
         }
     }
 

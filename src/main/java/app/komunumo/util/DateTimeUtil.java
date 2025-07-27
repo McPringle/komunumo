@@ -28,16 +28,24 @@ import java.util.Locale;
 
 public final class DateTimeUtil {
 
-    public static @NotNull ZonedDateTime getLocalizedDateTime(final @NotNull String timeZoneId,
-                                                              final @NotNull ZonedDateTime dateTime) {
-        final var zoneId = ZoneId.of(timeZoneId);
+    public static @NotNull ZonedDateTime getLocalizedDateTime(final @NotNull ZonedDateTime dateTime) {
+        return getLocalizedDateTime(dateTime, TimeZoneUtil.getClientTimeZone());
+    }
+
+    public static @NotNull String getLocalizedDateTimeString(final @NotNull ZonedDateTime dateTime,
+                                                             final @NotNull Locale locale) {
+        return getLocalizedDateTimeString(dateTime, TimeZoneUtil.getClientTimeZone(), locale);
+    }
+
+    public static @NotNull ZonedDateTime getLocalizedDateTime(final @NotNull ZonedDateTime dateTime,
+                                                              final @NotNull ZoneId zoneId) {
         return dateTime.withZoneSameInstant(zoneId);
     }
 
-    public static @NotNull String getLocalizedDateTimeString(final @NotNull String timeZoneId,
-                                                             final @NotNull Locale locale,
-                                                             final @NotNull ZonedDateTime dateTime) {
-        final var localizedDateTime = getLocalizedDateTime(timeZoneId, dateTime);
+    public static @NotNull String getLocalizedDateTimeString(final @NotNull ZonedDateTime dateTime,
+                                                             final @NotNull ZoneId zoneId,
+                                                             final @NotNull Locale locale) {
+        final var localizedDateTime = getLocalizedDateTime(dateTime, zoneId);
         final var zoneText = localizedDateTime.getZone().getDisplayName(TextStyle.SHORT, locale);
 
         return DateTimeFormatter
