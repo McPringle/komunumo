@@ -160,10 +160,7 @@ E-Mail: [email@example.eu](mailto:email@example.eu)
 Firstname Lastname (same address as above)
 
 No VAT ID available.  
-Not registered in the commercial register.
-
-EU Commission’s platform for online dispute resolution:  
-[https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)'),
+Not registered in the commercial register.'),
 
 -- German version
 ('imprint', 'DE', NOW(), NOW(), 'Impressum',
@@ -183,9 +180,6 @@ E-Mail: [email@example.eu](mailto:email@example.eu)
 Vorname Nachname (Anschrift wie oben)
 
 Keine Umsatzsteuer-Identifikationsnummer vorhanden.  
-Nicht eingetragen im Handelsregister.
-
-Plattform der EU-Kommission zur Online-Streitbeilegung:  
-[https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)');
+Nicht eingetragen im Handelsregister.');
 
 -- [jooq ignore stop]
