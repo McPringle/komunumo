@@ -17,26 +17,26 @@
  */
 package app.komunumo.ui.website.home;
 
-import app.komunumo.ui.website.WebsiteLayout;
 import app.komunumo.ui.website.events.EventGridView;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
-import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 
-@Route(value = "", layout = WebsiteLayout.class)
-@AnonymousAllowed
-public final class HomeView extends VerticalLayout implements BeforeEnterObserver {
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-    public HomeView() {
-        super();
-    }
+class HomeViewTest {
 
-    @Override
-    public void beforeEnter(final @NotNull BeforeEnterEvent beforeEnterEvent) {
-        beforeEnterEvent.forwardTo(EventGridView.class);
+    @Test
+    void shouldForwardToEventGridView() {
+        // Arrange
+        var event = mock(BeforeEnterEvent.class);
+        var view = new HomeView();
+
+        // Act
+        view.beforeEnter(event);
+
+        // Assert
+        verify(event).forwardTo(EventGridView.class);
     }
 
 }

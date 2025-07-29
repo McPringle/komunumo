@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.website.home;
+package app.komunumo.ui.website.community;
 
 import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.component.NavigationBar;
@@ -46,7 +46,6 @@ class HideCommunitiesIT extends IntegrationTest {
         assertThat(navigationBar).isNotNull();
         final var routerLinks = findComponents(navigationBar, RouterLink.class);
         assertContainsExactlyOneRouterLinkOf(routerLinks,
-                new Anchor("", "Overview"),
                 new Anchor("events", "Events"),
                 new Anchor("login", "Login"));
     }

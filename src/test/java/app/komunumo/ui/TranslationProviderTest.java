@@ -41,40 +41,40 @@ class TranslationProviderTest {
 
     @Test
     void testGetMessageInEnglish() {
-        assertThat(translationProvider.getTranslation("home.title", Locale.ENGLISH))
-                .isEqualTo("Overview");
+        assertThat(translationProvider.getTranslation("events.title", Locale.ENGLISH))
+                .isEqualTo("Events");
     }
 
     @Test
     void testTranslationInGerman() {
-        assertThat(translationProvider.getTranslation("home.title", Locale.GERMAN))
-                .isEqualTo("Übersicht");
+        assertThat(translationProvider.getTranslation("events.title", Locale.GERMAN))
+                .isEqualTo("Veranstaltungen");
     }
 
     @Test
     void testSwissGermanFallbackToGerman() {
-        assertThat(translationProvider.getTranslation("home.title", Locale.forLanguageTag("de-CH")))
-                .isEqualTo("Übersicht");
+        assertThat(translationProvider.getTranslation("events.title", Locale.forLanguageTag("de-CH")))
+                .isEqualTo("Veranstaltungen");
     }
 
     @Test
     void testFallbackToEnglish() {
-        assertThat(translationProvider.getTranslation("home.title", Locale.ITALIAN))
-                .isEqualTo("Overview");
+        assertThat(translationProvider.getTranslation("events.title", Locale.ITALIAN))
+                .isEqualTo("Events");
     }
 
     @Test
     void testFallbackWhenLocaleIsNull() {
-        assertThat(translationProvider.getTranslation("home.title", null))
-                .isEqualTo("Overview");
+        assertThat(translationProvider.getTranslation("events.title", null))
+                .isEqualTo("Events");
     }
 
     // TODO testWithPlaceholder()
 
     @Test
     void testMissingPlaceholder() {
-        assertThat(translationProvider.getTranslation("home.title", Locale.ENGLISH, "foobar"))
-                .isEqualTo("Overview");
+        assertThat(translationProvider.getTranslation("events.title", Locale.ENGLISH, "foobar"))
+                .isEqualTo("Events");
     }
 
     @Test
