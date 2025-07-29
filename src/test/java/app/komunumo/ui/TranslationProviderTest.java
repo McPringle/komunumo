@@ -69,7 +69,17 @@ class TranslationProviderTest {
                 .isEqualTo("Events");
     }
 
-    // TODO testWithPlaceholder()
+    @Test
+    void testWithPlaceholder() {
+        assertThat(translationProvider.getTranslation("communities.profileImage.altText", Locale.ENGLISH, "foobar"))
+                .isEqualTo("Profile picture of foobar");
+    }
+
+    @Test
+    void testWithMissingPlaceholder() {
+        assertThat(translationProvider.getTranslation("communities.profileImage.altText", Locale.ENGLISH))
+                .isEqualTo("Profile picture of {0}");
+    }
 
     @Test
     void testMissingPlaceholder() {
