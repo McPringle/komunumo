@@ -17,8 +17,23 @@
  */
 .navigation-bar {
     display: flex;
-    gap: var(--lumo-space-m);
+    justify-content: space-between;
+    align-items: center;
     padding: var(--lumo-space-m);
     background-color: var(--lumo-base-color);
     border-bottom: 1px solid var(--lumo-contrast-10pct);
+}
+
+.navigation-bar .menu-bar {
+    display: flex;
+    gap: var(--lumo-space-m);
+}
+
+.navigation-bar .avatar-container {
+    display: flex;
+    align-items: center;
+}
+
+.navigation-bar .avatar-container vaadin-avatar {
+    cursor: pointer;
 }

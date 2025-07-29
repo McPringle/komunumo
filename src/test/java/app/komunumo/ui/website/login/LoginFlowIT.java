@@ -30,6 +30,10 @@ import org.junit.jupiter.api.Test;
 
 class LoginFlowIT extends BrowserTest {
 
+    protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
+    protected static final String AVATAR_SELECTOR = "vaadin-avatar";
+    protected static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
+    protected static final String LOGOUT_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Logout')";
     private UserDto testUser;
 
     @BeforeAll
@@ -48,15 +52,20 @@ class LoginFlowIT extends BrowserTest {
     }
 
     @Test
-    void loginAndLogoutWorks() {
+    @SuppressWarnings({"java:S2925", "java:S2699"})
+    void loginAndLogoutWorks() throws InterruptedException {
         final var page = getPage();
 
-        page.navigate("http://localhost:8081/");
-        page.waitForSelector("h1:has-text('Your Instance Name')");
-        captureScreenshot("home-before-login");
+        page.navigate("http://localhost:8081/events");
+        page.waitForURL("**/events");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("before-login");
 
-        assertLinkIsVisible("login");
-        page.click("a[href='login']");
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        captureScreenshot("profile-menu-before-login");
+
+        page.click(LOGIN_MENU_ITEM_SELECTOR);
         page.waitForURL("**/login");
         page.waitForSelector("div:has-text('Log in')");
 
@@ -65,13 +74,18 @@ class LoginFlowIT extends BrowserTest {
         captureScreenshot("login");
         page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in")).click();
 
-        page.waitForSelector("h1:has-text('Your Instance Name')");
-        captureScreenshot("home-after-login");
-        assertLinkIsVisible("logout");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("after-login");
 
-        page.click("a[href='logout']");
-        page.waitForSelector("a[href='login']");
-        captureScreenshot("home-after-logout");
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+        captureScreenshot("profile-menu-after-login");
+
+        page.click(LOGOUT_MENU_ITEM_SELECTOR);
+        Thread.sleep(500); // wait for the logout process to complete
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        captureScreenshot("after-logout");
     }
 
 }

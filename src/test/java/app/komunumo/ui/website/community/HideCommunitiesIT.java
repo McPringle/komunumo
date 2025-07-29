@@ -45,9 +45,7 @@ class HideCommunitiesIT extends IntegrationTest {
         final var navigationBar = findComponent(websiteLayout, NavigationBar.class);
         assertThat(navigationBar).isNotNull();
         final var routerLinks = findComponents(navigationBar, RouterLink.class);
-        assertContainsExactlyOneRouterLinkOf(routerLinks,
-                new Anchor("events", "Events"),
-                new Anchor("login", "Login"));
+        assertContainsExactlyOneRouterLinkOf(routerLinks, new Anchor("events", "Events"));
     }
 
 }

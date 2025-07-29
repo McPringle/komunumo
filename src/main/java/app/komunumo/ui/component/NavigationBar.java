@@ -17,14 +17,17 @@
  */
 package app.komunumo.ui.component;
 
-import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.website.community.CommunityGridView;
 import app.komunumo.ui.website.events.EventGridView;
 import app.komunumo.ui.website.login.LoginView;
 import app.komunumo.ui.website.login.LogoutView;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
@@ -34,29 +37,48 @@ public final class NavigationBar extends Nav {
     public NavigationBar(final @NotNull ServiceProvider serviceProvider) {
         super();
         final var ui = UI.getCurrent();
-        final var locale = ui.getLocale();
         addClassName("navigation-bar");
 
-        add(new RouterLink(ui.getTranslation("events.title"), EventGridView.class));
+        final var menuContainer = new Div();
+        menuContainer.addClassName("menu-container");
+        menuContainer.add(getNavigationBar(ui, serviceProvider));
+        add(menuContainer);
 
-        if (!serviceProvider.getAppConfig().instance().hideCommunities()) {
-            add(new RouterLink(ui.getTranslation("communities.title"), CommunityGridView.class));
-        }
-
-        serviceProvider.globalPageService()
-                .getGlobalPages(locale)
-                .forEach(this::addGlobalPage);
-
-        final var securityService = serviceProvider.securityService();
-        if (securityService.isUserLoggedIn()) {
-            add(new RouterLink(ui.getTranslation("logout.title"), LogoutView.class));
-        } else {
-            add(new RouterLink(ui.getTranslation("login.title"), LoginView.class));
-        }
+        final var avatarContainer = new Div();
+        avatarContainer.addClassName("avatar-container");
+        avatarContainer.add(getAvatar(ui, serviceProvider));
+        add(avatarContainer);
     }
 
-    private void addGlobalPage(final @NotNull GlobalPageDto page) {
-        add(new Anchor("/page/" + page.slot(), page.title()));
+    private Component getNavigationBar(final @NotNull UI ui,
+                                       final @NotNull ServiceProvider serviceProvider) {
+        final var menuBar = new Div();
+        menuBar.addClassName("menu-bar");
+        menuBar.add(new RouterLink(ui.getTranslation("events.title"), EventGridView.class));
+        if (!serviceProvider.getAppConfig().instance().hideCommunities()) {
+            menuBar.add(new RouterLink(ui.getTranslation("communities.title"), CommunityGridView.class));
+        }
+        serviceProvider.globalPageService()
+                .getGlobalPages(ui.getLocale())
+                .forEach(page -> menuBar.add(new Anchor("/page/" + page.slot(), page.title())));
+        return menuBar;
+    }
+
+    private Component getAvatar(final @NotNull UI ui,
+                                final @NotNull ServiceProvider serviceProvider) {
+        final var avatar = new Avatar();
+        final var avatarMenu = new ContextMenu(avatar);
+        avatarMenu.setOpenOnClick(true);
+        if (serviceProvider.securityService().isUserLoggedIn()) {
+            avatarMenu.addItem(ui.getTranslation("logout.title"), e ->
+                    ui.navigate(LogoutView.class)
+            );
+        } else {
+            avatarMenu.addItem(ui.getTranslation("login.title"), e ->
+                    ui.navigate(LoginView.class)
+            );
+        }
+        return avatar;
     }
 
 }

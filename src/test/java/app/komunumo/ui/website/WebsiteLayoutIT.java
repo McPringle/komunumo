@@ -114,8 +114,7 @@ class WebsiteLayoutIT extends IntegrationTest {
         final var routerLinks = findComponents(navigationBar, RouterLink.class);
         assertContainsExactlyOneRouterLinkOf(routerLinks,
                 new Anchor("events", "Events"),
-                new Anchor("communities", "Communities"),
-                new Anchor("login", "Login"));
+                new Anchor("communities", "Communities"));
     }
 
     @Test
