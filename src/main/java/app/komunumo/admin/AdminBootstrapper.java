@@ -62,7 +62,7 @@ public final class AdminBootstrapper {
         }
 
         if (adminEmail.isBlank()) {
-            LOGGER.warn("No instance admin exists and KOMUNUMO_ADMIN_EMAIL is not set. Skipping admin creation.");
+            LOGGER.warn("No instance admin exists and KOMUNUMO_INSTANCE_ADMIN is not set. Skipping admin creation.");
             return;
         }
 
