@@ -22,10 +22,13 @@ import app.komunumo.ui.component.InfoBanner;
 import app.komunumo.ui.component.NavigationBar;
 import app.komunumo.ui.component.PageFooter;
 import app.komunumo.ui.component.PageHeader;
+import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Main;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_SLOGAN;
 
-public final class WebsiteLayout extends Div implements RouterLayout {
+public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnterObserver {
 
     private final @NotNull UI ui;
     private final @NotNull Main main;
@@ -93,6 +96,11 @@ public final class WebsiteLayout extends Div implements RouterLayout {
     @Override
     public void removeRouterLayoutContent(final @Nullable HasElement oldContent) {
         main.removeAll();
+    }
+
+    @Override
+    public void beforeEnter(final @NotNull BeforeEnterEvent event) {
+        ThemeUtil.initializeDarkMode();
     }
 
 }
