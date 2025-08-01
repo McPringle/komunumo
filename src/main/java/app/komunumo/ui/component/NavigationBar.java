@@ -22,6 +22,7 @@ import app.komunumo.ui.website.community.CommunityGridView;
 import app.komunumo.ui.website.events.EventGridView;
 import app.komunumo.ui.website.login.LoginView;
 import app.komunumo.ui.website.login.LogoutView;
+import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -69,15 +70,24 @@ public final class NavigationBar extends Nav {
         final var avatar = new Avatar();
         final var avatarMenu = new ContextMenu(avatar);
         avatarMenu.setOpenOnClick(true);
-        if (serviceProvider.securityService().isUserLoggedIn()) {
-            avatarMenu.addItem(ui.getTranslation("logout.title"), e ->
-                    ui.navigate(LogoutView.class)
-            );
-        } else {
+
+        // login as first entry in the menu
+        if (!serviceProvider.securityService().isUserLoggedIn()) {
             avatarMenu.addItem(ui.getTranslation("login.title"), e ->
                     ui.navigate(LoginView.class)
             );
         }
+
+        // dark theme toggle
+        avatarMenu.addItem(ui.getTranslation("avatar.menu.toggleDarkMode"), e -> ThemeUtil.toggleDarkMode());
+
+        // logout as last entry in the menu
+        if (serviceProvider.securityService().isUserLoggedIn()) {
+            avatarMenu.addItem(ui.getTranslation("logout.title"), e ->
+                    ui.navigate(LogoutView.class)
+            );
+        }
+
         return avatar;
     }
 
