@@ -28,7 +28,7 @@ class DownloadUtilTest {
     @Test
     void getString() throws Exception {
         final String string = DownloadUtil.getString("http://localhost:8082/custom-styles/styles.css").trim();
-        assertThat(string).startsWith(":root {").endsWith("}");
+        assertThat(string).startsWith("body::after {").endsWith("}");
     }
 
     @Test

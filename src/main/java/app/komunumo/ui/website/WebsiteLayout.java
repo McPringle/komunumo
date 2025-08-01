@@ -33,6 +33,9 @@ import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_SLOGAN;
 
@@ -47,12 +50,16 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
 
         final var customStyles = serviceProvider.getAppConfig().instance().styles();
         if (!customStyles.isBlank()) {
+            final var timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
+            final var href = customStyles.contains("?")
+                    ? customStyles + "&ts=" + timestamp
+                    : customStyles + "?ts=" + timestamp;
             ui.getPage().executeJs("""
                 const link = document.createElement('link');
                 link.rel = 'stylesheet';
                 link.href = $0;
                 document.head.appendChild(link);
-                """, customStyles);
+                """, href);
         }
 
         if (serviceProvider.getAppConfig().demo().enabled()) {

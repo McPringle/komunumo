@@ -27,12 +27,3 @@
 @import "components/event-card.css";
 @import "components/event-grid.css";
 @import "components/info-banner.css";
-
-:root {
-    --komunumo-background-color: var(--lumo-base-color);
-}
-
-main {
-    background-color: var(--komunumo-background-color);
-    width: 100%;
-}

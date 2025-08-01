@@ -27,8 +27,8 @@ class DarkModeIT extends BrowserTest {
     protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
     protected static final String AVATAR_SELECTOR = "vaadin-avatar";
     protected static final String DARK_MODE_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Toggle Dark Mode')";
-    protected static final String BACKGROUND_COLOR_DARK_MODE = "rgb(35, 51, 72)"; // midnight blue (--lumo-base-color)
-    protected static final String BACKGROUND_COLOR_LIGHT_MODE = "rgb(255, 255, 255)"; // white (--lumo-base-color)
+    protected static final String TITLE_COLOR_DARK_MODE = "rgb(245, 249, 255)";
+    protected static final String TITLE_COLOR_LIGHT_MODE = "rgb(25, 36, 52)";
 
     @Test
     @SuppressWarnings("java:S2925") // suppress warning about Thread.sleep, as this is a test for UI interaction
@@ -38,9 +38,9 @@ class DarkModeIT extends BrowserTest {
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("page-before-toggle");
 
-        final var backgroundColorBeforeToggle = page.evaluate("""
-          () => getComputedStyle(document.querySelector('main'))
-              .getPropertyValue('background-color')
+        final var titleColorBeforeToggle = page.evaluate("""
+          () => getComputedStyle(document.querySelector('h1'))
+              .getPropertyValue('color')
           """).toString();
 
         page.click(AVATAR_SELECTOR);
@@ -51,16 +51,16 @@ class DarkModeIT extends BrowserTest {
         Thread.sleep(100);
         captureScreenshot("page-after-toggle");
 
-        final var backgroundColorAfterToggle = page.evaluate("""
-          () => getComputedStyle(document.querySelector('main'))
-              .getPropertyValue('background-color')
+        final var titleColorAfterToggle = page.evaluate("""
+          () => getComputedStyle(document.querySelector('h1'))
+              .getPropertyValue('color')
           """).toString();
 
-        assertThat(backgroundColorBeforeToggle)
-                .isIn(BACKGROUND_COLOR_DARK_MODE, BACKGROUND_COLOR_LIGHT_MODE);
-        assertThat(backgroundColorAfterToggle)
-                .isIn(BACKGROUND_COLOR_DARK_MODE, BACKGROUND_COLOR_LIGHT_MODE)
-                .isNotSameAs(backgroundColorBeforeToggle);
+        assertThat(titleColorBeforeToggle)
+                .isIn(TITLE_COLOR_DARK_MODE, TITLE_COLOR_LIGHT_MODE);
+        assertThat(titleColorAfterToggle)
+                .isIn(TITLE_COLOR_DARK_MODE, TITLE_COLOR_LIGHT_MODE)
+                .isNotSameAs(titleColorBeforeToggle);
     }
 
 }

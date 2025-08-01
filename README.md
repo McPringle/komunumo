@@ -90,8 +90,20 @@ If no user with the admin role is found in the database, a new instance admin wi
 
 #### Styles
 
-The visual style of *Komunumo* can be customized by the instance maintainer using custom CSS variables.  
-For details on how to configure and apply custom styles, see the [Style Guide](STYLEGUIDE.md).
+To configure custom styling, set the environment variable `KOMUNUMO_INSTANCE_STYLES` to the URL of your custom CSS file. This file must be accessible via HTTPS and contain valid CSS.
+
+```
+KOMUNUMO_INSTANCE_STYLES=https://static.example.com/custom.css
+```
+
+The maintainer of the *Komunumo* instance is responsible for hosting the custom CSS file as well as any additional resources referenced within it, such as background images, fonts, or logos. All resources must be accessible via HTTPS.
+
+*Komunumo* uses the Vaadin Flow framework, which provides a set of CSS variables that can be used to customize the appearance of the application. These variables allow you to change colors, fonts, spacing, and other visual aspects of the UI. Please refer to the [Vaadin documentation](https://vaadin.com/docs/latest/styling) for a comprehensive list of available CSS variables.
+
+To make styling easier, Vaadin provides an online theme editor that allows you to experiment with different styles and see the changes in real-time: [Vaadin Theme Editor](https://demo.vaadin.com/lumo-editor/)
+
+> [!NOTE]  
+> When upgrading to a new release of *Komunumo* with an updated Vaadin version, new CSS variables may be added or existing ones removed. Please read the release notes to check for any changes and compare your styles before and after the update.
 
 #### Communities
 

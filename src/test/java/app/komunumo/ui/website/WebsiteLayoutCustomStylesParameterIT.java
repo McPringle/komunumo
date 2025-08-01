@@ -20,12 +20,12 @@ package app.komunumo.ui.website;
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
 
-class WebsiteLayoutCustomStylesIT extends BrowserTest {
+class WebsiteLayoutCustomStylesParameterIT extends BrowserTest {
 
     @Override
     protected String[] getProperties() {
         return new String[] {
-                "--komunumo.instance.styles=http://localhost:8082/custom-styles/styles.css"
+                "--komunumo.instance.styles=http://localhost:8082/custom-styles/styles.css?foo=bar"
         };
     }
 
