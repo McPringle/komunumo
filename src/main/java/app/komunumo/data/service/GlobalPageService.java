@@ -117,4 +117,13 @@ public final class GlobalPageService {
                 .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode))
                 .execute() > 0;
     }
+
+    public int getGlobalPageCount() {
+        return Optional.ofNullable(
+                dsl.selectCount()
+                        .from(GLOBAL_PAGE)
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
+
 }

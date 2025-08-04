@@ -102,6 +102,7 @@ public final class DemoDataCreator {
             demoDataImporter.importImages(imageService);
             demoDataImporter.importCommunities(communityService);
             demoDataImporter.importEvents(eventService);
+            demoDataImporter.importGlobalPages(globalPageService);
             LOGGER.info("Demo data created.");
         }
 

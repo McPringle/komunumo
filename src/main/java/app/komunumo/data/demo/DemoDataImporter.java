@@ -23,10 +23,12 @@ import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
+import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.util.DownloadUtil;
 import app.komunumo.util.ImageUtil;
@@ -56,11 +58,12 @@ public final class DemoDataImporter {
         try {
             final String json = DownloadUtil.getString(demoDataUrl);
             final JSONObject jsonObject = new JSONObject(json);
-            LOGGER.info("Successfully loaded {} settings, {} communities, {} events, and {} images",
+            LOGGER.info("Successfully loaded {} settings, {} communities, {} events, {} images, and {} global pages",
                     jsonObject.getJSONArray("settings").length(),
                     jsonObject.getJSONArray("communities").length(),
                     jsonObject.getJSONArray("events").length(),
-                    jsonObject.getJSONArray("images").length());
+                    jsonObject.getJSONArray("images").length(),
+                    jsonObject.getJSONArray("globalPages").length());
             return jsonObject;
         } catch (IOException | URISyntaxException e) {
             LOGGER.warn("Failed to download demo data: {}", e.getMessage());
@@ -151,6 +154,23 @@ public final class DemoDataImporter {
             });
         } else {
             LOGGER.warn("No events found in demo data.");
+        }
+    }
+
+    public void importGlobalPages(final @NotNull GlobalPageService globalPageService) {
+        if (demoData.has("globalPages")) {
+            demoData.getJSONArray("globalPages").forEach(object -> {
+                final var jsonObject = (JSONObject) object;
+                final var slot = jsonObject.getString("slot");
+                final var locale = Locale.forLanguageTag(jsonObject.getString("language"));
+                final var title = jsonObject.getString("title");
+                final var markdown = jsonObject.getString("markdown");
+
+                final var globalPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
+                globalPageService.storeGlobalPage(globalPage);
+            });
+        } else {
+            LOGGER.warn("No global pages found in demo data.");
         }
     }
 }
