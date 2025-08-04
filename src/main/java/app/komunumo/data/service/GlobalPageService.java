@@ -104,6 +104,11 @@ public final class GlobalPageService {
         return pageMap.values().stream().toList();
     }
 
+    public @NotNull List<@NotNull GlobalPageDto> getAllGlobalPages() {
+        return dsl.selectFrom(GLOBAL_PAGE)
+                .fetchInto(GlobalPageDto.class);
+    }
+
     public boolean deleteGlobalPage(final @NotNull GlobalPageDto globalPage) {
         final var slot = globalPage.slot();
         final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());

@@ -22,9 +22,11 @@ import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
+import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.util.ImageUtil;
@@ -46,6 +48,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public final class DemoDataCreator {
@@ -76,12 +79,14 @@ public final class DemoDataCreator {
         final var imageService = serviceProvider.imageService();
         final var communityService = serviceProvider.communityService();
         final var eventService = serviceProvider.eventService();
+        final var globalPageService = serviceProvider.globalPageService();
 
         LOGGER.info("Deleting existing data...");
         configurationService.deleteAllSettings();
         eventService.getEvents().forEach(eventService::deleteEvent);
         communityService.getCommunities().forEach(communityService::deleteCommunity);
         imageService.getImages().forEach(imageService::deleteImage);
+        globalPageService.getAllGlobalPages().forEach(globalPageService::deleteGlobalPage);
         LOGGER.info("Existing data deleted.");
 
 
@@ -90,6 +95,7 @@ public final class DemoDataCreator {
             final var images = createDemoImages(imageService);
             final var communities = createDemoCommunities(communityService, images);
             createDemoEvents(eventService, images, communities);
+            createGlobalPages(globalPageService);
         } else {
             final var demoDataImporter = new DemoDataImporter(demoDataUrl);
             demoDataImporter.importSettings(configurationService);
@@ -153,7 +159,7 @@ public final class DemoDataCreator {
     }
 
     @VisibleForTesting
-    void storeDemoImage(final ImageDto image, final String filename) {
+    void storeDemoImage(final @NotNull ImageDto image, final @NotNull String filename) {
         // load resources from classpath
         try (InputStream inputStream = getClass().getResourceAsStream("/META-INF/resources/images/" + filename)) {
             if (inputStream == null) {
@@ -170,6 +176,13 @@ public final class DemoDataCreator {
         } catch (final IOException e) {
             LOGGER.warn(e.getMessage());
         }
+    }
+
+    private void createGlobalPages(final @NotNull GlobalPageService globalPageService) {
+        globalPageService.storeGlobalPage(new GlobalPageDto("imprint", Locale.ENGLISH, null, null,
+                "Legal Notice", "## Legal Notice\n\nThis is a demo for testing purposes **only**."));
+        globalPageService.storeGlobalPage(new GlobalPageDto("imprint", Locale.GERMAN, null, null,
+                "Impressum", "## Impressum\n\nDies ist eine Demo **nur** für Testzwecke."));
     }
 
 }
