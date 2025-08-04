@@ -69,5 +69,19 @@
       "contentType": "image/png",
       "url": "http://localhost:8082/import/non-existing.png"
     }
+  ],
+  "globalPages": [
+    {
+      "slot": "imprint",
+      "language": "en",
+      "title": "Legal Notice",
+      "markdown": "## Legal Notice\n\nThis is a demo for testing purposes **only**."
+    },
+    {
+      "slot": "imprint",
+      "language": "de",
+      "title": "Impressum",
+      "markdown": "## Impressum\n\nDies ist eine Demo **nur** für Testzwecke."
+    }
   ]
 }
