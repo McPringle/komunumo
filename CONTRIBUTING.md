@@ -13,6 +13,21 @@
 
 ## How to contribute
 
+### Project Board
+
+To get an overview of ongoing and upcoming work, you can check our [project board](https://github.com/users/McPringle/projects/8/views/1), which organizes issues in a Kanban-style workflow:
+
+| Status      | Description                                                   |
+|-------------|---------------------------------------------------------------|
+| Backlog     | Ideas and requests that are not yet analyzed.                 |
+| In Analysis | Issues currently under discussion or refinement.              |
+| Ready       | Issues that are fully specified and ready to be implemented.  |
+| In Progress | Issues actively being worked on.                              |
+| Done        | Recently completed issues; older ones are archived over time. |
+
+> [!TIP]
+> If you’re looking for something to work on, focus on issues in the **Ready** column. These contain all necessary information to start contributing right away.
+
 ### Good first issues
 
 To find possible tasks for your first contribution to *Komunumo*, we tagged some of the hopefully easier to solve issues as [good first issue](https://github.com/McPringle/komunumo/labels/good%20first%20issue).
