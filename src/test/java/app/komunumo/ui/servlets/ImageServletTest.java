@@ -309,8 +309,10 @@ class ImageServletTest {
         assertThat(output.trim())
                 .startsWith("<?xml")
                 .contains("<svg xmlns=\"http://www.w3.org/2000/svg\"")
-                .contains("width=\"100\" height=\"200\"")
-                .contains("<g id=\"Logo\"")
+                .contains("width=\"100\"")
+                .contains("height=\"200\"")
+                .contains("<g ")
+                .contains("id=\"Logo\"")
                 .endsWith("</svg>");
     }
 
@@ -357,8 +359,8 @@ class ImageServletTest {
         assertThat(output.trim())
                 .startsWith("<?xml")
                 .contains("<svg xmlns=\"http://www.w3.org/2000/svg\"")
-                .contains("width=\"200\" height=\"500\"")
-                .doesNotContain("<g id=\"Logo\"")
+                .contains("width=\"200\"")
+                .contains("height=\"500\"")
                 .endsWith("</svg>");
     }
 

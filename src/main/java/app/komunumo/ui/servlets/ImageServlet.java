@@ -43,20 +43,24 @@ import static app.komunumo.util.TemplateUtil.replaceVariables;
 
 public final class ImageServlet extends HttpServlet {
 
-    private static final @NotNull String PLACEHOLDER_IMAGE_FILE = "/META-INF/resources/images/placeholder.svg";
+    private static final @NotNull String PLACEHOLDER_IMAGE_TEMPLATE_FILE = "/META-INF/resources/images/placeholder.svg";
+    private static final @NotNull String DEFAULT_INSTANCE_LOGO_FILE = "/META-INF/resources/images/default-logo.svg";
 
     private static final @NotNull String FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE = """
             <?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <svg xmlns="http://www.w3.org/2000/svg" width="${imageWidth}" height="${imageHeight}">
                 <rect width="100%" height="100%" fill="#d0d7de" />
+                <g id="Logo" />
             </svg>""";
 
     private static final @NotNull Pattern PLACEHOLDER_URL_PATTERN =
             Pattern.compile("^/placeholder-(\\d+)x(\\d+)\\.svg$");
 
-    private static final int KOMUNUMO_LOGO_WIDTH = 370;
-    private static final int KOMUNUMO_LOGO_HEIGHT = 257;
-    private static final double KOMUNUMO_LOGO_ASPECT_RATIO = (double) KOMUNUMO_LOGO_WIDTH / KOMUNUMO_LOGO_HEIGHT;
+    private final int baseLogoWidth;
+    private final int baseLogoHeight;
+    private final double baseLogoAspectRatio;
+
+    private final SvgTemplateApplier templateApplier;
 
     private static final long IMAGE_CACHE_DURATION = 86400; // 24 hours in seconds
 
@@ -67,14 +71,29 @@ public final class ImageServlet extends HttpServlet {
     private final @NotNull String placeholderImageTemplate;
 
     public ImageServlet(final @NotNull ImageService imageService) {
-        this(imageService, PLACEHOLDER_IMAGE_FILE);
+        this(imageService, PLACEHOLDER_IMAGE_TEMPLATE_FILE, null);
+    }
+
+    public ImageServlet(final @NotNull ImageService imageService, final String instanceLogoPath) {
+        this(imageService, PLACEHOLDER_IMAGE_TEMPLATE_FILE, instanceLogoPath);
     }
 
     public ImageServlet(final @NotNull ImageService imageService,
-                        final @NotNull String placeholderImageFile) {
+                        final @NotNull String placeholderImageFile, final String instanceLogoPath) {
         super();
         this.imageService = imageService;
-        this.placeholderImageTemplate = getResourceAsString(placeholderImageFile, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);
+        var placeholderImageRaw = getResourceAsString(placeholderImageFile, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);
+
+        try {
+            this.templateApplier = new SvgTemplateApplier(instanceLogoPath, DEFAULT_INSTANCE_LOGO_FILE);
+            this.placeholderImageTemplate = templateApplier.parseTemplate(placeholderImageRaw);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        this.baseLogoWidth = (int) templateApplier.getUserSvgWidth();
+        this.baseLogoHeight = (int) templateApplier.getUserSvgHeight();
+        this.baseLogoAspectRatio = (double) baseLogoWidth / baseLogoHeight;
+
     }
 
     @Override
@@ -138,8 +157,8 @@ public final class ImageServlet extends HttpServlet {
         final int maxLogoWidth = percentage * dimension.width / 100;
 
         // calculate scaled height and width, limited to both dimensions
-        final int logoWidthByHeight = (int) Math.round(maxLogoHeight * KOMUNUMO_LOGO_ASPECT_RATIO);
-        final int logoHeightByWidth = (int) Math.round(maxLogoWidth / KOMUNUMO_LOGO_ASPECT_RATIO);
+        final int logoWidthByHeight = (int) Math.round(maxLogoHeight * baseLogoAspectRatio);
+        final int logoHeightByWidth = (int) Math.round(maxLogoWidth / baseLogoAspectRatio);
 
         // choose the variant that fits in both directions
         int logoHeight;
@@ -150,9 +169,9 @@ public final class ImageServlet extends HttpServlet {
         }
 
         // centering
-        final double logoScalingFactor = (double) logoHeight / KOMUNUMO_LOGO_HEIGHT;
-        final double logoPositionX = (dimension.width - logoScalingFactor * KOMUNUMO_LOGO_WIDTH) / 2.0;
-        final double logoPositionY = (dimension.height - logoScalingFactor * KOMUNUMO_LOGO_HEIGHT) / 2.0;
+        final double logoScalingFactor = (double) logoHeight / baseLogoHeight;
+        final double logoPositionX = (dimension.width - logoScalingFactor * baseLogoWidth) / 2.0;
+        final double logoPositionY = (dimension.height - logoScalingFactor * baseLogoHeight) / 2.0;
 
         // generate the placeholder SVG code
         final var variables = Map.of(
@@ -161,7 +180,8 @@ public final class ImageServlet extends HttpServlet {
                 "logoPositionX", String.valueOf(logoPositionX),
                 "logoPositionY", String.valueOf(logoPositionY),
                 "logoScalingFactor", String.valueOf(logoScalingFactor));
-        final var placeholderImage = replaceVariables(placeholderImageTemplate, variables);
+        final var applyableImageTemplate = replaceVariables(placeholderImageTemplate, variables);
+        final var placeholderImage = templateApplier.applyTemplate(applyableImageTemplate);
 
         // set response headers
         response.setContentType(ContentType.IMAGE_SVG.getContentType());

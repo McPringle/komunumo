@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.StringReader;
+import java.nio.file.Path;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,7 +28,8 @@ public class SvgTemplateApplierTest {
     @BeforeEach
     void setUp() throws Exception {
         // Assuming we have test SVGs in the resources folder.
-        applier = new SvgTemplateApplier("testUserSvg.svg", "defaultSvg.svg");
+        Path userSvgPath = Path.of(getClass().getResource("/testUserSvg.svg").toURI()).toRealPath();
+        applier = new SvgTemplateApplier(userSvgPath.toString(), "notprovided.svg");
     }
 
     @Test
@@ -74,7 +76,7 @@ public class SvgTemplateApplierTest {
 
     private static Document asDoc(String xml) {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        factory.setNamespaceAware(false);
         try{
             DocumentBuilder builder = factory.newDocumentBuilder();
             return builder.parse(new InputSource(new StringReader(xml)));
