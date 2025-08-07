@@ -1,11 +1,24 @@
+/*
+ * Komunumo - Open Source Community Manager
+ * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package app.komunumo.ui.servlets;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.xml.HasXPath.hasXPath;
-import static org.junit.Assert.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -14,8 +27,9 @@ import java.nio.file.Path;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
@@ -36,14 +50,14 @@ public class SvgTemplateApplierTest {
     void testGetUserSvgWidth() {
         // Test that the user SVG width is correctly parsed
         double width = applier.getUserSvgWidth();
-        assertEquals(500.0, width, "Width should be 500px.");
+        assertThat(width).isEqualTo(500.0);
     }
 
     @Test
     void testGetUserSvgHeight() {
         // Test that the user SVG height is correctly parsed
         double height = applier.getUserSvgHeight();
-        assertEquals(400.0, height, "Height should be 400px.");
+        assertThat(height).isEqualTo(400.0);
     }
 
     @Test
@@ -53,11 +67,14 @@ public class SvgTemplateApplierTest {
         String preppedTemplate = applier.parseTemplate(wrapperSvg);
 
         // Check that the split contains the expected parts
-        assertNotNull(preppedTemplate, "Prefix should not be null.");
+        assertThat(preppedTemplate).isNotNull();
 
         // Further check if prefix and suffix contain the expected parts of the SVG
-        assertFalse("Should not contain the circle element", preppedTemplate.contains("<circle"));
-        assertThat(asDoc(preppedTemplate), hasXPath("/svg/g/@id", Matchers.equalTo("Logo")));
+        assertThat(preppedTemplate.contains("<circle")).isFalse();
+    
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        String idValue = xpath.evaluate("/svg/g/@id", asDoc(preppedTemplate));
+        assertThat(idValue).isEqualTo("Logo");
     }
 
     @Test
@@ -71,7 +88,9 @@ public class SvgTemplateApplierTest {
         String finalSvg = applier.applyTemplate(preppedString);
 
         // Check if the final SVG contains the user SVG content
-        assertThat(asDoc(finalSvg), hasXPath("/svg/g/circle/@cx", Matchers.equalTo("50")));
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        String cx = xpath.evaluate("/svg/g/circle/@cx", asDoc(finalSvg));
+        assertThat(cx).isEqualTo("50");
     }
 
     private static Document asDoc(String xml) {
@@ -88,9 +107,8 @@ public class SvgTemplateApplierTest {
     @Test
     void testInvalidSvgResource() {
         // Attempt to load an invalid user SVG path
-        assertThrows(FileNotFoundException.class, () -> {
-            new SvgTemplateApplier("invalidSvg.svg", "defaultSvg.svg");
-        });
+        assertThatThrownBy(() -> new SvgTemplateApplier("invalidSvg.svg", "defaultSvg.svg"))
+            .isInstanceOf(FileNotFoundException.class);
     }
 
     @Test
@@ -101,20 +119,19 @@ public class SvgTemplateApplierTest {
 
         // Assuming width/height from viewBox is 500px
         double width = applier.deriveSvgDimension(doc.getDocumentElement(), "width");
-        assertEquals(500.0, width, "Width should be derived from the viewBox.");
+        assertThat(width).isEqualTo(500.0);
 
         double height = applier.deriveSvgDimension(doc.getDocumentElement(), "height");
-        assertEquals(500.0, height, "Height should be derived from the viewBox.");
+        assertThat(height).isEqualTo(500.0);
     }
 
     @Test
     void testInvalidDimensionUnit() throws Exception{
         // Test for invalid dimension unit in the SVG
         String invalidSvgContent = "<svg width=\"500xyz\" height=\"400px\"></svg>";
-        Document doc = applier.parseSvg(new ByteArrayInputStream(invalidSvgContent.getBytes()));
+        Document doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(invalidSvgContent.getBytes()));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            applier.deriveSvgDimension(doc.getDocumentElement(), "width");
-        });
+        assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
