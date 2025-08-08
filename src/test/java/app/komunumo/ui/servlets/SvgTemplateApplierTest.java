@@ -19,6 +19,8 @@ package app.komunumo.ui.servlets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -32,7 +34,11 @@ import javax.xml.xpath.XPathFactory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 public class SvgTemplateApplierTest {
@@ -75,6 +81,14 @@ public class SvgTemplateApplierTest {
         XPath xpath = XPathFactory.newInstance().newXPath();
         String idValue = xpath.evaluate("/svg/g/@id", asDoc(preppedTemplate));
         assertThat(idValue).isEqualTo("Logo");
+    }
+
+    @Test
+    void testPrepareTemplateSplitWithNoGLogoSvg() throws Exception {
+        String wrapperSvg = "<svg width=\"500\" height=\"500\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\" /></svg>";
+
+        assertThatThrownBy(() -> applier.parseTemplate(wrapperSvg))
+            .isInstanceOf(RuntimeException.class);
     }
 
     @Test
@@ -134,4 +148,75 @@ public class SvgTemplateApplierTest {
         assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
             .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+        "<svg width=\"10px\"></svg>, 10",
+        "<svg width=\"10in\"></svg>, 960",
+        "<svg width=\"10mm\"></svg>, 37",
+        "<svg width=\"10cm\"></svg>, 377",
+        "<svg width=\"10pt\"></svg>, 13",
+        "<svg width=\"10pc\"></svg>, 160",
+        "<svg width=\"50%\" viewBox=\"0 0 500 500\"></svg>, 250",
+        "<svg viewBox=\"0 0 500 500\"></svg>, 500"
+    })
+    void testSvgDimensionDerivationOnWidth(String svgContent, int widthPxApprox) throws Exception{
+        Document doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+
+        double width = applier.deriveSvgDimension(doc.getDocumentElement(), "width");
+        assertThat((int)width).isEqualTo(widthPxApprox);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "<svg viewBox=\"0 0 500 300\"></svg>, height, 300",
+        "<svg width=\"50%\" height=\"100%\" viewBox=\"0 0 500 500\"></svg>, absent, 0",
+    })
+    void testSvgDimensionDerivationUsingNonWidthCases(String svgContent, String dim, int widthPxApprox) throws Exception{
+        Document doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+
+        double width = applier.deriveSvgDimension(doc.getDocumentElement(), dim);
+        assertThat((int)width).isEqualTo(widthPxApprox);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "<svg width=\"50%\"></svg>",
+        "<svg width=\"50%\" viewBox=\"0 500 500\"></svg>"
+    })
+    void testSvgDimensionDerivationWithInvalidViewBox(String svgContent) throws Exception{
+        Document doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+
+        assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void testIllegalArgumentForNullViewBox() throws Exception{
+        final var docElement = mock(Element.class);
+        when(docElement.getAttribute("xyz")).thenReturn(null);
+        when(docElement.getAttribute("viewBox")).thenReturn(null);
+
+        assertThatThrownBy(() -> applier.deriveSvgDimension(docElement, "xyz"))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void testUnsupportedConverstionUnit() throws Exception{
+        String svgContent = "<svg width=\"10xy\"></svg>";
+        Document doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+
+        assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void testInvalidDimensiont() throws Exception{
+        String svgContent = "<svg width=\"x\"></svg>";
+        Document doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+
+        assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
 }

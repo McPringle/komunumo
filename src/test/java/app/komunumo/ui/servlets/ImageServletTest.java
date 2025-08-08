@@ -36,10 +36,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -314,6 +317,16 @@ class ImageServletTest {
                 .contains("<g ")
                 .contains("id=\"Logo\"")
                 .endsWith("</svg>");
+    }
+
+    @Test
+    void failsInitializationWhenCustomLogoIsInvalid() throws IOException {
+        final var imageService = mock(ImageService.class);
+        Path badsvg = Files.createTempFile("corrupt", ".svg");
+        Files.writeString(badsvg, "<svg> x /svg>");
+
+        assertThatThrownBy(() -> new ImageServlet(imageService, badsvg.toString()))
+            .isInstanceOf(RuntimeException.class);
     }
 
     /**
