@@ -44,7 +44,7 @@ import org.xml.sax.InputSource;
 
 import app.komunumo.util.ResourceUtil;
 
-public final class SvgTemplateApplier {
+final class SvgTemplateApplier {
 
     // Store the user SVG as a string (without <svg> element)
     private final String userSvgString;
@@ -61,7 +61,7 @@ public final class SvgTemplateApplier {
     private static final double PT_TO_PX = INCH_TO_PX / 72; // 1 pt = 96 / 72 px
     private static final double PC_TO_PX = INCH_TO_PX / 6; // 1 pc = 96 / 6 px
 
-    public SvgTemplateApplier(final String userSvgPath, final String defaultSvgResourcePath) throws Exception {
+    SvgTemplateApplier(final String userSvgPath, final String defaultSvgResourcePath) throws Exception {
         // Load the user SVG file or fallback to default if user SVG is missing
         InputStream inputStream = null;
         if (StringUtils.hasText(userSvgPath)) {
@@ -87,18 +87,18 @@ public final class SvgTemplateApplier {
         this.userSvgHeight = deriveSvgDimension(svgElement, "height");
     }
 
-    public double getUserSvgWidth() {
+    double getUserSvgWidth() {
         return userSvgWidth;
     }
 
-    public double getUserSvgHeight() {
+    double getUserSvgHeight() {
         return userSvgHeight;
     }
 
     /*
-     * Parse, validate and prepare the tempalte wrapper SVG around the "Logo" group)
+     * Parse, validate and prepare the template wrapper SVG around the "Logo" group)
     */
-    public String parseTemplate(final String wrapperSvg) throws Exception {
+    String parseTemplate(final String wrapperSvg) throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -131,7 +131,7 @@ public final class SvgTemplateApplier {
     /*
      * Apply the applyable(expanded) template string by wrapping it around custom SVG content
      */
-    public String applyTemplate(final String preppedTemplate) {
+    String applyTemplate(final String preppedTemplate) {
         return preppedTemplate.replace(SPLIT_MARKE_STRING, userSvgString);
     }
 
