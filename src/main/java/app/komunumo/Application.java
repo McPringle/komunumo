@@ -26,6 +26,7 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import jakarta.servlet.http.HttpServlet;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -60,9 +61,10 @@ public class Application extends SpringBootServletInitializer implements AppShel
      */
     @Bean
     public @NotNull ServletRegistrationBean<@NotNull HttpServlet> imageServlet(
-            final @NotNull ImageService imageService) {
+            final @NotNull ImageService imageService,
+            final @NotNull @Value("${komunumo.instance.logo.path:}") String instanceLogoPath) {
         return new ServletRegistrationBean<>(
-                new ImageServlet(imageService),
+                new ImageServlet(imageService, instanceLogoPath),
                 "/images/*"
         );
     }
