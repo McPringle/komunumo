@@ -44,7 +44,7 @@ import static app.komunumo.util.TemplateUtil.replaceVariables;
 public final class ImageServlet extends HttpServlet {
 
     private static final @NotNull String PLACEHOLDER_IMAGE_TEMPLATE_FILE = "/META-INF/resources/images/placeholder.svg";
-    private static final @NotNull String DEFAULT_INSTANCE_LOGO_FILE = "/META-INF/resources/images/default-logo.svg";
+    private static final @NotNull String KOMUNUMO_LOGO_FILE = "/META-INF/resources/images/komunumo.svg";
 
     private static final @NotNull String FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE = """
             <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -85,7 +85,7 @@ public final class ImageServlet extends HttpServlet {
         var placeholderImageRaw = getResourceAsString(placeholderImageFile, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);
 
         try {
-            this.templateApplier = new SvgTemplateApplier(instanceLogoPath, DEFAULT_INSTANCE_LOGO_FILE);
+            this.templateApplier = new SvgTemplateApplier(instanceLogoPath, KOMUNUMO_LOGO_FILE);
             this.placeholderImageTemplate = templateApplier.parseTemplate(placeholderImageRaw);
         } catch (Exception e) {
             throw new RuntimeException(e);

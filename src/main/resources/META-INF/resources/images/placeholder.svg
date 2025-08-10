@@ -11,6 +11,6 @@
         </filter>
     </defs>
     <g id="Logo" transform="translate(${logoPositionX},${logoPositionY}) scale(${logoScalingFactor})" filter="url(#logoFilter)">
-        <!-- User provided svg through file ${komunumo.instance.logo.path}.  default: default-logo.svg -->
+        <!-- User provided svg through file ${komunumo.instance.logo.path}.  default: komunumo.svg -->
     </g>
 </svg>
