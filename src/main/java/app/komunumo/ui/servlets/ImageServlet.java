@@ -60,7 +60,7 @@ public final class ImageServlet extends HttpServlet {
     private final int baseLogoHeight;
     private final double baseLogoAspectRatio;
 
-    private final SvgTemplateApplier templateApplier;
+    private final transient SvgTemplateApplier templateApplier;
 
     private static final long IMAGE_CACHE_DURATION = 86400; // 24 hours in seconds
 
@@ -71,15 +71,17 @@ public final class ImageServlet extends HttpServlet {
     private final @NotNull String placeholderImageTemplate;
 
     public ImageServlet(final @NotNull ImageService imageService) {
-        this(imageService, PLACEHOLDER_IMAGE_TEMPLATE_FILE, null);
+        this(imageService, PLACEHOLDER_IMAGE_TEMPLATE_FILE, "");
     }
 
-    public ImageServlet(final @NotNull ImageService imageService, final String instanceLogoPath) {
+    public ImageServlet(final @NotNull ImageService imageService,
+                        final @NotNull String instanceLogoPath) {
         this(imageService, PLACEHOLDER_IMAGE_TEMPLATE_FILE, instanceLogoPath);
     }
 
     public ImageServlet(final @NotNull ImageService imageService,
-                        final @NotNull String placeholderImageFile, final String instanceLogoPath) {
+                        final @NotNull String placeholderImageFile,
+                        final @NotNull String instanceLogoPath) {
         super();
         this.imageService = imageService;
         var placeholderImageRaw = getResourceAsString(placeholderImageFile, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);

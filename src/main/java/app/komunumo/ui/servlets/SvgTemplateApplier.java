@@ -17,32 +17,25 @@
  */
 package app.komunumo.ui.servlets;
 
+import app.komunumo.util.ResourceUtil;
+import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-
-import org.springframework.util.StringUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import app.komunumo.util.ResourceUtil;
 
 final class SvgTemplateApplier {
 
@@ -61,11 +54,13 @@ final class SvgTemplateApplier {
     private static final double PT_TO_PX = INCH_TO_PX / 72; // 1 pt = 96 / 72 px
     private static final double PC_TO_PX = INCH_TO_PX / 6; // 1 pc = 96 / 6 px
 
-    SvgTemplateApplier(final String userSvgPath, final String defaultSvgResourcePath) throws Exception {
+    SvgTemplateApplier(final @NotNull String userSvgPath,
+                       final @NotNull String defaultSvgResourcePath)
+            throws Exception {
         // Load the user SVG file or fallback to default if user SVG is missing
         InputStream inputStream = null;
-        if (StringUtils.hasText(userSvgPath)) {
-            Path path = Path.of(userSvgPath);
+        if (!userSvgPath.isBlank()) {
+            final var path = Path.of(userSvgPath);
             if (Files.exists(path)) {
                 inputStream = Files.newInputStream(path);
             }
@@ -80,11 +75,12 @@ final class SvgTemplateApplier {
             throw new FileNotFoundException("Could not find both user and default SVG resources.");
         }
 
-        Document doc = parseSvg(inputStream);
-        Element svgElement = doc.getDocumentElement();
-        this.userSvgString = stripSvgShellElement(doc);
-        this.userSvgWidth = deriveSvgDimension(svgElement, "width");
-        this.userSvgHeight = deriveSvgDimension(svgElement, "height");
+        final var svgDocument = parseSvg(inputStream);
+        final var svgElement = svgDocument.getDocumentElement();
+
+        userSvgString = stripSvgShellElement(svgDocument);
+        userSvgWidth = deriveSvgDimension(svgElement, "width");
+        userSvgHeight = deriveSvgDimension(svgElement, "height");
     }
 
     double getUserSvgWidth() {
@@ -96,17 +92,17 @@ final class SvgTemplateApplier {
     }
 
     /*
-     * Parse, validate and prepare the template wrapper SVG around the "Logo" group)
-    */
-    String parseTemplate(final String wrapperSvg) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+     * Parse, validate and prepare the template wrapper SVG around the "Logo" group
+     */
+    String parseTemplate(final @NotNull String wrapperSvg) throws Exception {
+        final var factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(false);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(new InputSource(new StringReader(wrapperSvg)));
+        final var builder = factory.newDocumentBuilder();
+        final var document = builder.parse(new InputSource(new StringReader(wrapperSvg)));
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        String xpathExpr = String.format("//%s[@id='%s']", "g", "Logo");
-        Element gLogo = (Element) xPath.evaluate(xpathExpr, document, XPathConstants.NODE);
+        final var xPath = XPathFactory.newInstance().newXPath();
+        final var xpathExpr = String.format("//%s[@id='%s']", "g", "Logo");
+        final var gLogo = (Element) xPath.evaluate(xpathExpr, document, XPathConstants.NODE);
 
         if (gLogo == null) {
             throw new RuntimeException("Container element not found");
@@ -117,8 +113,8 @@ final class SvgTemplateApplier {
         }
         gLogo.appendChild(document.createTextNode(SPLIT_MARKE_STRING));
 
-        StringWriter writer = new StringWriter();
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        final var writer = new StringWriter();
+        final var transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -131,23 +127,23 @@ final class SvgTemplateApplier {
     /*
      * Apply the applyable(expanded) template string by wrapping it around custom SVG content
      */
-    String applyTemplate(final String preppedTemplate) {
+    String applyTemplate(final @NotNull String preppedTemplate) {
         return preppedTemplate.replace(SPLIT_MARKE_STRING, userSvgString);
     }
 
     // Parse the SVG and extract its inner contents, stripping away the <svg> wrapper
-    private String stripSvgShellElement(final Document doc) throws Exception {
-        StringBuilder svgContent = new StringBuilder();
-        Element rootElement = doc.getDocumentElement();
+    private String stripSvgShellElement(final @NotNull Document doc) throws Exception {
+        final var svgContent = new StringBuilder();
+        final var rootElement = doc.getDocumentElement();
 
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        final var transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-        NodeList children = rootElement.getChildNodes();
+        final var children = rootElement.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            Node child = children.item(i);
-            StringWriter writer = new StringWriter();
+            final var child = children.item(i);
+            final var writer = new StringWriter();
             transformer.transform(new DOMSource(child), new StreamResult(writer));
             svgContent.append(writer.toString());
         }
@@ -156,17 +152,18 @@ final class SvgTemplateApplier {
     }
 
     // Parse the SVG into a Document object
-    static Document parseSvg(final InputStream inputStream) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    static Document parseSvg(final @NotNull InputStream inputStream) throws Exception {
+        final var factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        final var builder = factory.newDocumentBuilder();
         return builder.parse(inputStream);
     }
 
     // Parse the SVG dimension and convert it to pixels (handling various units)
-    double deriveSvgDimension(final Element docElement, final String dimensionType) {
-        String dim = docElement.getAttribute(dimensionType);
-        if (dim == null || dim.isEmpty()) {
+    double deriveSvgDimension(final @NotNull Element docElement,
+                              final @NotNull String dimensionType) {
+        final var dim = docElement.getAttribute(dimensionType);
+        if (dim == null || dim.isBlank()) {
             // If width/height is not provided, fall back to the viewBox values
             return getDimensionFromViewBox(docElement, dimensionType);
         }
@@ -183,7 +180,7 @@ final class SvgTemplateApplier {
 
         // Handle different units like in, mm, cm, pt, pc
         if (dim.length() > 1) {
-            String dimSfx = dim.substring(dim.length() - 2);
+            final var dimSfx = dim.substring(dim.length() - 2);
             switch (dimSfx) {
                 case "px": return asPixels(dim, 1);
                 case "in": return asPixels(dim, INCH_TO_PX);
@@ -198,18 +195,20 @@ final class SvgTemplateApplier {
         throw new IllegalArgumentException("Unsupported unit conversion: " + dim);
     }
 
-    private double asPixels(final String dimension, final double conversionFactor) {
+    private double asPixels(final @NotNull String dimension,
+                            final double conversionFactor) {
         return Double.parseDouble(dimension.substring(0, dimension.length() - 2)) * conversionFactor;
     }
 
     // Extract the width/height from the viewBox if width/height are not provided
-    private double getDimensionFromViewBox(final Element docElement, final String dimensionType) {
-        String viewBox = docElement.getAttribute("viewBox");
-        if (viewBox == null || viewBox.isEmpty()) {
+    private double getDimensionFromViewBox(final @NotNull Element docElement,
+                                           final @NotNull String dimensionType) {
+        final var viewBox = docElement.getAttribute("viewBox");
+        if (viewBox == null || viewBox.isBlank()) {
             throw new IllegalArgumentException("No viewBox or dimensions found in SVG.");
         }
 
-        String[] viewBoxParts = viewBox.split(" ");
+        final var viewBoxParts = viewBox.split(" ");
         if (viewBoxParts.length < 4) {
             throw new IllegalArgumentException("Invalid viewBox attribute in SVG.");
         }
