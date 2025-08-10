@@ -61,7 +61,8 @@ public class Application extends SpringBootServletInitializer implements AppShel
      */
     @Bean
     public @NotNull ServletRegistrationBean<@NotNull HttpServlet> imageServlet(
-            final @NotNull ImageService imageService, @Value("${komunumo.instance.logo.path}") final String instanceLogoPath) {
+            final @NotNull ImageService imageService,
+            final @NotNull @Value("${komunumo.instance.logo.path:}") String instanceLogoPath) {
         return new ServletRegistrationBean<>(
                 new ImageServlet(imageService, instanceLogoPath),
                 "/images/*"
