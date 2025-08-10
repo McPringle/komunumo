@@ -26,6 +26,11 @@
       "description" : "Hide the communities from the user interface (true/false)."
     },
     {
+      "name" : "komunumo.instance.logo.path",
+      "type" : "java.lang.String",
+      "description" : "Path to file containing a custom logo in SVG format."
+    },
+    {
       "name" : "komunumo.instance.styles",
       "type" : "java.lang.String",
       "description" : "An external link to a stylesheet for custom CSS styles."
@@ -39,11 +44,6 @@
       "name" : "komunumo.mail.reply-to",
       "type" : "java.lang.String",
       "description" : "Optional reply-to address (e.g. `support@example.com`)."
-    },
-    {
-      "name" : "komunumo.instance.logo.path",
-      "type" : "java.lang.String",
-      "description" : "Path to file containing a custom logo svg."
     }
   ]
 }
