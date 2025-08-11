@@ -19,7 +19,7 @@ package app.komunumo;
 
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.service.ImageService;
-import app.komunumo.ui.servlets.ImageServlet;
+import app.komunumo.servlets.images.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.server.PWA;
