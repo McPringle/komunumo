@@ -270,7 +270,6 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-launcher</artifactId>
-            <version>1.12.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
