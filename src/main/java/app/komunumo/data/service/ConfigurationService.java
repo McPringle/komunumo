@@ -34,8 +34,8 @@ import static app.komunumo.data.db.tables.Config.CONFIG;
 @Service
 public final class ConfigurationService {
 
-    private final DSLContext dsl;
-    private final Cache<CacheKey, String> cache;
+    private final @NotNull DSLContext dsl;
+    private final @NotNull Cache<@NotNull CacheKey, @NotNull Optional<@Nullable String>> cache;
 
     public ConfigurationService(final @NotNull DSLContext dsl) {
         this.dsl = dsl;
@@ -62,14 +62,13 @@ public final class ConfigurationService {
 
     private @NotNull Optional<String> getFromCacheOrDb(final @NotNull ConfigurationSetting setting,
                                                        final @Nullable String language) {
-        return Optional.ofNullable(cache.get(new CacheKey(setting, language), cacheKey ->
+        return cache.get(new CacheKey(setting, language), cacheKey ->
                 dsl.select(CONFIG.VALUE)
                         .from(CONFIG)
                         .where(CONFIG.SETTING.eq(cacheKey.setting.setting()))
                         .and(language == null ? CONFIG.LANGUAGE.isNull() : CONFIG.LANGUAGE.eq(language))
                         .fetchOptional(CONFIG.VALUE)
-                        .orElse(null)
-        ));
+        );
     }
 
     public void setConfiguration(final @NotNull ConfigurationSetting setting,
