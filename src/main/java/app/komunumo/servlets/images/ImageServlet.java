@@ -32,43 +32,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static app.komunumo.util.ImageUtil.extractImageIdFromUrl;
-import static app.komunumo.util.ResourceUtil.getResourceAsString;
-import static app.komunumo.util.TemplateUtil.replaceVariables;
 
 public final class ImageServlet extends HttpServlet {
 
     private static final @NotNull String PLACEHOLDER_IMAGE_TEMPLATE_FILE = "/META-INF/resources/images/placeholder.svg";
-    private static final @NotNull String KOMUNUMO_LOGO_FILE = "/META-INF/resources/images/komunumo.svg";
-
-    private static final @NotNull String FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE = """
-            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-            <svg xmlns="http://www.w3.org/2000/svg" width="${imageWidth}" height="${imageHeight}">
-                <rect width="100%" height="100%" fill="#d0d7de" />
-                <g id="Logo" />
-            </svg>""";
 
     private static final @NotNull Pattern PLACEHOLDER_URL_PATTERN =
             Pattern.compile("^/placeholder-(\\d+)x(\\d+)\\.svg$");
 
-    private final int baseLogoWidth;
-    private final int baseLogoHeight;
-    private final double baseLogoAspectRatio;
-
-    private final transient SvgTemplateApplier templateApplier;
+    private @NotNull final PlaceholderImageGenerator placeholderImageGenerator;
 
     private static final long IMAGE_CACHE_DURATION = 86400; // 24 hours in seconds
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ImageServlet.class);
 
     private final transient @NotNull ImageService imageService;
-
-    private final @NotNull String placeholderImageTemplate;
 
     public ImageServlet(final @NotNull ImageService imageService) {
         this(imageService, PLACEHOLDER_IMAGE_TEMPLATE_FILE, "");
@@ -84,18 +67,7 @@ public final class ImageServlet extends HttpServlet {
                         final @NotNull String instanceLogoPath) {
         super();
         this.imageService = imageService;
-        var placeholderImageRaw = getResourceAsString(placeholderImageFile, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);
-
-        try {
-            this.templateApplier = new SvgTemplateApplier(instanceLogoPath, KOMUNUMO_LOGO_FILE);
-            this.placeholderImageTemplate = templateApplier.parseTemplate(placeholderImageRaw);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        this.baseLogoWidth = (int) templateApplier.getUserSvgWidth();
-        this.baseLogoHeight = (int) templateApplier.getUserSvgHeight();
-        this.baseLogoAspectRatio = (double) baseLogoWidth / baseLogoHeight;
-
+        this.placeholderImageGenerator = new PlaceholderImageGenerator(placeholderImageFile, instanceLogoPath);
     }
 
     @Override
@@ -110,11 +82,10 @@ public final class ImageServlet extends HttpServlet {
 
         final var placeholderMatcher = PLACEHOLDER_URL_PATTERN.matcher(url);
         if (placeholderMatcher.find()) {
-            final var width = Integer.parseInt(placeholderMatcher.group(1));
-            final var height = Integer.parseInt(placeholderMatcher.group(2));
-            if (width > 0 && height > 0) {
-                final var imageDimension = new ImageDimension(width, height);
-                generatePlaceholderImage(imageDimension, request, response);
+            final var imageWidth = Integer.parseInt(placeholderMatcher.group(1));
+            final var imageHeight = Integer.parseInt(placeholderMatcher.group(2));
+            if (imageWidth > 0 && imageHeight > 0) {
+                generatePlaceholderImage(imageWidth, imageHeight, request, response);
                 return;
             }
         }
@@ -150,40 +121,10 @@ public final class ImageServlet extends HttpServlet {
         }
     }
 
-    private void generatePlaceholderImage(final @NotNull ImageDimension dimension,
+    private void generatePlaceholderImage(final int imageWidth, final int imageHeight,
                                           final @NotNull HttpServletRequest request,
                                           final @NotNull HttpServletResponse response) {
-        // maximum permitted size (50% of the dimension)
-        final int percentage = 50;
-        final int maxLogoHeight = percentage * dimension.height / 100;
-        final int maxLogoWidth = percentage * dimension.width / 100;
-
-        // calculate scaled height and width, limited to both dimensions
-        final int logoWidthByHeight = (int) Math.round(maxLogoHeight * baseLogoAspectRatio);
-        final int logoHeightByWidth = (int) Math.round(maxLogoWidth / baseLogoAspectRatio);
-
-        // choose the variant that fits in both directions
-        int logoHeight;
-        if (logoWidthByHeight <= maxLogoWidth) {
-            logoHeight = maxLogoHeight;
-        } else {
-            logoHeight = logoHeightByWidth;
-        }
-
-        // centering
-        final double logoScalingFactor = (double) logoHeight / baseLogoHeight;
-        final double logoPositionX = (dimension.width - logoScalingFactor * baseLogoWidth) / 2.0;
-        final double logoPositionY = (dimension.height - logoScalingFactor * baseLogoHeight) / 2.0;
-
-        // generate the placeholder SVG code
-        final var variables = Map.of(
-                "imageWidth", String.valueOf(dimension.width),
-                "imageHeight", String.valueOf(dimension.height),
-                "logoPositionX", String.valueOf(logoPositionX),
-                "logoPositionY", String.valueOf(logoPositionY),
-                "logoScalingFactor", String.valueOf(logoScalingFactor));
-        final var applyableImageTemplate = replaceVariables(placeholderImageTemplate, variables);
-        final var placeholderImage = templateApplier.applyTemplate(applyableImageTemplate);
+        final var placeholderImage = placeholderImageGenerator.getPlaceholderImage(imageWidth, imageHeight);
 
         // set response headers
         response.setContentType(ContentType.IMAGE_SVG.getContentType());
@@ -220,7 +161,5 @@ public final class ImageServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
-
-    private record ImageDimension(int width, int height) { }
 
 }

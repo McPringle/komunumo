@@ -17,6 +17,7 @@
  */
 package app.komunumo.servlets.images;
 
+import app.komunumo.KomunumoException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,7 +86,7 @@ class SvgTemplateApplierTest {
     }
 
     @Test
-    void testPrepareTemplateSplitWithNoGLogoSvg() throws Exception {
+    void testPrepareTemplateSplitWithNoGLogoSvg() {
         final var wrapperSvg = "<svg width=\"500\" height=\"500\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\" /></svg>";
 
         assertThatThrownBy(() -> applier.parseTemplate(wrapperSvg))
@@ -120,7 +121,8 @@ class SvgTemplateApplierTest {
     void testInvalidSvgResource() {
         // Attempt to load an invalid user SVG path
         assertThatThrownBy(() -> new SvgTemplateApplier("invalidSvg.svg", "defaultSvg.svg"))
-            .isInstanceOf(FileNotFoundException.class);
+            .isInstanceOf(KomunumoException.class)
+            .hasMessage("Failed to initialize template parser: Could not find both user and default SVG resources.");
     }
 
     @Test

@@ -17,6 +17,7 @@
  */
 package app.komunumo.servlets.images;
 
+import app.komunumo.KomunumoException;
 import app.komunumo.util.ImageUtil;
 import app.komunumo.util.ResourceUtil;
 import org.jetbrains.annotations.NotNull;
@@ -49,32 +50,35 @@ final class SvgTemplateApplier {
     private static final String SPLIT_MARKE_STRING = "___USVG__";
 
     SvgTemplateApplier(final @NotNull String userSvgPath,
-                       final @NotNull String defaultSvgResourcePath)
-            throws Exception {
-        // Load the user SVG file or fallback to default if user SVG is missing
-        InputStream inputStream = null;
-        if (!userSvgPath.isBlank()) {
-            final var path = Path.of(userSvgPath);
-            if (Files.exists(path)) {
-                inputStream = Files.newInputStream(path);
+                       final @NotNull String defaultSvgResourcePath) {
+        try {
+            // Load the user SVG file or fallback to default if user SVG is missing
+            InputStream inputStream = null;
+            if (!userSvgPath.isBlank()) {
+                final var path = Path.of(userSvgPath);
+                if (Files.exists(path)) {
+                    inputStream = Files.newInputStream(path);
+                }
             }
+
+            //   or fallback to default if user SVG is missing
+            if (inputStream == null) {
+                inputStream = ResourceUtil.class.getResourceAsStream(defaultSvgResourcePath);
+            }
+
+            if (inputStream == null) {
+                throw new FileNotFoundException("Could not find both user and default SVG resources.");
+            }
+
+            final var svgDocument = parseSvg(inputStream);
+            final var svgElement = svgDocument.getDocumentElement();
+
+            userSvgString = stripSvgShellElement(svgDocument);
+            userSvgWidth = deriveSvgDimension(svgElement, "width");
+            userSvgHeight = deriveSvgDimension(svgElement, "height");
+        } catch (final Exception e) {
+            throw new KomunumoException("Failed to initialize template parser: " + e.getMessage(), e);
         }
-
-        //   or fallback to default if user SVG is missing
-        if (inputStream == null) {
-            inputStream = ResourceUtil.class.getResourceAsStream(defaultSvgResourcePath);
-        }
-
-        if (inputStream == null) {
-            throw new FileNotFoundException("Could not find both user and default SVG resources.");
-        }
-
-        final var svgDocument = parseSvg(inputStream);
-        final var svgElement = svgDocument.getDocumentElement();
-
-        userSvgString = stripSvgShellElement(svgDocument);
-        userSvgWidth = deriveSvgDimension(svgElement, "width");
-        userSvgHeight = deriveSvgDimension(svgElement, "height");
     }
 
     double getUserSvgWidth() {
@@ -88,34 +92,38 @@ final class SvgTemplateApplier {
     /*
      * Parse, validate and prepare the template wrapper SVG around the "Logo" group
      */
-    String parseTemplate(final @NotNull String wrapperSvg) throws Exception {
-        final var factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(false);
-        final var builder = factory.newDocumentBuilder();
-        final var document = builder.parse(new InputSource(new StringReader(wrapperSvg)));
+    String parseTemplate(final @NotNull String wrapperSvg) {
+        try {
+            final var factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(false);
+            final var builder = factory.newDocumentBuilder();
+            final var document = builder.parse(new InputSource(new StringReader(wrapperSvg)));
 
-        final var xPath = XPathFactory.newInstance().newXPath();
-        final var xpathExpr = String.format("//%s[@id='%s']", "g", "Logo");
-        final var gLogo = (Element) xPath.evaluate(xpathExpr, document, XPathConstants.NODE);
+            final var xPath = XPathFactory.newInstance().newXPath();
+            final var xpathExpr = String.format("//%s[@id='%s']", "g", "Logo");
+            final var gLogo = (Element) xPath.evaluate(xpathExpr, document, XPathConstants.NODE);
 
-        if (gLogo == null) {
-            throw new RuntimeException("Container element not found");
+            if (gLogo == null) {
+                throw new KomunumoException("Container element not found");
+            }
+
+            while (gLogo.hasChildNodes()) {
+                gLogo.removeChild(gLogo.getFirstChild());
+            }
+            gLogo.appendChild(document.createTextNode(SPLIT_MARKE_STRING));
+
+            final var writer = new StringWriter();
+            final var transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+            transformer.setOutputProperty(OutputKeys.INDENT, "no");
+            transformer.transform(new DOMSource(document), new StreamResult(writer));
+            return writer.toString();
+        } catch (final Exception e) {
+            throw new KomunumoException("Failed to parse SVG template: " + e.getMessage(), e);
         }
-
-        while (gLogo.hasChildNodes()) {
-            gLogo.removeChild(gLogo.getFirstChild());
-        }
-        gLogo.appendChild(document.createTextNode(SPLIT_MARKE_STRING));
-
-        final var writer = new StringWriter();
-        final var transformer = TransformerFactory.newInstance().newTransformer();
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
-        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
-        transformer.setOutputProperty(OutputKeys.INDENT, "no");
-        transformer.transform(new DOMSource(document), new StreamResult(writer));
-        return writer.toString();
     }
 
     /*
