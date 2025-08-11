@@ -151,8 +151,8 @@ class SvgTemplateApplierTest {
     @CsvSource({
         "<svg width=\"10px\"></svg>, 10",
         "<svg width=\"10in\"></svg>, 960",
-        "<svg width=\"10mm\"></svg>, 37",
-        "<svg width=\"10cm\"></svg>, 377",
+        "<svg width=\"10mm\"></svg>, 38",
+        "<svg width=\"10cm\"></svg>, 378",
         "<svg width=\"10pt\"></svg>, 13",
         "<svg width=\"10pc\"></svg>, 160",
         "<svg width=\"50%\" viewBox=\"0 0 500 500\"></svg>, 250",

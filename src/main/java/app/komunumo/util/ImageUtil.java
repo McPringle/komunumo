@@ -44,6 +44,13 @@ public final class ImageUtil {
     private static final @NotNull Pattern UUID_EXTRACT_PATTERN = Pattern.compile(
             ".*/([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\\.");
 
+    // Conversion constants to px (for different units) - approx
+    private static final double INCH_TO_PX = 96; // 1 inch = 96 px ie. Normal
+    private static final double MM_TO_PX = INCH_TO_PX / 25.4; // 1 mm = 96 / 25.4 px
+    private static final double CM_TO_PX = INCH_TO_PX / 2.54; // 1 cm = 96 / 2.54 px
+    private static final double PT_TO_PX = INCH_TO_PX / 72; // 1 pt = 96 / 72 px
+    private static final double PC_TO_PX = INCH_TO_PX / 6; // 1 pc = 96 / 6 px
+
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ImageUtil.class);
     private static Path uploadImagePath;
 
@@ -155,6 +162,57 @@ public final class ImageUtil {
         } catch (final @NotNull Exception e) {
             LOGGER.error("Error while cleaning up orphaned image files: {}", e.getMessage(), e);
         }
+    }
+
+    /**
+     * <p>Converts a dimension string with a unit (e.g., "10mm", "5in", "200px") into pixels.</p>
+     *
+     * @param dimension The dimension string, including the unit (e.g., "15mm", "2in", "100px").
+     * @param viewBoxReference Optional reference value in pixels, used when the dimension is a percentage ("%").
+     *                         Pass 0 or negative if not applicable.
+     * @return The dimension in pixels.
+     * @throws IllegalArgumentException if the unit is unsupported or the format is invalid.
+     */
+    @SuppressWarnings("ExtractMethodRecommender")
+    public static long convertToPixels(final @NotNull String dimension, final double viewBoxReference) {
+        if (dimension.isBlank()) {
+            throw new IllegalArgumentException("Dimension must not be blank");
+        }
+
+        // handle unitless values (assume pixels)
+        if (Character.isDigit(dimension.charAt(dimension.length() - 1))) {
+            return Long.parseLong(dimension);
+        }
+
+        // handle percentage values
+        if (dimension.endsWith("%")) {
+            if (viewBoxReference <= 0) {
+                throw new IllegalArgumentException("Cannot convert percentage without view box reference");
+            }
+            final var percent = Long.parseLong(dimension.substring(0, dimension.length() - 1));
+            return Math.round((viewBoxReference * percent) / 100);
+        }
+
+        // ensure the dimension has a unit
+        if (dimension.length() <= 2) {
+            throw new IllegalArgumentException("Dimension '" + dimension
+                    + "' must have a valid unit (e.g., 'px', 'in', 'mm', 'cm', 'pt', 'pc', '%').");
+        }
+
+        // handle units
+        final var unit = dimension.substring(dimension.length() - 2).toLowerCase();
+        final var value = Long.parseLong(dimension.substring(0, dimension.length() - 2));
+        final var pixels = switch (unit) {
+            case "px" -> value;
+            case "in" -> value * INCH_TO_PX;
+            case "mm" -> value * MM_TO_PX;
+            case "cm" -> value * CM_TO_PX;
+            case "pt" -> value * PT_TO_PX;
+            case "pc" -> value * PC_TO_PX;
+            default -> throw new IllegalArgumentException("Unsupported unit: " + unit);
+        };
+
+        return Math.round(pixels);
     }
 
     private ImageUtil() {

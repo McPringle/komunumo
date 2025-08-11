@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.servlets;
 
+import app.komunumo.util.ImageUtil;
 import app.komunumo.util.ResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
@@ -46,13 +47,6 @@ final class SvgTemplateApplier {
     private final double userSvgHeight;
 
     private static final String SPLIT_MARKE_STRING = "___USVG__";
-
-    // Conversion constants to px (for different units) - approx
-    private static final double INCH_TO_PX = 96; // 1 inch = 96 px ie. Normal
-    private static final double MM_TO_PX = INCH_TO_PX / 25.4; // 1 mm = 96 / 25.4 px
-    private static final double CM_TO_PX = INCH_TO_PX / 2.54; // 1 cm = 96 / 2.54 px
-    private static final double PT_TO_PX = INCH_TO_PX / 72; // 1 pt = 96 / 72 px
-    private static final double PC_TO_PX = INCH_TO_PX / 6; // 1 pc = 96 / 6 px
 
     SvgTemplateApplier(final @NotNull String userSvgPath,
                        final @NotNull String defaultSvgResourcePath)
@@ -162,42 +156,21 @@ final class SvgTemplateApplier {
     // Parse the SVG dimension and convert it to pixels (handling various units)
     double deriveSvgDimension(final @NotNull Element docElement,
                               final @NotNull String dimensionType) {
-        final var dim = docElement.getAttribute(dimensionType);
-        if (dim == null || dim.isBlank()) {
-            // If width/height is not provided, fall back to the viewBox values
+        final var dimension = docElement.getAttribute(dimensionType);
+
+        // If width/height is not provided, fall back to the viewBox values
+        if (dimension == null || dimension.isBlank()) {
             return getDimensionFromViewBox(docElement, dimensionType);
         }
 
-        if (Character.isDigit(dim.charAt(dim.length() - 1))) {
-            return Double.parseDouble(dim);
-        }
-
         // Handle % unit (percentage of the viewBox)
-        if (dim.endsWith("%")) {
-            return getDimensionFromViewBox(docElement, dimensionType)
-                    * (Double.parseDouble(dim.substring(0, dim.length() - 1)) / 100);
+        double referenceValue = 0;
+        if (dimension.endsWith("%")) {
+            referenceValue = getDimensionFromViewBox(docElement, dimensionType);
         }
 
         // Handle different units like in, mm, cm, pt, pc
-        if (dim.length() > 1) {
-            final var dimSfx = dim.substring(dim.length() - 2);
-            switch (dimSfx) {
-                case "px": return asPixels(dim, 1);
-                case "in": return asPixels(dim, INCH_TO_PX);
-                case "mm": return asPixels(dim, MM_TO_PX);
-                case "cm": return asPixels(dim, CM_TO_PX);
-                case "pt": return asPixels(dim, PT_TO_PX);
-                case "pc": return asPixels(dim, PC_TO_PX);
-                default: break;
-            }
-        }
-
-        throw new IllegalArgumentException("Unsupported unit conversion: " + dim);
-    }
-
-    private double asPixels(final @NotNull String dimension,
-                            final double conversionFactor) {
-        return Double.parseDouble(dimension.substring(0, dimension.length() - 2)) * conversionFactor;
+        return ImageUtil.convertToPixels(dimension, referenceValue);
     }
 
     // Extract the width/height from the viewBox if width/height are not provided

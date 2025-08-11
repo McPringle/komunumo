@@ -23,9 +23,13 @@ import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.InstanceConfig;
 import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.service.ImageService;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -33,9 +37,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -147,6 +153,60 @@ class ImageUtilTest {
 
         assertThatCode(() -> ImageUtil.cleanupOrphanedImageFiles(imageService))
                 .doesNotThrowAnyException();
+    }
+
+    private static Stream<Arguments> provideTestData_convertToPixels() {
+        return Stream.of(
+                Arguments.of("10", 0, 10),
+                Arguments.of("10px", 0, 10),
+                Arguments.of("10in", 0, 960),
+                Arguments.of("10mm", 0, 38),
+                Arguments.of("10cm", 0, 378),
+                Arguments.of("10pt", 0, 13),
+                Arguments.of("10pc", 0, 160),
+                Arguments.of("50%", 500, 250)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTestData_convertToPixels")
+    void convertToPixels(final @NotNull String dimension, final double viewBoxReference, final long expectedValue) {
+        assertThat(ImageUtil.convertToPixels(dimension, viewBoxReference)).isEqualTo(expectedValue);
+    }
+
+    @Test
+    void convertToPixelsWithInvalidDimensionThrowsException() {
+        assertThatThrownBy(() -> ImageUtil.convertToPixels("1x", 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Dimension '1x' must have a valid unit (e.g., 'px', 'in', 'mm', 'cm', 'pt', 'pc', '%').");
+    }
+
+    @Test
+    void convertToPixelsWithInvalidUnitThrowsException() {
+        assertThatThrownBy(() -> ImageUtil.convertToPixels("10ab", 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Unsupported unit: ab");
+    }
+
+    @Test
+    void convertPercentToPixelsWithoutViewBoxThrowsException() {
+        assertThatThrownBy(() -> ImageUtil.convertToPixels("50%", 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Cannot convert percentage without view box reference");
+    }
+
+    @Test
+    void convertToPixelsWithEmptyDimensionThrowsException() {
+        assertThatThrownBy(() -> ImageUtil.convertToPixels("", 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Dimension must not be blank");
+    }
+
+    @Test
+    void convertToPixelsWithBlankDimensionThrowsException() {
+        assertThatThrownBy(() -> ImageUtil.convertToPixels("     ", 0))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Dimension must not be blank");
     }
 
 }
