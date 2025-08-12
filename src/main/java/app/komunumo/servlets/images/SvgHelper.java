@@ -19,7 +19,6 @@ package app.komunumo.servlets.images;
 
 import app.komunumo.KomunumoException;
 import app.komunumo.util.ImageUtil;
-import app.komunumo.util.ResourceUtil;
 import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,14 +31,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 
-final class SvgTemplateApplier {
+final class SvgHelper {
 
     // Store the user SVG as a string (without <svg> element)
     private final String userSvgString;
@@ -49,27 +47,9 @@ final class SvgTemplateApplier {
 
     private static final String SPLIT_MARKE_STRING = "___USVG__";
 
-    SvgTemplateApplier(final @NotNull String userSvgPath,
-                       final @NotNull String defaultSvgResourcePath) {
+    SvgHelper(final @NotNull String instanceLogo) {
         try {
-            // Load the user SVG file or fallback to default if user SVG is missing
-            InputStream inputStream = null;
-            if (!userSvgPath.isBlank()) {
-                final var path = Path.of(userSvgPath);
-                if (Files.exists(path)) {
-                    inputStream = Files.newInputStream(path);
-                }
-            }
-
-            //   or fallback to default if user SVG is missing
-            if (inputStream == null) {
-                inputStream = ResourceUtil.class.getResourceAsStream(defaultSvgResourcePath);
-            }
-
-            if (inputStream == null) {
-                throw new FileNotFoundException("Could not find both user and default SVG resources.");
-            }
-
+            final var inputStream = new ByteArrayInputStream(instanceLogo.getBytes(StandardCharsets.UTF_8));
             final var svgDocument = parseSvg(inputStream);
             final var svgElement = svgDocument.getDocumentElement();
 

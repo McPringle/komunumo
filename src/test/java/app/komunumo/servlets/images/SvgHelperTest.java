@@ -33,25 +33,27 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class SvgTemplateApplierTest {
+class SvgHelperTest {
 
-    private SvgTemplateApplier applier;
+    private static final @NotNull String TEST_SVG = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <svg width="500" height="400" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="40" fill="red" />
+            </svg>""";
+
+    private SvgHelper applier;
 
     @BeforeEach
-    void setUp() throws Exception {
-        // Assuming we have test SVGs in the resources folder.
-        final var userSvgPath = Path.of(getClass().getResource("/testUserSvg.svg").toURI()).toRealPath();
-        applier = new SvgTemplateApplier(userSvgPath.toString(), "notprovided.svg");
+    void setUp() {
+        applier = new SvgHelper(TEST_SVG);
     }
 
     @Test
@@ -90,7 +92,7 @@ class SvgTemplateApplierTest {
         final var wrapperSvg = "<svg width=\"500\" height=\"500\"><circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\" /></svg>";
 
         assertThatThrownBy(() -> applier.parseTemplate(wrapperSvg))
-            .isInstanceOf(RuntimeException.class);
+            .isInstanceOf(KomunumoException.class);
     }
 
     @Test
@@ -120,7 +122,7 @@ class SvgTemplateApplierTest {
     @Test
     void testInvalidSvgResource() {
         // Attempt to load an invalid user SVG path
-        assertThatThrownBy(() -> new SvgTemplateApplier(""))
+        assertThatThrownBy(() -> new SvgHelper(""))
             .isInstanceOf(KomunumoException.class)
             .hasMessageStartingWith("Failed to initialize template parser:");
     }
@@ -129,7 +131,7 @@ class SvgTemplateApplierTest {
     void testParseSvgDimensionWithMissingUnits() throws Exception {
         // Test for dimensions without units, i.e., in the viewBox
         final var svgContent = "<svg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\"></svg>";
-        final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
         final var element = doc.getDocumentElement();
 
         // Assuming width/height from viewBox is 500px
@@ -144,7 +146,7 @@ class SvgTemplateApplierTest {
     void testInvalidDimensionUnit() throws Exception{
         // Test for invalid dimension unit in the SVG
         final var invalidSvgContent = "<svg width=\"500xyz\" height=\"400px\"></svg>";
-        final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(invalidSvgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(invalidSvgContent.getBytes()));
         final var element = doc.getDocumentElement();
 
         assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
@@ -163,7 +165,7 @@ class SvgTemplateApplierTest {
         "<svg viewBox=\"0 0 500 500\"></svg>, 500"
     })
     void testSvgDimensionDerivationOnWidth(final @NotNull String svgContent, int widthPxApprox) throws Exception {
-        final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
         final var width = applier.deriveSvgDimension(doc.getDocumentElement(), "width");
         assertThat((int)width).isEqualTo(widthPxApprox);
     }
@@ -177,7 +179,7 @@ class SvgTemplateApplierTest {
                                                       final @NotNull String dim,
                                                       final int widthPxApprox)
             throws Exception{
-        final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
         final var width = applier.deriveSvgDimension(doc.getDocumentElement(), dim);
         assertThat((int)width).isEqualTo(widthPxApprox);
     }
@@ -188,7 +190,7 @@ class SvgTemplateApplierTest {
         "<svg width=\"50%\" viewBox=\"0 500 500\"></svg>"
     })
     void testSvgDimensionDerivationWithInvalidViewBox(final @NotNull String svgContent) throws Exception{
-        final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
         final var element = doc.getDocumentElement();
 
         assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
@@ -208,7 +210,7 @@ class SvgTemplateApplierTest {
     @Test
     void testUnsupportedConversionUnit() throws Exception {
         final var svgContent = "<svg width=\"10xy\"></svg>";
-        final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
         final var element = doc.getDocumentElement();
 
         assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
@@ -218,7 +220,7 @@ class SvgTemplateApplierTest {
     @Test
     void testInvalidDimension() throws Exception {
         final var svgContent = "<svg width=\"x\"></svg>";
-        final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
         final var element = doc.getDocumentElement();
 
         assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))

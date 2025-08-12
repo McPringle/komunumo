@@ -20,6 +20,7 @@ package app.komunumo.servlets.images;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.util.ImageUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,12 +41,10 @@ import static app.komunumo.util.ImageUtil.extractImageIdFromUrl;
 
 public final class ImageServlet extends HttpServlet {
 
-    private static final @NotNull String PLACEHOLDER_IMAGE_TEMPLATE_FILE = "/META-INF/resources/images/placeholder.svg";
-
     private static final @NotNull Pattern PLACEHOLDER_URL_PATTERN =
             Pattern.compile("^/placeholder-(\\d+)x(\\d+)\\.svg$");
 
-    private @NotNull final PlaceholderImageGenerator placeholderImageGenerator;
+    private final transient @NotNull PlaceholderImageGenerator placeholderImageGenerator;
 
     private static final long IMAGE_CACHE_DURATION = 86400; // 24 hours in seconds
 
@@ -53,21 +52,10 @@ public final class ImageServlet extends HttpServlet {
 
     private final transient @NotNull ImageService imageService;
 
-    public ImageServlet(final @NotNull ImageService imageService) {
-        this(imageService, PLACEHOLDER_IMAGE_TEMPLATE_FILE, "");
-    }
-
-    public ImageServlet(final @NotNull ImageService imageService,
-                        final @NotNull String instanceLogoPath) {
-        this(imageService, PLACEHOLDER_IMAGE_TEMPLATE_FILE, instanceLogoPath);
-    }
-
-    public ImageServlet(final @NotNull ImageService imageService,
-                        final @NotNull String placeholderImageFile,
-                        final @NotNull String instanceLogoPath) {
+    public ImageServlet(final @NotNull ServiceProvider serviceProvider) {
         super();
-        this.imageService = imageService;
-        this.placeholderImageGenerator = new PlaceholderImageGenerator(placeholderImageFile, instanceLogoPath);
+        this.imageService = serviceProvider.imageService();
+        this.placeholderImageGenerator = new PlaceholderImageGenerator(serviceProvider);
     }
 
     @Override

@@ -25,9 +25,7 @@ import java.io.InputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 class ResourceUtilTest {
 
@@ -55,6 +53,7 @@ class ResourceUtilTest {
         };
 
         try (MockedStatic<ResourceUtil> mocked = mockStatic(ResourceUtil.class, CALLS_REAL_METHODS)) {
+            //noinspection resource
             mocked.when(() -> ResourceUtil.openResourceStream("/test.txt")).thenReturn(inputStream);
 
             final var output = ResourceUtil.getResourceAsString("/test.txt", "fallback");

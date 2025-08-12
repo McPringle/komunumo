@@ -18,7 +18,7 @@
 package app.komunumo;
 
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.servlets.images.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
@@ -26,7 +26,6 @@ import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import jakarta.servlet.http.HttpServlet;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,15 +55,14 @@ public class Application extends SpringBootServletInitializer implements AppShel
      * <p>This servlet is responsible for streaming stored image files from the file system
      * and serves images with appropriate cache headers.</p>
      *
-     * @param imageService the service used to retrieve image metadata
+     * @param serviceProvider the service provider used to provide the Komunumo services
      * @return a servlet registration bean that maps {@code /images/*} to {@link ImageServlet}
      */
     @Bean
     public @NotNull ServletRegistrationBean<@NotNull HttpServlet> imageServlet(
-            final @NotNull ImageService imageService,
-            final @NotNull @Value("${komunumo.instance.logo.path:}") String instanceLogoPath) {
+            final @NotNull ServiceProvider serviceProvider) {
         return new ServletRegistrationBean<>(
-                new ImageServlet(imageService, instanceLogoPath),
+                new ImageServlet(serviceProvider),
                 "/images/*"
         );
     }

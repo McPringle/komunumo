@@ -17,10 +17,16 @@
  */
 package app.komunumo.servlets.images;
 
+import app.komunumo.data.service.ServiceProvider;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
 import static app.komunumo.util.ResourceUtil.getResourceAsString;
@@ -28,6 +34,9 @@ import static app.komunumo.util.TemplateUtil.replaceVariables;
 
 final class PlaceholderImageGenerator {
 
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(PlaceholderImageGenerator.class);
+
+    private static final @NotNull String PLACEHOLDER_IMAGE_TEMPLATE_FILE = "/META-INF/resources/images/placeholder.svg";
     private static final @NotNull String FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE = """
             <?xml version="1.0" encoding="UTF-8" standalone="no"?>
             <svg xmlns="http://www.w3.org/2000/svg" width="${imageWidth}" height="${imageHeight}">
@@ -41,7 +50,7 @@ final class PlaceholderImageGenerator {
     private final int baseLogoHeight;
     private final double baseLogoAspectRatio;
 
-    private final @NotNull SvgTemplateApplier templateApplier;
+    private final @NotNull SvgHelper templateApplier;
     private final @NotNull String placeholderImageTemplate;
 
     // Cache for recently generated placeholder images
@@ -49,10 +58,11 @@ final class PlaceholderImageGenerator {
             .maximumSize(100)
             .build();
 
-    PlaceholderImageGenerator(final @NotNull String placeholderImageFile,
-                              final @NotNull String instanceLogoPath) {
-        this.templateApplier = new SvgTemplateApplier(instanceLogoPath, KOMUNUMO_LOGO_FILE);
-        final var placeholderImageRaw = getResourceAsString(placeholderImageFile, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);
+    PlaceholderImageGenerator(final @NotNull ServiceProvider serviceProvider) {
+        final var instanceLogo = loadInstanceLogo(serviceProvider.getAppConfig().files().basedir());
+
+        this.templateApplier = new SvgHelper(instanceLogo);
+        final var placeholderImageRaw = getResourceAsString(PLACEHOLDER_IMAGE_TEMPLATE_FILE, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);
         this.placeholderImageTemplate = templateApplier.parseTemplate(placeholderImageRaw);
 
         this.baseLogoWidth = (int) templateApplier.getUserSvgWidth();
@@ -60,12 +70,40 @@ final class PlaceholderImageGenerator {
         this.baseLogoAspectRatio = (double) baseLogoWidth / baseLogoHeight;
     }
 
+    private String loadInstanceLogo(final @NotNull Path basedir) {
+        final var customLogoPath = basedir.resolve(Path.of("custom", "images", "logo.svg"));
+        if (Files.exists(customLogoPath)) {
+            try {
+                return Files.readString(customLogoPath);
+            } catch (final IOException e) {
+                LOGGER.warn("Failed to read custom logo from '{}', fallback to default logo.", customLogoPath, e);
+            }
+        } else {
+            LOGGER.info("No custom logo found, using default logo.");
+        }
+
+        final var defaultLogo = getResourceAsString(KOMUNUMO_LOGO_FILE, "");
+        if (defaultLogo.isBlank()) {
+            LOGGER.warn("Failed to read default logo from '{}', fallback to empty logo.", KOMUNUMO_LOGO_FILE);
+        }
+        return defaultLogo;
+    }
+
+    /**
+     * <p>Returns a placeholder image SVG code for the given dimensions.
+     * The image is cached to avoid generating it multiple times.</p>
+     *
+     * @param imageWidth  the width of the placeholder image
+     * @param imageHeight the height of the placeholder image
+     * @return the SVG code for the placeholder image
+     */
     String getPlaceholderImage(final int imageWidth, final int imageHeight) {
         final var cacheKey = new CacheKey(imageWidth, imageHeight);
         return imageCache.get(cacheKey, key -> generatePlaceholderImage(imageWidth, imageHeight));
     }
 
-    String generatePlaceholderImage(final int imageWidth, final int imageHeight) {
+    @SuppressWarnings("ExtractMethodRecommender")
+    private String generatePlaceholderImage(final int imageWidth, final int imageHeight) {
         // maximum permitted size (50% of the dimension)
         final int percentage = 50;
         final int maxLogoHeight = percentage * imageHeight / 100;

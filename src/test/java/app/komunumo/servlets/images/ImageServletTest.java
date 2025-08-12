@@ -17,9 +17,15 @@
  */
 package app.komunumo.servlets.images;
 
+import app.komunumo.configuration.AppConfig;
+import app.komunumo.configuration.DemoConfig;
+import app.komunumo.configuration.FilesConfig;
+import app.komunumo.configuration.InstanceConfig;
+import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.util.ImageUtil;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,13 +42,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -57,6 +61,26 @@ import static org.mockito.Mockito.when;
 
 class ImageServletTest {
 
+    private ServiceProvider getServiceProviderMock() {
+        final var userHome = System.getProperty("user.home");
+        final var basedir = Path.of(userHome, ".komunumo", "test");
+
+        final var serviceProvider = mock(ServiceProvider.class);
+        final var imageService = mock(ImageService.class);
+
+        final var demoConfig = new DemoConfig(false, "");
+        final var filesConfig = new FilesConfig(basedir);
+        final var mailConfig = new MailConfig("noreply@foo.bar", "support@foo.bar");
+        final var instanceConfig = new InstanceConfig("admin@foo.bar", "", false);
+        final var appConfig = new AppConfig("0.0.0", demoConfig, filesConfig, instanceConfig, mailConfig);
+
+
+        when(serviceProvider.imageService()).thenReturn(imageService);
+        when(serviceProvider.getAppConfig()).thenReturn(appConfig);
+
+        return serviceProvider;
+    }
+
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {
@@ -70,11 +94,12 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
+        final var serviceProvider = getServiceProviderMock();
+        final var imageService = serviceProvider.imageService();
 
         when(request.getPathInfo()).thenReturn(pathInfo);
 
-        final var servlet = new ImageServlet(imageService);
+        final var servlet = new ImageServlet(serviceProvider);
 
         // Act
         servlet.doGet(request, response);
@@ -89,7 +114,8 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
+        final var serviceProvider = getServiceProviderMock();
+        final var imageService = serviceProvider.imageService();
 
         final var pathInfo = "/images/afc3478d-2c92-41b5-b89f-2a9111d79c73.jpg";
         final var imageId = UUID.fromString("afc3478d-2c92-41b5-b89f-2a9111d79c73");
@@ -97,7 +123,7 @@ class ImageServletTest {
         when(request.getPathInfo()).thenReturn(pathInfo);
         when(imageService.getImage(imageId)).thenReturn(Optional.empty());
 
-        final var servlet = new ImageServlet(imageService);
+        final var servlet = new ImageServlet(serviceProvider);
 
         // Act
         servlet.doGet(request, response);
@@ -112,7 +138,8 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
+        final var serviceProvider = getServiceProviderMock();
+        final var imageService = serviceProvider.imageService();
 
         final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
         final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
@@ -121,7 +148,7 @@ class ImageServletTest {
         when(request.getPathInfo()).thenReturn(pathInfo);
         when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
 
-        final var servlet = new ImageServlet(imageService);
+        final var servlet = new ImageServlet(serviceProvider);
 
         // Mock static method: ImageUtil.loadImage(image) → Optional.empty()
         try (MockedStatic<ImageUtil> mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
@@ -142,7 +169,8 @@ class ImageServletTest {
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
+        final var serviceProvider = getServiceProviderMock();
+        final var imageService = serviceProvider.imageService();
 
         when(request.getPathInfo()).thenReturn("/images/" + imageId + ".jpg");
         when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
@@ -157,7 +185,7 @@ class ImageServletTest {
                 });
 
 
-        final var servlet = new ImageServlet(imageService);
+        final var servlet = new ImageServlet(serviceProvider);
 
         try (var mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
             mockedStatic.when(() -> ImageUtil.loadImage(image)).thenReturn(brokenOptional);
@@ -179,7 +207,8 @@ class ImageServletTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var outputStream = mock(ServletOutputStream.class);
-        final var imageService = mock(ImageService.class);
+        final var serviceProvider = getServiceProviderMock();
+        final var imageService = serviceProvider.imageService();
 
         when(request.getPathInfo()).thenReturn("/images/" + imageId + ".jpg");
         when(response.getOutputStream()).thenReturn(outputStream);
@@ -188,7 +217,7 @@ class ImageServletTest {
         // working stream that successfully calls `.transferTo(...)`
         final var inputStream = spy(new ByteArrayInputStream("demo".getBytes()));
 
-        final var servlet = new ImageServlet(imageService);
+        final var servlet = new ImageServlet(serviceProvider);
 
         try (var mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
             mockedStatic.when(() -> ImageUtil.loadImage(image)).thenReturn(Optional.of(inputStream));
@@ -210,8 +239,8 @@ class ImageServletTest {
     @Test
     void setsNotFoundStatus_whenRedirectTo404PageFails() throws IOException {
         // Arrange
-        final var imageService = mock(ImageService.class);
-        final var servlet = new ImageServlet(imageService);
+        final var serviceProvider = getServiceProviderMock();
+        final var servlet = new ImageServlet(serviceProvider);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -238,7 +267,8 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
+        final var serviceProvider = getServiceProviderMock();
+        final var imageService = serviceProvider.imageService();
 
         final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
         final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
@@ -250,7 +280,7 @@ class ImageServletTest {
         doThrow(new IOException("Redirect failed"))
                 .when(response).sendRedirect("/error/500");
 
-        final var servlet = new ImageServlet(imageService);
+        final var servlet = new ImageServlet(serviceProvider);
 
         // Mock static method: ImageUtil.loadImage(image) → Optional.empty()
         try (MockedStatic<ImageUtil> mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
@@ -266,9 +296,10 @@ class ImageServletTest {
     @Test
     void redirectsTo500Page_whenPrintWriterThrowsIOException() throws IOException {
         // Arrange
+        final var serviceProvider = getServiceProviderMock();
+        final var imageService = serviceProvider.imageService();
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
         final var printWriter = mock(PrintWriter.class);
 
         when(request.getPathInfo()).thenReturn("/placeholder-100x200.svg");
@@ -277,7 +308,7 @@ class ImageServletTest {
                 .when(printWriter).write(anyString());
 
         // Act
-        final var servlet = new ImageServlet(imageService);
+        final var servlet = new ImageServlet(serviceProvider);
         servlet.doGet(request, response);
 
         // Assert
@@ -290,14 +321,14 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var imageService = mock(ImageService.class);
         final var stringWriter = new StringWriter();
+        final var serviceProvider = getServiceProviderMock();
 
         when(request.getPathInfo()).thenReturn("/placeholder-100x200.svg");
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
         // Act
-        final var servlet = new ImageServlet(imageService);
+        final var servlet = new ImageServlet(serviceProvider);
         servlet.doGet(request, response);
 
         // Assert
@@ -316,64 +347,6 @@ class ImageServletTest {
                 .contains("height=\"200\"")
                 .contains("<g ")
                 .contains("id=\"Logo\"")
-                .endsWith("</svg>");
-    }
-
-    @Test
-    void failsInitializationWhenCustomLogoIsInvalid() throws IOException {
-        final var imageService = mock(ImageService.class);
-        Path badsvg = Files.createTempFile("corrupt", ".svg");
-        Files.writeString(badsvg, "<svg> x /svg>");
-
-        assertThatThrownBy(() -> new ImageServlet(imageService, badsvg.toString()))
-            .isInstanceOf(RuntimeException.class);
-    }
-
-    /**
-     * <p>Tests the behavior of {@link ImageServlet} when the placeholder SVG template file is missing.</p>
-     *
-     * <p>This test temporarily renames the {@code placeholder.svg} resource in the {@code target/classes} directory
-     * to simulate its absence on the classpath.</p>
-     *
-     * <p><strong>WARNING:</strong> This test modifies files in the compiled output directory. It must not run in parallel
-     * with other tests, as it may interfere with concurrent accesses to the same resource file.</p>
-     *
-     * <ul>
-     *     <li>Make sure this test is not executed concurrently with others (e.g. avoid parallel builds).</li>
-     *     <li>The test restores the original file in a {@code finally} block to ensure cleanup.</li>
-     * </ul>
-     */
-    @Test
-    void usesFallback_whenPlaceholderImageTemplateFileIsMissing() throws IOException {
-        // Arrange
-        final var imageService = mock(ImageService.class);
-
-        // Act
-        final var request = mock(HttpServletRequest.class);
-        final var response = mock(HttpServletResponse.class);
-        final var writer = new StringWriter();
-
-        when(request.getPathInfo()).thenReturn("/placeholder-200x500.svg");
-        when(response.getWriter()).thenReturn(new PrintWriter(writer));
-
-        final var servlet = new ImageServlet(imageService,
-                "/META-INF/resources/images/non-existing.svg");
-        servlet.doGet(request, response);
-
-        // Assert
-        verify(response).setContentType("image/svg+xml");
-        verify(response).setHeader("Cache-Control", "public, max-age=86400");
-        verify(response, never()).sendRedirect("/error/404");
-        verify(response, never()).sendRedirect("/error/500");
-        verify(response, never()).setStatus(HttpServletResponse.SC_NOT_FOUND);
-        verify(response, never()).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-        final var output = writer.toString();
-        assertThat(output.trim())
-                .startsWith("<?xml")
-                .contains("<svg xmlns=\"http://www.w3.org/2000/svg\"")
-                .contains("width=\"200\"")
-                .contains("height=\"500\"")
                 .endsWith("</svg>");
     }
 

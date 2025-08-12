@@ -45,7 +45,7 @@ public final class ResourceUtil {
     }
 
     @VisibleForTesting
-    static @Nullable InputStream openResourceStream(final @NotNull String path) {
+    public static @Nullable InputStream openResourceStream(final @NotNull String path) {
         return ResourceUtil.class.getResourceAsStream(path);
     }
 
