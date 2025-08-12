@@ -75,10 +75,10 @@ class SvgTemplateApplierTest {
         final var preppedTemplate = applier.parseTemplate(wrapperSvg);
 
         // Check that the split contains the expected parts
-        assertThat(preppedTemplate).isNotNull();
-
         // Further check if prefix and suffix contain the expected parts of the SVG
-        assertThat(preppedTemplate.contains("<circle")).isFalse();
+        assertThat(preppedTemplate)
+                .isNotNull()
+                .doesNotContain("<circle");
 
         final var xpath = XPathFactory.newInstance().newXPath();
         final var idValue = xpath.evaluate("/svg/g/@id", asDoc(preppedTemplate));
@@ -120,9 +120,9 @@ class SvgTemplateApplierTest {
     @Test
     void testInvalidSvgResource() {
         // Attempt to load an invalid user SVG path
-        assertThatThrownBy(() -> new SvgTemplateApplier("invalidSvg.svg", "defaultSvg.svg"))
+        assertThatThrownBy(() -> new SvgTemplateApplier(""))
             .isInstanceOf(KomunumoException.class)
-            .hasMessage("Failed to initialize template parser: Could not find both user and default SVG resources.");
+            .hasMessageStartingWith("Failed to initialize template parser:");
     }
 
     @Test
@@ -130,12 +130,13 @@ class SvgTemplateApplierTest {
         // Test for dimensions without units, i.e., in the viewBox
         final var svgContent = "<svg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\"></svg>";
         final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var element = doc.getDocumentElement();
 
         // Assuming width/height from viewBox is 500px
-        final var width = applier.deriveSvgDimension(doc.getDocumentElement(), "width");
+        final var width = applier.deriveSvgDimension(element, "width");
         assertThat(width).isEqualTo(500.0);
 
-        final var height = applier.deriveSvgDimension(doc.getDocumentElement(), "height");
+        final var height = applier.deriveSvgDimension(element, "height");
         assertThat(height).isEqualTo(500.0);
     }
 
@@ -144,8 +145,9 @@ class SvgTemplateApplierTest {
         // Test for invalid dimension unit in the SVG
         final var invalidSvgContent = "<svg width=\"500xyz\" height=\"400px\"></svg>";
         final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(invalidSvgContent.getBytes()));
+        final var element = doc.getDocumentElement();
 
-        assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
+        assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -187,17 +189,19 @@ class SvgTemplateApplierTest {
     })
     void testSvgDimensionDerivationWithInvalidViewBox(final @NotNull String svgContent) throws Exception{
         final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
-        assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
+        final var element = doc.getDocumentElement();
+
+        assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void testIllegalArgumentForNullViewBox() {
-        final var docElement = mock(Element.class);
-        when(docElement.getAttribute("xyz")).thenReturn(null);
-        when(docElement.getAttribute("viewBox")).thenReturn(null);
+        final var element = mock(Element.class);
+        when(element.getAttribute("xyz")).thenReturn(null);
+        when(element.getAttribute("viewBox")).thenReturn(null);
 
-        assertThatThrownBy(() -> applier.deriveSvgDimension(docElement, "xyz"))
+        assertThatThrownBy(() -> applier.deriveSvgDimension(element, "xyz"))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -205,8 +209,9 @@ class SvgTemplateApplierTest {
     void testUnsupportedConversionUnit() throws Exception {
         final var svgContent = "<svg width=\"10xy\"></svg>";
         final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var element = doc.getDocumentElement();
 
-        assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
+        assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -214,8 +219,9 @@ class SvgTemplateApplierTest {
     void testInvalidDimension() throws Exception {
         final var svgContent = "<svg width=\"x\"></svg>";
         final var doc = SvgTemplateApplier.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var element = doc.getDocumentElement();
 
-        assertThatThrownBy(() -> applier.deriveSvgDimension(doc.getDocumentElement(), "width"))
+        assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
