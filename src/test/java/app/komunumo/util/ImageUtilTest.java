@@ -148,6 +148,23 @@ class ImageUtilTest {
     }
 
     @Test
+    void shouldHandleException() throws IOException {
+        final var dir = Files.createDirectories(uploadImagePath);
+
+        final var imageService = mock(ImageService.class);
+        when(imageService.getAllImageIds()).thenReturn(List.of());
+
+        try (var spy = Mockito.mockStatic(Files.class, Mockito.CALLS_REAL_METHODS)) {
+            //noinspection resource // false positive, Mockito handles resource management
+            spy.when(() -> Files.walk(Mockito.eq(dir)))
+                    .thenThrow(new IOException("Mocked failure"));
+
+            assertThatCode(() -> ImageUtil.cleanupOrphanedImageFiles(imageService))
+                    .doesNotThrowAnyException();
+        }
+    }
+
+    @Test
     void shouldHandleMissingBaseDirectoryGracefully() {
         final var imageService = mock(ImageService.class);
         when(imageService.getAllImageIds()).thenReturn(List.of());
