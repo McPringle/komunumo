@@ -186,7 +186,7 @@ public final class ImageUtil {
 
         // handle unitless values (assume pixels)
         if (Character.isDigit(dimension.charAt(dimension.length() - 1))) {
-            return Long.parseLong(dimension);
+            return Math.round(Double.parseDouble(dimension));
         }
 
         // handle percentage values
