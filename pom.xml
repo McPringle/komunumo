@@ -6,7 +6,7 @@
     <groupId>app.komunumo</groupId>
     <artifactId>komunumo</artifactId>
     <name>Komunumo</name>
-    <version>1.0.0-${buildtype}.${maven.build.timestamp}</version>
+    <version>${revision}</version>
     <packaging>jar</packaging>
     <description>Open Source Community Manager</description>
     <url>https://komunumo.app/</url>
@@ -83,6 +83,7 @@
         <vaadin.version>24.8.5</vaadin.version>
         <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
         <buildtype>SNAPSHOT</buildtype>
+        <revision>1.0.0-${buildtype}.${maven.build.timestamp}</revision>
     </properties>
 
     <parent>
