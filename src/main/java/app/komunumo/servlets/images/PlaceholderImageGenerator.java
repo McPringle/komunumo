@@ -74,7 +74,9 @@ final class PlaceholderImageGenerator {
         final var customLogoPath = basedir.resolve(Path.of("custom", "images", "logo.svg"));
         if (Files.exists(customLogoPath)) {
             try {
-                return Files.readString(customLogoPath);
+                final var customLogo = Files.readString(customLogoPath);
+                LOGGER.info("Custom logo found and successfully loaded.");
+                return customLogo;
             } catch (final IOException e) {
                 LOGGER.warn("Failed to read custom logo from '{}', fallback to default logo.", customLogoPath, e);
             }

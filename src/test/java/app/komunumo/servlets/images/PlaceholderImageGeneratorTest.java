@@ -30,7 +30,6 @@ import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import org.testcontainers.shaded.org.checkerframework.checker.units.qual.K;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,7 +100,8 @@ class PlaceholderImageGeneratorTest {
         final var customLogoPath = serviceProvider.getAppConfig().files().basedir()
                 .resolve(Path.of("custom", "images", "logo.svg"));
 
-        try (MockedStatic<Files> mocked = mockStatic(Files.class, CALLS_REAL_METHODS)) {
+        try (MockedStatic<Files> mocked = mockStatic(Files.class, CALLS_REAL_METHODS);
+             var logCaptor = LogCaptor.forClass(PlaceholderImageGenerator.class)) {
             mocked.when(() -> Files.exists(customLogoPath))
                     .thenReturn(TRUE);
             mocked.when(() -> Files.readString(customLogoPath))
@@ -110,6 +110,8 @@ class PlaceholderImageGeneratorTest {
             final var generator = new PlaceholderImageGenerator(serviceProvider);
             final var image = generator.getPlaceholderImage(200, 100);
 
+            assertThat(logCaptor.getInfoLogs())
+                    .contains("Custom logo found and successfully loaded.");
             assertThat(image)
                     .isNotNull()
                     .contains("<circle")
