@@ -122,6 +122,11 @@ public final class ImageUtil {
     }
 
     public static void cleanupOrphanedImageFiles(final @NotNull ImageService imageService) {
+        if (!Files.exists(uploadImagePath)) {
+            LOGGER.info("No images to clean, directory '{}' does not exist.", uploadImagePath);
+            return;
+        }
+
         try {
             final List<UUID> knownImageIds = imageService.getAllImageIds();
             try (var files = Files.walk(uploadImagePath)) {

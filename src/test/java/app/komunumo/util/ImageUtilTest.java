@@ -23,6 +23,7 @@ import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.InstanceConfig;
 import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.service.ImageService;
+import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -151,8 +152,13 @@ class ImageUtilTest {
         final var imageService = mock(ImageService.class);
         when(imageService.getAllImageIds()).thenReturn(List.of());
 
-        assertThatCode(() -> ImageUtil.cleanupOrphanedImageFiles(imageService))
-                .doesNotThrowAnyException();
+        try (var logCaptor = LogCaptor.forClass(ImageUtil.class)) {
+            assertThatCode(() -> ImageUtil.cleanupOrphanedImageFiles(imageService))
+                    .doesNotThrowAnyException();
+
+            assertThat(logCaptor.getInfoLogs())
+                    .contains("No images to clean, directory '" + uploadImagePath + "' does not exist.");
+        }
     }
 
     private static Stream<Arguments> provideTestData_convertToPixels() {
