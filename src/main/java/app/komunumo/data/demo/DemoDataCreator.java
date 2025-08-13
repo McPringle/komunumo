@@ -175,7 +175,7 @@ public final class DemoDataCreator {
             // finally: store the image
             ImageUtil.storeImage(image, tempFile);
         } catch (final IOException e) {
-            LOGGER.warn(e.getMessage());
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
