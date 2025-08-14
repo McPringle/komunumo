@@ -218,21 +218,20 @@ The structure of the JSON file must follow the expected format used by *Komunumo
 
 #### Available Environment Variables
 
-| Variable                             | Default             | Description                                                           |
-|--------------------------------------|---------------------|-----------------------------------------------------------------------|
-| `KOMUNUMO_MAIL_FROM`                 | `noreply@localhost` | Sender address shown in outgoing emails (e.g. noreply@example.com).   |
-| `KOMUNUMO_MAIL_REPLY_TO`             | *(empty)*           | Optional reply-to address (e.g. `support@example.com`).               |
-| `KOMUNUMO_MAIL_HOST`                 | `localhost`         | Mail server address. Use a local MTA or external SMTP provider.       |
-| `KOMUNUMO_MAIL_PORT`                 | `25`                | Port for the SMTP server (e.g., `587` for STARTTLS or `465` for SSL). |
-| `KOMUNUMO_MAIL_PROTOCOL`             | `smtp`              | Protocol used for sending email. Usually `smtp`.                      |
-| `KOMUNUMO_MAIL_USERNAME`             | *(empty)*           | Username for SMTP authentication, if required.                        |
-| `KOMUNUMO_MAIL_PASSWORD`             | *(empty)*           | Password for SMTP authentication, if required.                        |
-| `KOMUNUMO_MAIL_SMTP_AUTH`            | `false`             | Whether SMTP authentication is enabled.                               |
-| `KOMUNUMO_MAIL_SMTP_AUTH_MECHANISMS` | *(empty)*           | The mechanisms used for authentication (empty=auto).                  |
-| `KOMUNUMO_MAIL_STARTTLS_ENABLE`      | `false`             | Enable STARTTLS encryption (recommended for port 587).                |
-| `KOMUNUMO_MAIL_STARTTLS_REQUIRED`    | `false`             | Require STARTTLS (connection will fail if not supported).             |
-| `KOMUNUMO_MAIL_SSL_ENABLE`           | `false`             | Enable SSL encryption (typically for port 465).                       |
-| `KOMUNUMO_MAIL_ENCODING`             | `UTF-8`             | Default encoding for email subject and content.                       |
+| Variable                          | Default             | Description                                                           |
+|-----------------------------------|---------------------|-----------------------------------------------------------------------|
+| `KOMUNUMO_MAIL_FROM`              | `noreply@localhost` | Sender address shown in outgoing emails (e.g. noreply@example.com).   |
+| `KOMUNUMO_MAIL_REPLY_TO`          | *(empty)*           | Optional reply-to address (e.g. `support@example.com`).               |
+| `KOMUNUMO_MAIL_HOST`              | `localhost`         | Mail server address. Use a local MTA or external SMTP provider.       |
+| `KOMUNUMO_MAIL_PORT`              | `25`                | Port for the SMTP server (e.g., `587` for STARTTLS or `465` for SSL). |
+| `KOMUNUMO_MAIL_PROTOCOL`          | `smtp`              | Protocol used for sending email. Usually `smtp`.                      |
+| `KOMUNUMO_MAIL_USERNAME`          | *(empty)*           | Username for SMTP authentication, if required.                        |
+| `KOMUNUMO_MAIL_PASSWORD`          | *(empty)*           | Password for SMTP authentication, if required.                        |
+| `KOMUNUMO_MAIL_SMTP_AUTH`         | `false`             | Whether SMTP authentication is enabled.                               |
+| `KOMUNUMO_MAIL_STARTTLS_ENABLE`   | `false`             | Enable STARTTLS encryption (recommended for port 587).                |
+| `KOMUNUMO_MAIL_STARTTLS_REQUIRED` | `false`             | Require STARTTLS (connection will fail if not supported).             |
+| `KOMUNUMO_MAIL_SSL_ENABLE`        | `false`             | Enable SSL encryption (typically for port 465).                       |
+| `KOMUNUMO_MAIL_ENCODING`          | `UTF-8`             | Default encoding for email subject and content.                       |
 
 #### Example Configuration
 
