@@ -92,7 +92,9 @@ public abstract class BrowserTest {
         browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(true));
 
         screenshotDir = SCREENSHOT_DIR.resolve(getClass().getName()).resolve(browser.browserType().name());
-        screenshotOptions = new Page.ScreenshotOptions().setType(ScreenshotType.PNG);
+        screenshotOptions = new Page.ScreenshotOptions()
+                .setType(ScreenshotType.PNG)
+                .setFullPage(true);
     }
 
     @AfterAll
