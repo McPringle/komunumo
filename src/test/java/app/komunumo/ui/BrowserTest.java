@@ -105,7 +105,9 @@ public abstract class BrowserTest {
     @BeforeEach
     void openPage() throws FolderException {
         greenMail.purgeEmailFromAllMailboxes();
-        page = browser.newPage();
+        final var pageOptions = new Browser.NewPageOptions()
+                .setViewportSize(1920, 1080);
+        page = browser.newPage(pageOptions);
     }
 
     @AfterEach
