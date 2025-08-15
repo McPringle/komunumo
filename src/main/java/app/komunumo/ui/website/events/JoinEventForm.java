@@ -48,14 +48,14 @@ public final class JoinEventForm extends Details {
         emailField.setWidthFull();
         add(emailField);
 
-        final var joinButton = new Button(getTranslation("event.join.email.button"));
-        add(joinButton);
+        final var emailButton = new Button(getTranslation("event.join.email.button"));
+        add(emailButton);
 
         final var binder = new Binder<>(EmailBean.class);
         binder.forField(emailField)
                 .bind(EmailBean::getEmail, EmailBean::setEmail);
         binder.addStatusChangeListener(event ->
-                joinButton.setEnabled(!emailField.getValue().isBlank() && binder.isValid()));
+                emailButton.setEnabled(!emailField.getValue().isBlank() && binder.isValid()));
         binder.setBean(new EmailBean());
         binder.validate();
     }

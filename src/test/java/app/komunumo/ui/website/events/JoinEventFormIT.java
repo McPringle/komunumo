@@ -58,19 +58,19 @@ class JoinEventFormIT extends IntegrationTest {
 
         // find components
         final var emailField = findComponents(joinEventForm, EmailField.class).getFirst();
-        final var joinButton = findComponents(joinEventForm, Button.class).getFirst();
+        final var emailButton = findComponents(joinEventForm, Button.class).getFirst();
 
         // email field is empty and button is disabled
         assertThat(emailField.getValue()).isEmpty();
-        assertThat(joinButton.isEnabled()).isFalse();
+        assertThat(emailButton.isEnabled()).isFalse();
 
         // entering invalid email address keeps the button disabled
         emailField.setValue("foobar@example");
-        assertThat(joinButton.isEnabled()).isFalse();
+        assertThat(emailButton.isEnabled()).isFalse();
 
         // entering valid email address enables the button
         emailField.setValue("foobar@example.eu");
-        assertThat(joinButton.isEnabled()).isTrue();
+        assertThat(emailButton.isEnabled()).isTrue();
     }
 
 }
