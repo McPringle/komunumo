@@ -30,10 +30,11 @@ import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Nav;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 
-public final class NavigationBar extends Nav {
+public final class NavigationBar extends HorizontalLayout {
 
     public NavigationBar(final @NotNull ServiceProvider serviceProvider) {
         super();
@@ -43,17 +44,14 @@ public final class NavigationBar extends Nav {
         final var menuContainer = new Div();
         menuContainer.addClassName("menu-container");
         menuContainer.add(getNavigationBar(ui, serviceProvider));
-        add(menuContainer);
+        addToStart(menuContainer);
 
-        final var avatarContainer = new Div();
-        avatarContainer.addClassName("avatar-container");
-        avatarContainer.add(getAvatar(ui, serviceProvider));
-        add(avatarContainer);
+        addToEnd(getAvatar(ui, serviceProvider));
     }
 
     private Component getNavigationBar(final @NotNull UI ui,
                                        final @NotNull ServiceProvider serviceProvider) {
-        final var menuBar = new Div();
+        final var menuBar = new Nav();
         menuBar.addClassName("menu-bar");
         menuBar.add(new RouterLink(ui.getTranslation("events.title"), EventGridView.class));
         if (!serviceProvider.getAppConfig().instance().hideCommunities()) {

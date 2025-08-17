@@ -16,9 +16,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 .navigation-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: var(--lumo-space-m);
     border-bottom: 1px solid var(--lumo-contrast-10pct);
 }
@@ -28,11 +25,6 @@
     gap: var(--lumo-space-m);
 }
 
-.navigation-bar .avatar-container {
-    display: flex;
-    align-items: center;
-}
-
-.navigation-bar .avatar-container vaadin-avatar {
+.navigation-bar vaadin-avatar {
     cursor: pointer;
 }
