@@ -22,12 +22,14 @@ import app.komunumo.ui.IntegrationTest;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.textfield.EmailField;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.komunumo.util.TestUtil.findComponents;
 import static com.github.mvysny.kaributesting.v10.BasicUtilsKt._fireDomEvent;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,12 +67,29 @@ class JoinEventFormIT extends IntegrationTest {
         assertThat(emailButton.isEnabled()).isFalse();
 
         // entering invalid email address keeps the button disabled
-        emailField.setValue("foobar@example");
+        emailField.setValue("noreply@komunumo");
         assertThat(emailButton.isEnabled()).isFalse();
 
         // entering valid email address enables the button
-        emailField.setValue("foobar@example.eu");
+        emailField.setValue("noreply@komunumo.test");
         assertThat(emailButton.isEnabled()).isTrue();
+
+        // click the button
+        _click(emailButton);
+        assertThat(emailField.getErrorMessage()).startsWith("The confirmation code could not be sent");
+        assertThat(emailField.getValue()).isEqualTo("noreply@komunumo.test");
+        assertThat(findComponents(joinEventForm, EmailField.class)).containsExactly(emailField);
+
+        // entering existing email address still enables the button
+        emailField.setValue("foobar@komunumo.test");
+        assertThat(emailButton.isEnabled()).isTrue();
+
+        // click the button
+        _click(emailButton);
+        final var text = findComponents(joinEventForm, Paragraph.class).getFirst();
+        assertThat(text).isNotNull();
+        assertThat(text.getText()).isEqualTo("SORRY, NOT IMPLEMENTED YET!");
+        assertThat(findComponents(joinEventForm, EmailField.class)).isEmpty();
     }
 
 }

@@ -17,11 +17,14 @@
  */
 package app.komunumo.ui.website.events;
 
+import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.service.EventService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.validator.EmailValidator;
 import org.jetbrains.annotations.NotNull;
 
 import static com.vaadin.flow.component.details.DetailsVariant.FILLED;
@@ -29,8 +32,14 @@ import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
 
 public final class JoinEventForm extends Details {
 
-    public JoinEventForm() {
+    private final transient @NotNull EventService eventService;
+    private final transient @NotNull EventDto event;
+
+    public JoinEventForm(final @NotNull EventService eventService,
+                         final @NotNull EventDto event) {
         super();
+        this.eventService = eventService;
+        this.event = event;
         addClassName("join-event-form");
         addThemeVariants(FILLED);
         setSummaryText(getTranslation("event.join.title"));
@@ -53,11 +62,28 @@ public final class JoinEventForm extends Details {
 
         final var binder = new Binder<>(EmailBean.class);
         binder.forField(emailField)
+                .withValidator(new EmailValidator(getTranslation("validation.email.invalid"), true))
                 .bind(EmailBean::getEmail, EmailBean::setEmail);
-        binder.addStatusChangeListener(event ->
+        binder.addStatusChangeListener(evt ->
                 emailButton.setEnabled(!emailField.getValue().isBlank() && binder.isValid()));
         binder.setBean(new EmailBean());
         binder.validate();
+
+        emailButton.addClickListener(evt -> {
+            final var email = binder.getBean().getEmail();
+            if (eventService.requestVerificationCode(event.id(), email)) {
+                showEnterCodeForm(email);
+            } else {
+                emailField.setErrorMessage(getTranslation("event.join.email.error"));
+                emailField.setInvalid(true);
+                emailField.focus();
+            }
+        });
+    }
+
+    private void showEnterCodeForm(final @NotNull String email) {
+        removeAll();
+        add(new Paragraph("SORRY, NOT IMPLEMENTED YET!"));
     }
 
     public static final class EmailBean {

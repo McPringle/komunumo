@@ -111,7 +111,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        pageContent.add(new JoinEventForm());
+        pageContent.add(new JoinEventForm(eventService, event));
     }
 
     private void addDateTimeText(final @Nullable ZonedDateTime dateTime,

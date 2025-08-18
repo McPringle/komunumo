@@ -145,4 +145,11 @@ class EventServiceIT extends IntegrationTest {
                 .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
     }
 
+    @Test
+    void requestVerificationCode() {
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(eventService.requestVerificationCode(null, "")).isFalse();
+        assertThat(eventService.requestVerificationCode(event.id(), "")).isFalse();
+        assertThat(eventService.requestVerificationCode(event.id(), "foobar@komunumo.test")).isTrue();
+    }
 }
