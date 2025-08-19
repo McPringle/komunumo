@@ -52,7 +52,8 @@ public final class JoinEventForm extends Details {
         final var joinInfo = new Paragraph(getTranslation("event.join.email.info"));
         add(joinInfo);
 
-        final var emailField = new EmailField(getTranslation("event.join.email.field"));
+        final var emailField = new EmailField();
+        emailField.setPlaceholder(getTranslation("event.join.email.field"));
         emailField.setValueChangeMode(EAGER);
         emailField.setWidthFull();
         add(emailField);
