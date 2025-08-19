@@ -61,17 +61,17 @@ public final class JoinEventForm extends Details {
         final var emailButton = new Button(getTranslation("event.join.email.button"));
         add(emailButton);
 
-        final var binder = new Binder<>(EmailBean.class);
+        final var binder = new Binder<Void>();
         binder.forField(emailField)
                 .withValidator(new EmailValidator(getTranslation("validation.email.invalid"), true))
-                .bind(EmailBean::getEmail, EmailBean::setEmail);
+                .bind(ignored -> null, (ignored, v) -> {});
         binder.addStatusChangeListener(evt ->
-                emailButton.setEnabled(!emailField.getValue().isBlank() && binder.isValid()));
-        binder.setBean(new EmailBean());
+                emailButton.setEnabled(!emailField.getValue().isBlank() && binder.isValid())
+        );
         binder.validate();
 
         emailButton.addClickListener(evt -> {
-            final var email = binder.getBean().getEmail();
+            final var email = emailField.getValue().trim();
             final var locale = getLocale();
             if (participationService.requestVerificationCode(event, email, locale)) {
                 showEnterCodeForm(email);
@@ -92,18 +92,6 @@ public final class JoinEventForm extends Details {
     private void showEnterCodeForm(final @NotNull String email) {
         removeAll();
         add(new Paragraph(getTranslation("event.join.email.send", email)));
-    }
-
-    public static final class EmailBean {
-        private @NotNull String email = "";
-
-        public @NotNull String getEmail() {
-            return email;
-        }
-
-        public void setEmail(final @NotNull String email) {
-            this.email = email;
-        }
     }
 
 }
