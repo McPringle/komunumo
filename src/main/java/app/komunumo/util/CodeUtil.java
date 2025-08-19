@@ -20,38 +20,48 @@ package app.komunumo.util;
 import org.jetbrains.annotations.NotNull;
 
 import java.security.SecureRandom;
-import java.util.Locale;
 
 public final class CodeUtil {
 
-    private static final String ALPHABET = "23456789abcdefghjkmnpqrstuvwxyz";
+    // Digits only, allows leading zeros.
+    private static final String DIGITS = "0123456789";
     private static final SecureRandom RNG = new SecureRandom();
 
-    private static final int LENGTH = 10;
-    private static final int GROUP_SIZE = 5;
-    private static final char SEPARATOR = '-';
+    // 6-digit verification code
+    private static final int LENGTH = 6;
 
-    public static String nextCode() {
+    /**
+     * <p>Generates a six-digit numeric verification code as a {@link String}.</p>
+     *
+     * <p>The code consists exclusively of ASCII digits {@code '0'..'9'} and may contain
+     * leading zeros (e.g. {@code "003917"}). A cryptographically strong
+     * {@link SecureRandom} is used as the source of randomness.</p>
+     *
+     * @return a six-character string containing only digits {@code 0-9}
+     * @see #normalizeInput(String)
+     */
+    public static @NotNull String nextCode() {
         final var code = new StringBuilder(LENGTH);
-        for (int i = 0; i < LENGTH; i++) {
-            code.append(ALPHABET.charAt(RNG.nextInt(ALPHABET.length())));
+        for (var i = 0; i < LENGTH; i++) {
+            code.append(DIGITS.charAt(RNG.nextInt(DIGITS.length())));
         }
-        return formatGrouped(code.toString());
+        return code.toString();
     }
 
-    private static String formatGrouped(final @NotNull String code) {
-        final var formatted = new StringBuilder(code.length() + code.length() / GROUP_SIZE);
-        for (int i = 0; i < code.length(); i++) {
-            if (i > 0 && i % GROUP_SIZE == 0) {
-                formatted.append(SEPARATOR);
-            }
-            formatted.append(code.charAt(i));
-        }
-        return formatted.toString();
-    }
-
-    public static String normalizeInput(final @NotNull String code) {
-        return code.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9]", "");
+    /**
+     * <p>Normalizes user input of a verification code by removing every non-digit character.</p>
+     *
+     * <p>This is intended to make user entry tolerant to formatting such as spaces or
+     * hyphens (e.g. from copying/pasting or visually grouped codes). The method does
+     * <strong>not</strong> perform any length checks or padding; it simply strips all
+     * characters except {@code 0-9}.</p>
+     *
+     * @param code non-null raw user input (may contain spaces, hyphens, or other characters)
+     * @return the input with all non-digits removed; returns an empty string if no digits are present
+     * @see #nextCode()
+     */
+    public static @NotNull String normalizeInput(final @NotNull String code) {
+        return code.replaceAll("\\D", "");
     }
 
     private CodeUtil() {
