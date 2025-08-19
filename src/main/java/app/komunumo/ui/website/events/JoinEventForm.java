@@ -81,6 +81,12 @@ public final class JoinEventForm extends Details {
                 emailField.focus();
             }
         });
+
+        addOpenedChangeListener(evt -> {
+            if (evt.isOpened()) {
+                emailField.focus();
+            }
+        });
     }
 
     private void showEnterCodeForm(final @NotNull String email) {
