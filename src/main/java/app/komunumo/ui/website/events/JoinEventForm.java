@@ -23,6 +23,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
 import org.jetbrains.annotations.NotNull;
@@ -61,10 +62,12 @@ public final class JoinEventForm extends Details {
         final var emailButton = new Button(getTranslation("event.join.email.button"));
         add(emailButton);
 
-        final var binder = new Binder<Void>();
+        final var binder = new Binder<DummyBean>();
         binder.forField(emailField)
+                .withNullRepresentation("")
                 .withValidator(new EmailValidator(getTranslation("validation.email.invalid"), true))
-                .bind(ignored -> null, (ignored, v) -> {});
+                .bind(dummy -> null, (dummy, value) -> { });
+        binder.setBean(new DummyBean());
         binder.addStatusChangeListener(evt ->
                 emailButton.setEnabled(!emailField.getValue().isBlank() && binder.isValid())
         );
@@ -91,7 +94,54 @@ public final class JoinEventForm extends Details {
 
     private void showEnterCodeForm(final @NotNull String email) {
         removeAll();
-        add(new Paragraph(getTranslation("event.join.email.send", email)));
+
+        final var codeInfo = new Paragraph(getTranslation("event.join.code.info", email));
+        add(codeInfo);
+
+        final var codeField = new TextField();
+        codeField.setPlaceholder(getTranslation("event.join.code.field"));
+        codeField.setValueChangeMode(EAGER);
+        codeField.setWidthFull();
+        codeField.setAllowedCharPattern("\\d");
+        codeField.setMaxLength(6);
+        codeField.getElement().setAttribute("inputmode", "numeric");
+        add(codeField);
+
+        final var codeButton = new Button(getTranslation("event.join.code.button"));
+        add(codeButton);
+
+        final var binder = new Binder<DummyBean>();
+        binder.forField(codeField)
+                .withNullRepresentation("")
+                .withValidator(code -> code.isBlank() || code.trim().matches("\\d{6}"),
+                        getTranslation("validation.code.invalid"))
+                .bind(dummy -> null, (dummy, value) -> { });
+        binder.setBean(new DummyBean());
+        binder.addStatusChangeListener(evt ->
+                codeButton.setEnabled(!codeField.getValue().isBlank() && binder.isValid())
+        );
+        binder.validate();
+
+        codeButton.addClickListener(evt -> {
+            final var code = codeField.getValue().trim();
+            if (participationService.verifyCode(email, code)) {
+                participationOkay(email);
+            } else {
+                codeField.setErrorMessage(getTranslation("event.join.code.error"));
+                codeField.setInvalid(true);
+                codeField.focus();
+            }
+        });
+
+        codeField.focus();
     }
+
+    private void participationOkay(final @NotNull String email) {
+        removeAll();
+        add(new Paragraph("PARTICIPATION NOT IMPLEMENTED YET!"));
+    }
+
+    @SuppressWarnings("java:S2094") // DummyBean for Binder (to use validation only)
+    private static final class DummyBean { }
 
 }

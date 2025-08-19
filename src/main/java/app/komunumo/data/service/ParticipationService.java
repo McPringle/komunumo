@@ -20,27 +20,35 @@ package app.komunumo.data.service;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
+import app.komunumo.util.CodeUtil;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public final class ParticipationService {
 
     private final @NotNull MailService mailService;
+    private final @NotNull Cache<@NotNull String, @NotNull String> verificationCodeCache;
 
     public ParticipationService(final @NotNull MailService mailService) {
         this.mailService = mailService;
+        this.verificationCodeCache = Caffeine.newBuilder()
+                .expireAfterWrite(Duration.ofMinutes(15))
+                .maximumSize(1_000) // prevent memory overflow (DDOS attack)
+                .build();
     }
 
     public boolean requestVerificationCode(final @NotNull EventDto event,
                                            final @NotNull String email,
                                            final @NotNull Locale locale) {
         final var eventTitle = event.title();
-        final var verificationCode = UUID.randomUUID().toString();
+        final var verificationCode = generateVerificationCode(email);
         final var verificationLink = "LINK NOT IMPLEMENTED YET";
         final Map<String, String> mailVariables = Map.of(
                 "eventTitle", eventTitle,
@@ -50,4 +58,18 @@ public final class ParticipationService {
                 mailVariables, email);
     }
 
+    private @NotNull String generateVerificationCode(final @NotNull String email) {
+        final var code = CodeUtil.nextCode();
+        verificationCodeCache.put(email, code);
+        return code;
+    }
+
+    public boolean verifyCode(final @NotNull String email, final @NotNull String code) {
+        final var cachedCode = verificationCodeCache.getIfPresent(email);
+        if (CodeUtil.normalizeInput(code).equals(cachedCode)) {
+            verificationCodeCache.invalidate(email);
+            return true;
+        }
+        return false;
+    }
 }

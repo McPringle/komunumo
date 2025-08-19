@@ -19,10 +19,12 @@ package app.komunumo.data.service;
 
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -30,6 +32,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 class ParticipationServiceIT extends IntegrationTest {
+
+    private static final Pattern EXTRACT_CODE_FROM_BODY =
+            Pattern.compile("\\bcode\\b[\\p{Punct}\\s]*\"(\\d{6})\"",
+                    Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
     @Autowired
     private @NotNull ParticipationService participationService;
@@ -49,12 +55,42 @@ class ParticipationServiceIT extends IntegrationTest {
             final var receivedMessage = greenMail.getReceivedMessages()[0];
             assertThat(receivedMessage.getAllRecipients()[0]).hasToString("test@komunumo.app");
             assertThat(receivedMessage.getSubject()).isEqualTo("Confirm your event join request");
-            assertThat(getBody(receivedMessage))
+
+            final var body = getBody(receivedMessage);
+            assertThat(body)
                     .doesNotContain("${eventTitle}")
                     .doesNotContain("${verificationCode}")
                     .doesNotContain("${verificationLink}")
                     .contains(event.title());
+
+            final var code = extractCodeFromBody(body);
+            verifyGoodCode(code);
         });
     }
 
+    private @Nullable String extractCodeFromBody(final @NotNull String body) {
+        final var m = EXTRACT_CODE_FROM_BODY.matcher(body);
+        return m.find() ? m.group(1) : null;
+    }
+
+    private void verifyGoodCode(final @Nullable String code) {
+        assertThat(code).isNotNull();
+
+        // Verify that the code is INVALID for the given email
+        assertThat(participationService.verifyCode("fail@komunumo.app", code)).isFalse();
+
+        // Verify that the code is valid for the given email
+        assertThat(participationService.verifyCode("test@komunumo.app", code)).isTrue();
+
+        // Verify that the code is INVALID for the given email after it has been used
+        assertThat(participationService.verifyCode("test@komunumo.app", code)).isFalse();
+    }
+
+    @Test
+    void verifyBadCode() {
+        assertThat(participationService.verifyCode("", "")).isFalse();
+        assertThat(participationService.verifyCode("test@komunumo.app", "")).isFalse();
+        assertThat(participationService.verifyCode("", "123456")).isFalse();
+        assertThat(participationService.verifyCode("test@komunumo.app", "123456")).isFalse();
+    }
 }
