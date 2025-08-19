@@ -18,7 +18,7 @@
 package app.komunumo.ui.website.events;
 
 import app.komunumo.data.dto.EventDto;
-import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.ParticipationService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Paragraph;
@@ -32,13 +32,13 @@ import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
 
 public final class JoinEventForm extends Details {
 
-    private final transient @NotNull EventService eventService;
+    private final transient @NotNull ParticipationService participationService;
     private final transient @NotNull EventDto event;
 
-    public JoinEventForm(final @NotNull EventService eventService,
+    public JoinEventForm(final @NotNull ParticipationService participationService,
                          final @NotNull EventDto event) {
         super();
-        this.eventService = eventService;
+        this.participationService = participationService;
         this.event = event;
         addClassName("join-event-form");
         addThemeVariants(FILLED);
@@ -71,7 +71,7 @@ public final class JoinEventForm extends Details {
 
         emailButton.addClickListener(evt -> {
             final var email = binder.getBean().getEmail();
-            if (eventService.requestVerificationCode(event.id(), email)) {
+            if (participationService.requestVerificationCode(event.id(), email)) {
                 showEnterCodeForm(email);
             } else {
                 emailField.setErrorMessage(getTranslation("event.join.email.error"));

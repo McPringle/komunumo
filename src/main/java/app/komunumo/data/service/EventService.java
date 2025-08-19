@@ -25,7 +25,6 @@ import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
@@ -125,13 +124,6 @@ public final class EventService {
         return dsl.delete(EVENT)
                 .where(EVENT.ID.eq(event.id()))
                 .execute() > 0;
-    }
-
-    public boolean requestVerificationCode(final @Nullable UUID eventId, final @NotNull String email) {
-        // This method would typically send a verification code to the provided email address.
-        // For simplicity, we will just return true or false with a simple check.
-        // The logic to send an email will be implemented here, soon.
-        return eventId != null && !email.isBlank() && !email.equals("noreply@komunumo.test");
     }
 
 }
