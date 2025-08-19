@@ -17,20 +17,37 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.dto.MailFormat;
+import app.komunumo.data.dto.MailTemplateId;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
 public final class ParticipationService {
 
-    public boolean requestVerificationCode(final @Nullable UUID eventId, final @NotNull String email) {
-        // This method would typically send a verification code to the provided email address.
-        // For simplicity, we will just return true or false with a simple check.
-        // The logic to send an email will be implemented here, soon.
-        return eventId != null && !email.isBlank() && !email.equals("noreply@komunumo.test");
+    private final @NotNull MailService mailService;
+
+    public ParticipationService(final @NotNull MailService mailService) {
+        this.mailService = mailService;
+    }
+
+    public boolean requestVerificationCode(final @NotNull EventDto event,
+                                           final @NotNull String email,
+                                           final @NotNull Locale locale) {
+        final var eventTitle = event.title();
+        final var verificationCode = UUID.randomUUID().toString();
+        final var verificationLink = "LINK NOT IMPLEMENTED YET";
+        final Map<String, String> mailVariables = Map.of(
+                "eventTitle", eventTitle,
+                "verificationCode", verificationCode,
+                "verificationLink", verificationLink);
+        return mailService.sendMail(MailTemplateId.JOIN_EVENT_VERIFICATION_CODE, locale, MailFormat.MARKDOWN,
+                mailVariables, email);
     }
 
 }

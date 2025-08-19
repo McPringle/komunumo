@@ -137,7 +137,9 @@ CREATE TABLE global_page (
 -- [jooq ignore start]
 
 INSERT INTO mail_template (id, language, subject, markdown)
-VALUES ('NEW_PASSWORD','DE','Dein Profil bei Komunumo', 'Dein neues Passwort, um dich bei Komunumo anzumelden:\n${password}'),
+VALUES ('JOIN_EVENT_VERIFICATION_CODE', 'DE', 'Bestätige deine Event-Anmeldung', 'Hallo,\n\ndu möchtest dich für das Event "${eventTitle}" anmelden. Bitte gib im Verifizierungs-Formular auf der Webseite den Code "${verificationCode}" ein oder klicke alternativ auf diesen Link, um deine Anmeldung direkt zu bestätigen:\n\n${verificationLink}\n\nErst wenn du diesen Schritt abgeschlossen hast, bist du für das Event angemeldet.\n\nVielen Dank und bis bald!'),
+       ('JOIN_EVENT_VERIFICATION_CODE', 'EN', 'Confirm your event join request', 'Hello,\n\nyou requested to join the event "${eventTitle}". Please enter the code "${verificationCode}" in the verification form on the website, or click the link below to confirm your join request directly:\n\n${verificationLink}\n\nYou will only be able to join the event once you finish this step.\n\nThank you very much and see you soon!'),
+       ('NEW_PASSWORD','DE','Dein Profil bei Komunumo', 'Dein neues Passwort, um dich bei Komunumo anzumelden:\n${password}'),
        ('NEW_PASSWORD','EN','Your profile at Komunumo', 'Your new password to log in to Komunumo:\n${password}');
 
 -- [jooq ignore stop]

@@ -22,7 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Locale;
+
+import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 class ParticipationServiceIT extends IntegrationTest {
 
@@ -35,9 +40,21 @@ class ParticipationServiceIT extends IntegrationTest {
     @Test
     void requestVerificationCode() {
         final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
-        assertThat(participationService.requestVerificationCode(null, "")).isFalse();
-        assertThat(participationService.requestVerificationCode(event.id(), "")).isFalse();
-        assertThat(participationService.requestVerificationCode(event.id(), "foobar@komunumo.test")).isTrue();
+        final var locale = Locale.ENGLISH;
+
+        assertThat(participationService.requestVerificationCode(event, "", locale)).isFalse();
+        assertThat(participationService.requestVerificationCode(event, "test@komunumo.app", locale)).isTrue();
+
+        await().atMost(2, SECONDS).untilAsserted(() -> {
+            final var receivedMessage = greenMail.getReceivedMessages()[0];
+            assertThat(receivedMessage.getAllRecipients()[0]).hasToString("test@komunumo.app");
+            assertThat(receivedMessage.getSubject()).isEqualTo("Confirm your event join request");
+            assertThat(getBody(receivedMessage))
+                    .doesNotContain("${eventTitle}")
+                    .doesNotContain("${verificationCode}")
+                    .doesNotContain("${verificationLink}")
+                    .contains(event.title());
+        });
     }
 
 }

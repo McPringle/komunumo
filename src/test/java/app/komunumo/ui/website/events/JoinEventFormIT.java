@@ -18,28 +18,48 @@
 package app.komunumo.ui.website.events;
 
 import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.ParticipationService;
 import app.komunumo.ui.IntegrationTest;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.textfield.EmailField;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static app.komunumo.util.TestUtil.findComponents;
 import static com.github.mvysny.kaributesting.v10.BasicUtilsKt._fireDomEvent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 class JoinEventFormIT extends IntegrationTest {
 
     @Autowired
     private EventService eventService;
 
-    @Test
-    void joinEventFlow() {
+    @MockitoBean
+    private ParticipationService participationService;
+
+    private Details joinEventForm;
+    private EmailField emailField;
+    private Button emailButton;
+
+    @BeforeEach
+    void prepareTests() {
+        // fail sending the verification code when using email address "fail@komunumo.app"
+        when(participationService.requestVerificationCode(any(), anyString(), any()))
+                .thenAnswer(inv -> {
+                    final var email = inv.getArgument(1, String.class);
+                    return !email.equals("fail@komunumo.app");
+                });
+
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
                 .stream()
                 .filter(eventWithImage -> eventWithImage.image() != null)
@@ -49,7 +69,7 @@ class JoinEventFormIT extends IntegrationTest {
 
         UI.getCurrent().navigate("events/" + testEvent.id());
 
-        final var joinEventForm = _get(Details.class, spec -> spec.withClasses("join-event-form"));
+        joinEventForm = _get(Details.class, spec -> spec.withClasses("join-event-form"));
         assertThat(joinEventForm).isNotNull();
         assertThat(joinEventForm.isOpened()).isFalse();
 
@@ -59,36 +79,47 @@ class JoinEventFormIT extends IntegrationTest {
         assertThat(joinEventForm.isOpened()).isTrue();
 
         // find components
-        final var emailField = findComponents(joinEventForm, EmailField.class).getFirst();
-        final var emailButton = findComponents(joinEventForm, Button.class).getFirst();
+        emailField = findComponents(joinEventForm, EmailField.class).getFirst();
+        emailButton = findComponents(joinEventForm, Button.class).getFirst();
 
-        // email field is empty and button is disabled
+    }
+
+    @Test
+    void emptyFieldDisablesButton() {
         assertThat(emailField.getValue()).isEmpty();
         assertThat(emailButton.isEnabled()).isFalse();
+    }
 
-        // entering invalid email address keeps the button disabled
-        emailField.setValue("noreply@komunumo");
-        assertThat(emailButton.isEnabled()).isFalse();
-
-        // entering valid email address enables the button
-        emailField.setValue("noreply@komunumo.test");
+    @Test
+    void enteringValidEmailEnablesButton() {
+        emailField.setValue("test@komunumo.app");
         assertThat(emailButton.isEnabled()).isTrue();
+    }
 
-        // click the button
+    @Test
+    void enteringInvalidEmailDisablesButton() {
+        emailField.setValue("test@komunumo");
+        assertThat(emailButton.isEnabled()).isFalse();
+    }
+
+    @Test
+    void checkErrorMessageWhenSendingEmailFails() {
+        emailField.setValue("fail@komunumo.app");
+        assertThat(emailButton.isEnabled()).isTrue();
         _click(emailButton);
         assertThat(emailField.getErrorMessage()).startsWith("The confirmation code could not be sent");
-        assertThat(emailField.getValue()).isEqualTo("noreply@komunumo.test");
+        assertThat(emailField.getValue()).isEqualTo("fail@komunumo.app");
         assertThat(findComponents(joinEventForm, EmailField.class)).containsExactly(emailField);
+    }
 
-        // entering existing email address still enables the button
-        emailField.setValue("foobar@komunumo.test");
+    @Test
+    void checkSuccessMessage() {
+        emailField.setValue("test@komunumo.app");
         assertThat(emailButton.isEnabled()).isTrue();
-
-        // click the button
         _click(emailButton);
         final var text = findComponents(joinEventForm, Paragraph.class).getFirst();
         assertThat(text).isNotNull();
-        assertThat(text.getText()).isEqualTo("SORRY, NOT IMPLEMENTED YET!");
+        assertThat(text.getText()).isEqualTo("We have just sent an email to test@komunumo.app.");
         assertThat(findComponents(joinEventForm, EmailField.class)).isEmpty();
     }
 

@@ -94,7 +94,7 @@ public final class MailService {
             return true;
         } catch (final Exception e) {
             LOGGER.error("Unable to send mail with subject '{}' to {}: {}",
-                    subject, emailAddresses, e.getMessage(), e);
+                    subject, emailAddresses, e.getMessage());
             return false;
         }
     }

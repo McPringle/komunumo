@@ -71,7 +71,8 @@ public final class JoinEventForm extends Details {
 
         emailButton.addClickListener(evt -> {
             final var email = binder.getBean().getEmail();
-            if (participationService.requestVerificationCode(event.id(), email)) {
+            final var locale = getLocale();
+            if (participationService.requestVerificationCode(event, email, locale)) {
                 showEnterCodeForm(email);
             } else {
                 emailField.setErrorMessage(getTranslation("event.join.email.error"));
@@ -83,7 +84,7 @@ public final class JoinEventForm extends Details {
 
     private void showEnterCodeForm(final @NotNull String email) {
         removeAll();
-        add(new Paragraph("SORRY, NOT IMPLEMENTED YET!"));
+        add(new Paragraph(getTranslation("event.join.email.send", email)));
     }
 
     public static final class EmailBean {
