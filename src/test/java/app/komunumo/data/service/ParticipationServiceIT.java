@@ -130,8 +130,50 @@ class ParticipationServiceIT extends IntegrationTest {
             assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
         });
 
-        participationService.deleteParticipation(participation);
+        assertThat(participationService.deleteParticipation(participation)).isTrue();
+        assertThat(participationService.deleteParticipation(participation)).isFalse();
         assertThat(participationService.getParticipations()).isEmpty();
+
+        assertThat(userService.deleteUser(user)).isTrue();
+        assertThat(userService.deleteUser(user)).isFalse();
+    }
+
+    @Test
+    void joinEventAnonymousUser() {
+        assertThat(participationService.getParticipations()).isEmpty();
+
+        final var email = "test@komunumo.app";
+        assertThat(userService.getUserByEmail(email)).isEmpty();
+
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(event).isNotNull();
+
+        final var locale = Locale.ENGLISH;
+        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+
+        // try to join again with the same email
+        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+
+        final var participations = participationService.getParticipations();
+        assertThat(participations).hasSize(1);
+
+        final var user = userService.getUserByEmail(email).orElseThrow();
+        assertThat(user).isNotNull();
+
+        final var participation = participations.getFirst();
+        assertThat(participation).isNotNull().satisfies(testee -> {
+            assertThat(testee.eventId()).isEqualTo(event.id());
+            assertThat(testee.userId()).isEqualTo(user.id());
+            assertThat(testee.registered()).isNotNull();
+            assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
+        });
+
+        assertThat(participationService.deleteParticipation(participation)).isTrue();
+        assertThat(participationService.deleteParticipation(participation)).isFalse();
+        assertThat(participationService.getParticipations()).isEmpty();
+
+        assertThat(userService.deleteUser(user)).isTrue();
+        assertThat(userService.deleteUser(user)).isFalse();
     }
 
 }
