@@ -131,4 +131,54 @@ class UserServiceIT extends IntegrationTest {
         assertThat(userService.getAdminCount()).isZero();
     }
 
+    @Test
+    @SuppressWarnings("java:S5961")
+    void createReadDeleteAnonymousUser() {
+        final var email = "anonymous@example.com";
+        assertThat(userService.getUserByEmail(email)).isEmpty();
+
+        // create a new user
+        var testUser = userService.createAnonymousUserWithEmail(email);
+        final var testUserId = testUser.id();
+        assertThat(testUserId).isNotNull().satisfies(testee -> {
+            assertThat(testee.toString()).isNotEmpty();
+            assertThat(testee.toString()).isNotBlank();
+        });
+
+        assertThat(testUser).isNotNull().satisfies(testee -> {
+            assertThat(testee.id()).isEqualTo(testUserId);
+            assertThat(testee.profile()).isNull();
+            assertThat(testee.created()).isNotNull();
+            assertThat(testee.updated()).isNotNull();
+            assertThat(testee.updated()).isEqualTo(testee.created());
+            assertThat(testee.email()).isEqualTo(email);
+            assertThat(testee.name()).isBlank();
+            assertThat(testee.bio()).isBlank();
+            assertThat(testee.imageId()).isNull();
+            assertThat(testee.role()).isEqualTo(UserRole.USER);
+            assertThat(testee.type()).isEqualTo(UserType.ANONYMOUS);
+        });
+
+        // read user by email
+        testUser = userService.getUserByEmail(email).orElseThrow();
+        assertThat(testUser).isNotNull().satisfies(testee -> {
+            assertThat(testee.id()).isEqualTo(testUserId);
+            assertThat(testee.profile()).isNull();
+            assertThat(testee.created()).isNotNull();
+            assertThat(testee.updated()).isNotNull();
+            assertThat(testee.updated()).isEqualTo(testee.created());
+            assertThat(testee.email()).isEqualTo(email);
+            assertThat(testee.name()).isBlank();
+            assertThat(testee.bio()).isBlank();
+            assertThat(testee.imageId()).isNull();
+            assertThat(testee.role()).isEqualTo(UserRole.USER);
+            assertThat(testee.type()).isEqualTo(UserType.ANONYMOUS);
+        });
+
+        // delete the existing user
+        assertThat(userService.deleteUser(testUser)).isTrue();
+        assertThat(userService.deleteUser(testUser)).isFalse();
+        assertThat(userService.getUserByEmail(email)).isEmpty();
+    }
+
 }
