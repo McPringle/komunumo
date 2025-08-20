@@ -22,6 +22,7 @@ import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.ParticipationDto;
+import app.komunumo.data.dto.UserDto;
 import app.komunumo.util.CodeUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -35,6 +36,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import static app.komunumo.data.db.tables.Participation.PARTICIPATION;
 
@@ -97,7 +99,8 @@ public final class ParticipationService {
                 .orElseGet(() -> userService.createAnonymousUserWithEmail(email));
 
         @SuppressWarnings("DataFlowIssue") // event and user objects are from the DB and are guaranteed to have an ID
-        final var participation = new ParticipationDto(event.id(), user.id(), null);
+        final var participation = getParticipation(event, user) // try to get existing participation
+                .orElseGet(() -> new ParticipationDto(event.id(), user.id(), null));
         storeParticipation(participation);
 
         final var eventTitle = event.title();
@@ -124,6 +127,14 @@ public final class ParticipationService {
     public @NotNull List<@NotNull ParticipationDto> getParticipations() {
         return dsl.selectFrom(PARTICIPATION)
                 .fetchInto(ParticipationDto.class);
+    }
+
+    public @NotNull Optional<ParticipationDto> getParticipation(final @NotNull EventDto event,
+                                                                final @NotNull UserDto user) {
+        return dsl.selectFrom(PARTICIPATION)
+                .where(PARTICIPATION.EVENT_ID.eq(event.id())
+                        .and(PARTICIPATION.USER_ID.eq(user.id())))
+                .fetchOptionalInto(ParticipationDto.class);
     }
 
     public boolean deleteParticipation(final @NotNull ParticipationDto participation) {
