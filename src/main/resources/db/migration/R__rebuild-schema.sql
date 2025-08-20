@@ -38,7 +38,7 @@ CREATE TABLE user (
     id VARCHAR(36) NOT NULL,
     created TIMESTAMP NOT NULL,
     updated TIMESTAMP NOT NULL,
-    profile VARCHAR(255) NOT NULL,
+    profile VARCHAR(255) DEFAULT NULL,
     email VARCHAR(255) DEFAULT NULL,
     name VARCHAR(255) NOT NULL,
     bio TEXT NOT NULL,

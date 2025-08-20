@@ -64,7 +64,6 @@ public final class JoinEventForm extends Details {
 
         final var binder = new Binder<DummyBean>();
         binder.forField(emailField)
-                .withNullRepresentation("")
                 .withValidator(new EmailValidator(getTranslation("validation.email.invalid"), true))
                 .bind(dummy -> null, (dummy, value) -> { });
         binder.setBean(new DummyBean());
@@ -74,8 +73,8 @@ public final class JoinEventForm extends Details {
         binder.validate();
 
         emailButton.addClickListener(evt -> {
-            final var email = emailField.getValue().trim();
             final var locale = getLocale();
+            final var email = emailField.getValue().trim().toLowerCase(locale);
             if (participationService.requestVerificationCode(event, email, locale)) {
                 showEnterCodeForm(email);
             } else {
@@ -112,7 +111,6 @@ public final class JoinEventForm extends Details {
 
         final var binder = new Binder<DummyBean>();
         binder.forField(codeField)
-                .withNullRepresentation("")
                 .withValidator(code -> code.isBlank() || code.trim().matches("\\d{6}"),
                         getTranslation("validation.code.invalid"))
                 .bind(dummy -> null, (dummy, value) -> { });
@@ -125,7 +123,13 @@ public final class JoinEventForm extends Details {
         codeButton.addClickListener(evt -> {
             final var code = codeField.getValue().trim();
             if (participationService.verifyCode(email, code)) {
-                participationOkay(email);
+                removeAll();
+                final var locale = getLocale();
+                if (participationService.joinEvent(event, email, locale)) {
+                    add(new Paragraph(getTranslation("event.join.success")));
+                } else {
+                    add(new Paragraph(getTranslation("event.join.failed")));
+                }
             } else {
                 codeField.setErrorMessage(getTranslation("event.join.code.error"));
                 codeField.setInvalid(true);
@@ -134,11 +138,6 @@ public final class JoinEventForm extends Details {
         });
 
         codeField.focus();
-    }
-
-    private void participationOkay(final @NotNull String email) {
-        removeAll();
-        add(new Paragraph("PARTICIPATION NOT IMPLEMENTED YET!"));
     }
 
     @SuppressWarnings("java:S2094") // DummyBean for Binder (to use validation only)

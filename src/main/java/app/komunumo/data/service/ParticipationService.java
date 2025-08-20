@@ -17,27 +17,44 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.db.tables.records.ParticipationRecord;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
+import app.komunumo.data.dto.ParticipationDto;
 import app.komunumo.util.CodeUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;
+import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static app.komunumo.data.db.tables.Participation.PARTICIPATION;
 
 @Service
 public final class ParticipationService {
 
+    private final @NotNull DSLContext dsl;
     private final @NotNull MailService mailService;
+    private final @NotNull UserService userService;
+
     private final @NotNull Cache<@NotNull String, @NotNull String> verificationCodeCache;
 
-    public ParticipationService(final @NotNull MailService mailService) {
+    public ParticipationService(final @NotNull DSLContext dsl,
+                                final @NotNull MailService mailService,
+                                final @NotNull UserService userService) {
+        super();
+        this.dsl = dsl;
         this.mailService = mailService;
+        this.userService = userService;
+
         this.verificationCodeCache = Caffeine.newBuilder()
                 .expireAfterWrite(Duration.ofMinutes(15))
                 .maximumSize(1_000) // prevent memory overflow (DDOS attack)
@@ -72,4 +89,48 @@ public final class ParticipationService {
         }
         return false;
     }
+
+    public boolean joinEvent(final @NotNull EventDto event,
+                             final @NotNull String email,
+                             final @NotNull Locale locale) {
+        final var user = userService.getUserByEmail(email)
+                .orElseGet(() -> userService.createAnonymousUserWithEmail(email));
+
+        @SuppressWarnings("DataFlowIssue") // event and user objects are from the DB and are guaranteed to have an ID
+        final var participation = new ParticipationDto(event.id(), user.id(), null);
+        storeParticipation(participation);
+
+        final var eventTitle = event.title();
+        final Map<String, String> mailVariables = Map.of("eventTitle", eventTitle);
+        return mailService.sendMail(MailTemplateId.JOIN_EVENT_SUCCESS, locale, MailFormat.MARKDOWN,
+                mailVariables, email);
+    }
+
+    public @NotNull ParticipationDto storeParticipation(final @NotNull ParticipationDto participation) {
+        final ParticipationRecord participationRecord = dsl.fetchOptional(PARTICIPATION,
+                        PARTICIPATION.EVENT_ID.eq(participation.eventId())
+                                .and(PARTICIPATION.USER_ID.eq(participation.userId())))
+                .orElse(dsl.newRecord(PARTICIPATION));
+        participationRecord.from(participation);
+
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        if (participationRecord.getRegistered() == null) { // NOSONAR (false positive)
+            participationRecord.setRegistered(now);
+        }
+        participationRecord.store();
+        return participationRecord.into(ParticipationDto.class);
+    }
+
+    public @NotNull List<@NotNull ParticipationDto> getParticipations() {
+        return dsl.selectFrom(PARTICIPATION)
+                .fetchInto(ParticipationDto.class);
+    }
+
+    public boolean deleteParticipation(final @NotNull ParticipationDto participation) {
+        return dsl.delete(PARTICIPATION)
+                .where(PARTICIPATION.EVENT_ID.eq(participation.eventId())
+                        .and(PARTICIPATION.USER_ID.eq(participation.userId())))
+                .execute() > 0;
+    }
+
 }

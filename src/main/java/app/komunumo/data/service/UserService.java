@@ -19,6 +19,8 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.UserRecord;
 import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -76,6 +78,13 @@ public final class UserService {
         return dsl.selectFrom(USER)
                 .where(USER.EMAIL.eq(email))
                 .fetchOptionalInto(UserDto.class);
+    }
+
+    public @NotNull UserDto createAnonymousUserWithEmail(final @NotNull String email) {
+        final var user = new UserDto(null, null, null,
+                null, email, "", "", null,
+                UserRole.USER, UserType.ANONYMOUS, null);
+        return storeUser(user);
     }
 
     public boolean deleteUser(final @NotNull UserDto user) {

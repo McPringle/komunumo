@@ -23,16 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public record UserDto(
-        @Nullable UUID id,
-        @Nullable ZonedDateTime created,
-        @Nullable ZonedDateTime updated,
-        @Nullable String profile,
-        @Nullable String email,
-        @NotNull String name,
-        @NotNull String bio,
-        @Nullable UUID imageId,
-        @NotNull UserRole role,
-        @NotNull UserType type,
-        @Nullable String passwordHash
+public record ParticipationDto(
+        @NotNull UUID eventId,
+        @NotNull UUID userId,
+        @Nullable ZonedDateTime registered
 ) { }
