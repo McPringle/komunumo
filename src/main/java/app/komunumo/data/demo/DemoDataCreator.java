@@ -79,10 +79,12 @@ public final class DemoDataCreator {
         final var imageService = serviceProvider.imageService();
         final var communityService = serviceProvider.communityService();
         final var eventService = serviceProvider.eventService();
+        final var participationService = serviceProvider.participationService();
         final var globalPageService = serviceProvider.globalPageService();
 
         LOGGER.info("Deleting existing data...");
         configurationService.deleteAllSettings();
+        participationService.getParticipations().forEach(participationService::deleteParticipation);
         eventService.getEvents().forEach(eventService::deleteEvent);
         communityService.getCommunities().forEach(communityService::deleteCommunity);
         imageService.getImages().forEach(imageService::deleteImage);
