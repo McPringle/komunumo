@@ -204,7 +204,7 @@ class JoinEventFormIT extends IntegrationTest {
 
         final var text = findComponents(joinEventForm, Paragraph.class).getFirst();
         assertThat(text).isNotNull();
-        assertThat(text.getText()).startsWith("PARTICIPATION NOT IMPLEMENTED YET!");
+        assertThat(text.getText()).startsWith("Joining this event failed. Please try again later.");
         assertThat(findComponents(joinEventForm, TextField.class)).isEmpty();
     }
 

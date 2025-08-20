@@ -17,12 +17,16 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -42,6 +46,9 @@ class ParticipationServiceIT extends IntegrationTest {
 
     @Autowired
     private @NotNull EventService eventService;
+
+    @Autowired
+    private @NotNull UserService userService;
 
     @Test
     void requestVerificationCode() {
@@ -93,4 +100,38 @@ class ParticipationServiceIT extends IntegrationTest {
         assertThat(participationService.verifyCode("", "123456")).isFalse();
         assertThat(participationService.verifyCode("test@komunumo.app", "123456")).isFalse();
     }
+
+    @Test
+    void joinEventExistingUser() {
+        assertThat(participationService.getParticipations()).isEmpty();
+
+        final var email = "test@komunumo.app";
+        assertThat(userService.getUserByEmail(email)).isEmpty();
+
+        userService.storeUser(new UserDto(null, null, null, null, email, "", "",
+                null, UserRole.USER, UserType.LOCAL, null));
+        final var user = userService.getUserByEmail(email).orElseThrow();
+        assertThat(user).isNotNull();
+
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(event).isNotNull();
+
+        final var locale = Locale.ENGLISH;
+        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+
+        final var participations = participationService.getParticipations();
+        assertThat(participations).hasSize(1);
+
+        final var participation = participations.getFirst();
+        assertThat(participation).isNotNull().satisfies(testee -> {
+            assertThat(testee.eventId()).isEqualTo(event.id());
+            assertThat(testee.userId()).isEqualTo(user.id());
+            assertThat(testee.registered()).isNotNull();
+            assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
+        });
+
+        participationService.deleteParticipation(participation);
+        assertThat(participationService.getParticipations()).isEmpty();
+    }
+
 }

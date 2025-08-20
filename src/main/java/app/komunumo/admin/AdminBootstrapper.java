@@ -49,7 +49,7 @@ public final class AdminBootstrapper {
 
     public AdminBootstrapper(final @NotNull AppConfig appConfig,
                              final @NotNull ServiceProvider serviceProvider) {
-        this.adminEmail = appConfig.instance().admin();
+        this.adminEmail = appConfig.instance().admin().trim().toLowerCase(Locale.getDefault());
         this.userService = serviceProvider.userService();
         this.securityService = serviceProvider.securityService();
         this.mailService = serviceProvider.mailService();
