@@ -58,7 +58,7 @@ class JoinEventFormIT extends IntegrationTest {
     private Button codeButton;
 
     @Test
-    void testJoinEventFlow() {
+    void testJoinEventFlowSuccess() {
         prepareEmailForm();
 
         // check toggling join form component
@@ -74,13 +74,26 @@ class JoinEventFormIT extends IntegrationTest {
         checkEmailSuccessMessage();
 
         // checks for step 2: entering code
-        prepareCodeForm();
+        prepareCodeForm(true);
         checkCodeFieldIsEmpty();
         enteringIncompleteCodeDisablesButton();
         enteringBlanksDisablesButton();
         enteringCompleteCodeEnablesButton();
         checkErrorWhenUsingWrongCode();
         checkSuccessWithCorrectCode();
+    }
+
+    @Test
+    void testJoinEventFlowFail() {
+        prepareEmailForm();
+        openJoinForm();
+
+        // checks for step 1: entering email
+        checkEmailSuccessMessage();
+
+        // checks for step 2: entering code
+        prepareCodeForm(false);
+        checkFailWithCorrectCode();
     }
 
     private void prepareEmailForm() {
@@ -156,11 +169,16 @@ class JoinEventFormIT extends IntegrationTest {
         assertThat(findComponents(joinEventForm, EmailField.class)).isEmpty();
     }
 
-    private void prepareCodeForm() {
+    private void prepareCodeForm(final boolean returnValue) {
         when(participationService.verifyCode(anyString(), anyString()))
                 .thenAnswer(inv -> {
                     final var code = inv.getArgument(1, String.class);
                     return code.equals(CODE_OKAY);
+                });
+        when(participationService.joinEvent(any(), anyString(), any()))
+                .thenAnswer(inv -> {
+                    final var email = inv.getArgument(1, String.class);
+                    return returnValue && email.equals(EMAIL_OKAY);
                 });
 
         // find components
@@ -204,7 +222,18 @@ class JoinEventFormIT extends IntegrationTest {
 
         final var text = findComponents(joinEventForm, Paragraph.class).getFirst();
         assertThat(text).isNotNull();
-        assertThat(text.getText()).startsWith("Joining this event failed. Please try again later.");
+        assertThat(text.getText()).isEqualTo("You have successfully joined the event.");
+        assertThat(findComponents(joinEventForm, TextField.class)).isEmpty();
+    }
+
+    private void checkFailWithCorrectCode() {
+        codeField.setValue(CODE_OKAY);
+        assertThat(codeButton.isEnabled()).isTrue();
+        _click(codeButton);
+
+        final var text = findComponents(joinEventForm, Paragraph.class).getFirst();
+        assertThat(text).isNotNull();
+        assertThat(text.getText()).isEqualTo("Joining this event failed. Please try again later.");
         assertThat(findComponents(joinEventForm, TextField.class)).isEmpty();
     }
 
