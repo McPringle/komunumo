@@ -22,6 +22,7 @@ import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.MailService;
 import app.komunumo.data.service.SecurityService;
 import app.komunumo.data.service.ServiceProvider;
@@ -70,7 +71,8 @@ public final class AdminBootstrapper {
         final var passwordHash = securityService.encodePassword(password);
 
         final var adminUser = new UserDto(null, null, null,
-                "@admin", adminEmail, "Admin", "", null, UserRole.ADMIN, passwordHash);
+                "@admin", adminEmail, "Admin", "", null,
+                UserRole.ADMIN, UserType.LOCAL, passwordHash);
         userService.storeUser(adminUser);
 
         mailService.sendMail(MailTemplateId.NEW_PASSWORD, Locale.getDefault(), MailFormat.MARKDOWN,

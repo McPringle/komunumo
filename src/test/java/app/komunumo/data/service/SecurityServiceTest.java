@@ -19,6 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.security.AuthenticatedUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,7 +40,7 @@ class SecurityServiceTest {
     @Test
     void getLoggedInUser() {
         final var userDto = new UserDto(null, null, null, "@test", "test@localhost",
-                "Test User", "", null, UserRole.USER, "{noop}password");
+                "Test User", "", null, UserRole.USER, UserType.LOCAL, "{noop}password");
         final var authenticatedUser = mock(AuthenticatedUser.class);
         when (authenticatedUser.getLoggedInUser()).thenReturn(Optional.of(userDto));
         final var userService = mock(UserService.class);
@@ -70,7 +71,7 @@ class SecurityServiceTest {
         final var passwordEncoder = mock(PasswordEncoder.class);
 
         final var userDto = new UserDto(null, null, null, "@test", "test@localhost",
-                "Test User", "", null, UserRole.USER, "{noop}password");
+                "Test User", "", null, UserRole.USER, UserType.LOCAL, "{noop}password");
         when(userService.getUserByEmail("test@localhost")).thenReturn(Optional.of(userDto));
 
         final var testee = new SecurityService(authenticatedUser, userService, passwordEncoder);
@@ -89,7 +90,7 @@ class SecurityServiceTest {
         final var passwordEncoder = mock(PasswordEncoder.class);
 
         final var userDto = new UserDto(null, null, null, "@test", "test@localhost",
-                "Test User", "", null, UserRole.ADMIN, "{noop}password");
+                "Test User", "", null, UserRole.ADMIN, UserType.LOCAL, "{noop}password");
         when(userService.getUserByEmail("test@localhost")).thenReturn(Optional.of(userDto));
 
         final var testee = new SecurityService(authenticatedUser, userService, passwordEncoder);

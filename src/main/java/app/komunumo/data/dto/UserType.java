@@ -17,22 +17,21 @@
  */
 package app.komunumo.data.dto;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+public enum UserType {
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
+    /**
+     * Regular local account (login possible).
+     */
+    LOCAL,
 
-public record UserDto(
-        @Nullable UUID id,
-        @Nullable ZonedDateTime created,
-        @Nullable ZonedDateTime updated,
-        @NotNull String profile,
-        @NotNull String email,
-        @NotNull String name,
-        @NotNull String bio,
-        @Nullable UUID imageId,
-        @NotNull UserRole role,
-        @NotNull UserType type,
-        @Nullable String passwordHash
-) { }
+    /**
+     * Federated/remote actor, usually no email.
+     */
+    REMOTE,
+
+    /**
+     * Email-only shadow account.
+     */
+    ANONYMOUS
+
+}

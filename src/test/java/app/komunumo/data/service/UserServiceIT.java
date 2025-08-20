@@ -19,6 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class UserServiceIT extends IntegrationTest {
         // create a new user
         var testUser = new UserDto(null, null, null,
                 "@testUser", "test@example.eu", "Test User", "Test User Bio", null,
-                UserRole.USER, null);
+                UserRole.USER, UserType.LOCAL, null);
         testUser = userService.storeUser(testUser);
         final var testUserId = testUser.id();
         assertThat(testUserId).isNotNull().satisfies(testee -> {
@@ -77,7 +78,8 @@ class UserServiceIT extends IntegrationTest {
 
         // updating the existing user
         testUser = new UserDto(testUserId, testUser.created(), testUser.updated(), testUser.profile(), testUser.email(),
-                "Test User Modified", testUser.bio(), testUser.imageId(), testUser.role(), testUser.passwordHash());
+                "Test User Modified", testUser.bio(), testUser.imageId(), testUser.role(), testUser.type(),
+                testUser.passwordHash());
         testUser = userService.storeUser(testUser);
         assertThat(testUser).isNotNull().satisfies(testee -> {
             assertThat(testee.id()).isEqualTo(testUserId);
@@ -96,7 +98,7 @@ class UserServiceIT extends IntegrationTest {
         // create a new admin
         var testAdmin = new UserDto(null, null, null,
                 "@testAdmin", "admin@example.eu", "Test Admin", "Test Admin Bio", null,
-                UserRole.ADMIN, null);
+                UserRole.ADMIN, UserType.LOCAL, null);
         testAdmin = userService.storeUser(testAdmin);
         final var testAdminId = testAdmin.id();
         assertThat(testAdminId).isNotNull().satisfies(testee -> {
