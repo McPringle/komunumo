@@ -2,6 +2,7 @@
 
 DROP TABLE IF EXISTS global_page;
 DROP TABLE IF EXISTS participant;
+DROP TABLE IF EXISTS participation;
 DROP TABLE IF EXISTS event;
 DROP TABLE IF EXISTS member;
 DROP TABLE IF EXISTS community;
@@ -108,15 +109,15 @@ CREATE TABLE event (
             REFERENCES image (id)
 );
 
-CREATE TABLE participant (
+CREATE TABLE participation (
     event_id VARCHAR(36) NOT NULL,
     user_id VARCHAR(36) NOT NULL,
     registered TIMESTAMP NOT NULL,
     PRIMARY KEY (event_id, user_id),
-    CONSTRAINT fk_participant_event
+    CONSTRAINT fk_participation_event
         FOREIGN KEY (event_id)
             REFERENCES event (id),
-    CONSTRAINT fk_participant_user
+    CONSTRAINT fk_participation_user
         FOREIGN KEY (user_id)
             REFERENCES user (id)
 );
@@ -140,8 +141,8 @@ CREATE TABLE global_page (
 -- [jooq ignore start]
 
 INSERT INTO mail_template (id, language, subject, markdown)
-VALUES ('JOIN_EVENT_SUCCESS', 'DE', 'Deine Anmeldung für "${eventName}" ist bestätigt', 'Hallo,\n\ndeine Anmeldung für das Event "${eventName}" wurde erfolgreich bestätigt.\n\nDu bist nun offiziell für das Event angemeldet.\nWir freuen uns, dich dort zu sehen!\n\nVielen Dank und bis bald!'),
-       ('JOIN_EVENT_SUCCESS', 'EN', 'Your attendance for "${eventName}" is confirmed', 'Hello,\n\nyour attendance for the event "${eventName}" has been successfully confirmed.\n\nYou are now officially signed up for the event.\nWe look forward to seeing you there!\n\nThank you very much and see you soon!'),
+VALUES ('JOIN_EVENT_SUCCESS', 'DE', 'Deine Anmeldung ist bestätigt', 'Hallo,\n\ndeine Anmeldung für das Event "${eventTitle}" wurde erfolgreich bestätigt.\n\nDu bist nun offiziell für das Event angemeldet.\nWir freuen uns, dich dort zu sehen!\n\nVielen Dank und bis bald!'),
+       ('JOIN_EVENT_SUCCESS', 'EN', 'Your attendance is confirmed', 'Hello,\n\nyour attendance for the event "${eventTitle}" has been successfully confirmed.\n\nYou are now officially signed up for the event.\nWe look forward to seeing you there!\n\nThank you very much and see you soon!'),
        ('JOIN_EVENT_VERIFICATION_CODE', 'DE', 'Bestätige deine Event-Anmeldung', 'Hallo,\n\ndu möchtest dich für das Event "${eventTitle}" anmelden. Bitte gib im Verifizierungs-Formular auf der Webseite den Code "${verificationCode}" ein oder klicke alternativ auf diesen Link, um deine Anmeldung direkt zu bestätigen:\n\n${verificationLink}\n\nErst wenn du diesen Schritt abgeschlossen hast, bist du für das Event angemeldet.\n\nVielen Dank und bis bald!'),
        ('JOIN_EVENT_VERIFICATION_CODE', 'EN', 'Confirm your event join request', 'Hello,\n\nyou requested to join the event "${eventTitle}". Please enter the code "${verificationCode}" in the verification form on the website, or click the link below to confirm your join request directly:\n\n${verificationLink}\n\nYou will only be able to join the event once you finish this step.\n\nThank you very much and see you soon!'),
        ('NEW_PASSWORD','DE','Dein Profil bei Komunumo', 'Dein neues Passwort, um dich bei Komunumo anzumelden:\n${password}'),
