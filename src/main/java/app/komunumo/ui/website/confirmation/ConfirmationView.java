@@ -23,7 +23,6 @@ import app.komunumo.ui.component.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
 import app.komunumo.util.ParseUtil;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
