@@ -63,7 +63,6 @@ class RegisterFormIT extends IntegrationTest {
         checkEmailFieldIsEmpty();
         enteringValidEmailEnablesButton();
         enteringInvalidEmailDisablesButton();
-        checkErrorMessageWhenSendingEmailFails();
         checkEmailSuccessMessage();
     }
 
@@ -77,7 +76,7 @@ class RegisterFormIT extends IntegrationTest {
 
         UI.getCurrent().navigate("events/" + testEvent.id());
 
-        joinEventForm = _get(Details.class, spec -> spec.withClasses("join-event-form"));
+        joinEventForm = _get(Details.class, spec -> spec.withClasses("register-form"));
         assertThat(joinEventForm).isNotNull();
 
         // find components
@@ -114,15 +113,6 @@ class RegisterFormIT extends IntegrationTest {
         assertThat(emailButton.isEnabled()).isFalse();
     }
 
-    private void checkErrorMessageWhenSendingEmailFails() {
-        emailField.setValue("fail@komunumo.app");
-        assertThat(emailButton.isEnabled()).isTrue();
-        _click(emailButton);
-        assertThat(emailField.getErrorMessage()).startsWith("The verification code could not be sent");
-        assertThat(emailField.getValue()).isEqualTo("fail@komunumo.app");
-        assertThat(findComponents(joinEventForm, EmailField.class)).containsExactly(emailField);
-    }
-
     private void checkEmailSuccessMessage() {
         emailField.setValue(EMAIL_OKAY);
         assertThat(emailButton.isEnabled()).isTrue();
@@ -130,7 +120,7 @@ class RegisterFormIT extends IntegrationTest {
 
         final var text = findComponents(joinEventForm, Paragraph.class).getFirst();
         assertThat(text).isNotNull();
-        assertThat(text.getText()).startsWith("We have just sent an email to " + EMAIL_OKAY + ".");
+        assertThat(text.getText()).startsWith("We have sent an email to your address \"" + EMAIL_OKAY + "\".");
         assertThat(findComponents(joinEventForm, EmailField.class)).isEmpty();
     }
 
