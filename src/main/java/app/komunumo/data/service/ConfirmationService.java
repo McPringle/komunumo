@@ -46,7 +46,7 @@ public final class ConfirmationService {
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull MailService mailService;
 
-    private final @NotNull Cache<@NotNull UUID, @NotNull ConfirmationData> confirmationCache = Caffeine.newBuilder()
+    private final @NotNull Cache<@NotNull String, @NotNull ConfirmationData> confirmationCache = Caffeine.newBuilder()
             .expireAfterWrite(Duration.ofMinutes(15))
             .maximumSize(1_000) // prevent memory overflow (DDOS attack)
             .build();
@@ -63,7 +63,7 @@ public final class ConfirmationService {
                                          final @NotNull String onSuccessMessage,
                                          final @NotNull Runnable onSuccessHandler,
                                          final @NotNull Locale locale) {
-        final var confirmationId = UUID.randomUUID();
+        final var confirmationId = UUID.randomUUID().toString();
         final var confirmationData = new ConfirmationData(confirmationId, emailAddress,
                 onSuccessMessage, onSuccessHandler, locale);
         confirmationCache.put(confirmationId, confirmationData);
@@ -88,7 +88,7 @@ public final class ConfirmationService {
                 .toUriString();
     }
 
-    public @NotNull Optional<String> confirm(final @NotNull UUID confirmationId) {
+    public @NotNull Optional<String> confirm(final @NotNull String confirmationId) {
         final var confirmationData = confirmationCache.getIfPresent(confirmationId);
         if (confirmationData != null) {
             try {
@@ -104,7 +104,7 @@ public final class ConfirmationService {
     }
 
     private record ConfirmationData(
-            @NotNull UUID id,
+            @NotNull String id,
             @NotNull String emailAddress,
             @NotNull String successMessage,
             @NotNull Runnable onSuccessHandler,

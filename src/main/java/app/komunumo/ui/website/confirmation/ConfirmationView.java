@@ -39,7 +39,7 @@ public final class ConfirmationView extends AbstractView implements BeforeEnterO
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ConfirmationView.class);
 
-    private final @NotNull ConfirmationService confirmationService;
+    private final transient @NotNull ConfirmationService confirmationService;
 
     public ConfirmationView(final @NotNull ConfigurationService configurationService,
                             final @NotNull ConfirmationService confirmationService) {
@@ -62,7 +62,7 @@ public final class ConfirmationView extends AbstractView implements BeforeEnterO
 
         final var success = confirmationService.confirm(confirmationId);
         if (success.isEmpty()) {
-            LOGGER.warn("Confirmation with ID '{}' not found or not successful!", confirmationId);
+            LOGGER.warn("Confirmation with ID '{}' not found!", confirmationId);
             final var errorMessage = new Markdown(getTranslation("confirmation.view.error"));
             errorMessage.addClassName("error");
             add(errorMessage);

@@ -106,9 +106,9 @@ class ConfirmationServiceIT extends IntegrationTest {
         });
     }
 
-    private UUID extractConfirmationId(final @NotNull String body) {
+    private String extractConfirmationId(final @NotNull String body) {
         Matcher matcher = EXTRACT_ID_PATTERN.matcher(body);
         assertThat(matcher.find()).isTrue();
-        return UUID.fromString(matcher.group(1));
+        return matcher.group(1);
     }
 }
