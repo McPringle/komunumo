@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum ConfigurationSetting {
+    INSTANCE_URL("instance.url", "http://localhost:8080"),
     INSTANCE_NAME("instance.name", "Your Instance Name"),
     INSTANCE_SLOGAN("instance.slogan", "Your Instance Slogan"),;
 
