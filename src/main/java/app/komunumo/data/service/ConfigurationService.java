@@ -51,12 +51,14 @@ public final class ConfigurationService {
     public @NotNull String getConfiguration(final @NotNull ConfigurationSetting setting,
                                             final @Nullable Locale locale) {
         if (locale == null) {
-            return getFromCacheOrDb(setting, null).orElse(setting.defaultValue());
+            return getFromCacheOrDb(setting, null)
+                    .orElse(setting.defaultValue());
         }
 
         final var languageCode = LocaleUtil.getLanguageCode(locale);
         return getFromCacheOrDb(setting, languageCode)
                 .or(() -> getFromCacheOrDb(setting, "EN"))
+                .or(() -> getFromCacheOrDb(setting, null))
                 .orElse(setting.defaultValue());
     }
 
