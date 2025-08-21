@@ -21,7 +21,6 @@ import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.ui.component.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
-import app.komunumo.util.ParseUtil;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -33,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Route(value = "confirm/:id", layout = WebsiteLayout.class)
+@Route(value = "confirm", layout = WebsiteLayout.class)
 @AnonymousAllowed
 public final class ConfirmationView extends AbstractView implements BeforeEnterObserver {
 
@@ -56,9 +55,12 @@ public final class ConfirmationView extends AbstractView implements BeforeEnterO
 
     @Override
     public void beforeEnter(final @NotNull BeforeEnterEvent beforeEnterEvent) {
-        final var params = beforeEnterEvent.getRouteParameters();
-        final var confirmationId = ParseUtil.parseUUID(params.get("id"))
-                .orElseThrow(() -> new NotFoundException("Invalid confirmation ID!"));
+        final var confirmationId = beforeEnterEvent
+                .getLocation()
+                .getQueryParameters()
+                .getSingleParameter("id")
+                .orElseThrow(() -> new NotFoundException("Missing confirmation ID!"))
+                .trim();
 
         final var success = confirmationService.confirm(confirmationId);
         if (success.isEmpty()) {

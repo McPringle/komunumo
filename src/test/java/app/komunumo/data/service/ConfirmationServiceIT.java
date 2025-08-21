@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Locale;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,7 +38,7 @@ import static org.awaitility.Awaitility.await;
 class ConfirmationServiceIT extends IntegrationTest {
 
     private static final @NotNull Pattern EXTRACT_ID_PATTERN =
-            Pattern.compile("http://localhost(?::\\d+)?/confirm/([0-9a-fA-F\\-]{36})");
+            Pattern.compile("http://localhost(?::\\d+)?/confirm\\?id=([0-9a-fA-F\\-]{36})(?:&.*)?");
 
     @Autowired
     private ConfirmationService confirmationService;

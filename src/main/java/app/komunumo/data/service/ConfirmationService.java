@@ -82,7 +82,7 @@ public final class ConfirmationService {
         return UriComponentsBuilder
                 .fromUriString(instanceUrl)
                 .path(CONFIRMATION_PATH)
-                .pathSegment(confirmationData.id().toString())
+                .queryParam("id", confirmationData.id())
                 .encode(StandardCharsets.UTF_8)
                 .build()
                 .toUriString();
