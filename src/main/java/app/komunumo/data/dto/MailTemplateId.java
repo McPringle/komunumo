@@ -18,7 +18,7 @@
 package app.komunumo.data.dto;
 
 public enum MailTemplateId {
-    JOIN_EVENT_SUCCESS,
-    JOIN_EVENT_VERIFICATION_CODE,
+    CONFIRMATION_PROCESS,
+    EVENT_REGISTRATION_SUCCESS,
     NEW_PASSWORD
 }
