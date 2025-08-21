@@ -18,40 +18,51 @@
 package app.komunumo.ui.website.events;
 
 import app.komunumo.data.service.EventService;
-import app.komunumo.data.service.ParticipationService;
 import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.website.confirmation.ConfirmationView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
+import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.router.QueryParameters;
+import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static app.komunumo.util.TestUtil.findComponent;
 import static app.komunumo.util.TestUtil.findComponents;
 import static com.github.mvysny.kaributesting.v10.BasicUtilsKt._fireDomEvent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
+import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 class RegisterFormIT extends IntegrationTest {
 
     private static final @NotNull String EMAIL_OKAY = "test@komunumo.app";
+    private static final @NotNull Pattern EXTRACT_ID_PATTERN =
+            Pattern.compile("http://localhost(?::\\d+)?/confirm\\?id=([0-9a-fA-F\\-]{36})(?:&.*)?");
 
     @Autowired
     private EventService eventService;
-
-    @MockitoBean
-    private ParticipationService participationService;
 
     private Details joinEventForm;
     private EmailField emailField;
     private Button emailButton;
 
     @Test
-    void testJoinEventFlowSuccess() {
+    void testJoinEventFlowSuccess() throws MessagingException {
         prepareEmailForm();
 
         // check toggling join form component
@@ -63,7 +74,9 @@ class RegisterFormIT extends IntegrationTest {
         checkEmailFieldIsEmpty();
         enteringValidEmailEnablesButton();
         enteringInvalidEmailDisablesButton();
-        checkEmailSuccessMessage();
+        checkEmailSendMessage();
+
+        readEmailAndConfirm();
     }
 
     private void prepareEmailForm() {
@@ -113,7 +126,7 @@ class RegisterFormIT extends IntegrationTest {
         assertThat(emailButton.isEnabled()).isFalse();
     }
 
-    private void checkEmailSuccessMessage() {
+    private void checkEmailSendMessage() {
         emailField.setValue(EMAIL_OKAY);
         assertThat(emailButton.isEnabled()).isTrue();
         _click(emailButton);
@@ -124,4 +137,36 @@ class RegisterFormIT extends IntegrationTest {
         assertThat(findComponents(joinEventForm, EmailField.class)).isEmpty();
     }
 
+    private void readEmailAndConfirm() throws MessagingException {
+        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 1);
+        final var confirmationMessage = greenMail.getReceivedMessages()[0];
+        assertThat(confirmationMessage.getAllRecipients()[0])
+                .hasToString(EMAIL_OKAY);
+
+        final var body = getBody(confirmationMessage);
+        final var confirmationId = extractConfirmationId(body);
+        System.out.println("Confirmation id: " + confirmationId);
+
+        UI.getCurrent().navigate(
+                ConfirmationView.class,
+                new QueryParameters(Map.of("id", List.of(confirmationId)))
+        );
+
+        final var main = _get(Main.class);
+        final var markdown = findComponent(main, Markdown.class);
+        assertThat(markdown).isNotNull();
+        assertThat(markdown.getContent()).contains("You are now officially signed up for the event.");
+
+        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 2);
+        final var successMessage = greenMail.getReceivedMessages()[1];
+        assertThat(successMessage.getAllRecipients()[0])
+                .hasToString(EMAIL_OKAY);
+        assertThat(getBody(successMessage)).contains("You are now officially signed up for the event.");
+    }
+
+    private String extractConfirmationId(final @NotNull String body) {
+        Matcher matcher = EXTRACT_ID_PATTERN.matcher(body);
+        assertThat(matcher.find()).isTrue();
+        return matcher.group(1);
+    }
 }
