@@ -18,6 +18,7 @@
 package app.komunumo.ui.website.events;
 
 import app.komunumo.data.dto.EventWithImageDto;
+import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.data.service.ServiceProvider;
@@ -52,6 +53,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailView.class);
 
     private final transient @NotNull EventService eventService;
+    private final transient @NotNull ConfirmationService confirmationService;
     private final transient @NotNull ParticipationService participationService;
 
     private final @NotNull HtmlContainer pageContent = new Div();
@@ -61,6 +63,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
     public EventDetailView(final @NotNull ServiceProvider serviceProvider) {
         super(serviceProvider.configurationService());
         this.eventService = serviceProvider.eventService();
+        this.confirmationService = serviceProvider.confirmationService();
         this.participationService = serviceProvider.participationService();
         addClassName("event-detail-view");
         add(pageContent);
@@ -114,7 +117,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        pageContent.add(new JoinEventForm(participationService, event));
+        pageContent.add(new RegisterForm(confirmationService, participationService, event));
     }
 
     private void addDateTimeText(final @Nullable ZonedDateTime dateTime,

@@ -25,7 +25,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.textfield.EmailField;
-import com.vaadin.flow.component.textfield.TextField;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +35,10 @@ import static com.github.mvysny.kaributesting.v10.BasicUtilsKt._fireDomEvent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
-class JoinEventFormIT extends IntegrationTest {
+class RegisterFormIT extends IntegrationTest {
 
     private static final @NotNull String EMAIL_OKAY = "test@komunumo.app";
-    private static final @NotNull String CODE_OKAY = "123456";
 
     @Autowired
     private EventService eventService;
@@ -54,8 +49,6 @@ class JoinEventFormIT extends IntegrationTest {
     private Details joinEventForm;
     private EmailField emailField;
     private Button emailButton;
-    private TextField codeField;
-    private Button codeButton;
 
     @Test
     void testJoinEventFlowSuccess() {
@@ -66,43 +59,15 @@ class JoinEventFormIT extends IntegrationTest {
         closeJoinForm();
         openJoinForm();
 
-        // checks for step 1: entering email
+        // check entering email
         checkEmailFieldIsEmpty();
         enteringValidEmailEnablesButton();
         enteringInvalidEmailDisablesButton();
         checkErrorMessageWhenSendingEmailFails();
         checkEmailSuccessMessage();
-
-        // checks for step 2: entering code
-        prepareCodeForm(true);
-        checkCodeFieldIsEmpty();
-        enteringIncompleteCodeDisablesButton();
-        enteringBlanksDisablesButton();
-        enteringCompleteCodeEnablesButton();
-        checkErrorWhenUsingWrongCode();
-        checkSuccessWithCorrectCode();
-    }
-
-    @Test
-    void testJoinEventFlowFail() {
-        prepareEmailForm();
-        openJoinForm();
-
-        // checks for step 1: entering email
-        checkEmailSuccessMessage();
-
-        // checks for step 2: entering code
-        prepareCodeForm(false);
-        checkFailWithCorrectCode();
     }
 
     private void prepareEmailForm() {
-        when(participationService.requestVerificationCode(any(), anyString(), any()))
-                .thenAnswer(inv -> {
-                    final var email = inv.getArgument(1, String.class);
-                    return email.equals(EMAIL_OKAY);
-                });
-
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
                 .stream()
                 .filter(eventWithImage -> eventWithImage.image() != null)
@@ -167,74 +132,6 @@ class JoinEventFormIT extends IntegrationTest {
         assertThat(text).isNotNull();
         assertThat(text.getText()).startsWith("We have just sent an email to " + EMAIL_OKAY + ".");
         assertThat(findComponents(joinEventForm, EmailField.class)).isEmpty();
-    }
-
-    private void prepareCodeForm(final boolean returnValue) {
-        when(participationService.verifyCode(anyString(), anyString()))
-                .thenAnswer(inv -> {
-                    final var code = inv.getArgument(1, String.class);
-                    return code.equals(CODE_OKAY);
-                });
-        when(participationService.joinEvent(any(), anyString(), any()))
-                .thenAnswer(inv -> {
-                    final var email = inv.getArgument(1, String.class);
-                    return returnValue && email.equals(EMAIL_OKAY);
-                });
-
-        // find components
-        codeField = findComponents(joinEventForm, TextField.class).getFirst();
-        codeButton = findComponents(joinEventForm, Button.class).getFirst();
-    }
-
-    private void checkCodeFieldIsEmpty() {
-        assertThat(codeField.getValue()).isEmpty();
-        assertThat(codeButton.isEnabled()).isFalse();
-    }
-
-    private void enteringIncompleteCodeDisablesButton() {
-        codeField.setValue("000");
-        assertThat(codeButton.isEnabled()).isFalse();
-    }
-
-    private void enteringBlanksDisablesButton() {
-        codeField.setValue("      ");
-        assertThat(codeButton.isEnabled()).isFalse();
-    }
-
-    private void enteringCompleteCodeEnablesButton() {
-        codeField.setValue("000000");
-        assertThat(codeButton.isEnabled()).isTrue();
-    }
-
-    private void checkErrorWhenUsingWrongCode() {
-        codeField.setValue("000000");
-        assertThat(codeButton.isEnabled()).isTrue();
-        _click(codeButton);
-        assertThat(codeField.getErrorMessage()).startsWith("The verification code is invalid.");
-        assertThat(codeField.getValue()).isEqualTo("000000");
-        assertThat(findComponents(joinEventForm, TextField.class)).containsExactly(codeField);
-    }
-
-    private void checkSuccessWithCorrectCode() {
-        codeField.setValue(CODE_OKAY);
-        assertThat(codeButton.isEnabled()).isTrue();
-        _click(codeButton);
-
-        final var text = findComponents(joinEventForm, Paragraph.class).getFirst();
-        assertThat(text).isNotNull();
-        assertThat(text.getText()).isEqualTo("You have successfully joined the event.");
-        assertThat(findComponents(joinEventForm, TextField.class)).isEmpty();
-    }
-
-    private void checkFailWithCorrectCode() {
-        codeField.setValue(CODE_OKAY);
-        assertThat(codeButton.isEnabled()).isTrue();
-        _click(codeButton);
-
-        final var text = findComponents(joinEventForm, Paragraph.class).getFirst();
-        assertThat(text).isNotNull();
-        assertThat(text.getText()).isEqualTo("Joining this event failed. Please try again later.");
-        assertThat(findComponents(joinEventForm, TextField.class)).isEmpty();
     }
 
 }

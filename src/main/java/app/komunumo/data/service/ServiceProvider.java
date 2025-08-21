@@ -22,10 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
+@SuppressWarnings("java:S6206")
 public final class ServiceProvider {
 
     private final @NotNull AppConfig appConfig;
     private final @NotNull ConfigurationService configurationService;
+    private final @NotNull ConfirmationService confirmationService;
     private final @NotNull SecurityService securityService;
     private final @NotNull CommunityService communityService;
     private final @NotNull EventService eventService;
@@ -38,6 +40,7 @@ public final class ServiceProvider {
     @SuppressWarnings("checkstyle:ParameterNumber")
     public ServiceProvider(final @NotNull AppConfig appConfig,
                            final @NotNull ConfigurationService configurationService,
+                           final @NotNull ConfirmationService confirmationService,
                            final @NotNull SecurityService securityService,
                            final @NotNull CommunityService communityService,
                            final @NotNull GlobalPageService globalPageService,
@@ -49,6 +52,7 @@ public final class ServiceProvider {
         super();
         this.appConfig = appConfig;
         this.configurationService = configurationService;
+        this.confirmationService = confirmationService;
         this.securityService = securityService;
         this.communityService = communityService;
         this.eventService = eventService;
@@ -65,6 +69,10 @@ public final class ServiceProvider {
 
     public @NotNull ConfigurationService configurationService() {
         return configurationService;
+    }
+
+    public @NotNull ConfirmationService confirmationService() {
+        return confirmationService;
     }
 
     public @NotNull SecurityService securityService() {

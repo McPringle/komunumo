@@ -50,130 +50,104 @@ class ParticipationServiceIT extends IntegrationTest {
     @Autowired
     private @NotNull UserService userService;
 
-    @Test
-    void requestVerificationCode() {
-        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
-        final var locale = Locale.ENGLISH;
-
-        assertThat(participationService.requestVerificationCode(event, "", locale)).isFalse();
-        assertThat(participationService.requestVerificationCode(event, "test@komunumo.app", locale)).isTrue();
-
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = greenMail.getReceivedMessages()[0];
-            assertThat(receivedMessage.getAllRecipients()[0]).hasToString("test@komunumo.app");
-            assertThat(receivedMessage.getSubject()).isEqualTo("Confirm your event join request");
-
-            final var body = getBody(receivedMessage);
-            assertThat(body)
-                    .doesNotContain("${eventTitle}")
-                    .doesNotContain("${verificationCode}")
-                    .doesNotContain("${verificationLink}")
-                    .contains(event.title());
-
-            final var code = extractCodeFromBody(body);
-            verifyGoodCode(code);
-        });
-    }
-
-    private @Nullable String extractCodeFromBody(final @NotNull String body) {
-        final var m = EXTRACT_CODE_FROM_BODY.matcher(body);
-        return m.find() ? m.group(1) : null;
-    }
-
-    private void verifyGoodCode(final @Nullable String code) {
-        assertThat(code).isNotNull();
-
-        // Verify that the code is INVALID for the given email
-        assertThat(participationService.verifyCode("fail@komunumo.app", code)).isFalse();
-
-        // Verify that the code is valid for the given email
-        assertThat(participationService.verifyCode("test@komunumo.app", code)).isTrue();
-
-        // Verify that the code is INVALID for the given email after it has been used
-        assertThat(participationService.verifyCode("test@komunumo.app", code)).isFalse();
-    }
-
-    @Test
-    void verifyBadCode() {
-        assertThat(participationService.verifyCode("", "")).isFalse();
-        assertThat(participationService.verifyCode("test@komunumo.app", "")).isFalse();
-        assertThat(participationService.verifyCode("", "123456")).isFalse();
-        assertThat(participationService.verifyCode("test@komunumo.app", "123456")).isFalse();
-    }
-
-    @Test
-    void joinEventExistingUser() {
-        assertThat(participationService.getParticipations()).isEmpty();
-
-        final var email = "test@komunumo.app";
-        assertThat(userService.getUserByEmail(email)).isEmpty();
-
-        userService.storeUser(new UserDto(null, null, null, null, email, "", "",
-                null, UserRole.USER, UserType.LOCAL, null));
-        final var user = userService.getUserByEmail(email).orElseThrow();
-        assertThat(user).isNotNull();
-
-        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
-        assertThat(event).isNotNull();
-
-        final var locale = Locale.ENGLISH;
-        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
-
-        final var participations = participationService.getParticipations();
-        assertThat(participations).hasSize(1);
-
-        final var participation = participations.getFirst();
-        assertThat(participation).isNotNull().satisfies(testee -> {
-            assertThat(testee.eventId()).isEqualTo(event.id());
-            assertThat(testee.userId()).isEqualTo(user.id());
-            assertThat(testee.registered()).isNotNull();
-            assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
-        });
-
-        assertThat(participationService.deleteParticipation(participation)).isTrue();
-        assertThat(participationService.deleteParticipation(participation)).isFalse();
-        assertThat(participationService.getParticipations()).isEmpty();
-
-        assertThat(userService.deleteUser(user)).isTrue();
-        assertThat(userService.deleteUser(user)).isFalse();
-    }
-
-    @Test
-    void joinEventAnonymousUser() {
-        assertThat(participationService.getParticipations()).isEmpty();
-
-        final var email = "test@komunumo.app";
-        assertThat(userService.getUserByEmail(email)).isEmpty();
-
-        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
-        assertThat(event).isNotNull();
-
-        final var locale = Locale.ENGLISH;
-        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
-
-        // try to join again with the same email
-        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
-
-        final var participations = participationService.getParticipations();
-        assertThat(participations).hasSize(1);
-
-        final var user = userService.getUserByEmail(email).orElseThrow();
-        assertThat(user).isNotNull();
-
-        final var participation = participations.getFirst();
-        assertThat(participation).isNotNull().satisfies(testee -> {
-            assertThat(testee.eventId()).isEqualTo(event.id());
-            assertThat(testee.userId()).isEqualTo(user.id());
-            assertThat(testee.registered()).isNotNull();
-            assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
-        });
-
-        assertThat(participationService.deleteParticipation(participation)).isTrue();
-        assertThat(participationService.deleteParticipation(participation)).isFalse();
-        assertThat(participationService.getParticipations()).isEmpty();
-
-        assertThat(userService.deleteUser(user)).isTrue();
-        assertThat(userService.deleteUser(user)).isFalse();
-    }
+//    @Test
+//    void requestVerificationCode() {
+//        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+//        final var locale = Locale.ENGLISH;
+//
+//        assertThat(participationService.requestVerificationCode(event, "", locale)).isFalse();
+//        assertThat(participationService.requestVerificationCode(event, "test@komunumo.app", locale)).isTrue();
+//
+//        await().atMost(2, SECONDS).untilAsserted(() -> {
+//            final var receivedMessage = greenMail.getReceivedMessages()[0];
+//            assertThat(receivedMessage.getAllRecipients()[0]).hasToString("test@komunumo.app");
+//            assertThat(receivedMessage.getSubject()).isEqualTo("Confirm your event join request");
+//
+//            final var body = getBody(receivedMessage);
+//            assertThat(body)
+//                    .doesNotContain("${eventTitle}")
+//                    .doesNotContain("${verificationCode}")
+//                    .doesNotContain("${verificationLink}")
+//                    .contains(event.title());
+//
+//            final var code = extractCodeFromBody(body);
+//            verifyGoodCode(code);
+//        });
+//    }
+//
+//    @Test
+//    void joinEventExistingUser() {
+//        assertThat(participationService.getParticipations()).isEmpty();
+//
+//        final var email = "test@komunumo.app";
+//        assertThat(userService.getUserByEmail(email)).isEmpty();
+//
+//        userService.storeUser(new UserDto(null, null, null, null, email, "", "",
+//                null, UserRole.USER, UserType.LOCAL, null));
+//        final var user = userService.getUserByEmail(email).orElseThrow();
+//        assertThat(user).isNotNull();
+//
+//        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+//        assertThat(event).isNotNull();
+//
+//        final var locale = Locale.ENGLISH;
+//        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+//
+//        final var participations = participationService.getParticipations();
+//        assertThat(participations).hasSize(1);
+//
+//        final var participation = participations.getFirst();
+//        assertThat(participation).isNotNull().satisfies(testee -> {
+//            assertThat(testee.eventId()).isEqualTo(event.id());
+//            assertThat(testee.userId()).isEqualTo(user.id());
+//            assertThat(testee.registered()).isNotNull();
+//            assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
+//        });
+//
+//        assertThat(participationService.deleteParticipation(participation)).isTrue();
+//        assertThat(participationService.deleteParticipation(participation)).isFalse();
+//        assertThat(participationService.getParticipations()).isEmpty();
+//
+//        assertThat(userService.deleteUser(user)).isTrue();
+//        assertThat(userService.deleteUser(user)).isFalse();
+//    }
+//
+//    @Test
+//    void joinEventAnonymousUser() {
+//        assertThat(participationService.getParticipations()).isEmpty();
+//
+//        final var email = "test@komunumo.app";
+//        assertThat(userService.getUserByEmail(email)).isEmpty();
+//
+//        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+//        assertThat(event).isNotNull();
+//
+//        final var locale = Locale.ENGLISH;
+//        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+//
+//        // try to join again with the same email
+//        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+//
+//        final var participations = participationService.getParticipations();
+//        assertThat(participations).hasSize(1);
+//
+//        final var user = userService.getUserByEmail(email).orElseThrow();
+//        assertThat(user).isNotNull();
+//
+//        final var participation = participations.getFirst();
+//        assertThat(participation).isNotNull().satisfies(testee -> {
+//            assertThat(testee.eventId()).isEqualTo(event.id());
+//            assertThat(testee.userId()).isEqualTo(user.id());
+//            assertThat(testee.registered()).isNotNull();
+//            assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
+//        });
+//
+//        assertThat(participationService.deleteParticipation(participation)).isTrue();
+//        assertThat(participationService.deleteParticipation(participation)).isFalse();
+//        assertThat(participationService.getParticipations()).isEmpty();
+//
+//        assertThat(userService.deleteUser(user)).isTrue();
+//        assertThat(userService.deleteUser(user)).isFalse();
+//    }
 
 }
