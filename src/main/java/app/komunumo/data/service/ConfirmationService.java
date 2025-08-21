@@ -63,7 +63,7 @@ public final class ConfirmationService {
                                          final @NotNull String onSuccessMessage,
                                          final @NotNull Runnable onSuccessHandler,
                                          final @NotNull Locale locale) {
-        final var confirmationId = generateConfirmationId();
+        final var confirmationId = UUID.randomUUID();
         final var confirmationData = new ConfirmationData(confirmationId, emailAddress,
                 onSuccessMessage, onSuccessHandler, locale);
         confirmationCache.put(confirmationId, confirmationData);
@@ -75,14 +75,6 @@ public final class ConfirmationService {
                 "confirmationLink", confirmationLink,
                 "confirmationReason", confirmationReason);
         mailService.sendMail(MailTemplateId.CONFIRMATION_PROCESS, locale, MailFormat.MARKDOWN, variables, emailAddress);
-    }
-
-    private @NotNull UUID generateConfirmationId() {
-        UUID confirmationId;
-        do {
-            confirmationId = UUID.randomUUID();
-        } while (confirmationCache.asMap().containsKey(confirmationId));
-        return confirmationId;
     }
 
     private String generateConfirmationLink(final @NotNull ConfirmationData confirmationData) {
