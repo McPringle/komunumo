@@ -30,14 +30,10 @@ import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 import java.util.Map;
 
-@Component
 public final class AdminBootstrapper {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(AdminBootstrapper.class);
@@ -55,7 +51,6 @@ public final class AdminBootstrapper {
         this.mailService = serviceProvider.mailService();
     }
 
-    @EventListener(ApplicationReadyEvent.class)
     public void createInitialAdminIfMissing() {
         if (userService.getAdminCount() > 0) {
             LOGGER.info("There are already instance admins. Skipping admin creation.");

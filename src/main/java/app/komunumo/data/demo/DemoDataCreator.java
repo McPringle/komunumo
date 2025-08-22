@@ -30,7 +30,6 @@ import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.util.ImageUtil;
-import jakarta.annotation.PostConstruct;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -67,7 +66,6 @@ public final class DemoDataCreator {
         this.demoDataUrl = demoConfig.json();
     }
 
-    @PostConstruct
     @Scheduled(cron = "0 0 * * * *")
     public void resetDemoData() {
         if (!enabled) {
@@ -90,7 +88,6 @@ public final class DemoDataCreator {
         imageService.getImages().forEach(imageService::deleteImage);
         globalPageService.getAllGlobalPages().forEach(globalPageService::deleteGlobalPage);
         LOGGER.info("Existing data deleted.");
-
 
         LOGGER.info("Creating demo data...");
         if (demoDataUrl.isBlank()) {
