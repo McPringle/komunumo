@@ -17,31 +17,29 @@
  */
 package app.komunumo.data.dto;
 
-public enum UserType {
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-    /**
-     * Regular local account, login possible.
-     */
-    LOCAL(true),
+import static org.assertj.core.api.Assertions.assertThat;
 
-    /**
-     * Federated/remote actor, usually no email, no login possible.
-     */
-    REMOTE(false),
+class UserTypeTest {
 
-    /**
-     * Email-only shadow account, no login possible.
-     */
-    ANONYMOUS(false);
-
-    private final boolean loginAllowed;
-
-    UserType(final boolean loginAllowed) {
-        this.loginAllowed = loginAllowed;
+    @ParameterizedTest(name = "{index} ⇒ {0}.isLoginAllowed() == {1}")
+    @CsvSource({
+            "LOCAL, true",
+            "REMOTE, false",
+            "ANONYMOUS, false"
+    })
+    void shouldReturnExpectedLoginAllowedFlag(final @NotNull UserType userType, final boolean expected) {
+        final var actual = userType.isLoginAllowed();
+        assertThat(actual).isEqualTo(expected);
     }
 
-    public boolean isLoginAllowed() {
-        return loginAllowed;
+    @Test
+    void shouldHaveExactlyThreeUserTypes() {
+        assertThat(UserType.values()).hasSize(3);
     }
 
 }
