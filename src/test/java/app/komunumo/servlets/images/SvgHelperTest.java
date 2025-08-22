@@ -131,7 +131,7 @@ class SvgHelperTest {
     void testParseSvgDimensionWithMissingUnits() throws Exception {
         // Test for dimensions without units, i.e., in the viewBox
         final var svgContent = "<svg width=\"500\" height=\"500\" viewBox=\"0 0 500 500\"></svg>";
-        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()), true);
         final var element = doc.getDocumentElement();
 
         // Assuming width/height from viewBox is 500px
@@ -146,7 +146,7 @@ class SvgHelperTest {
     void testInvalidDimensionUnit() throws Exception{
         // Test for invalid dimension unit in the SVG
         final var invalidSvgContent = "<svg width=\"500xyz\" height=\"400px\"></svg>";
-        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(invalidSvgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(invalidSvgContent.getBytes()), true);
         final var element = doc.getDocumentElement();
 
         assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
@@ -165,7 +165,7 @@ class SvgHelperTest {
         "<svg viewBox=\"0 0 500 500\"></svg>, 500"
     })
     void testSvgDimensionDerivationOnWidth(final @NotNull String svgContent, int widthPxApprox) throws Exception {
-        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()), true);
         final var width = applier.deriveSvgDimension(doc.getDocumentElement(), "width");
         assertThat((int)width).isEqualTo(widthPxApprox);
     }
@@ -179,7 +179,7 @@ class SvgHelperTest {
                                                       final @NotNull String dim,
                                                       final int widthPxApprox)
             throws Exception{
-        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()), true);
         final var width = applier.deriveSvgDimension(doc.getDocumentElement(), dim);
         assertThat((int)width).isEqualTo(widthPxApprox);
     }
@@ -190,7 +190,7 @@ class SvgHelperTest {
         "<svg width=\"50%\" viewBox=\"0 500 500\"></svg>"
     })
     void testSvgDimensionDerivationWithInvalidViewBox(final @NotNull String svgContent) throws Exception{
-        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()), true);
         final var element = doc.getDocumentElement();
 
         assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
@@ -210,7 +210,7 @@ class SvgHelperTest {
     @Test
     void testUnsupportedConversionUnit() throws Exception {
         final var svgContent = "<svg width=\"10xy\"></svg>";
-        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()), true);
         final var element = doc.getDocumentElement();
 
         assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
@@ -220,11 +220,36 @@ class SvgHelperTest {
     @Test
     void testInvalidDimension() throws Exception {
         final var svgContent = "<svg width=\"x\"></svg>";
-        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()));
+        final var doc = SvgHelper.parseSvg(new ByteArrayInputStream(svgContent.getBytes()), true);
         final var element = doc.getDocumentElement();
 
         assertThatThrownBy(() -> applier.deriveSvgDimension(element, "width"))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void noOpEntityResolver_returnsEmptyInputSource() throws Exception {
+        final var resolver = SvgHelper.noOpEntityResolver();
+
+        final var src = resolver.resolveEntity(
+                "-//W3C//DTD SVG 1.1//EN",
+                "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd");
+
+        assertThat(src).isNotNull();
+        assertThat(src.getCharacterStream()).isNotNull();
+        // reading forces the use of the StringReader
+        assertThat(src.getCharacterStream().read()).isEqualTo(-1);
+    }
+
+    @Test
+    void parseSvg_acceptsDoctype_withoutFetchingExternalDtd() throws Exception {
+        final var svg = """
+            <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+                                 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+            <svg xmlns="http://www.w3.org/2000/svg"></svg>
+            """;
+        final var doc = SvgHelper.parseSvg(svg, true);
+        assertThat(doc.getDocumentElement().getNodeName()).isEqualTo("svg");
     }
 
 }

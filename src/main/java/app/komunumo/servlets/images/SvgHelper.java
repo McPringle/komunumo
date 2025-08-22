@@ -20,12 +20,17 @@ package app.komunumo.servlets.images;
 import app.komunumo.KomunumoException;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -50,7 +55,7 @@ final class SvgHelper {
     SvgHelper(final @NotNull String instanceLogo) {
         try {
             final var inputStream = new ByteArrayInputStream(instanceLogo.getBytes(StandardCharsets.UTF_8));
-            final var svgDocument = parseSvg(inputStream);
+            final var svgDocument = parseSvg(inputStream, true);
             final var svgElement = svgDocument.getDocumentElement();
 
             userSvgString = stripSvgShellElement(svgDocument);
@@ -74,10 +79,7 @@ final class SvgHelper {
      */
     String parseTemplate(final @NotNull String wrapperSvg) {
         try {
-            final var factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(false);
-            final var builder = factory.newDocumentBuilder();
-            final var document = builder.parse(new InputSource(new StringReader(wrapperSvg)));
+            final var document = parseSvg(wrapperSvg, false);
 
             final var xPath = XPathFactory.newInstance().newXPath();
             final var xpathExpr = String.format("//%s[@id='%s']", "g", "Logo");
@@ -93,7 +95,7 @@ final class SvgHelper {
             gLogo.appendChild(document.createTextNode(SPLIT_MARKE_STRING));
 
             final var writer = new StringWriter();
-            final var transformer = TransformerFactory.newInstance().newTransformer();
+            final var transformer = newHardenedTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -118,7 +120,7 @@ final class SvgHelper {
         final var svgContent = new StringBuilder();
         final var rootElement = doc.getDocumentElement();
 
-        final var transformer = TransformerFactory.newInstance().newTransformer();
+        final Transformer transformer = newHardenedTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
@@ -133,12 +135,100 @@ final class SvgHelper {
         return svgContent.toString();
     }
 
-    // Parse the SVG into a Document object
-    static Document parseSvg(final @NotNull InputStream inputStream) throws Exception {
+    /**
+     *  Builds a hardened Transformer that avoids any external access (DTD/XSL).
+     */
+    private static Transformer newHardenedTransformer() throws TransformerConfigurationException {
+        return newHardenedTransformer(TransformerFactory.newInstance());
+    }
+
+    /**
+     *  Testable seam: harden a provided TransformerFactory instance.
+     */
+    @VisibleForTesting
+    static Transformer newHardenedTransformer(final TransformerFactory tf) throws TransformerConfigurationException {
+        // Enable secure processing (limits expansion, time, memory; implementation-dependent)
+        tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+
+        // Forbid external DTDs and stylesheets (prevents network/file access)
+        try {
+            tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException ignored) {
+            // Some TransformerFactory implementations may not support these attributes.
+        }
+
+        final Transformer transformer = tf.newTransformer();
+
+        // Never resolve URIs in XSLT (extra safety even though we use no stylesheets)
+        transformer.setURIResolver((href, base) -> null);
+
+        return transformer;
+    }
+
+    /**
+     * <p>Parses an SVG from the given {@link InputStream} into a DOM {@link Document}.</p>
+     *
+     * <p>This method is configured to accept DOCTYPE declarations in the SVG,
+     * but prevents the parser from loading any external DTDs or schemas.
+     * Network requests (e.g., to w3.org) are disabled by:</p>
+     *
+     * <ul>
+     *   <li>Disallowing access to external DTDs and schemas via JAXP properties</li>
+     *   <li>Disabling the loading of external DTDs</li>
+     *   <li>Providing a no-op {@link org.xml.sax.EntityResolver} to resolve entities locally</li>
+     * </ul>
+     *
+     * <p>This ensures the SVG can be parsed without validation and without
+     * triggering HTTP requests, while still producing a usable DOM tree.</p>
+     *
+     * @param inputStream the input stream containing the SVG content; must not be {@code null}
+     * @return the parsed SVG as a DOM {@link Document}; will never be {@code null}
+     * @throws Exception if parsing fails for any reason
+     */
+    @SuppressWarnings("HttpUrlsUsage")
+    @VisibleForTesting
+    static @NotNull Document parseSvg(final @NotNull InputStream inputStream,
+                                      final boolean namespaceAwareness) throws Exception {
         final var factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
+        factory.setNamespaceAware(namespaceAwareness);
+        factory.setValidating(false); // no validation needed
+
+        // Prevent any external access for DTDs and XML Schemas
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
+        // Do not load external DTDs (avoids network calls to w3.org)
+        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+        // Allow DOCTYPE declarations (explicitly set to be clear)
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", false);
+
         final var builder = factory.newDocumentBuilder();
+
+        // No-op EntityResolver: if a DOCTYPE systemId is present, nothing will be loaded
+        builder.setEntityResolver(noOpEntityResolver());
+
         return builder.parse(inputStream);
+    }
+
+    /**
+     *  Returns a no-op EntityResolver that never fetches external resources.
+     */
+    @VisibleForTesting
+    static @NotNull EntityResolver noOpEntityResolver() {
+        return (publicId, systemId) -> new InputSource(new StringReader(""));
+    }
+
+    /**
+     * Parses an SVG from the given String into a DOM {@link Document}.
+     * Delegates to {@link #parseSvg(InputStream,boolean)} to avoid code duplication.
+     */
+    static @NotNull Document parseSvg(final @NotNull String svg,
+                                      final boolean namespaceAwareness) throws Exception {
+        try (var in = new ByteArrayInputStream(svg.getBytes(StandardCharsets.UTF_8))) {
+            return parseSvg(in, namespaceAwareness);
+        }
     }
 
     // Parse the SVG dimension and convert it to pixels (handling various units)
