@@ -141,8 +141,8 @@ CREATE TABLE global_page (
 -- [jooq ignore start]
 
 INSERT INTO mail_template (id, language, subject, markdown)
-VALUES ('CONFIRMATION_PROCESS', 'DE', '[${instanceName}] Bitte bestätige deine E-Mail-Adresse', 'Hallo,\n\num fortzufahren, bestätige bitte deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n\n${confirmationLink}\n\nDieser Link ist 15 Minuten gültig.\n\n${confirmationReason}\n\nDanke!\n${instanceName}'),
-       ('CONFIRMATION_PROCESS', 'EN', '[${instanceName}] Please confirm your email address', 'Hello,\n\nto continue, please confirm your email address by clicking the link below:\n\n${confirmationLink}\n\nThis link is valid for 15 minutes.\n\n${confirmationReason}\n\nThank you!\n${instanceName}'),
+VALUES ('CONFIRMATION_PROCESS', 'DE', 'Bitte bestätige deine E-Mail-Adresse', 'Hallo,\n\num fortzufahren, bestätige bitte deine E-Mail-Adresse, indem du auf den folgenden Link klickst:\n\n${confirmationLink}\n\nDieser Link ist 15 Minuten gültig.\n\n${confirmationReason}\n\nDanke!\n${instanceName}'),
+       ('CONFIRMATION_PROCESS', 'EN', 'Please confirm your email address', 'Hello,\n\nto continue, please confirm your email address by clicking the link below:\n\n${confirmationLink}\n\nThis link is valid for 15 minutes.\n\n${confirmationReason}\n\nThank you!\n${instanceName}'),
        ('EVENT_REGISTRATION_SUCCESS', 'DE', 'Deine Anmeldung ist bestätigt', 'Hallo,\n\ndeine Anmeldung für das Event "${eventTitle}" wurde erfolgreich bestätigt.\n\nDu bist nun offiziell für das Event angemeldet.\nWir freuen uns, dich dort zu sehen!\n\nVielen Dank und bis bald!'),
        ('EVENT_REGISTRATION_SUCCESS', 'EN', 'Your registration is confirmed', 'Hello,\n\nyour registration for the event "${eventTitle}" has been successfully confirmed.\n\nYou are now officially signed up for the event.\nWe look forward to seeing you there!\n\nThank you very much and see you soon!'),
        ('NEW_PASSWORD','DE','Dein Profil bei Komunumo', 'Dein neues Passwort, um dich bei Komunumo anzumelden:\n${password}'),

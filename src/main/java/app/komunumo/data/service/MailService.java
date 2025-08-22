@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static app.komunumo.data.db.tables.MailTemplate.MAIL_TEMPLATE;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.data.dto.MailFormat.HTML;
 import static app.komunumo.data.dto.MailFormat.MARKDOWN;
 import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;
@@ -47,13 +48,16 @@ public final class MailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailService.class);
 
+    private final @NotNull String instanceName;
     private final @NotNull AppConfig appConfig;
     private final @NotNull JavaMailSender mailSender;
     private final @NotNull DSLContext dsl;
 
     public MailService(final @NotNull AppConfig appConfig,
+                       final @NotNull ConfigurationService configurationService,
                        final @NotNull JavaMailSender mailSender,
                        final @NotNull DSLContext dsl) {
+        this.instanceName = configurationService.getConfiguration(INSTANCE_NAME);
         this.appConfig = appConfig;
         this.mailSender = mailSender;
         this.dsl = dsl;
@@ -65,7 +69,7 @@ public final class MailService {
                             final @Nullable Map<String, String> variables,
                             final @NotNull String... emailAddresses) {
         final var mailTemplate = getMailTemplate(mailTemplateId, locale).orElseThrow();
-        final var subject = replaceVariables(mailTemplate.subject(), variables);
+        final var subject = "[%s] %s".formatted(instanceName, replaceVariables(mailTemplate.subject(), variables));
         final var markdown = replaceVariables(mailTemplate.markdown(), variables);
 
         try {

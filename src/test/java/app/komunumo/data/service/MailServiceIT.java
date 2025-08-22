@@ -84,7 +84,7 @@ class MailServiceIT extends IntegrationTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("Your profile at Komunumo");
+                    .isEqualTo("[Your Instance Name] Your profile at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
                     .isEqualTo("Your new password to log in to Komunumo:\r\n${password}");
             assertThat(receivedMessage.getAllRecipients())
@@ -109,7 +109,7 @@ class MailServiceIT extends IntegrationTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("Your profile at Komunumo");
+                    .isEqualTo("[Your Instance Name] Your profile at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
                     .isEqualTo("Your new password to log in to Komunumo:\r\n${password}");
             assertThat(receivedMessage.getAllRecipients())
@@ -134,7 +134,7 @@ class MailServiceIT extends IntegrationTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("Your profile at Komunumo");
+                    .isEqualTo("[Your Instance Name] Your profile at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
                     .isEqualTo("Your new password to log in to Komunumo:\r\nsEcReT");
             assertThat(receivedMessage.getAllRecipients())
@@ -159,7 +159,7 @@ class MailServiceIT extends IntegrationTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("Your profile at Komunumo");
+                    .isEqualTo("[Your Instance Name] Your profile at Komunumo");
             assertThat(GreenMailUtil.getBody(receivedMessage))
                     .isEqualTo("<p>Your new password to log in to Komunumo:<br />\r\nsEcReT</p>");
             assertThat(receivedMessage.getAllRecipients())
@@ -177,7 +177,7 @@ class MailServiceIT extends IntegrationTest {
                     null, "@@@");
             assertThat(result).isFalse();
             assertThat(logCaptor.getErrorLogs()).containsExactly(
-                    "Unable to send mail with subject 'Your profile at Komunumo' to [@@@]: Missing local name");
+                    "Unable to send mail with subject '[Your Instance Name] Your profile at Komunumo' to [@@@]: Missing local name");
         }
     }
 
