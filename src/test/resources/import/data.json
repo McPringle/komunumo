@@ -1,6 +1,10 @@
 {
   "settings": [
     {
+      "setting": "instance.url",
+      "value": "http://localhost:8080"
+    },
+    {
       "setting": "instance.name",
       "language": "en",
       "value": "Komunumo Test"

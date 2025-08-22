@@ -76,7 +76,8 @@ public final class DemoDataImporter {
             demoData.getJSONArray("settings").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var setting = ConfigurationSetting.fromString(jsonObject.getString("setting"));
-                final var locale = Locale.forLanguageTag(jsonObject.getString("language"));
+                final var language = jsonObject.optString("language", null);
+                final var locale = language == null ? null : Locale.forLanguageTag(language);
                 final var value = jsonObject.getString("value");
 
                 configurationService.setConfiguration(setting, locale, value);
