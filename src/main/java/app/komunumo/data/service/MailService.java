@@ -48,8 +48,8 @@ public final class MailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailService.class);
 
-    private final @NotNull String instanceName;
     private final @NotNull AppConfig appConfig;
+    private final @NotNull ConfigurationService configurationService;
     private final @NotNull JavaMailSender mailSender;
     private final @NotNull DSLContext dsl;
 
@@ -57,8 +57,8 @@ public final class MailService {
                        final @NotNull ConfigurationService configurationService,
                        final @NotNull JavaMailSender mailSender,
                        final @NotNull DSLContext dsl) {
-        this.instanceName = configurationService.getConfiguration(INSTANCE_NAME);
         this.appConfig = appConfig;
+        this.configurationService = configurationService;
         this.mailSender = mailSender;
         this.dsl = dsl;
     }
@@ -68,6 +68,7 @@ public final class MailService {
                             final @NotNull MailFormat format,
                             final @Nullable Map<String, String> variables,
                             final @NotNull String... emailAddresses) {
+        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
         final var mailTemplate = getMailTemplate(mailTemplateId, locale).orElseThrow();
         final var subject = "[%s] %s".formatted(instanceName, replaceVariables(mailTemplate.subject(), variables));
         final var markdown = replaceVariables(mailTemplate.markdown(), variables);
