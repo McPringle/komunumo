@@ -19,7 +19,6 @@ package app.komunumo.ui.website.events;
 
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.component.AbstractView;
-import app.komunumo.ui.component.EventGrid;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;

@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.component;
+package app.komunumo.ui.website.events;
 
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventWithImageDto;
+import app.komunumo.ui.component.KomunumoCard;
 import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.LinkUtil;
 import com.vaadin.flow.component.UI;
