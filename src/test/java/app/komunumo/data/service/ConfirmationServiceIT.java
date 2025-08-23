@@ -77,6 +77,8 @@ class ConfirmationServiceIT extends IntegrationTest {
             final var body = getBody(receivedMessage);
             assertThat(body)
                     .doesNotContain("${instanceName}")
+
+                    .doesNotContain("${confirmationTimeout}")
                     .doesNotContain("${confirmationReason}")
                     .doesNotContain("${confirmationLink}")
                     .contains("Test Reason");
@@ -110,4 +112,30 @@ class ConfirmationServiceIT extends IntegrationTest {
         assertThat(matcher.find()).isTrue();
         return matcher.group(1);
     }
+
+    @Test
+    void confirmationTimeout_is5Minutes() {
+        final var timeout = confirmationService.getConfirmationTimeout();
+        assertThat(timeout).isNotNull();
+        assertThat(timeout.toMinutes()).isEqualTo(5);
+    }
+
+    @Test
+    void confirmationTimeoutText_inEnglish() {
+        final var timeout = confirmationService.getConfirmationTimeoutText(Locale.ENGLISH);
+        assertThat(timeout).isNotNull().isEqualTo("5 minutes");
+    }
+
+    @Test
+    void confirmationTimeoutText_inGerman() {
+        final var timeout = confirmationService.getConfirmationTimeoutText(Locale.GERMAN);
+        assertThat(timeout).isNotNull().isEqualTo("5 Minuten");
+    }
+
+    @Test
+    void confirmationTimeoutText_inFallbackLanguage() {
+        final var timeout = confirmationService.getConfirmationTimeoutText(null);
+        assertThat(timeout).isNotNull().isEqualTo("5 minutes");
+    }
+
 }

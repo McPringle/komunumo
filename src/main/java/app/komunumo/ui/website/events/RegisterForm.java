@@ -54,7 +54,8 @@ public final class RegisterForm extends Details {
     private void showEnterEmailForm() {
         removeAll();
 
-        final var infoText = new Paragraph(getTranslation("event.register.email.info"));
+        final var confirmationTimeout = confirmationService.getConfirmationTimeoutText(getLocale());
+        final var infoText = new Paragraph(getTranslation("event.register.email.info", confirmationTimeout));
         add(infoText);
 
         final var emailField = new EmailField();
@@ -93,7 +94,7 @@ public final class RegisterForm extends Details {
                     locale);
 
             removeAll();
-            add(new Paragraph(getTranslation("event.register.email.send", emailAddress)));
+            add(new Paragraph(getTranslation("event.register.email.send", emailAddress, confirmationTimeout)));
         });
 
         addOpenedChangeListener(evt -> {

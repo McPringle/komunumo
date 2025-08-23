@@ -65,7 +65,8 @@ public final class ConfirmationView extends AbstractView implements BeforeEnterO
         final var success = confirmationService.confirm(confirmationId);
         if (success.isEmpty()) {
             LOGGER.warn("Confirmation with ID '{}' not found!", confirmationId);
-            final var errorMessage = new Markdown(getTranslation("confirmation.view.error"));
+            final var confirmationTimeout = confirmationService.getConfirmationTimeoutText(getLocale());
+            final var errorMessage = new Markdown(getTranslation("confirmation.view.error", confirmationTimeout));
             errorMessage.addClassName("error");
             add(errorMessage);
         } else {
