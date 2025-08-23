@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.component;
+package app.komunumo.ui.components;
 
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.website.community.CommunityGridView;

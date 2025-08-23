@@ -18,7 +18,7 @@
 package app.komunumo.ui.website.error;
 
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.ui.component.AbstractView;
+import app.komunumo.ui.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.server.auth.AnonymousAllowed;

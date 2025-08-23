@@ -17,8 +17,8 @@
  */
 package app.komunumo.ui.website;
 
-import app.komunumo.ui.component.InfoBanner;
-import app.komunumo.ui.component.PageFooter;
+import app.komunumo.ui.components.InfoBanner;
+import app.komunumo.ui.components.PageFooter;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
@@ -35,8 +35,8 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import app.komunumo.ui.IntegrationTest;
-import app.komunumo.ui.component.NavigationBar;
-import app.komunumo.ui.component.PageHeader;
+import app.komunumo.ui.components.NavigationBar;
+import app.komunumo.ui.components.PageHeader;
 import app.komunumo.ui.website.home.HomeView;
 
 import java.util.Optional;

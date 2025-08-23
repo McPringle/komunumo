@@ -18,10 +18,10 @@
 package app.komunumo.ui.website;
 
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.component.InfoBanner;
-import app.komunumo.ui.component.NavigationBar;
-import app.komunumo.ui.component.PageFooter;
-import app.komunumo.ui.component.PageHeader;
+import app.komunumo.ui.components.InfoBanner;
+import app.komunumo.ui.components.NavigationBar;
+import app.komunumo.ui.components.PageFooter;
+import app.komunumo.ui.components.PageHeader;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;

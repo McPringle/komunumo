@@ -19,7 +19,7 @@ package app.komunumo.ui.website.events;
 
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventWithImageDto;
-import app.komunumo.ui.component.KomunumoCard;
+import app.komunumo.ui.components.KomunumoCard;
 import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.LinkUtil;
 import com.vaadin.flow.component.UI;

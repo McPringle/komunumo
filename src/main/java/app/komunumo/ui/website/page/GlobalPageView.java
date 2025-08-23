@@ -19,7 +19,7 @@ package app.komunumo.ui.website.page;
 
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.component.AbstractView;
+import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.html.Div;

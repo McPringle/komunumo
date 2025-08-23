@@ -18,7 +18,7 @@
 package app.komunumo.ui.website;
 
 import app.komunumo.ui.IntegrationTest;
-import app.komunumo.ui.component.InfoBanner;
+import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.website.home.HomeView;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;

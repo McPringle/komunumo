@@ -20,7 +20,7 @@ package app.komunumo.ui.website.community;
 import app.komunumo.data.dto.CommunityWithImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.component.AbstractView;
+import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
 import app.komunumo.util.ImageUtil;
 import com.vaadin.flow.component.HtmlContainer;

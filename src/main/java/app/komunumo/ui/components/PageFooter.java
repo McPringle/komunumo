@@ -15,17 +15,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.component;
+package app.komunumo.ui.components;
 
-import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.AnchorTarget;
+import com.vaadin.flow.component.html.Footer;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class KomunumoGrid extends Div {
+import java.time.Year;
 
-    protected KomunumoGrid(final @NotNull KomunumoCard... cards) {
+public final class PageFooter extends Footer {
+
+    public PageFooter(final @NotNull UI ui,
+                      final @NotNull String version) {
         super();
-        addClassName("komunumo-grid");
-        add(cards);
+        addClassName("page-footer");
+
+        final var komunumoFooter = ui.getTranslation("komunumo.footer", version, Year.now());
+        add(new Anchor("https://komunumo.app/", komunumoFooter, AnchorTarget.BLANK));
     }
 
 }

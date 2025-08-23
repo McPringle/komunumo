@@ -20,7 +20,7 @@ package app.komunumo.ui.website.login;
 
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.security.AuthenticatedUser;
-import app.komunumo.ui.component.AbstractView;
+import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;

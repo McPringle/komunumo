@@ -18,7 +18,7 @@
 package app.komunumo.ui.website.community;
 
 import app.komunumo.ui.IntegrationTest;
-import app.komunumo.ui.component.NavigationBar;
+import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;

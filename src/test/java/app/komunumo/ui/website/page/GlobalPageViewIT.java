@@ -18,7 +18,7 @@
 package app.komunumo.ui.website.page;
 
 import app.komunumo.ui.IntegrationTest;
-import app.komunumo.ui.component.AbstractView;
+import app.komunumo.ui.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;

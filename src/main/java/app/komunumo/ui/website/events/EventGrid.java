@@ -18,7 +18,7 @@
 package app.komunumo.ui.website.events;
 
 import app.komunumo.data.dto.EventWithImageDto;
-import app.komunumo.ui.component.KomunumoGrid;
+import app.komunumo.ui.components.KomunumoGrid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

@@ -19,7 +19,7 @@ package app.komunumo.ui.website.confirmation;
 
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.ConfirmationService;
-import app.komunumo.ui.component.AbstractView;
+import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.website.WebsiteLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.markdown.Markdown;
