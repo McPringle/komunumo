@@ -24,8 +24,6 @@
 
 @import "components/community-card.css";
 @import "components/community-grid.css";
-@import "components/event-card.css";
-@import "components/event-grid.css";
 @import "components/info-banner.css";
 
 @import "views/confirmation-view.css";
