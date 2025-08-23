@@ -17,7 +17,7 @@
  */
 package app.komunumo.security;
 
-import app.komunumo.ui.website.login.LoginView;
+import app.komunumo.ui.views.login.LoginView;
 import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;

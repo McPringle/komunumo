@@ -18,10 +18,10 @@
 package app.komunumo.ui.components;
 
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.website.community.CommunityGridView;
-import app.komunumo.ui.website.events.EventGridView;
-import app.komunumo.ui.website.login.LoginView;
-import app.komunumo.ui.website.login.LogoutView;
+import app.komunumo.ui.views.community.CommunityGridView;
+import app.komunumo.ui.views.events.EventGridView;
+import app.komunumo.ui.views.login.LoginView;
+import app.komunumo.ui.views.login.LogoutView;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
