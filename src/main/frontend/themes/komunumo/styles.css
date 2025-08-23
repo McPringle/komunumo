@@ -16,14 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "components/page-header.css";
-@import "components/page-footer.css";
-@import "components/navigation-bar.css";
+@import "components/info-banner.css";
 @import "components/komunumo-card.css";
 @import "components/komunumo-grid.css";
-
-@import "components/community-card.css";
-@import "components/community-grid.css";
-@import "components/info-banner.css";
+@import "components/navigation-bar.css";
+@import "components/page-footer.css";
+@import "components/page-header.css";
 
 @import "views/confirmation-view.css";
