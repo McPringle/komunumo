@@ -102,9 +102,8 @@ public final class ConfirmationService {
     }
 
     public @NotNull String getConfirmationTimeoutText(final @Nullable Locale locale) {
-        long minutes = CONFIRMATION_TIMEOUT.toMinutes();
-        String unit = translationProvider.getTranslation("confirmation.timeout.minutes", locale);
-        return "%d %s".formatted(minutes, unit);
+        final long minutes = CONFIRMATION_TIMEOUT.toMinutes();
+        return translationProvider.getTranslation("confirmation.timeout.minutes", locale, minutes);
     }
 
     public @NotNull Optional<String> confirm(final @NotNull String confirmationId) {
