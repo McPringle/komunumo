@@ -118,9 +118,9 @@ public final class DemoDataImporter {
             demoData.getJSONArray("communities").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var communityId = UUID.fromString(jsonObject.getString("communityId"));
-                final var profile = jsonObject.getString("profile");
-                final var name = jsonObject.getString("name");
-                final var description = jsonObject.getString("description");
+                final var profile = jsonObject.getString("profile").trim();
+                final var name = jsonObject.getString("name").trim();
+                final var description = jsonObject.getString("description").trim();
                 final var imageId = jsonObject.getString("imageId");
                 final var imageUUID = imageId.isBlank() ? null : UUID.fromString(imageId);
 
@@ -139,9 +139,9 @@ public final class DemoDataImporter {
                 final var jsonObject = (JSONObject) object;
                 final var eventId = UUID.fromString(jsonObject.getString("eventId"));
                 final var communityId = UUID.fromString(jsonObject.getString("communityId"));
-                final var title = jsonObject.getString("title");
-                final var description = jsonObject.getString("description");
-                final var location = jsonObject.getString("location");
+                final var title = jsonObject.getString("title").trim();
+                final var description = jsonObject.getString("description").trim();
+                final var location = jsonObject.getString("location").trim();
                 final var begin = ZonedDateTime.parse(jsonObject.getString("begin"));
                 final var end = ZonedDateTime.parse(jsonObject.getString("end"));
                 final var imageId = jsonObject.getString("imageId");
@@ -162,10 +162,10 @@ public final class DemoDataImporter {
         if (demoData.has("globalPages")) {
             demoData.getJSONArray("globalPages").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
-                final var slot = jsonObject.getString("slot");
+                final var slot = jsonObject.getString("slot").trim();
                 final var locale = Locale.forLanguageTag(jsonObject.getString("language"));
-                final var title = jsonObject.getString("title");
-                final var markdown = jsonObject.getString("markdown");
+                final var title = jsonObject.getString("title").trim();
+                final var markdown = jsonObject.getString("markdown").trim();
 
                 final var globalPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
                 globalPageService.storeGlobalPage(globalPage);
