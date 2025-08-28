@@ -16,12 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "components/confirmation-dialog.css";
-@import "components/info-banner.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
-@import "components/navigation-bar.css";
-@import "components/page-footer.css";
-@import "components/page-header.css";
+.confirmation-dialog {
+    width: 30em;
+}
 
-@import "views/confirmation-view.css";
+.confirmation-dialog .email-button {
+    margin-right: auto;
+}
