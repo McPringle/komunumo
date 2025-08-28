@@ -20,6 +20,7 @@ package app.komunumo.ui.components;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.views.community.CommunityGridView;
 import app.komunumo.ui.views.events.EventGridView;
+import app.komunumo.ui.views.login.LoginDialog;
 import app.komunumo.ui.views.login.LoginView;
 import app.komunumo.ui.views.login.LogoutView;
 import app.komunumo.util.ThemeUtil;
@@ -73,6 +74,9 @@ public final class NavigationBar extends HorizontalLayout {
         if (!serviceProvider.securityService().isUserLoggedIn()) {
             avatarMenu.addItem(ui.getTranslation("login.title"), e ->
                     ui.navigate(LoginView.class)
+            );
+            avatarMenu.addItem(ui.getTranslation("login.title") + " \uD83C\uDD95", e ->
+                    new LoginDialog(serviceProvider).open()
             );
         }
 
