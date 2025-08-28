@@ -22,6 +22,7 @@ import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -58,6 +59,12 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
         final var slot = params.get("slot").orElse("");
         final var ui = beforeEnterEvent.getUI();
         final var locale = ui.getLocale();
+        ContextMenu menu = new ContextMenu();
+
+        menu.setTarget(pageContent);
+        menu.addItem("Edit", event -> {
+            new EditorDialog().open();
+        });
 
         globalPageService.getGlobalPage(slot, locale).ifPresentOrElse(globalPage -> {
             pageContent.removeAll();
