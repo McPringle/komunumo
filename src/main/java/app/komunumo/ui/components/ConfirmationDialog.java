@@ -24,7 +24,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
@@ -42,7 +41,7 @@ public class ConfirmationDialog extends Dialog {
 
     private final transient @NotNull ConfirmationService confirmationService;
 
-    private final @NotNull Markdown customInfo = new Markdown();
+    private final @NotNull Paragraph customMessage = new Paragraph();
 
     public ConfirmationDialog(final @NotNull ServiceProvider serviceProvider) {
         super();
@@ -65,7 +64,8 @@ public class ConfirmationDialog extends Dialog {
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         getHeader().add(closeButton);
 
-        add(customInfo);
+        customMessage.addClassName("custom-message");
+        add(customMessage);
 
         final var confirmationTimeout = confirmationService.getConfirmationTimeoutText(getLocale());
         final var infoText = new Paragraph(getTranslation("ui.components.ConfirmationDialog.info", confirmationTimeout));
@@ -103,12 +103,12 @@ public class ConfirmationDialog extends Dialog {
     }
 
     /**
-     * <p>Sets a custom info text above the standard info text. Markdown format is supported.</p>
+     * <p>Sets a custom message above the standard info.</p>
      *
-     * @param info the custom info text in markdown format
+     * @param message the custom message
      */
-    protected void setCustomInfo(final @NotNull String info) {
-        customInfo.setContent(info);
+    protected void setCustomMessage(final @NotNull String message) {
+        customMessage.setText(message);
     }
 
     @SuppressWarnings("java:S2094") // DummyBean for Binder (to use validation only)
