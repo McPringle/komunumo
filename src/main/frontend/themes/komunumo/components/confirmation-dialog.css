@@ -20,6 +20,10 @@
     width: 30em;
 }
 
+.confirmation-dialog .custom-message {
+    font-weight: bold;
+}
+
 .confirmation-dialog .email-button {
     margin-right: auto;
 }
