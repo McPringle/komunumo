@@ -77,8 +77,8 @@ public final class LoginService {
         // persist in HTTP session
         final var request = VaadinService.getCurrentRequest();
         final var response = VaadinService.getCurrentResponse();
-        if (request instanceof VaadinServletRequest vaadinServletRequest &&
-                response instanceof VaadinServletResponse vaadinServletResponse) {
+        if (request instanceof VaadinServletRequest vaadinServletRequest
+                && response instanceof VaadinServletResponse vaadinServletResponse) {
             final var httpServletRequest = vaadinServletRequest.getHttpServletRequest();
             final var httpServletResponse = vaadinServletResponse.getHttpServletResponse();
             new HttpSessionSecurityContextRepository().saveContext(context, httpServletRequest, httpServletResponse);
