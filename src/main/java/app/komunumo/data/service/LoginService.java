@@ -100,8 +100,12 @@ public final class LoginService {
     }
 
     public @NotNull Optional<UserDto> getLoggedInUser() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        var principal = (UserPrincipal) auth.getPrincipal();
+        final var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            return Optional.empty();
+        }
+
+        final var principal = (UserPrincipal) auth.getPrincipal();
         return userService.getUserById(principal.getUserId());
     }
 
