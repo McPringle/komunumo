@@ -27,8 +27,21 @@ public final class LoginService {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(LoginService.class);
 
+    private final @NotNull UserService userService;
+
+    public LoginService(final @NotNull UserService userService) {
+        super();
+        this.userService = userService;
+    }
+
     public boolean login(final @NotNull String emailAddress) {
-        LOGGER.info("User {} wants to login.", emailAddress);
+        if (userService.getUserByEmail(emailAddress).isPresent()) {
+            // TODO: implement login with Vaadin/Spring Security
+            LOGGER.info("User with email address {} successfully logged in.", emailAddress);
+            return true;
+        }
+
+        LOGGER.info("User with email address {} not found.", emailAddress);
         return false;
     }
 
