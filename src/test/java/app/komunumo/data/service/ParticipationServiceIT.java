@@ -49,7 +49,7 @@ class ParticipationServiceIT extends IntegrationTest {
         assertThat(userService.getUserByEmail(email)).isEmpty();
 
         userService.storeUser(new UserDto(null, null, null, null, email, "", "",
-                null, UserRole.USER, UserType.LOCAL, null));
+                null, UserRole.USER, UserType.LOCAL));
         final var user = userService.getUserByEmail(email).orElseThrow();
         assertThat(user).isNotNull();
 

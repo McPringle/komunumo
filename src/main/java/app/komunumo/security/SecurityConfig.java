@@ -25,10 +25,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.security.SecureRandom;
 
 /**
  * <p>Security configuration for the Komunumo application.</p>
@@ -87,19 +83,6 @@ public class SecurityConfig extends VaadinWebSecurity {
                         "/.well-known/**",
                         "/actuator/health",
                         "/images/**");
-    }
-
-    /**
-     * <p>Creates the password encoder used for storing and verifying passwords.</p>
-     *
-     * <p>This implementation uses BCrypt with a strength of 10 and a
-     * {@link SecureRandom} instance to provide secure hashing.</p>
-     *
-     * @return a {@link PasswordEncoder} instance
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10, new SecureRandom());
     }
 
 }

@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import static app.komunumo.data.db.tables.User.USER;
 
@@ -74,6 +75,12 @@ public final class UserService {
         ).orElse(0);
     }
 
+    public @NotNull Optional<UserDto> getUserById(final @NotNull UUID id) {
+        return dsl.selectFrom(USER)
+                .where(USER.ID.eq(id))
+                .fetchOptionalInto(UserDto.class);
+    }
+
     public @NotNull Optional<UserDto> getUserByEmail(final @NotNull String email) {
         return dsl.selectFrom(USER)
                 .where(USER.EMAIL.eq(email))
@@ -83,7 +90,7 @@ public final class UserService {
     public @NotNull UserDto createAnonymousUserWithEmail(final @NotNull String email) {
         final var user = new UserDto(null, null, null,
                 null, email, "", "", null,
-                UserRole.USER, UserType.ANONYMOUS, null);
+                UserRole.USER, UserType.ANONYMOUS);
         return storeUser(user);
     }
 

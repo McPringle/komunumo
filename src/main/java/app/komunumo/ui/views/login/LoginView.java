@@ -18,38 +18,28 @@
 package app.komunumo.ui.views.login;
 
 import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.security.SecurityConfig;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.login.LoginI18n;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
-@Route(value = SecurityConfig.LOGIN_URL, layout = WebsiteLayout.class)
 @AnonymousAllowed
-public final class LoginView extends AbstractView {
+@Route(value = SecurityConfig.LOGIN_URL, layout = WebsiteLayout.class)
+public final class LoginView extends AbstractView implements BeforeEnterObserver {
 
-    public LoginView(final @NotNull ConfigurationService configurationService) {
-        super(configurationService);
-        setSizeFull();
-        setAlignItems(Alignment.CENTER);
-        setJustifyContentMode(JustifyContentMode.CENTER);
+    private final @NotNull ServiceProvider serviceProvider;
 
-        final var locale = UI.getCurrent().getLocale();
-        final var i18n = LoginI18n.createDefault();
-        i18n.getForm().setTitle(getTranslation(locale, "login.title"));
-        i18n.getForm().setUsername(getTranslation(locale, "login.form.email"));
-        i18n.getForm().setPassword(getTranslation(locale, "login.form.password"));
-        i18n.getForm().setSubmit(getTranslation(locale, "login.form.submit"));
-        i18n.getForm().setForgotPassword(getTranslation(locale, "login.form.forgot-password"));
-
-        final var login = new LoginForm();
-        login.setI18n(i18n);
-        login.setAction(SecurityConfig.LOGIN_URL);
-        add(login);
+    public LoginView(final @NotNull ServiceProvider serviceProvider) {
+        super(serviceProvider.configurationService());
+        this.serviceProvider = serviceProvider;
     }
 
     @Override
@@ -57,4 +47,8 @@ public final class LoginView extends AbstractView {
         return getTranslation(UI.getCurrent().getLocale(), "login.title");
     }
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        new LoginDialog(serviceProvider).open();
+    }
 }

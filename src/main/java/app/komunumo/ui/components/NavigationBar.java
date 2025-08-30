@@ -21,7 +21,6 @@ import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.views.community.CommunityGridView;
 import app.komunumo.ui.views.events.EventGridView;
 import app.komunumo.ui.views.login.LoginDialog;
-import app.komunumo.ui.views.login.LoginView;
 import app.komunumo.ui.views.login.LogoutView;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.Component;
@@ -71,11 +70,8 @@ public final class NavigationBar extends HorizontalLayout {
         avatarMenu.setOpenOnClick(true);
 
         // login as first entry in the menu
-        if (!serviceProvider.securityService().isUserLoggedIn()) {
+        if (!serviceProvider.loginService().isUserLoggedIn()) {
             avatarMenu.addItem(ui.getTranslation("login.title"), e ->
-                    ui.navigate(LoginView.class)
-            );
-            avatarMenu.addItem(ui.getTranslation("login.title") + " \uD83C\uDD95", e ->
                     new LoginDialog(serviceProvider).open()
             );
         }
@@ -84,7 +80,7 @@ public final class NavigationBar extends HorizontalLayout {
         avatarMenu.addItem(ui.getTranslation("avatar.menu.toggleDarkMode"), e -> ThemeUtil.toggleDarkMode());
 
         // logout as last entry in the menu
-        if (serviceProvider.securityService().isUserLoggedIn()) {
+        if (serviceProvider.loginService().isUserLoggedIn()) {
             avatarMenu.addItem(ui.getTranslation("logout.title"), e ->
                     ui.navigate(LogoutView.class)
             );

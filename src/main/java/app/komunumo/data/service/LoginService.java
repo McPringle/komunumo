@@ -17,22 +17,28 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.security.SecurityConfig;
+import app.komunumo.security.UserPrincipal;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import com.vaadin.flow.server.VaadinServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public final class LoginService {
@@ -65,9 +71,11 @@ public final class LoginService {
             roles.add(new SimpleGrantedAuthority(UserRole.ADMIN.getRole()));
         }
         final var authorities = Collections.unmodifiableList(roles);
+        final var principal = new UserPrincipal(user, authorities);
+
 
         // Authentication-Token without password (passwordless)
-        final var authentication = new UsernamePasswordAuthenticationToken(emailAddress, null, authorities);
+        final var authentication = new PreAuthenticatedAuthenticationToken(principal, null, authorities);
 
         // create and set SecurityContext
         final var context = SecurityContextHolder.createEmptyContext();
@@ -89,6 +97,27 @@ public final class LoginService {
 
         LOGGER.info("User with email {} successfully logged in.", emailAddress);
         return true;
+    }
+
+    public @NotNull Optional<UserDto> getLoggedInUser() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        var principal = (UserPrincipal) auth.getPrincipal();
+        return userService.getUserById(principal.getUserId());
+    }
+
+    public boolean isUserLoggedIn() {
+        return getLoggedInUser().isPresent();
+    }
+
+    public void logout() {
+        logout(SecurityConfig.LOGOUT_SUCCESS_URL);
+    }
+
+    public void logout(final @NotNull String location) {
+        UI.getCurrent().getPage().setLocation(location);
+        SecurityContextHolder.clearContext();
+        final var logoutHandler = new SecurityContextLogoutHandler();
+        logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
     }
 
 }

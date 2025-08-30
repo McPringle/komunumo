@@ -28,7 +28,6 @@ public final class ServiceProvider {
     private final @NotNull AppConfig appConfig;
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull ConfirmationService confirmationService;
-    private final @NotNull SecurityService securityService;
     private final @NotNull CommunityService communityService;
     private final @NotNull EventService eventService;
     private final @NotNull GlobalPageService globalPageService;
@@ -42,7 +41,6 @@ public final class ServiceProvider {
     public ServiceProvider(final @NotNull AppConfig appConfig,
                            final @NotNull ConfigurationService configurationService,
                            final @NotNull ConfirmationService confirmationService,
-                           final @NotNull SecurityService securityService,
                            final @NotNull CommunityService communityService,
                            final @NotNull GlobalPageService globalPageService,
                            final @NotNull EventService eventService,
@@ -55,7 +53,6 @@ public final class ServiceProvider {
         this.appConfig = appConfig;
         this.configurationService = configurationService;
         this.confirmationService = confirmationService;
-        this.securityService = securityService;
         this.communityService = communityService;
         this.eventService = eventService;
         this.globalPageService = globalPageService;
@@ -76,10 +73,6 @@ public final class ServiceProvider {
 
     public @NotNull ConfirmationService confirmationService() {
         return confirmationService;
-    }
-
-    public @NotNull SecurityService securityService() {
-        return securityService;
     }
 
     public @NotNull CommunityService communityService() {

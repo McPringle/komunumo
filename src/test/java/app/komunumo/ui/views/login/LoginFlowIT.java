@@ -20,7 +20,6 @@ package app.komunumo.ui.views.login;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.SecurityService;
 import app.komunumo.data.service.UserService;
 import app.komunumo.ui.BrowserTest;
 import com.microsoft.playwright.Page;
@@ -40,11 +39,9 @@ class LoginFlowIT extends BrowserTest {
     @BeforeAll
     void createTestUser() {
         final var userService = getBean(UserService.class);
-        final var securityService = getBean(SecurityService.class);
-        final var encodedPassword = securityService.encodePassword("foobar");
         testUser = userService.storeUser(new UserDto(null, null, null,
                 "@loginLogoutFlow", "login-logout-flow@localhost", "Test User", "", null,
-                UserRole.USER, UserType.LOCAL, encodedPassword));
+                UserRole.USER, UserType.LOCAL));
     }
 
     @AfterAll

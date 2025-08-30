@@ -18,13 +18,9 @@
 package app.komunumo.admin;
 
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.dto.MailFormat;
-import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.MailService;
-import app.komunumo.data.service.SecurityService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
-import java.util.Map;
 
 public final class AdminBootstrapper {
 
@@ -40,15 +35,11 @@ public final class AdminBootstrapper {
 
     private final @NotNull String adminEmail;
     private final @NotNull UserService userService;
-    private final @NotNull SecurityService securityService;
-    private final @NotNull MailService mailService;
 
     public AdminBootstrapper(final @NotNull AppConfig appConfig,
                              final @NotNull ServiceProvider serviceProvider) {
         this.adminEmail = appConfig.instance().admin().trim().toLowerCase(Locale.getDefault());
         this.userService = serviceProvider.userService();
-        this.securityService = serviceProvider.securityService();
-        this.mailService = serviceProvider.mailService();
     }
 
     public void createInitialAdminIfMissing() {
@@ -62,17 +53,10 @@ public final class AdminBootstrapper {
             return;
         }
 
-        final var password = securityService.generateRandomPassword();
-        final var passwordHash = securityService.encodePassword(password);
-
         final var adminUser = new UserDto(null, null, null,
                 "@admin", adminEmail, "Admin", "", null,
-                UserRole.ADMIN, UserType.LOCAL, passwordHash);
+                UserRole.ADMIN, UserType.LOCAL);
         userService.storeUser(adminUser);
-
-        mailService.sendMail(MailTemplateId.NEW_PASSWORD, Locale.getDefault(), MailFormat.MARKDOWN,
-                Map.of("password", password), adminEmail);
-
         LOGGER.info("Initial admin user created with email: {}", adminEmail);
     }
 

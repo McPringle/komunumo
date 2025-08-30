@@ -40,7 +40,7 @@ class UserServiceIT extends IntegrationTest {
         // create a new user
         var testUser = new UserDto(null, null, null,
                 "@testUser", "test@example.eu", "Test User", "Test User Bio", null,
-                UserRole.USER, UserType.LOCAL, null);
+                UserRole.USER, UserType.LOCAL);
         testUser = userService.storeUser(testUser);
         final var testUserId = testUser.id();
         assertThat(testUserId).isNotNull().satisfies(testee -> {
@@ -78,8 +78,7 @@ class UserServiceIT extends IntegrationTest {
 
         // updating the existing user
         testUser = new UserDto(testUserId, testUser.created(), testUser.updated(), testUser.profile(), testUser.email(),
-                "Test User Modified", testUser.bio(), testUser.imageId(), testUser.role(), testUser.type(),
-                testUser.passwordHash());
+                "Test User Modified", testUser.bio(), testUser.imageId(), testUser.role(), testUser.type());
         testUser = userService.storeUser(testUser);
         assertThat(testUser).isNotNull().satisfies(testee -> {
             assertThat(testee.id()).isEqualTo(testUserId);
@@ -98,7 +97,7 @@ class UserServiceIT extends IntegrationTest {
         // create a new admin
         var testAdmin = new UserDto(null, null, null,
                 "@testAdmin", "admin@example.eu", "Test Admin", "Test Admin Bio", null,
-                UserRole.ADMIN, UserType.LOCAL, null);
+                UserRole.ADMIN, UserType.LOCAL);
         testAdmin = userService.storeUser(testAdmin);
         final var testAdminId = testAdmin.id();
         assertThat(testAdminId).isNotNull().satisfies(testee -> {

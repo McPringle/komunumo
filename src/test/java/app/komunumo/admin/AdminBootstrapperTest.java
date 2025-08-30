@@ -24,7 +24,6 @@ import app.komunumo.configuration.InstanceConfig;
 import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.MailService;
-import app.komunumo.data.service.SecurityService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +41,7 @@ import static org.mockito.Mockito.when;
 class AdminBootstrapperTest {
 
     @Test
+    @SuppressWarnings("DataFlowIssue")
     void shouldCreateAdminIfNoneExistsAndEmailIsSet() {
         final var serviceProvider = mockServiceProvider(0);
         final var appConfig = createAppConfig("admin@example.eu");
@@ -81,14 +81,10 @@ class AdminBootstrapperTest {
     private ServiceProvider mockServiceProvider(final int adminCount) {
         final var userService = mock(UserService.class);
         when(userService.getAdminCount()).thenReturn(adminCount);
-        final var securityService = mock(SecurityService.class);
-        when(securityService.generateRandomPassword()).thenReturn("randomPassword");
-        when(securityService.encodePassword("randomPassword")).thenReturn("encodedPassword");
         final var mailService = mock(MailService.class);
         when(mailService.sendMail(any(), any(), any(), any(), any())).thenReturn(true);
         final var serviceProvider = mock(ServiceProvider.class);
         when(serviceProvider.userService()).thenReturn(userService);
-        when(serviceProvider.securityService()).thenReturn(securityService);
         when(serviceProvider.mailService()).thenReturn(mailService);
         return serviceProvider;
     }
