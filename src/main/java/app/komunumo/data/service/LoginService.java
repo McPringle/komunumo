@@ -53,7 +53,7 @@ public final class LoginService {
             return false;
         }
 
-        final var user = optUser.get();
+        final var user = optUser.orElseThrow();
         if (!user.type().isLoginAllowed()) {
             LOGGER.info("User with email {} exists but login is not allowed for type {}", emailAddress, user.type());
             return false;
