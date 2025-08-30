@@ -55,6 +55,7 @@ public final class AuthenticatedUser {
 
     public void logout(final @NotNull String location) {
         UI.getCurrent().getPage().setLocation(location);
+        SecurityContextHolder.clearContext();
         final var logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
     }
