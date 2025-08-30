@@ -105,8 +105,11 @@ public final class LoginService {
             return Optional.empty();
         }
 
-        final var principal = (UserPrincipal) auth.getPrincipal();
-        return userService.getUserById(principal.getUserId());
+        if (auth.getPrincipal() instanceof UserPrincipal principal) {
+            return userService.getUserById(principal.getUserId());
+        }
+
+        return Optional.empty();
     }
 
     public boolean isUserLoggedIn() {
