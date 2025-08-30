@@ -20,5 +20,5 @@ package app.komunumo.data.dto;
 public enum MailTemplateId {
     CONFIRMATION_PROCESS,
     EVENT_REGISTRATION_SUCCESS,
-    NEW_PASSWORD
+    TEST
 }

@@ -42,7 +42,7 @@ class MailServiceNoReplyToIT extends IntegrationTest {
     @Test
     void sendMailSuccessWithoutReplyTo() {
         final var result = mailService.sendMail(
-                MailTemplateId.NEW_PASSWORD, Locale.ENGLISH, MailFormat.MARKDOWN,
+                MailTemplateId.TEST, Locale.ENGLISH, MailFormat.MARKDOWN,
                 null, "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {

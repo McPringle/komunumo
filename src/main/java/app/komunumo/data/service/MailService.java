@@ -32,12 +32,14 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
 import static app.komunumo.data.db.tables.MailTemplate.MAIL_TEMPLATE;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_URL;
 import static app.komunumo.data.dto.MailFormat.HTML;
 import static app.komunumo.data.dto.MailFormat.MARKDOWN;
 import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;
@@ -69,9 +71,17 @@ public final class MailService {
                             final @Nullable Map<String, String> variables,
                             final @NotNull String... emailAddresses) {
         final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
+        final var instanceUrl = configurationService.getConfiguration(INSTANCE_URL, locale);
+        final HashMap<String, String> allVariables = new HashMap<>();
+        if (variables != null) {
+            allVariables.putAll(variables);
+        }
+        allVariables.put("instanceName", instanceName);
+        allVariables.put("instanceUrl", instanceUrl);
+
         final var mailTemplate = getMailTemplate(mailTemplateId, locale).orElseThrow();
-        final var subject = "[%s] %s".formatted(instanceName, replaceVariables(mailTemplate.subject(), variables));
-        final var markdown = replaceVariables(mailTemplate.markdown(), variables);
+        final var subject = "[%s] %s".formatted(instanceName, replaceVariables(mailTemplate.subject(), allVariables));
+        final var markdown = replaceVariables(mailTemplate.markdown(), allVariables);
 
         try {
             final var mimeMessage = mailSender.createMimeMessage();
