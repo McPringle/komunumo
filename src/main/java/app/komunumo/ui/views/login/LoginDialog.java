@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.views.login;
 
+import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
@@ -40,8 +41,9 @@ public final class LoginDialog extends ConfirmationDialog {
     }
 
     @Override
-    protected void onConfirmationSuccess(final @NotNull String emailAddress) {
-        if (loginService.login(emailAddress)) {
+    protected void onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
+        final var email = confirmationContext.email();
+        if (loginService.login(email)) {
             UI.getCurrent().getPage()
                     .executeJs("setTimeout(function() { window.location.href = '/'; }, 5000);");
         }

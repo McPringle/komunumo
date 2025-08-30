@@ -17,9 +17,11 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.ui.TranslationProvider;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -68,7 +70,7 @@ public final class ConfirmationService {
     public void startConfirmationProcess(final @NotNull String emailAddress,
                                          final @NotNull String confirmationReason,
                                          final @NotNull String onSuccessMessage,
-                                         final @NotNull Consumer<String> onSuccessHandler,
+                                         final @NotNull Consumer<ConfirmationContext> onSuccessHandler,
                                          final @NotNull Locale locale) {
         final var confirmationId = UUID.randomUUID().toString();
         final var confirmationData = new ConfirmationData(confirmationId, emailAddress,
@@ -111,7 +113,8 @@ public final class ConfirmationService {
         final var confirmationData = confirmationCache.getIfPresent(confirmationId);
         if (confirmationData != null) {
             try {
-                confirmationData.onSuccessHandler().accept(confirmationData.emailAddress);
+                final var confirmationContext = new ConfirmationContext(confirmationData.emailAddress);
+                confirmationData.onSuccessHandler().accept(confirmationContext);
                 confirmationCache.invalidate(confirmationId);
                 return Optional.of(confirmationData.successMessage);
             } catch (final Exception exception) {
@@ -127,7 +130,7 @@ public final class ConfirmationService {
             @NotNull String id,
             @NotNull String emailAddress,
             @NotNull String successMessage,
-            @NotNull Consumer<String> onSuccessHandler,
+            @NotNull Consumer<ConfirmationContext> onSuccessHandler,
             @NotNull Locale locale
     ) { }
 
