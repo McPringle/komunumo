@@ -119,6 +119,7 @@ public final class ConfirmationService {
                         confirmationId, exception.getMessage(), exception);
             }
         }
+        LOGGER.warn("Invalid or expired confirmation ID: {}", confirmationId);
         return Optional.empty();
     }
 
