@@ -17,16 +17,34 @@
  */
 package app.komunumo.ui.views.login;
 
+import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
+import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 
-public class LoginDialog extends ConfirmationDialog {
+public final class LoginDialog extends ConfirmationDialog {
+
+    private final @NotNull LoginService loginService;
 
     public LoginDialog(final @NotNull ServiceProvider serviceProvider)  {
-        super(serviceProvider);
+        super(
+                serviceProvider,
+                "ui.views.login.LoginDialog.infoText",
+                "ui.views.login.LoginDialog.successMessage"
+        );
+        this.loginService = serviceProvider.loginService();
+
         setHeaderTitle(getTranslation("ui.components.LoginDialog.title"));
-        setCustomMessage(getTranslation("ui.views.login.LoginDialog.info"));
+        setCustomMessage(getTranslation("ui.views.login.LoginDialog.infoText"));
+    }
+
+    @Override
+    protected void onConfirmationSuccess(final @NotNull String emailAddress) {
+        if (loginService.login(emailAddress)) {
+            UI.getCurrent().getPage()
+                    .executeJs("setTimeout(function() { window.location.href = '/'; }, 5000);");
+        }
     }
 
 }

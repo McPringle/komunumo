@@ -24,26 +24,25 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY;
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY;
 import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
 
-public class ConfirmationDialog extends Dialog {
-
-    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ConfirmationDialog.class);
+public abstract class ConfirmationDialog extends Dialog {
 
     private final transient @NotNull ConfirmationService confirmationService;
 
     private final @NotNull Paragraph customMessage = new Paragraph();
 
-    public ConfirmationDialog(final @NotNull ServiceProvider serviceProvider) {
+    public ConfirmationDialog(final @NotNull ServiceProvider serviceProvider,
+                              final @NotNull String confirmationReasonKey,
+                              final @NotNull String successMessageKey) {
         super();
         this.confirmationService = serviceProvider.confirmationService();
         addClassName("confirmation-dialog");
@@ -54,10 +53,6 @@ public class ConfirmationDialog extends Dialog {
         setDraggable(false);
         setResizable(false);
 
-        buildUserInterface();
-    }
-
-    private void buildUserInterface() {
         setHeaderTitle(getTranslation("ui.components.ConfirmationDialog.title"));
         final var closeButton = new Button(new Icon("lumo", "cross"),
                 (evt) -> close());
@@ -68,7 +63,7 @@ public class ConfirmationDialog extends Dialog {
         add(customMessage);
 
         final var confirmationTimeout = confirmationService.getConfirmationTimeoutText(getLocale());
-        final var infoText = new Paragraph(getTranslation("ui.components.ConfirmationDialog.info", confirmationTimeout));
+        final var infoText = new Paragraph(getTranslation("ui.components.ConfirmationDialog.infoText", confirmationTimeout));
         add(infoText);
 
         final var emailField = new EmailField();
@@ -89,8 +84,9 @@ public class ConfirmationDialog extends Dialog {
 
         final var binder = new Binder<DummyBean>();
         binder.forField(emailField)
-                .withValidator(new EmailValidator(getTranslation("ui.components.ConfirmationDialog.error.email"), true))
-                .bind(dummy -> null, (dummy, value) -> { });
+                .withValidator(new EmailValidator(getTranslation("ui.components.ConfirmationDialog.email.error"), true))
+                .bind(dummy -> null, (dummy, value) -> {
+                });
         binder.setBean(new DummyBean());
         binder.addStatusChangeListener(evt ->
                 emailButton.setEnabled(!emailField.getValue().isBlank() && binder.isValid())
@@ -98,7 +94,23 @@ public class ConfirmationDialog extends Dialog {
         binder.validate();
 
         emailButton.addClickListener(evt -> {
-            LOGGER.info("Login with email: {}", emailField.getValue());
+            final var emailAddress = emailField.getValue();
+            confirmationService.startConfirmationProcess(
+                    emailAddress,
+                    getTranslation(confirmationReasonKey),
+                    getTranslation(successMessageKey),
+                    this::onConfirmationSuccess,
+                    getLocale());
+
+            removeAll();
+            add(new Markdown(getTranslation("ui.components.ConfirmationDialog.email.send",
+                    emailAddress, confirmationTimeout)));
+
+            getFooter().removeAll();
+            final var closeDialogButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.close"));
+            closeDialogButton.addThemeVariants(LUMO_PRIMARY);
+            closeDialogButton.addClickListener(ev -> close());
+            getFooter().add(closeDialogButton);
         });
     }
 
@@ -111,7 +123,10 @@ public class ConfirmationDialog extends Dialog {
         customMessage.setText(message);
     }
 
+    protected abstract void onConfirmationSuccess(@NotNull String emailAddress);
+
     @SuppressWarnings("java:S2094") // DummyBean for Binder (to use validation only)
-    private static final class DummyBean { }
+    private static final class DummyBean {
+    }
 
 }
