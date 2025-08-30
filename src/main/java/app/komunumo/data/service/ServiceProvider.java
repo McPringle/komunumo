@@ -36,6 +36,7 @@ public final class ServiceProvider {
     private final @NotNull UserService userService;
     private final @NotNull MailService mailService;
     private final @NotNull ParticipationService participationService;
+    private final @NotNull LoginService loginService;
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     public ServiceProvider(final @NotNull AppConfig appConfig,
@@ -48,7 +49,8 @@ public final class ServiceProvider {
                            final @NotNull ImageService imageService,
                            final @NotNull UserService userService,
                            final @NotNull MailService mailService,
-                           final @NotNull ParticipationService participationService) {
+                           final @NotNull ParticipationService participationService,
+                           final @NotNull LoginService loginService) {
         super();
         this.appConfig = appConfig;
         this.configurationService = configurationService;
@@ -61,6 +63,7 @@ public final class ServiceProvider {
         this.userService = userService;
         this.mailService = mailService;
         this.participationService = participationService;
+        this.loginService = loginService;
     }
 
     public @NotNull AppConfig getAppConfig() {
@@ -105,6 +108,10 @@ public final class ServiceProvider {
 
     public @NotNull ParticipationService participationService() {
         return participationService;
+    }
+
+    public @NotNull LoginService loginService() {
+        return loginService;
     }
 
 }
