@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.components;
 
+import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.data.service.ServiceProvider;
 import com.vaadin.flow.component.button.Button;
@@ -123,7 +124,7 @@ public abstract class ConfirmationDialog extends Dialog {
         customMessage.setText(message);
     }
 
-    protected abstract void onConfirmationSuccess(@NotNull String emailAddress);
+    protected abstract void onConfirmationSuccess(@NotNull ConfirmationContext confirmationContext);
 
     @SuppressWarnings("java:S2094") // DummyBean for Binder (to use validation only)
     private static final class DummyBean {

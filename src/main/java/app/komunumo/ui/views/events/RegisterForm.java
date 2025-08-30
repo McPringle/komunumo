@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.views.events;
 
+import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.data.service.ParticipationService;
@@ -86,8 +87,8 @@ public final class RegisterForm extends Details {
             final var emailAddress = emailField.getValue().trim().toLowerCase(locale);
             final var confirmationReason = getTranslation("confirmation.reason.event.register", eventTitle);
             final var onSuccessMessage = getTranslation("event.register.success", eventLink);
-            final Consumer<String> onSuccessHandler =
-                    email -> participationService.joinEvent(event, emailAddress, locale);
+            final Consumer<ConfirmationContext> onSuccessHandler = confirmationContext ->
+                    participationService.joinEvent(event, emailAddress, locale);
 
             confirmationService.startConfirmationProcess(
                     emailAddress,

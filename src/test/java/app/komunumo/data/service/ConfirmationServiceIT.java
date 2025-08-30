@@ -18,6 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.KomunumoException;
+import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.ui.IntegrationTest;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +52,7 @@ class ConfirmationServiceIT extends IntegrationTest {
         final var confirmationReason = "Test Reason";
         final var onSuccessMessage = "Success Message";
         final var onSuccessHandlerCounter = new AtomicInteger(0);
-        final Consumer<String> onSuccessHandler = email -> {
+        final Consumer<ConfirmationContext> onSuccessHandler = confirmationContext -> {
             final var callCount = onSuccessHandlerCounter.incrementAndGet();
             if (callCount == 1) { // first call should throw an exception
                 throw new KomunumoException("expected");
