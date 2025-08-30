@@ -25,7 +25,9 @@ class MailTemplateIdTest {
 
     @Test
     void name() {
-        assertThat(MailTemplateId.NEW_PASSWORD).hasToString("NEW_PASSWORD");
+        assertThat(MailTemplateId.CONFIRMATION_PROCESS).hasToString("CONFIRMATION_PROCESS");
+        assertThat(MailTemplateId.EVENT_REGISTRATION_SUCCESS).hasToString("EVENT_REGISTRATION_SUCCESS");
+        assertThat(MailTemplateId.TEST).hasToString("TEST");
     }
 
 }
