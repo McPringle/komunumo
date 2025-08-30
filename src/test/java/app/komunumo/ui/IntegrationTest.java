@@ -20,7 +20,7 @@ package app.komunumo.ui;
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
-import app.komunumo.security.AuthenticatedUser;
+import app.komunumo.data.service.LoginService;
 import com.github.mvysny.fakeservlet.FakeRequest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
@@ -76,6 +76,8 @@ public abstract class IntegrationTest {
 
     private static Routes routes;
     private static Path baseDataDir;
+    @Autowired
+    private LoginService loginService;
 
     @BeforeAll
     public static void discoverRoutes() {
@@ -113,9 +115,6 @@ public abstract class IntegrationTest {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
-    private AuthenticatedUser authenticatedUser;
-
     @BeforeEach
     public void setup() throws FolderException {
         final Function0<UI> uiFactory = UI::new;
@@ -146,7 +145,7 @@ public abstract class IntegrationTest {
                 .toList();
 
         // create a Spring Security user (UserDetails)
-        final var userDetails = new User(user.email(), user.passwordHash(), authorities);
+        final var userDetails = new User(user.email(), null, authorities);
 
         // create the authentication token
         final var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
@@ -169,7 +168,7 @@ public abstract class IntegrationTest {
             request.setUserPrincipalInt(null);
             request.setUserInRole((principal, role) -> false);
         }
-        authenticatedUser.logout();
+        loginService.logout();
         UI.getCurrent().getPage().reload();
     }
 

@@ -19,7 +19,7 @@
 package app.komunumo.ui.views.login;
 
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.security.AuthenticatedUser;
+import app.komunumo.data.service.LoginService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.UI;
@@ -32,9 +32,9 @@ import org.jetbrains.annotations.NotNull;
 public final class LogoutView extends AbstractView {
 
     public LogoutView(final @NotNull ConfigurationService configurationService,
-                      final @NotNull AuthenticatedUser authenticatedUser) {
+                      final @NotNull LoginService loginService) {
         super(configurationService);
-        authenticatedUser.logout();
+        loginService.logout();
     }
 
     @Override
