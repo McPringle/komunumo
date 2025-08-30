@@ -29,6 +29,8 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
+
 import static com.vaadin.flow.component.details.DetailsVariant.FILLED;
 import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
 
@@ -84,7 +86,8 @@ public final class RegisterForm extends Details {
             final var emailAddress = emailField.getValue().trim().toLowerCase(locale);
             final var confirmationReason = getTranslation("confirmation.reason.event.register", eventTitle);
             final var onSuccessMessage = getTranslation("event.register.success", eventLink);
-            final Runnable onSuccessHandler = () -> participationService.joinEvent(event, emailAddress, locale);
+            final Consumer<String> onSuccessHandler =
+                    email -> participationService.joinEvent(event, emailAddress, locale);
 
             confirmationService.startConfirmationProcess(
                     emailAddress,

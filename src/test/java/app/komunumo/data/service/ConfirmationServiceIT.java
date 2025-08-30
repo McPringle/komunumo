@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,7 @@ class ConfirmationServiceIT extends IntegrationTest {
         final var confirmationReason = "Test Reason";
         final var onSuccessMessage = "Success Message";
         final var onSuccessHandlerCounter = new AtomicInteger(0);
-        final Runnable onSuccessHandler = () -> {
+        final Consumer<String> onSuccessHandler = email -> {
             final var callCount = onSuccessHandlerCounter.incrementAndGet();
             if (callCount == 1) { // first call should throw an exception
                 throw new KomunumoException("expected");

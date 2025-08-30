@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_URL;
@@ -67,7 +68,7 @@ public final class ConfirmationService {
     public void startConfirmationProcess(final @NotNull String emailAddress,
                                          final @NotNull String confirmationReason,
                                          final @NotNull String onSuccessMessage,
-                                         final @NotNull Runnable onSuccessHandler,
+                                         final @NotNull Consumer<String> onSuccessHandler,
                                          final @NotNull Locale locale) {
         final var confirmationId = UUID.randomUUID().toString();
         final var confirmationData = new ConfirmationData(confirmationId, emailAddress,
@@ -110,7 +111,7 @@ public final class ConfirmationService {
         final var confirmationData = confirmationCache.getIfPresent(confirmationId);
         if (confirmationData != null) {
             try {
-                confirmationData.onSuccessHandler().run();
+                confirmationData.onSuccessHandler().accept(confirmationData.emailAddress);
                 confirmationCache.invalidate(confirmationId);
                 return Optional.of(confirmationData.successMessage);
             } catch (final Exception exception) {
@@ -125,7 +126,7 @@ public final class ConfirmationService {
             @NotNull String id,
             @NotNull String emailAddress,
             @NotNull String successMessage,
-            @NotNull Runnable onSuccessHandler,
+            @NotNull Consumer<String> onSuccessHandler,
             @NotNull Locale locale
     ) { }
 
