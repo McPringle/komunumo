@@ -21,6 +21,7 @@ import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.LoginService;
+import app.komunumo.security.UserPrincipal;
 import com.github.mvysny.fakeservlet.FakeRequest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
@@ -43,10 +44,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
@@ -141,14 +143,15 @@ public abstract class IntegrationTest {
     protected void login(final @NotNull UserDto user) {
         final var roles = List.of(user.role());
         final var authorities = roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                .map(role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role.name()))
                 .toList();
 
         // create a Spring Security user (UserDetails)
         final var userDetails = new User(user.email(), null, authorities);
+        final var userPrincipal = new UserPrincipal(user, authorities);
 
         // create the authentication token
-        final var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+        final var authentication = new PreAuthenticatedAuthenticationToken(userDetails, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // make ViewAccessChecker work
