@@ -18,10 +18,10 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.ConfirmationContext;
+import app.komunumo.data.service.interfaces.ConfirmationHandler;
 import app.komunumo.ui.TranslationProvider;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -35,7 +35,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_URL;
@@ -70,11 +69,12 @@ public final class ConfirmationService {
     public void startConfirmationProcess(final @NotNull String emailAddress,
                                          final @NotNull String confirmationReason,
                                          final @NotNull String onSuccessMessage,
-                                         final @NotNull Consumer<ConfirmationContext> onSuccessHandler,
+                                         final @NotNull String onFailMessage,
+                                         final @NotNull ConfirmationHandler confirmationHandler,
                                          final @NotNull Locale locale) {
         final var confirmationId = UUID.randomUUID().toString();
         final var confirmationData = new ConfirmationData(confirmationId, emailAddress,
-                onSuccessMessage, onSuccessHandler, locale);
+                onSuccessMessage, onFailMessage, confirmationHandler, locale);
         confirmationCache.put(confirmationId, confirmationData);
 
         final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
@@ -114,11 +114,14 @@ public final class ConfirmationService {
         if (confirmationData != null) {
             try {
                 final var confirmationContext = new ConfirmationContext(confirmationData.emailAddress);
-                confirmationData.onSuccessHandler().accept(confirmationContext);
-                confirmationCache.invalidate(confirmationId);
-                return Optional.of(confirmationData.successMessage);
+                if (confirmationData.confirmationHandler().handle(confirmationContext)) {
+                    confirmationCache.invalidate(confirmationId);
+                    return Optional.of(confirmationData.successMessage);
+                } else {
+                    return Optional.of(confirmationData.failMessage);
+                }
             } catch (final Exception exception) {
-                LOGGER.error("Error in 'onSuccessHandler' for confirmation ID {}: {}",
+                LOGGER.error("Error in 'confirmationHandler' for confirmation ID {}: {}",
                         confirmationId, exception.getMessage(), exception);
             }
         }
@@ -130,7 +133,8 @@ public final class ConfirmationService {
             @NotNull String id,
             @NotNull String emailAddress,
             @NotNull String successMessage,
-            @NotNull Consumer<ConfirmationContext> onSuccessHandler,
+            @NotNull String failMessage,
+            @NotNull ConfirmationHandler confirmationHandler,
             @NotNull Locale locale
     ) { }
 

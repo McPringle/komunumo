@@ -17,10 +17,10 @@
  */
 package app.komunumo.ui.views.events;
 
-import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.data.service.ParticipationService;
+import app.komunumo.data.service.interfaces.ConfirmationHandler;
 import app.komunumo.util.LinkUtil;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
@@ -29,8 +29,6 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 
 import static com.vaadin.flow.component.details.DetailsVariant.FILLED;
 import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
@@ -86,15 +84,17 @@ public final class RegisterForm extends Details {
             final var eventLink = "[%s](%s)".formatted(eventTitle, LinkUtil.getLink(event));
             final var emailAddress = emailField.getValue().trim().toLowerCase(locale);
             final var confirmationReason = getTranslation("confirmation.reason.event.register", eventTitle);
+            final var onFailMessage = getTranslation("event.register.failed", eventLink);
             final var onSuccessMessage = getTranslation("event.register.success", eventLink);
-            final Consumer<ConfirmationContext> onSuccessHandler = confirmationContext ->
+            final ConfirmationHandler confirmationHandler = confirmationContext ->
                     participationService.joinEvent(event, emailAddress, locale);
 
             confirmationService.startConfirmationProcess(
                     emailAddress,
                     confirmationReason,
                     onSuccessMessage,
-                    onSuccessHandler,
+                    onFailMessage,
+                    confirmationHandler,
                     locale);
 
             removeAll();
