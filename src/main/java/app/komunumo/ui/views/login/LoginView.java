@@ -17,19 +17,17 @@
  */
 package app.komunumo.ui.views.login;
 
-import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.security.SecurityConfig;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.login.LoginForm;
-import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @AnonymousAllowed
 @Route(value = SecurityConfig.LOGIN_URL, layout = WebsiteLayout.class)
@@ -48,7 +46,7 @@ public final class LoginView extends AbstractView implements BeforeEnterObserver
     }
 
     @Override
-    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+    public void beforeEnter(final @Nullable BeforeEnterEvent beforeEnterEvent) {
         new LoginDialog(serviceProvider).open();
     }
 }
