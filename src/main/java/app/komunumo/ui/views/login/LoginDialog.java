@@ -21,7 +21,6 @@ import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
-import app.komunumo.ui.views.home.HomeView;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 
