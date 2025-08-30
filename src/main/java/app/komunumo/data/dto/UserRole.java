@@ -17,7 +17,20 @@
  */
 package app.komunumo.data.dto;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum UserRole {
-    ADMIN,
-    USER
+    ADMIN("ROLE_ADMIN"),
+    USER("ROLE_USER");
+
+    private final @NotNull String role;
+
+    UserRole(final @NotNull String role) {
+        this.role = role;
+    }
+
+    public @NotNull String getRole() {
+        return role;
+    }
+
 }

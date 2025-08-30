@@ -17,10 +17,22 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.dto.UserRole;
+import com.vaadin.flow.server.VaadinService;
+import com.vaadin.flow.server.VaadinServletRequest;
+import com.vaadin.flow.server.VaadinServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 @Service
 public final class LoginService {
@@ -35,14 +47,48 @@ public final class LoginService {
     }
 
     public boolean login(final @NotNull String emailAddress) {
-        if (userService.getUserByEmail(emailAddress).isPresent()) {
-            // TODO: implement login with Vaadin/Spring Security
-            LOGGER.info("User with email address {} successfully logged in.", emailAddress);
-            return true;
+        final var optUser = userService.getUserByEmail(emailAddress);
+        if (optUser.isEmpty()) {
+            LOGGER.info("User with email {} not found.", emailAddress);
+            return false;
         }
 
-        LOGGER.info("User with email address {} not found.", emailAddress);
-        return false;
+        final var user = optUser.get();
+        if (!user.type().isLoginAllowed()) {
+            LOGGER.info("User with email {} exists but login is not allowed for type {}", emailAddress, user.type());
+            return false;
+        }
+
+        final var roles = new ArrayList<GrantedAuthority>();
+        roles.add(new SimpleGrantedAuthority(UserRole.USER.getRole()));
+        if (user.role().equals(UserRole.ADMIN)) {
+            roles.add(new SimpleGrantedAuthority(UserRole.ADMIN.getRole()));
+        }
+        final var authorities = Collections.unmodifiableList(roles);
+
+        // Authentication-Token without password (passwordless)
+        final var authentication = new UsernamePasswordAuthenticationToken(emailAddress, null, authorities);
+
+        // create and set SecurityContext
+        final var context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+
+        // persist in HTTP session
+        final var request = VaadinService.getCurrentRequest();
+        final var response = VaadinService.getCurrentResponse();
+        if (request instanceof VaadinServletRequest vaadinServletRequest &&
+                response instanceof VaadinServletResponse vaadinServletResponse) {
+            final var httpServletRequest = vaadinServletRequest.getHttpServletRequest();
+            final var httpServletResponse = vaadinServletResponse.getHttpServletResponse();
+            new HttpSessionSecurityContextRepository().saveContext(context, httpServletRequest, httpServletResponse);
+        } else {
+            // fallback: should never happen in Vaadin UI context
+            LOGGER.warn("No Vaadin servlet request/response available; SecurityContext not saved to session.");
+        }
+
+        LOGGER.info("User with email {} successfully logged in.", emailAddress);
+        return true;
     }
 
 }
