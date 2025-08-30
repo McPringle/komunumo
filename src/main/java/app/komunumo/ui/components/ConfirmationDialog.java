@@ -43,7 +43,8 @@ public abstract class ConfirmationDialog extends Dialog {
 
     public ConfirmationDialog(final @NotNull ServiceProvider serviceProvider,
                               final @NotNull String confirmationReasonKey,
-                              final @NotNull String successMessageKey) {
+                              final @NotNull String successMessageKey,
+                              final @NotNull String failedMessageKey) {
         super();
         this.confirmationService = serviceProvider.confirmationService();
         addClassName("confirmation-dialog");
@@ -100,6 +101,7 @@ public abstract class ConfirmationDialog extends Dialog {
                     emailAddress,
                     getTranslation(confirmationReasonKey),
                     getTranslation(successMessageKey),
+                    getTranslation(failedMessageKey),
                     this::onConfirmationSuccess,
                     getLocale());
 
@@ -124,7 +126,21 @@ public abstract class ConfirmationDialog extends Dialog {
         customMessage.setText(message);
     }
 
-    protected abstract void onConfirmationSuccess(@NotNull ConfirmationContext confirmationContext);
+    /**
+     * <p>Callback that is invoked by the {@link ConfirmationService} after an email
+     * address has been successfully verified.</p>
+     *
+     * <p>Implementations can perform any required actions in response to the confirmation,
+     * such as logging in the user, updating application state, or triggering further
+     * workflows. The return value determines which feedback message is shown to the user
+     * in the UI.</p>
+     *
+     * @param confirmationContext the context of the confirmation, containing details
+     *                            about the verified email address
+     * @return {@code true} if the user should see a success message in the UI,
+     *         {@code false} if a failure message should be displayed instead
+     */
+    protected abstract boolean onConfirmationSuccess(@NotNull ConfirmationContext confirmationContext);
 
     @SuppressWarnings("java:S2094") // DummyBean for Binder (to use validation only)
     private static final class DummyBean {

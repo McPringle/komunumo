@@ -21,6 +21,7 @@ import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
+import app.komunumo.ui.views.home.HomeView;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,8 @@ public final class LoginDialog extends ConfirmationDialog {
         super(
                 serviceProvider,
                 "ui.views.login.LoginDialog.infoText",
-                "ui.views.login.LoginDialog.successMessage"
+                "ui.views.login.LoginDialog.successMessage",
+                "ui.views.login.LoginDialog.failedMessage"
         );
         this.loginService = serviceProvider.loginService();
 
@@ -41,12 +43,14 @@ public final class LoginDialog extends ConfirmationDialog {
     }
 
     @Override
-    protected void onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
+    protected boolean onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
         final var email = confirmationContext.email();
         if (loginService.login(email)) {
             UI.getCurrent().getPage()
                     .executeJs("setTimeout(function() { window.location.href = '/'; }, 5000);");
+            return true;
         }
+        return false;
     }
 
 }

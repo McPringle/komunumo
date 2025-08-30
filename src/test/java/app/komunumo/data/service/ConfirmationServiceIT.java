@@ -18,7 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.KomunumoException;
-import app.komunumo.data.dto.ConfirmationContext;
+import app.komunumo.data.service.interfaces.ConfirmationHandler;
 import app.komunumo.ui.IntegrationTest;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,23 +50,26 @@ class ConfirmationServiceIT extends IntegrationTest {
         final var emailAddress = "test@example.com";
         final var confirmationReason = "Test Reason";
         final var onSuccessMessage = "Success Message";
-        final var onSuccessHandlerCounter = new AtomicInteger(0);
-        final Consumer<ConfirmationContext> onSuccessHandler = confirmationContext -> {
-            final var callCount = onSuccessHandlerCounter.incrementAndGet();
+        final var onFailMessage = "Failed Message";
+        final var confirmationHandlerCounter = new AtomicInteger(0);
+        final ConfirmationHandler confirmationHandler = confirmationContext -> {
+            final var callCount = confirmationHandlerCounter.incrementAndGet();
             if (callCount == 1) { // first call should throw an exception
                 throw new KomunumoException("expected");
             }
+            return true;
         };
 
         confirmationService.startConfirmationProcess(
                 emailAddress,
                 confirmationReason,
                 onSuccessMessage,
-                onSuccessHandler,
+                onFailMessage,
+                confirmationHandler,
                 locale);
 
         await().atMost(2, SECONDS).untilAsserted(() -> {
-            onSuccessHandlerCounter.set(0);
+            confirmationHandlerCounter.set(0);
             final var receivedMessage = greenMail.getReceivedMessages()[0];
 
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -89,23 +91,23 @@ class ConfirmationServiceIT extends IntegrationTest {
             assertThat(confirmationId).isNotNull();
 
             Optional<String> success;
-            assertThat(onSuccessHandlerCounter.get()).isZero();
+            assertThat(confirmationHandlerCounter.get()).isZero();
 
             try (var logCaptor = LogCaptor.forClass(ConfirmationService.class)) {
                 success = confirmationService.confirm(confirmationId);
                 assertThat(success).isEmpty();
-                assertThat(onSuccessHandlerCounter.get()).isEqualTo(1);
+                assertThat(confirmationHandlerCounter.get()).isEqualTo(1);
                 assertThat(logCaptor.getErrorLogs()).containsExactly(
-                        "Error in 'onSuccessHandler' for confirmation ID " + confirmationId + ": expected");
+                        "Error in 'confirmationHandler' for confirmation ID " + confirmationId + ": expected");
             }
 
             success = confirmationService.confirm(confirmationId);
             assertThat(success).isNotEmpty().contains("Success Message");
-            assertThat(onSuccessHandlerCounter.get()).isEqualTo(2);
+            assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
 
             success = confirmationService.confirm(confirmationId);
             assertThat(success).isEmpty();
-            assertThat(onSuccessHandlerCounter.get()).isEqualTo(2);
+            assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
         });
     }
 
