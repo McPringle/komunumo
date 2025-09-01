@@ -18,6 +18,8 @@
 package app.komunumo.ui;
 
 import app.komunumo.Application;
+import app.komunumo.data.dto.ConfigurationSetting;
+import app.komunumo.data.service.ConfigurationService;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
@@ -95,6 +97,10 @@ public abstract class BrowserTest {
         screenshotOptions = new Page.ScreenshotOptions()
                 .setType(ScreenshotType.PNG)
                 .setFullPage(true);
+
+        final var instanceUrl = "http://localhost:%d".formatted(PORT);
+        final var configurationService = getBean(ConfigurationService.class);
+        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl);
     }
 
     @AfterAll
