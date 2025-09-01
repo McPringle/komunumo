@@ -25,10 +25,32 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class TestUtil {
+
+    /**
+     * Regex pattern to match HTTP(S) links including optional query parameters.
+     * Matches until the first whitespace or control character.
+     */
+    private static final @NotNull Pattern HTTP_LINK_PATTERN = Pattern.compile(
+            "https?://\\S+", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Extracts the first HTTP(S) link from the given text.
+     *
+     * @param text the text containing a link
+     * @return the extracted link as String, or null if no link was found
+     */
+    public static String extractLinkFromText(final @NotNull String text) {
+        final var matcher = HTTP_LINK_PATTERN.matcher(text);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
+    }
 
     /**
      * <p>Asserts that the given list contains exactly one instance of each specified class,
