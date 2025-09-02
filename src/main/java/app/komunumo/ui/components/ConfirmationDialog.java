@@ -83,6 +83,7 @@ public abstract class ConfirmationDialog extends Dialog {
         final var cancelButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.cancel"),
                 (evt) -> close());
         cancelButton.addThemeVariants(LUMO_TERTIARY);
+        cancelButton.addClassName("cancel-button");
         getFooter().add(cancelButton);
 
         final var binder = new Binder<DummyBean>();
