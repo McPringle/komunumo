@@ -56,11 +56,11 @@ public abstract class ConfirmationDialog extends Dialog {
         setResizable(false);
 
         setHeaderTitle(getTranslation("ui.components.ConfirmationDialog.title"));
-        final var closeButton = new Button(new Icon("lumo", "cross"),
+        final var closeDialogButton = new Button(new Icon("lumo", "cross"),
                 (evt) -> close());
-        closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        closeButton.addClassName("close-dialog-button");
-        getHeader().add(closeButton);
+        closeDialogButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        closeDialogButton.addClassName("close-dialog-button");
+        getHeader().add(closeDialogButton);
 
         customMessage.addClassName("custom-message");
         add(customMessage);
@@ -109,10 +109,11 @@ public abstract class ConfirmationDialog extends Dialog {
                     emailAddress, confirmationTimeout)));
 
             getFooter().removeAll();
-            final var closeDialogButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.close"));
-            closeDialogButton.addThemeVariants(LUMO_PRIMARY);
-            closeDialogButton.addClickListener(ev -> close());
-            getFooter().add(closeDialogButton);
+            final var closeButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.close"));
+            closeButton.addThemeVariants(LUMO_PRIMARY);
+            closeButton.addClassName("close-button");
+            closeButton.addClickListener(ev -> close());
+            getFooter().add(closeButton);
         });
 
         addOpenedChangeListener(evt -> {
