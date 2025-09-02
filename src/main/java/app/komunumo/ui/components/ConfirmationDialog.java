@@ -87,13 +87,11 @@ public abstract class ConfirmationDialog extends Dialog {
 
         final var binder = new Binder<DummyBean>();
         binder.forField(emailField)
-                .withValidator(new EmailValidator(getTranslation("ui.components.ConfirmationDialog.email.error"), true))
-                .bind(dummy -> null, (dummy, value) -> {
-                });
+                .asRequired("")
+                .withValidator(new EmailValidator(getTranslation("ui.components.ConfirmationDialog.email.error")))
+                .bind(dummy -> null, (dummy, value) -> { });
         binder.setBean(new DummyBean());
-        binder.addStatusChangeListener(evt ->
-                emailButton.setEnabled(!emailField.getValue().isBlank() && binder.isValid())
-        );
+        binder.addStatusChangeListener(evt -> emailButton.setEnabled(binder.isValid()));
         binder.validate();
 
         emailButton.addClickListener(evt -> {
