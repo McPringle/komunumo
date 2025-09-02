@@ -89,9 +89,12 @@ class LoginFlowIT extends BrowserTest {
 
         // click on the request email button
         page.locator("vaadin-button.email-button").click();
+
+        // close the dialog
         final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
         closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         captureScreenshot("after-email-requested");
+        closeButton.click();
 
         // wait for the confirmation email
         await().atMost(2, SECONDS).untilAsserted(() -> {
@@ -164,6 +167,7 @@ class LoginFlowIT extends BrowserTest {
         page.locator("vaadin-button.email-button").click();
         final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
         closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        closeButton.click();
         captureScreenshot("after-email-requested");
 
         // wait for the confirmation email
