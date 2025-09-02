@@ -20,6 +20,7 @@ package app.komunumo.ui.components;
 import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.data.service.ServiceProvider;
+import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -56,8 +57,7 @@ public abstract class ConfirmationDialog extends Dialog {
         setResizable(false);
 
         setHeaderTitle(getTranslation("ui.components.ConfirmationDialog.title"));
-        final var closeDialogButton = new Button(new Icon("lumo", "cross"),
-                (evt) -> close());
+        final var closeDialogButton = new Button(new Icon("lumo", "cross"), this::closeDialog);
         closeDialogButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         closeDialogButton.addClassName("close-dialog-button");
         getHeader().add(closeDialogButton);
@@ -80,8 +80,7 @@ public abstract class ConfirmationDialog extends Dialog {
         emailButton.addClassName("email-button");
         getFooter().add(emailButton);
 
-        final var cancelButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.cancel"),
-                (evt) -> close());
+        final var cancelButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.cancel"), this::closeDialog);
         cancelButton.addThemeVariants(LUMO_TERTIARY);
         cancelButton.addClassName("cancel-button");
         getFooter().add(cancelButton);
@@ -113,7 +112,7 @@ public abstract class ConfirmationDialog extends Dialog {
             final var closeButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.close"));
             closeButton.addThemeVariants(LUMO_PRIMARY);
             closeButton.addClassName("close-button");
-            closeButton.addClickListener(ev -> close());
+            closeButton.addClickListener(this::closeDialog);
             getFooter().add(closeButton);
         });
 
@@ -122,6 +121,10 @@ public abstract class ConfirmationDialog extends Dialog {
                 emailField.focus();
             }
         });
+    }
+
+    private void closeDialog(final @NotNull ClickEvent<Button> event) {
+        close();
     }
 
     /**
