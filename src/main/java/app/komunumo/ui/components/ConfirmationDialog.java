@@ -115,6 +115,12 @@ public abstract class ConfirmationDialog extends Dialog {
             closeDialogButton.addClickListener(ev -> close());
             getFooter().add(closeDialogButton);
         });
+
+        addOpenedChangeListener(evt -> {
+            if (evt.isOpened()) {
+                emailField.focus();
+            }
+        });
     }
 
     /**
