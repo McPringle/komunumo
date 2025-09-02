@@ -59,6 +59,7 @@ public abstract class ConfirmationDialog extends Dialog {
         final var closeButton = new Button(new Icon("lumo", "cross"),
                 (evt) -> close());
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        closeButton.addClassName("close-dialog-button");
         getHeader().add(closeButton);
 
         customMessage.addClassName("custom-message");
