@@ -194,4 +194,35 @@ class LoginFlowIT extends BrowserTest {
         assertThat(message).startsWith("The login to your profile was not successful.");
     }
 
+    @Test
+    void loginDialogOpenAndClose() {
+        final var page = getPage();
+
+        // navigate to events page
+        page.navigate("http://localhost:8081/events");
+        page.waitForURL("**/events");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("before-login");
+
+        // open avatar menu
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        captureScreenshot("profile-menu-before-login");
+
+        // click on login menu item
+        page.click(LOGIN_MENU_ITEM_SELECTOR);
+
+        // wait for login dialog to appear
+        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
+                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
+        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        captureScreenshot("login-dialog-empty");
+
+        // close the dialog
+        final var closeButton = page.locator("vaadin-button.close-dialog-button");
+        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        closeButton.click();
+    }
+
 }
