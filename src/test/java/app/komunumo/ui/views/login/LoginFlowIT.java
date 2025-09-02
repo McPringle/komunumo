@@ -65,12 +65,12 @@ class LoginFlowIT extends BrowserTest {
         page.navigate("http://localhost:8081/events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("before-login");
+        captureScreenshot("loginAndLogoutWorks_before-login");
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
-        captureScreenshot("profile-menu-before-login");
+        captureScreenshot("loginAndLogoutWorks_profile-menu-before-login");
 
         // click on login menu item
         page.click(LOGIN_MENU_ITEM_SELECTOR);
@@ -80,12 +80,12 @@ class LoginFlowIT extends BrowserTest {
                 .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
         overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
-        captureScreenshot("login-dialog-empty");
+        captureScreenshot("loginAndLogoutWorks_login-dialog-empty");
 
         // fill in email address
         final var emailInput = page.locator("vaadin-email-field").locator("input");
         emailInput.fill("success@example.com");
-        captureScreenshot("login-dialog-filled");
+        captureScreenshot("loginAndLogoutWorks_login-dialog-filled");
 
         // click on the request email button
         page.locator("vaadin-button.email-button").click();
@@ -93,7 +93,7 @@ class LoginFlowIT extends BrowserTest {
         // close the dialog
         final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
         closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("after-email-requested");
+        captureScreenshot("loginAndLogoutWorks_after-email-requested");
         closeButton.click();
 
         // wait for the confirmation email
@@ -113,23 +113,23 @@ class LoginFlowIT extends BrowserTest {
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("confirmation-page");
+        captureScreenshot("loginAndLogoutWorks_confirmation-page");
 
         // navigate back to the events page
         page.navigate("http://localhost:8081/events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("after-login");
+        captureScreenshot("loginAndLogoutWorks_after-login");
 
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
-        captureScreenshot("profile-menu-after-login");
+        captureScreenshot("loginAndLogoutWorks_profile-menu-after-login");
 
         page.click(LOGOUT_MENU_ITEM_SELECTOR);
         Thread.sleep(500); // wait for the logout process to complete
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
-        captureScreenshot("after-logout");
+        captureScreenshot("loginAndLogoutWorks_after-logout");
     }
 
     @Test
@@ -141,12 +141,12 @@ class LoginFlowIT extends BrowserTest {
         page.navigate("http://localhost:8081/events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("before-login");
+        captureScreenshot("loginFails_before-login");
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
-        captureScreenshot("profile-menu-before-login");
+        captureScreenshot("loginFails_profile-menu-before-login");
 
         // click on login menu item
         page.click(LOGIN_MENU_ITEM_SELECTOR);
@@ -156,19 +156,19 @@ class LoginFlowIT extends BrowserTest {
                 .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
         overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
-        captureScreenshot("login-dialog-empty");
+        captureScreenshot("loginFails_login-dialog-empty");
 
         // fill in email address
         final var emailInput = page.locator("vaadin-email-field").locator("input");
         emailInput.fill("fail@example.com");
-        captureScreenshot("login-dialog-filled");
+        captureScreenshot("loginFails_login-dialog-filled");
 
         // click on the request email button
         page.locator("vaadin-button.email-button").click();
         final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
         closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         closeButton.click();
-        captureScreenshot("after-email-requested");
+        captureScreenshot("loginFails_after-email-requested");
 
         // wait for the confirmation email
         await().atMost(2, SECONDS).untilAsserted(() -> {
@@ -187,7 +187,7 @@ class LoginFlowIT extends BrowserTest {
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("confirmation-page");
+        captureScreenshot("loginFails_confirmation-page");
 
         // check for error message
         final var message = page.locator("vaadin-markdown.success-message").textContent();
@@ -202,12 +202,12 @@ class LoginFlowIT extends BrowserTest {
         page.navigate("http://localhost:8081/events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("before-login");
+        captureScreenshot("loginDialogOpenAndClose_before-login");
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
-        captureScreenshot("profile-menu-before-login");
+        captureScreenshot("loginDialogOpenAndClose_profile-menu-before-login");
 
         // click on login menu item
         page.click(LOGIN_MENU_ITEM_SELECTOR);
@@ -217,7 +217,7 @@ class LoginFlowIT extends BrowserTest {
                 .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
         overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
-        captureScreenshot("login-dialog-empty");
+        captureScreenshot("loginDialogOpenAndClose_login-dialog-empty");
 
         // close the dialog
         final var closeButton = page.locator("vaadin-button.close-dialog-button");
