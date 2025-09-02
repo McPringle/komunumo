@@ -225,4 +225,35 @@ class LoginFlowIT extends BrowserTest {
         closeButton.click();
     }
 
+    @Test
+    void loginDialogCancel() {
+        final var page = getPage();
+
+        // navigate to events page
+        page.navigate("http://localhost:8081/events");
+        page.waitForURL("**/events");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("loginDialogCancel_before-login");
+
+        // open avatar menu
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        captureScreenshot("loginDialogCancel_profile-menu-before-login");
+
+        // click on login menu item
+        page.click(LOGIN_MENU_ITEM_SELECTOR);
+
+        // wait for login dialog to appear
+        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
+                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
+        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        captureScreenshot("loginDialogCancel_login-dialog-empty");
+
+        // cancel the dialog
+        final var cancelButton = page.locator("vaadin-button.cancel-button");
+        cancelButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        cancelButton.click();
+    }
+
 }
