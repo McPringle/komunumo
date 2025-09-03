@@ -18,9 +18,6 @@
 package app.komunumo.ui.views.events;
 
 import app.komunumo.data.dto.EventWithImageDto;
-import app.komunumo.data.service.ConfirmationService;
-import app.komunumo.data.service.EventService;
-import app.komunumo.data.service.ParticipationService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
@@ -28,6 +25,7 @@ import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.ImageUtil;
 import app.komunumo.util.ParseUtil;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -52,9 +50,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailView.class);
 
-    private final transient @NotNull EventService eventService;
-    private final transient @NotNull ConfirmationService confirmationService;
-    private final transient @NotNull ParticipationService participationService;
+    private final transient @NotNull ServiceProvider serviceProvider;
 
     private final @NotNull HtmlContainer pageContent = new Div();
 
@@ -62,9 +58,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
 
     public EventDetailView(final @NotNull ServiceProvider serviceProvider) {
         super(serviceProvider.configurationService());
-        this.eventService = serviceProvider.eventService();
-        this.confirmationService = serviceProvider.confirmationService();
-        this.participationService = serviceProvider.participationService();
+        this.serviceProvider = serviceProvider;
         addClassName("event-detail-view");
         add(pageContent);
     }
@@ -77,7 +71,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         final var ui = beforeEnterEvent.getUI();
         final var locale = ui.getLocale();
 
-        eventService.getEventWithImage(eventId).ifPresentOrElse(eventWithImage -> {
+        serviceProvider.eventService().getEventWithImage(eventId).ifPresentOrElse(eventWithImage -> {
             showDetails(eventWithImage, locale);
             pageTitle = eventWithImage.event().title();
         }, () -> {
@@ -117,7 +111,8 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        pageContent.add(new RegisterForm(confirmationService, participationService, event));
+        pageContent.add(new Button(getTranslation("ui.views.events.EventDetailView.register"),
+                e -> new RegisterDialog(serviceProvider, event).open()));
     }
 
     private void addDateTimeText(final @Nullable ZonedDateTime dateTime,

@@ -48,7 +48,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-class RegisterFormIT extends IntegrationTest {
+class RegisterDialogIT extends IntegrationTest {
 
     private static final @NotNull String EMAIL_OKAY = "test@komunumo.app";
     private static final @NotNull Pattern EXTRACT_ID_PATTERN =
