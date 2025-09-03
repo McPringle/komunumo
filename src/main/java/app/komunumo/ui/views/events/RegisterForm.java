@@ -70,7 +70,7 @@ public final class RegisterForm extends Details {
 
         final var binder = new Binder<DummyBean>();
         binder.forField(emailField)
-                .withValidator(new EmailValidator(getTranslation("validation.email.invalid"), true))
+                .withValidator(new EmailValidator(getTranslation("ui.validation.email.invalid"), true))
                 .bind(dummy -> null, (dummy, value) -> { });
         binder.setBean(new DummyBean());
         binder.addStatusChangeListener(evt ->
