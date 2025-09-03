@@ -37,7 +37,7 @@ public final class LoginDialog extends ConfirmationDialog {
         );
         this.loginService = serviceProvider.loginService();
 
-        setHeaderTitle(getTranslation("ui.components.LoginDialog.title"));
+        setHeaderTitle(getTranslation("ui.views.login.LoginDialog.title"));
         setCustomMessage(getTranslation("ui.views.login.LoginDialog.infoText"));
     }
 
