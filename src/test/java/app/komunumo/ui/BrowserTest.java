@@ -55,6 +55,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BrowserTest {
 
+    protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
+
     private static final Path SCREENSHOT_DIR = Path.of("target/playwright-screenshots");
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmssSSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(BrowserTest.class);

@@ -37,10 +37,10 @@ import static org.awaitility.Awaitility.await;
 
 class LoginFlowIT extends BrowserTest {
 
-    protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
-    protected static final String AVATAR_SELECTOR = "vaadin-avatar";
-    protected static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
-    protected static final String LOGOUT_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Logout')";
+    private static final String AVATAR_SELECTOR = "vaadin-avatar";
+    private static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
+    private static final String LOGOUT_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Logout')";
+
     private UserDto testUser;
 
     @BeforeAll
