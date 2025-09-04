@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static app.komunumo.data.service.ConfirmationService.CONTEXT_KEY_EMAIL;
+import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;

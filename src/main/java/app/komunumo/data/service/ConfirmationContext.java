@@ -24,6 +24,8 @@ import java.util.Map;
 
 public final class ConfirmationContext extends HashMap<String, Object> {
 
+    public static final @NotNull String CONTEXT_KEY_EMAIL = "email";
+
     public static @NotNull ConfirmationContext of(final @NotNull Object... keyValues) {
         if (keyValues.length % 2 != 0) {
             throw new IllegalArgumentException("Keys and values must be in pairs");

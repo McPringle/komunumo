@@ -24,7 +24,7 @@ import app.komunumo.ui.components.ConfirmationDialog;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 
-import static app.komunumo.data.service.ConfirmationService.CONTEXT_KEY_EMAIL;
+import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
 
 public final class LoginDialog extends ConfirmationDialog {
 

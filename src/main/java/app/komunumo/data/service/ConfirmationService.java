@@ -39,11 +39,10 @@ import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_URL;
 import static app.komunumo.data.dto.MailFormat.MARKDOWN;
 import static app.komunumo.data.dto.MailTemplateId.CONFIRMATION_PROCESS;
+import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
 
 @Service
 public final class ConfirmationService {
-
-    public static final @NotNull String CONTEXT_KEY_EMAIL = "email";
 
     private static final @NotNull Duration CONFIRMATION_TIMEOUT = Duration.ofMinutes(5);
     private static final @NotNull String CONFIRMATION_PATH = "/confirm";

@@ -17,8 +17,8 @@
  */
 package app.komunumo.ui.views.events;
 
-import app.komunumo.data.service.ConfirmationContext;
 import app.komunumo.data.dto.EventDto;
+import app.komunumo.data.service.ConfirmationContext;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-import static app.komunumo.data.service.ConfirmationService.CONTEXT_KEY_EMAIL;
+import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
 
 public final class RegisterDialog extends ConfirmationDialog {
 

@@ -32,7 +32,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
 import org.jetbrains.annotations.NotNull;
 
-import static app.komunumo.data.service.ConfirmationService.CONTEXT_KEY_EMAIL;
+import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY;
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY;
 import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
