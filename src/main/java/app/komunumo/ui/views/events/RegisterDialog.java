@@ -53,11 +53,10 @@ public final class RegisterDialog extends ConfirmationDialog {
     @Override
     protected boolean onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
         final var email = confirmationContext.email();
-        if (participationService.joinEvent(event, email, locale)) {
-            final var redirectUrl = LinkUtil.getLink(event);
-            UI.getCurrent().getPage().executeJs(
-                    "setTimeout(function() { window.location.href = '%s'; }, 5000);".formatted(redirectUrl));
-        }
+        participationService.joinEvent(event, email, locale);
+        final var redirectUrl = LinkUtil.getLink(event);
+        UI.getCurrent().getPage().executeJs(
+                "setTimeout(function() { window.location.href = '%s'; }, 5000);".formatted(redirectUrl));
         return true;
     }
 
