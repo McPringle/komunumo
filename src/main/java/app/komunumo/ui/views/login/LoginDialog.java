@@ -18,26 +18,24 @@
 package app.komunumo.ui.views.login;
 
 import app.komunumo.data.service.ConfirmationContext;
+import app.komunumo.data.service.ConfirmationResult;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 
-import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
+import java.util.Locale;
 
 public final class LoginDialog extends ConfirmationDialog {
 
     private final @NotNull LoginService loginService;
 
-    public LoginDialog(final @NotNull ServiceProvider serviceProvider)  {
-        super(
-                serviceProvider,
-                "ui.views.login.LoginDialog.infoText",
-                "ui.views.login.LoginDialog.successMessage",
-                "ui.views.login.LoginDialog.failedMessage",
-                ConfirmationContext.empty()
-        );
+    public LoginDialog(final @NotNull ServiceProvider serviceProvider,
+                       final @NotNull TranslationProvider translationProvider,
+                       final @NotNull Locale locale)  {
+        super(serviceProvider);
         this.loginService = serviceProvider.loginService();
 
         setHeaderTitle(getTranslation("ui.views.login.LoginDialog.title"));
@@ -45,14 +43,16 @@ public final class LoginDialog extends ConfirmationDialog {
     }
 
     @Override
-    protected boolean onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
-        final var email = confirmationContext.getString(CONTEXT_KEY_EMAIL);
+    protected @NotNull ConfirmationResult onConfirmationSuccess(final @NotNull String email,
+                                                                final @NotNull ConfirmationContext confirmationContext) {
         if (loginService.login(email)) {
             UI.getCurrent().getPage()
                     .executeJs("setTimeout(function() { window.location.href = '/'; }, 5000);");
-            return true;
+            return new ConfirmationResult(ConfirmationResult.Type.ERROR,
+                    getTranslation("ui.views.login.LoginDialog.successMessage"));
         }
-        return false;
+        return new ConfirmationResult(ConfirmationResult.Type.ERROR,
+                getTranslation("ui.views.login.LoginDialog.failedMessage"));
     }
 
 }

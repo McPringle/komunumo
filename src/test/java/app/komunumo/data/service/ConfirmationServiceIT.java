@@ -20,18 +20,17 @@ package app.komunumo.data.service;
 import app.komunumo.KomunumoException;
 import app.komunumo.data.service.interfaces.ConfirmationHandler;
 import app.komunumo.ui.IntegrationTest;
+import jakarta.mail.MessagingException;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Locale;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,71 +45,69 @@ class ConfirmationServiceIT extends IntegrationTest {
     private ConfirmationService confirmationService;
 
     @Test
-    void confirmationProcess() {
+    void confirmationProcess() throws MessagingException {
         final var locale = Locale.ENGLISH;
-        final var emailAddress = "test@example.com";
-        final var confirmationReason = "Test Reason";
-        final var onSuccessMessage = "Success Message";
-        final var onFailMessage = "Failed Message";
+        final var email = "test@example.com";
+        final var customMessage = "Info Text";
         final var confirmationHandlerCounter = new AtomicInteger(0);
-        final ConfirmationHandler confirmationHandler = confirmationContext -> {
+        final ConfirmationHandler confirmationHandler = (__, context) -> {
             final var callCount = confirmationHandlerCounter.incrementAndGet();
-            if (callCount == 1) { // first call should throw an exception
-                throw new KomunumoException("expected");
-            }
-            return true;
+            return switch (callCount) {
+                case 1 -> throw new KomunumoException("expected");
+                case 2 -> new ConfirmationResult(ConfirmationResult.Type.SUCCESS, "Test Success Message");
+                default -> throw new IllegalStateException("Unexpected call count: " + callCount);
+            };
         };
 
-        final var confirmationContext = ConfirmationContext.of(CONTEXT_KEY_EMAIL, emailAddress);
+        final var confirmationContext = ConfirmationContext.empty();
         confirmationService.startConfirmationProcess(
-                confirmationReason,
-                onSuccessMessage,
-                onFailMessage,
-                confirmationHandler,
+                email,
+                customMessage,
                 locale,
+                confirmationHandler,
                 confirmationContext);
 
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            confirmationHandlerCounter.set(0);
-            final var receivedMessage = greenMail.getReceivedMessages()[0];
+        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
+        confirmationHandlerCounter.set(0);
 
-            assertThat(receivedMessage.getAllRecipients()[0])
-                    .hasToString("test@example.com");
+        final var receivedMessage = greenMail.getReceivedMessages()[0];
+        assertThat(receivedMessage.getAllRecipients()[0])
+                .hasToString("test@example.com");
 
-            assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Your Instance Name] Please confirm your email address");
+        assertThat(receivedMessage.getSubject())
+                .isEqualTo("[Your Instance Name] Please confirm your email address");
 
-            final var body = getBody(receivedMessage);
-            assertThat(body)
-                    .doesNotContain("${instanceName}")
+        final var body = getBody(receivedMessage);
+        assertThat(body)
+                .doesNotContain("${instanceName}")
+                .doesNotContain("${confirmationTimeout}")
+                .doesNotContain("${customMessage}")
+                .doesNotContain("${confirmationLink}")
+                .contains("Info Text");
 
-                    .doesNotContain("${confirmationTimeout}")
-                    .doesNotContain("${confirmationReason}")
-                    .doesNotContain("${confirmationLink}")
-                    .contains("Test Reason");
+        final var confirmationId = extractConfirmationId(body);
+        assertThat(confirmationId).isNotNull();
 
-            final var confirmationId = extractConfirmationId(body);
-            assertThat(confirmationId).isNotNull();
+        ConfirmationResult confirmationResult;
+        assertThat(confirmationHandlerCounter.get()).isZero();
 
-            Optional<String> success;
-            assertThat(confirmationHandlerCounter.get()).isZero();
+        try (var logCaptor = LogCaptor.forClass(ConfirmationService.class)) {
+            confirmationResult = confirmationService.confirm(confirmationId, locale);
+            assertThat(confirmationResult.type()).isEqualTo(ConfirmationResult.Type.ERROR);
+            assertThat(confirmationHandlerCounter.get()).isEqualTo(1);
+            assertThat(logCaptor.getErrorLogs()).containsExactly(
+                    "Error in 'confirmationHandler' for confirmation ID " + confirmationId + ": expected");
+        }
 
-            try (var logCaptor = LogCaptor.forClass(ConfirmationService.class)) {
-                success = confirmationService.confirm(confirmationId);
-                assertThat(success).isEmpty();
-                assertThat(confirmationHandlerCounter.get()).isEqualTo(1);
-                assertThat(logCaptor.getErrorLogs()).containsExactly(
-                        "Error in 'confirmationHandler' for confirmation ID " + confirmationId + ": expected");
-            }
+        confirmationResult = confirmationService.confirm(confirmationId, locale);
+        assertThat(confirmationResult.type()).isEqualTo(ConfirmationResult.Type.SUCCESS);
+        assertThat(confirmationResult.message()).isEqualTo("Test Success Message");
+        assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
 
-            success = confirmationService.confirm(confirmationId);
-            assertThat(success).isNotEmpty().contains("Success Message");
-            assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
-
-            success = confirmationService.confirm(confirmationId);
-            assertThat(success).isEmpty();
-            assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
-        });
+        confirmationResult = confirmationService.confirm(confirmationId, locale);
+        assertThat(confirmationResult.type()).isEqualTo(ConfirmationResult.Type.ERROR);
+        assertThat(confirmationResult.message()).startsWith("An error occurred confirming your email address.");
+        assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
     }
 
     private String extractConfirmationId(final @NotNull String body) {

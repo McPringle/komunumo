@@ -131,7 +131,7 @@ class LoginFlowIT extends BrowserTest {
 
     @Test
     @SuppressWarnings({"java:S2925", "java:S2699"})
-    void loginFails() throws MessagingException {
+    void loginShouldFail() throws MessagingException {
         final var page = getPage();
 
         // navigate to events page
@@ -187,7 +187,7 @@ class LoginFlowIT extends BrowserTest {
         captureScreenshot("loginFails_confirmation-page");
 
         // check for error message
-        final var message = page.locator("vaadin-markdown.success-message").textContent();
+        final var message = page.locator("vaadin-markdown.error-message").textContent();
         assertThat(message).startsWith("The login to your profile was not successful.");
     }
 

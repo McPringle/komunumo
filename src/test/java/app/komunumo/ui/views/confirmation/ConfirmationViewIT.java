@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.views.confirmation;
 
+import app.komunumo.data.service.ConfirmationResult;
 import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.ui.IntegrationTest;
 import com.vaadin.flow.component.UI;
@@ -29,11 +30,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static app.komunumo.util.TestUtil.findComponent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -54,8 +55,8 @@ class ConfirmationViewIT extends IntegrationTest {
 
     @Test
     void invalidConfirmationId() {
-        when(confirmationService.confirm(anyString()))
-                .thenReturn(Optional.empty());
+        when(confirmationService.confirm(anyString(), any()))
+                .thenReturn(new ConfirmationResult(ConfirmationResult.Type.ERROR, "Invalid confirmation ID"));
 
         UI.getCurrent().navigate(
                 ConfirmationView.class,
@@ -68,13 +69,13 @@ class ConfirmationViewIT extends IntegrationTest {
         assertThat(h2.getText()).isEqualTo("Confirmation of your email address");
         final var markdown = findComponent(main, Markdown.class);
         assertThat(markdown).isNotNull();
-        assertThat(markdown.getContent()).startsWith("An error occurred confirming your email address.");
+        assertThat(markdown.getContent()).isEqualTo("Invalid confirmation ID");
     }
 
     @Test
     void correctConfirmationId() {
-        when(confirmationService.confirm(anyString()))
-                .thenReturn(Optional.of("**successful** confirmation"));
+        when(confirmationService.confirm(anyString(), any()))
+                .thenReturn(new ConfirmationResult(ConfirmationResult.Type.SUCCESS, "**successful** confirmation"));
 
         UI.getCurrent().navigate(
                 ConfirmationView.class,

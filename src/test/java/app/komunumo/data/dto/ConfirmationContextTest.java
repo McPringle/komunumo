@@ -65,31 +65,4 @@ class ConfirmationContextTest {
                 .hasMessage("Keys and values must be in pairs");
     }
 
-    @Test
-    void getStringExistingKey() {
-        final var confirmationContext = ConfirmationContext.of("key1", "value1");
-        assertThat(confirmationContext.getString("key1")).isEqualTo("value1");
-    }
-
-    @Test
-    void getStringNonExistingKey() {
-        final var confirmationContext = ConfirmationContext.empty();
-        assertThatThrownBy(() -> {
-            confirmationContext.getString("nonExistingKey");
-        })
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Key 'nonExistingKey' does not exist");
-    }
-
-    @Test
-    void getStringNullValue() {
-        @SuppressWarnings("DataFlowIssue")
-        final var confirmationContext = ConfirmationContext.of("key1", null);
-        assertThatThrownBy(() -> {
-            confirmationContext.getString("key1");
-        })
-                .isInstanceOf(NullPointerException.class)
-                .hasMessage("Key 'key1' is null");
-    }
-
 }

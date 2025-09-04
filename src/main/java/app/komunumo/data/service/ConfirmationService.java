@@ -32,14 +32,12 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_URL;
 import static app.komunumo.data.dto.MailFormat.MARKDOWN;
 import static app.komunumo.data.dto.MailTemplateId.CONFIRMATION_PROCESS;
-import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
 
 @Service
 public final class ConfirmationService {
@@ -66,28 +64,26 @@ public final class ConfirmationService {
         this.translationProvider = translationProvider;
     }
 
-    public void startConfirmationProcess(final @NotNull String confirmationReason,
-                                         final @NotNull String onSuccessMessage,
-                                         final @NotNull String onFailMessage,
-                                         final @NotNull ConfirmationHandler confirmationHandler,
+    public void startConfirmationProcess(final @NotNull String email,
+                                         final @NotNull String customMessage,
                                          final @NotNull Locale locale,
+                                         final @NotNull ConfirmationHandler confirmationHandler,
                                          final @NotNull ConfirmationContext confirmationContext) {
         final var confirmationId = UUID.randomUUID().toString();
-        final var confirmationData = new ConfirmationData(confirmationId, onSuccessMessage, onFailMessage,
-                confirmationHandler, locale, confirmationContext);
+        final var confirmationData = new ConfirmationData(confirmationId, email, customMessage, locale,
+                confirmationHandler, confirmationContext);
         confirmationCache.put(confirmationId, confirmationData);
 
         final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
         final var confirmationLink = generateConfirmationLink(confirmationData);
         final var confirmationTimeout = getConfirmationTimeoutText(locale);
 
-        final var emailAddress = confirmationContext.getString(CONTEXT_KEY_EMAIL);
         final Map<String, String> variables = Map.of(
                 "instanceName", instanceName,
                 "confirmationLink", confirmationLink,
                 "confirmationTimeout", confirmationTimeout,
-                "confirmationReason", confirmationReason);
-        mailService.sendMail(CONFIRMATION_PROCESS, locale, MARKDOWN, variables, emailAddress);
+                "customMessage", customMessage);
+        mailService.sendMail(CONFIRMATION_PROCESS, locale, MARKDOWN, variables, email);
     }
 
     private String generateConfirmationLink(final @NotNull ConfirmationData confirmationData) {
@@ -110,32 +106,37 @@ public final class ConfirmationService {
         return translationProvider.getTranslation("confirmation.timeout.minutes", locale, minutes);
     }
 
-    public @NotNull Optional<String> confirm(final @NotNull String confirmationId) {
+    public @NotNull ConfirmationResult confirm(final @NotNull String confirmationId,
+                                               final @Nullable Locale locale) {
         final var confirmationData = confirmationCache.getIfPresent(confirmationId);
         if (confirmationData != null) {
             try {
+                final var email = confirmationData.email();
                 final var confirmationContext = confirmationData.context();
-                if (confirmationData.confirmationHandler().handle(confirmationContext)) {
-                    confirmationCache.invalidate(confirmationId);
-                    return Optional.of(confirmationData.successMessage);
-                } else {
-                    return Optional.of(confirmationData.failMessage);
+                final var result = confirmationData.confirmationHandler().handle(email, confirmationContext);
+                if (result.type().equals(ConfirmationResult.Type.SUCCESS)) {
+                    confirmationCache.invalidate(confirmationId); // only allow one successful confirmation
                 }
+                return result;
             } catch (final Exception exception) {
                 LOGGER.error("Error in 'confirmationHandler' for confirmation ID {}: {}",
                         confirmationId, exception.getMessage(), exception);
+                final var message = translationProvider.getTranslation("confirmation.view.handlerError", locale);
+                return new ConfirmationResult(ConfirmationResult.Type.ERROR, message);
             }
         }
         LOGGER.warn("Invalid or expired confirmation ID: {}", confirmationId);
-        return Optional.empty();
+        final var confirmationTimeout = getConfirmationTimeoutText(locale);
+        final var message = translationProvider.getTranslation("confirmation.view.error", locale, confirmationTimeout);
+        return new ConfirmationResult(ConfirmationResult.Type.ERROR, message);
     }
 
     private record ConfirmationData(
             @NotNull String id,
-            @NotNull String successMessage,
-            @NotNull String failMessage,
-            @NotNull ConfirmationHandler confirmationHandler,
+            @NotNull String email,
+            @NotNull String infoText,
             @NotNull Locale locale,
+            @NotNull ConfirmationHandler confirmationHandler,
             @NotNull ConfirmationContext context) { }
 
 }

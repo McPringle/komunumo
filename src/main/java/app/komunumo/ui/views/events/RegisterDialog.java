@@ -19,16 +19,16 @@ package app.komunumo.ui.views.events;
 
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.service.ConfirmationContext;
+import app.komunumo.data.service.ConfirmationResult;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
 import app.komunumo.util.LinkUtil;
-import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
-
-import static app.komunumo.data.service.ConfirmationContext.CONTEXT_KEY_EMAIL;
+import java.util.Map;
 
 public final class RegisterDialog extends ConfirmationDialog {
 
@@ -38,30 +38,26 @@ public final class RegisterDialog extends ConfirmationDialog {
     private final @NotNull Locale locale;
 
     public RegisterDialog(final @NotNull ServiceProvider serviceProvider,
+                          final @NotNull TranslationProvider translationProvider,
+                          final @NotNull Locale locale,
                           final @NotNull EventDto event)  {
-        super(
-                serviceProvider,
-                "ui.views.events.RegisterDialog.infoText",
-                "ui.views.events.RegisterDialog.successMessage",
-                "ui.views.events.RegisterDialog.failedMessage",
-                ConfirmationContext.of("event", event)
-        );
+        super(serviceProvider);
         this.participationService = serviceProvider.participationService();
         this.locale = getLocale();
 
         setHeaderTitle(getTranslation("ui.views.events.RegisterDialog.title"));
         setCustomMessage(getTranslation("ui.views.events.RegisterDialog.infoText"));
+        setContext(ConfirmationContext.of(Map.entry(CONTEXT_KEY_EVENT, event)));
     }
 
     @Override
-    protected boolean onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
-        final var email = confirmationContext.getString(CONTEXT_KEY_EMAIL);
-        final var event = (EventDto) confirmationContext.get(CONTEXT_KEY_EVENT);
+    protected @NotNull ConfirmationResult onConfirmationSuccess(final @NotNull String email,
+                                                                final @NotNull ConfirmationContext context) {
+        final var event = (EventDto) context.get(CONTEXT_KEY_EVENT);
         participationService.joinEvent(event, email, locale);
-        final var redirectUrl = LinkUtil.getLink(event);
-        UI.getCurrent().getPage().executeJs(
-                "setTimeout(function() { window.location.href = '%s'; }, 5000);".formatted(redirectUrl));
-        return true;
+        return new ConfirmationResult(ConfirmationResult.Type.SUCCESS,
+                getTranslation("ui.views.events.RegisterDialog.successMessage",
+                        event.title(), LinkUtil.getLink(event)));
     }
 
 }

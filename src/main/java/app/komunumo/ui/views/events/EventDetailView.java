@@ -19,6 +19,7 @@ package app.komunumo.ui.views.events;
 
 import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import app.komunumo.util.DateTimeUtil;
@@ -51,14 +52,17 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
     private static final Logger LOGGER = LoggerFactory.getLogger(EventDetailView.class);
 
     private final transient @NotNull ServiceProvider serviceProvider;
+    private final transient @NotNull TranslationProvider translationProvider;
 
     private final @NotNull HtmlContainer pageContent = new Div();
 
     private @NotNull String pageTitle = "";
 
-    public EventDetailView(final @NotNull ServiceProvider serviceProvider) {
+    public EventDetailView(final @NotNull ServiceProvider serviceProvider,
+                           final @NotNull TranslationProvider translationProvider) {
         super(serviceProvider.configurationService());
         this.serviceProvider = serviceProvider;
+        this.translationProvider = translationProvider;
         addClassName("event-detail-view");
         add(pageContent);
     }
@@ -112,7 +116,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         pageContent.add(description);
 
         final var registrationButton = new Button(getTranslation("ui.views.events.EventDetailView.register"));
-        registrationButton.addClickListener(e -> new RegisterDialog(serviceProvider, event).open());
+        registrationButton.addClickListener(e -> new RegisterDialog(serviceProvider, translationProvider, locale, event).open());
         registrationButton.addClassName("registration-button");
         pageContent.add(registrationButton);
     }

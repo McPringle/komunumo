@@ -19,6 +19,7 @@ package app.komunumo.ui.views.login;
 
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.security.SecurityConfig;
+import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.UI;
@@ -34,10 +35,13 @@ import org.jetbrains.annotations.Nullable;
 public final class LoginView extends AbstractView implements BeforeEnterObserver {
 
     private final @NotNull ServiceProvider serviceProvider;
+    private final @NotNull TranslationProvider translationProvider;
 
-    public LoginView(final @NotNull ServiceProvider serviceProvider) {
+    public LoginView(final @NotNull ServiceProvider serviceProvider,
+                     final @NotNull TranslationProvider translationProvider) {
         super(serviceProvider.configurationService());
         this.serviceProvider = serviceProvider;
+        this.translationProvider = translationProvider;
     }
 
     @Override
@@ -47,6 +51,6 @@ public final class LoginView extends AbstractView implements BeforeEnterObserver
 
     @Override
     public void beforeEnter(final @Nullable BeforeEnterEvent beforeEnterEvent) {
-        new LoginDialog(serviceProvider).open();
+        new LoginDialog(serviceProvider, translationProvider, getLocale()).open();
     }
 }
