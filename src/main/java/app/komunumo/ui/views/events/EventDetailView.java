@@ -111,8 +111,10 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        pageContent.add(new Button(getTranslation("ui.views.events.EventDetailView.register"),
-                e -> new RegisterDialog(serviceProvider, event).open()));
+        final var registrationButton = new Button(getTranslation("ui.views.events.EventDetailView.register"));
+        registrationButton.addClickListener(e -> new RegisterDialog(serviceProvider, event).open());
+        registrationButton.addClassName("registration-button");
+        pageContent.add(registrationButton);
     }
 
     private void addDateTimeText(final @Nullable ZonedDateTime dateTime,
