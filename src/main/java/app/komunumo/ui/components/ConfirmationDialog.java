@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.data.dto.ConfirmationContext;
+import app.komunumo.data.service.ConfirmationContext;
 import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.data.service.ServiceProvider;
 import com.vaadin.flow.component.ClickEvent;
@@ -32,6 +32,7 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
 import org.jetbrains.annotations.NotNull;
 
+import static app.komunumo.data.service.ConfirmationService.CONTEXT_KEY_EMAIL;
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY;
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY;
 import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
@@ -45,7 +46,8 @@ public abstract class ConfirmationDialog extends Dialog {
     public ConfirmationDialog(final @NotNull ServiceProvider serviceProvider,
                               final @NotNull String confirmationReasonKey,
                               final @NotNull String successMessageKey,
-                              final @NotNull String failedMessageKey) {
+                              final @NotNull String failedMessageKey,
+                              final @NotNull ConfirmationContext confirmationContext) {
         super();
         this.confirmationService = serviceProvider.confirmationService();
         addClassName("confirmation-dialog");
@@ -96,13 +98,14 @@ public abstract class ConfirmationDialog extends Dialog {
 
         emailButton.addClickListener(evt -> {
             final var emailAddress = emailField.getValue();
+            confirmationContext.put(CONTEXT_KEY_EMAIL, emailAddress);
             confirmationService.startConfirmationProcess(
-                    emailAddress,
                     getTranslation(confirmationReasonKey),
                     getTranslation(successMessageKey),
                     getTranslation(failedMessageKey),
                     this::onConfirmationSuccess,
-                    getLocale());
+                    getLocale(),
+                    confirmationContext);
 
             removeAll();
             add(new Markdown(getTranslation("ui.components.ConfirmationDialog.email.send",

@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.views.events;
 
-import app.komunumo.data.dto.ConfirmationContext;
+import app.komunumo.data.service.ConfirmationContext;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.data.service.ServiceProvider;
@@ -28,10 +28,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+import static app.komunumo.data.service.ConfirmationService.CONTEXT_KEY_EMAIL;
+
 public final class RegisterDialog extends ConfirmationDialog {
 
+    private static @NotNull final String CONTEXT_KEY_EVENT = "event";
+
     private final @NotNull ParticipationService participationService;
-    private final @NotNull EventDto event;
     private final @NotNull Locale locale;
 
     public RegisterDialog(final @NotNull ServiceProvider serviceProvider,
@@ -40,10 +43,10 @@ public final class RegisterDialog extends ConfirmationDialog {
                 serviceProvider,
                 "ui.views.events.RegisterDialog.infoText",
                 "ui.views.events.RegisterDialog.successMessage",
-                "ui.views.events.RegisterDialog.failedMessage"
+                "ui.views.events.RegisterDialog.failedMessage",
+                ConfirmationContext.of("event", event)
         );
         this.participationService = serviceProvider.participationService();
-        this.event = event;
         this.locale = getLocale();
 
         setHeaderTitle(getTranslation("ui.views.events.RegisterDialog.title"));
@@ -52,7 +55,8 @@ public final class RegisterDialog extends ConfirmationDialog {
 
     @Override
     protected boolean onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
-        final var email = confirmationContext.email();
+        final var email = confirmationContext.getString(CONTEXT_KEY_EMAIL);
+        final var event = (EventDto) confirmationContext.get(CONTEXT_KEY_EVENT);
         participationService.joinEvent(event, email, locale);
         final var redirectUrl = LinkUtil.getLink(event);
         UI.getCurrent().getPage().executeJs(

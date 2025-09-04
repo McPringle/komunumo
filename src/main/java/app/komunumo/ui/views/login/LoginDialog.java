@@ -17,12 +17,14 @@
  */
 package app.komunumo.ui.views.login;
 
-import app.komunumo.data.dto.ConfirmationContext;
+import app.komunumo.data.service.ConfirmationContext;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
+
+import static app.komunumo.data.service.ConfirmationService.CONTEXT_KEY_EMAIL;
 
 public final class LoginDialog extends ConfirmationDialog {
 
@@ -33,7 +35,8 @@ public final class LoginDialog extends ConfirmationDialog {
                 serviceProvider,
                 "ui.views.login.LoginDialog.infoText",
                 "ui.views.login.LoginDialog.successMessage",
-                "ui.views.login.LoginDialog.failedMessage"
+                "ui.views.login.LoginDialog.failedMessage",
+                ConfirmationContext.empty()
         );
         this.loginService = serviceProvider.loginService();
 
@@ -43,7 +46,7 @@ public final class LoginDialog extends ConfirmationDialog {
 
     @Override
     protected boolean onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
-        final var email = confirmationContext.email();
+        final var email = confirmationContext.getString(CONTEXT_KEY_EMAIL);
         if (loginService.login(email)) {
             UI.getCurrent().getPage()
                     .executeJs("setTimeout(function() { window.location.href = '/'; }, 5000);");

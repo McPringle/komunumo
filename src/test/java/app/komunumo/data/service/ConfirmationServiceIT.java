@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static app.komunumo.data.service.ConfirmationService.CONTEXT_KEY_EMAIL;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,13 +61,14 @@ class ConfirmationServiceIT extends IntegrationTest {
             return true;
         };
 
+        final var confirmationContext = ConfirmationContext.of(CONTEXT_KEY_EMAIL, emailAddress);
         confirmationService.startConfirmationProcess(
-                emailAddress,
                 confirmationReason,
                 onSuccessMessage,
                 onFailMessage,
                 confirmationHandler,
-                locale);
+                locale,
+                confirmationContext);
 
         await().atMost(2, SECONDS).untilAsserted(() -> {
             confirmationHandlerCounter.set(0);

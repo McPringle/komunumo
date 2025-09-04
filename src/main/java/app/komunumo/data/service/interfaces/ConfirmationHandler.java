@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.service.interfaces;
 
-import app.komunumo.data.dto.ConfirmationContext;
+import app.komunumo.data.service.ConfirmationContext;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface

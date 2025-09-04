@@ -17,7 +17,6 @@
  */
 package app.komunumo.data.service;
 
-import app.komunumo.data.dto.ConfirmationContext;
 import app.komunumo.data.service.interfaces.ConfirmationHandler;
 import app.komunumo.ui.TranslationProvider;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -44,6 +43,8 @@ import static app.komunumo.data.dto.MailTemplateId.CONFIRMATION_PROCESS;
 @Service
 public final class ConfirmationService {
 
+    public static final @NotNull String CONTEXT_KEY_EMAIL = "email";
+
     private static final @NotNull Duration CONFIRMATION_TIMEOUT = Duration.ofMinutes(5);
     private static final @NotNull String CONFIRMATION_PATH = "/confirm";
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ConfirmationService.class);
@@ -66,21 +67,22 @@ public final class ConfirmationService {
         this.translationProvider = translationProvider;
     }
 
-    public void startConfirmationProcess(final @NotNull String emailAddress,
-                                         final @NotNull String confirmationReason,
+    public void startConfirmationProcess(final @NotNull String confirmationReason,
                                          final @NotNull String onSuccessMessage,
                                          final @NotNull String onFailMessage,
                                          final @NotNull ConfirmationHandler confirmationHandler,
-                                         final @NotNull Locale locale) {
+                                         final @NotNull Locale locale,
+                                         final @NotNull ConfirmationContext confirmationContext) {
         final var confirmationId = UUID.randomUUID().toString();
-        final var confirmationData = new ConfirmationData(confirmationId, emailAddress,
-                onSuccessMessage, onFailMessage, confirmationHandler, locale);
+        final var confirmationData = new ConfirmationData(confirmationId, onSuccessMessage, onFailMessage,
+                confirmationHandler, locale, confirmationContext);
         confirmationCache.put(confirmationId, confirmationData);
 
         final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
         final var confirmationLink = generateConfirmationLink(confirmationData);
         final var confirmationTimeout = getConfirmationTimeoutText(locale);
 
+        final var emailAddress = confirmationContext.getString(CONTEXT_KEY_EMAIL);
         final Map<String, String> variables = Map.of(
                 "instanceName", instanceName,
                 "confirmationLink", confirmationLink,
@@ -113,7 +115,7 @@ public final class ConfirmationService {
         final var confirmationData = confirmationCache.getIfPresent(confirmationId);
         if (confirmationData != null) {
             try {
-                final var confirmationContext = new ConfirmationContext(confirmationData.emailAddress);
+                final var confirmationContext = confirmationData.context();
                 if (confirmationData.confirmationHandler().handle(confirmationContext)) {
                     confirmationCache.invalidate(confirmationId);
                     return Optional.of(confirmationData.successMessage);
@@ -131,11 +133,10 @@ public final class ConfirmationService {
 
     private record ConfirmationData(
             @NotNull String id,
-            @NotNull String emailAddress,
             @NotNull String successMessage,
             @NotNull String failMessage,
             @NotNull ConfirmationHandler confirmationHandler,
-            @NotNull Locale locale
-    ) { }
+            @NotNull Locale locale,
+            @NotNull ConfirmationContext context) { }
 
 }
