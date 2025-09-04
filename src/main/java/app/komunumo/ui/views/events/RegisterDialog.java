@@ -58,9 +58,8 @@ public class RegisterDialog extends ConfirmationDialog {
             final var redirectUrl = LinkUtil.getLink(event);
             UI.getCurrent().getPage().executeJs(
                     "setTimeout(function() { window.location.href = '%s'; }, 5000);".formatted(redirectUrl));
-            return true;
         }
-        return false;
+        return true;
     }
 
 }
