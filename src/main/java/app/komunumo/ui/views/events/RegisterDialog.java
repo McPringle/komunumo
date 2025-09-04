@@ -28,8 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
-public class RegisterDialog extends ConfirmationDialog {
-
+public final class RegisterDialog extends ConfirmationDialog {
 
     private final @NotNull ParticipationService participationService;
     private final @NotNull EventDto event;
@@ -52,7 +51,7 @@ public class RegisterDialog extends ConfirmationDialog {
     }
 
     @Override
-    protected boolean onConfirmationSuccess(@NotNull ConfirmationContext confirmationContext) {
+    protected boolean onConfirmationSuccess(final @NotNull ConfirmationContext confirmationContext) {
         final var email = confirmationContext.email();
         if (participationService.joinEvent(event, email, locale)) {
             final var redirectUrl = LinkUtil.getLink(event);

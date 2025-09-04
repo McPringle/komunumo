@@ -97,12 +97,9 @@ class LoginFlowIT extends BrowserTest {
         closeButton.click();
 
         // wait for the confirmation email
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            greenMail.waitForIncomingEmail(1);
-        });
+        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
         final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject())
-                .isEqualTo("[Your Instance Name] Please confirm your email address");
+        assertThat(receivedMessage.getSubject()).isEqualTo("[Your Instance Name] Please confirm your email address");
 
         // extract the confirmation link
         final var mailBody = GreenMailUtil.getBody(receivedMessage);
