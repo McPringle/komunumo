@@ -174,24 +174,11 @@ public abstract class BrowserTest {
      * @param baseName the base file name (e.g., "home", "login-error")
      */
     protected void captureScreenshot(final @NotNull String baseName) {
-        captureScreenshot(baseName, true);
-    }
-
-    /**
-     * <p>Captures a screenshot with a given name and an optional timestamp prefix.</p>
-     *
-     * @param baseName         the base file name (e.g., "home", "login-error")
-     * @param includeTimestamp if {@code true}, prepends the current timestamp to the file name
-     *                         to avoid overwriting previous screenshots (e.g., "20250604-235945342_home.png")
-     */
-    protected void captureScreenshot(final @NotNull String baseName, final boolean includeTimestamp) {
         try {
             if (!Files.exists(screenshotDir)) {
                 Files.createDirectories(screenshotDir);
             }
-            final var fileName = includeTimestamp
-                    ? TIMESTAMP_FORMAT.format(LocalDateTime.now()) + "_" + baseName + ".png"
-                    : baseName + ".png";
+            final var fileName = TIMESTAMP_FORMAT.format(LocalDateTime.now()) + "_" + baseName + ".png";
             final var path = screenshotDir.resolve(fileName);
             page.screenshot(screenshotOptions.setPath(path));
             LOGGER.info("Screenshot captured and saved to: {}", path.toAbsolutePath());
