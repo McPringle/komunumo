@@ -151,7 +151,7 @@ public abstract class BrowserTest {
     /**
      * <p>Returns the current Playwright {@link Page} instance used in the test.</p>
      *
-     * <p>This page is created before each test and closed afterwards.
+     * <p>This page is created before each test and closed afterward.
      * It can be used to interact with the browser, navigate to URLs,
      * or assert the presence of elements on the page.</p>
      *
