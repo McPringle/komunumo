@@ -37,10 +37,6 @@ import static org.awaitility.Awaitility.await;
 
 class LoginFlowIT extends BrowserTest {
 
-    private static final String AVATAR_SELECTOR = "vaadin-avatar";
-    private static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
-    private static final String LOGOUT_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Logout')";
-
     private UserDto testUser;
 
     @BeforeAll
@@ -59,74 +55,15 @@ class LoginFlowIT extends BrowserTest {
     @Test
     @SuppressWarnings({"java:S2925", "java:S2699"})
     void loginAndLogoutWorks() throws InterruptedException, MessagingException {
+        login(testUser);
+
         final var page = getPage();
-
-        // navigate to events page
         page.navigate("http://localhost:8081/events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("loginAndLogoutWorks_before-login");
+        captureScreenshot("loginWorks_event-page");
 
-        // open avatar menu
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
-        captureScreenshot("loginAndLogoutWorks_profile-menu-before-login");
-
-        // click on login menu item
-        page.click(LOGIN_MENU_ITEM_SELECTOR);
-
-        // wait for login dialog to appear
-        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
-                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
-        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
-        captureScreenshot("loginAndLogoutWorks_login-dialog-empty");
-
-        // fill in email address
-        final var emailInput = page.locator("vaadin-email-field").locator("input");
-        emailInput.fill("success@example.com");
-        captureScreenshot("loginAndLogoutWorks_login-dialog-filled");
-
-        // click on the request email button
-        page.locator("vaadin-button.email-button").click();
-
-        // close the dialog
-        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
-        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("loginAndLogoutWorks_after-email-requested");
-        closeButton.click();
-
-        // wait for the confirmation email
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
-        final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject()).isEqualTo("[Your Instance Name] Please confirm your email address");
-
-        // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(receivedMessage);
-        final var confirmationLink = extractLinkFromText(mailBody);
-        assertThat(confirmationLink).isNotNull();
-
-        // open the confirmation link
-        page.navigate(confirmationLink);
-        page.waitForURL("**/confirm**");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("loginAndLogoutWorks_confirmation-page");
-
-        // navigate back to the events page
-        page.navigate("http://localhost:8081/events");
-        page.waitForURL("**/events");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("loginAndLogoutWorks_after-login");
-
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
-        captureScreenshot("loginAndLogoutWorks_profile-menu-after-login");
-
-        page.click(LOGOUT_MENU_ITEM_SELECTOR);
-        Thread.sleep(500); // wait for the logout process to complete
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
-        captureScreenshot("loginAndLogoutWorks_after-logout");
+        logout();
     }
 
     @Test

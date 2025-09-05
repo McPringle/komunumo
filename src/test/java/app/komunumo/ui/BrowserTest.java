@@ -19,16 +19,20 @@ package app.komunumo.ui;
 
 import app.komunumo.Application;
 import app.komunumo.data.dto.ConfigurationSetting;
+import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.service.ConfigurationService;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.ScreenshotType;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -50,12 +54,19 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
+import static app.komunumo.util.TestUtil.extractLinkFromText;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.awaitility.Awaitility.await;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BrowserTest {
 
     protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
+    protected static final String AVATAR_SELECTOR = "vaadin-avatar";
+    protected static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
+    protected static final String LOGOUT_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Logout')";
 
     private static final Path SCREENSHOT_DIR = Path.of("target/playwright-screenshots");
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmssSSS");
@@ -187,6 +198,71 @@ public abstract class BrowserTest {
         } catch (final IOException e) {
             throw new RuntimeException("Failed to capture screenshot", e);
         }
+    }
+
+    /**
+     * Logs in a user for browser tests.
+     *
+     * @param user the user to log in
+     */
+    protected void login(final @NotNull UserDto user) {
+        // navigate to login page
+        page.navigate("http://localhost:8081/login");
+        page.waitForURL("**/login");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+
+        // wait for login dialog to appear
+        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
+                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
+        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        captureScreenshot("login_empty-dialog");
+
+        // fill in email address
+        final var emailInput = page.locator("vaadin-email-field").locator("input");
+        emailInput.fill(user.email());
+        captureScreenshot("login_email-field-set");
+
+        // click on the request email button
+        final var mailCount = greenMail.getReceivedMessages().length;
+        page.locator("vaadin-button.email-button").click();
+
+        // close the dialog
+        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
+        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        captureScreenshot("login_email-send");
+        closeButton.click();
+
+        // wait for the confirmation email
+        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(mailCount + 1));
+        final var receivedMessage = greenMail.getReceivedMessages()[0];
+        assertThatCode(() ->
+                assertThat(receivedMessage.getSubject())
+                        .isEqualTo("[Your Instance Name] Please confirm your email address")
+        ).doesNotThrowAnyException();
+
+        // extract the confirmation link
+        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var confirmationLink = extractLinkFromText(mailBody);
+        assertThat(confirmationLink).isNotNull();
+
+        // open the confirmation link
+        page.navigate(confirmationLink);
+        page.waitForURL("**/confirm**");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("login_confirmation-page");
+    }
+
+    protected void logout() {
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+        captureScreenshot("logout_profile-menu");
+
+        page.click(LOGOUT_MENU_ITEM_SELECTOR);
+        assertThatCode(() ->
+                Thread.sleep(500) // wait for the logout process to complete
+        ).doesNotThrowAnyException();
+        captureScreenshot("logout_done");
     }
 
     /**
