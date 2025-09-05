@@ -151,7 +151,7 @@ public abstract class IntegrationTest {
         final var userPrincipal = new UserPrincipal(user, authorities);
 
         // create the authentication token
-        final var authentication = new PreAuthenticatedAuthenticationToken(userDetails, null, authorities);
+        final var authentication = new PreAuthenticatedAuthenticationToken(userPrincipal, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // make ViewAccessChecker work
