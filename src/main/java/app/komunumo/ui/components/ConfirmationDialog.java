@@ -58,6 +58,10 @@ public abstract class ConfirmationDialog extends Dialog {
     }
 
     private void renderUI() {
+        getHeader().removeAll();
+        getFooter().removeAll();
+        removeAll();
+
         setHeaderTitle(getTranslation("ui.components.ConfirmationDialog.title"));
         final var closeDialogButton = new Button(new Icon("lumo", "cross"), this::closeDialog);
         closeDialogButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
