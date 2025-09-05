@@ -18,6 +18,7 @@
 package app.komunumo.ui.views;
 
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.components.PageFooter;
@@ -44,7 +45,8 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
     private final @NotNull UI ui;
     private final @NotNull Main main;
 
-    public WebsiteLayout(final @NotNull ServiceProvider serviceProvider) {
+    public WebsiteLayout(final @NotNull ServiceProvider serviceProvider,
+                         final @NotNull TranslationProvider translationProvider) {
         super();
         ui = UI.getCurrent();
 
@@ -67,7 +69,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         }
 
         addPageHeader(serviceProvider);
-        addNavigationBar(serviceProvider);
+        addNavigationBar(serviceProvider, translationProvider);
 
         main = new Main();
         add(main);
@@ -83,8 +85,9 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         add(new PageHeader(instanceTitle, instanceSlogan));
     }
 
-    private void addNavigationBar(final @NotNull ServiceProvider serviceProvider) {
-        add(new NavigationBar(serviceProvider));
+    private void addNavigationBar(final @NotNull ServiceProvider serviceProvider,
+                                  final @NotNull TranslationProvider translationProvider) {
+        add(new NavigationBar(serviceProvider, translationProvider));
     }
 
     private void addFooter(final @NotNull ServiceProvider serviceProvider) {

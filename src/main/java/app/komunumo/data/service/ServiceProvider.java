@@ -28,7 +28,6 @@ public final class ServiceProvider {
     private final @NotNull AppConfig appConfig;
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull ConfirmationService confirmationService;
-    private final @NotNull SecurityService securityService;
     private final @NotNull CommunityService communityService;
     private final @NotNull EventService eventService;
     private final @NotNull GlobalPageService globalPageService;
@@ -36,24 +35,24 @@ public final class ServiceProvider {
     private final @NotNull UserService userService;
     private final @NotNull MailService mailService;
     private final @NotNull ParticipationService participationService;
+    private final @NotNull LoginService loginService;
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     public ServiceProvider(final @NotNull AppConfig appConfig,
                            final @NotNull ConfigurationService configurationService,
                            final @NotNull ConfirmationService confirmationService,
-                           final @NotNull SecurityService securityService,
                            final @NotNull CommunityService communityService,
                            final @NotNull GlobalPageService globalPageService,
                            final @NotNull EventService eventService,
                            final @NotNull ImageService imageService,
                            final @NotNull UserService userService,
                            final @NotNull MailService mailService,
-                           final @NotNull ParticipationService participationService) {
+                           final @NotNull ParticipationService participationService,
+                           final @NotNull LoginService loginService) {
         super();
         this.appConfig = appConfig;
         this.configurationService = configurationService;
         this.confirmationService = confirmationService;
-        this.securityService = securityService;
         this.communityService = communityService;
         this.eventService = eventService;
         this.globalPageService = globalPageService;
@@ -61,6 +60,7 @@ public final class ServiceProvider {
         this.userService = userService;
         this.mailService = mailService;
         this.participationService = participationService;
+        this.loginService = loginService;
     }
 
     public @NotNull AppConfig getAppConfig() {
@@ -73,10 +73,6 @@ public final class ServiceProvider {
 
     public @NotNull ConfirmationService confirmationService() {
         return confirmationService;
-    }
-
-    public @NotNull SecurityService securityService() {
-        return securityService;
     }
 
     public @NotNull CommunityService communityService() {
@@ -105,6 +101,10 @@ public final class ServiceProvider {
 
     public @NotNull ParticipationService participationService() {
         return participationService;
+    }
+
+    public @NotNull LoginService loginService() {
+        return loginService;
     }
 
 }

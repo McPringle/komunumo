@@ -15,22 +15,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.data.service;
 
 import org.jetbrains.annotations.NotNull;
 
-public enum UserRole {
-    ADMIN("ROLE_ADMIN"),
-    USER("ROLE_USER");
+public record ConfirmationResult(@NotNull Type type, @NotNull String message) {
 
-    private final @NotNull String role;
+    public enum Type {
+        SUCCESS("success-message"),
+        ERROR("error-message"),
+        INFO("info-message");
 
-    UserRole(final @NotNull String role) {
-        this.role = role;
-    }
+        private final @NotNull String className;
 
-    public @NotNull String getRole() {
-        return role;
+        Type(final @NotNull String className) {
+            this.className = className;
+        }
+
+        public @NotNull String getClassName() {
+            return className;
+        }
     }
 
 }

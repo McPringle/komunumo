@@ -20,31 +20,31 @@ package app.komunumo.ui.views.login;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.SecurityService;
 import app.komunumo.data.service.UserService;
 import app.komunumo.ui.BrowserTest;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.options.AriaRole;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.options.WaitForSelectorState;
+import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static app.komunumo.util.TestUtil.extractLinkFromText;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
 class LoginFlowIT extends BrowserTest {
 
-    protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
-    protected static final String AVATAR_SELECTOR = "vaadin-avatar";
-    protected static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
-    protected static final String LOGOUT_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Logout')";
     private UserDto testUser;
 
     @BeforeAll
     void createTestUser() {
         final var userService = getBean(UserService.class);
-        final var securityService = getBean(SecurityService.class);
-        final var encodedPassword = securityService.encodePassword("foobar");
         testUser = userService.storeUser(new UserDto(null, null, null,
-                "@loginLogoutFlow", "login-logout-flow@localhost", "Test User", "", null,
-                UserRole.USER, UserType.LOCAL, encodedPassword));
+                "@loginLogoutFlow", "success@example.com", "Test User", "", null,
+                UserRole.USER, UserType.LOCAL));
     }
 
     @AfterAll
@@ -54,39 +54,140 @@ class LoginFlowIT extends BrowserTest {
 
     @Test
     @SuppressWarnings({"java:S2925", "java:S2699"})
-    void loginAndLogoutWorks() throws InterruptedException {
-        final var page = getPage();
+    void loginAndLogoutWorks() throws InterruptedException, MessagingException {
+        login(testUser);
 
+        final var page = getPage();
         page.navigate("http://localhost:8081/events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("before-login");
+        captureScreenshot("loginWorks_event-page");
 
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
-        captureScreenshot("profile-menu-before-login");
+        logout();
+    }
 
-        page.click(LOGIN_MENU_ITEM_SELECTOR);
-        page.waitForURL("**/login");
-        page.waitForSelector("div:has-text('Log in')");
+    @Test
+    @SuppressWarnings({"java:S2925", "java:S2699"})
+    void loginShouldFail() throws MessagingException {
+        final var page = getPage();
 
-        page.fill("input[name='username']", "login-logout-flow@localhost");
-        page.fill("input[name='password']", "foobar");
-        captureScreenshot("login");
-        page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Log in")).click();
-
+        // navigate to events page
+        page.navigate("http://localhost:8081/events");
+        page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("after-login");
+        captureScreenshot("loginFails_before-login");
 
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
-        captureScreenshot("profile-menu-after-login");
-
-        page.click(LOGOUT_MENU_ITEM_SELECTOR);
-        Thread.sleep(500); // wait for the logout process to complete
+        // open avatar menu
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
-        captureScreenshot("after-logout");
+        captureScreenshot("loginFails_profile-menu-before-login");
+
+        // click on login menu item
+        page.click(LOGIN_MENU_ITEM_SELECTOR);
+
+        // wait for login dialog to appear
+        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
+                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
+        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        captureScreenshot("loginFails_login-dialog-empty");
+
+        // fill in email address
+        final var emailInput = page.locator("vaadin-email-field").locator("input");
+        emailInput.fill("fail@example.com");
+        captureScreenshot("loginFails_login-dialog-filled");
+
+        // click on the request email button
+        page.locator("vaadin-button.email-button").click();
+        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
+        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        closeButton.click();
+        captureScreenshot("loginFails_after-email-requested");
+
+        // wait for the confirmation email
+        await().atMost(2, SECONDS).untilAsserted(() -> {
+            greenMail.waitForIncomingEmail(1);
+        });
+        final var receivedMessage = greenMail.getReceivedMessages()[0];
+        assertThat(receivedMessage.getSubject())
+                .isEqualTo("[Your Instance Name] Please confirm your email address");
+
+        // extract the confirmation link
+        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var confirmationLink = extractLinkFromText(mailBody);
+        assertThat(confirmationLink).isNotNull();
+
+        // open the confirmation link
+        page.navigate(confirmationLink);
+        page.waitForURL("**/confirm**");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("loginFails_confirmation-page");
+
+        // check for error message
+        final var message = page.locator("vaadin-markdown.error-message").textContent();
+        assertThat(message).startsWith("The login to your profile was not successful.");
+    }
+
+    @Test
+    void loginDialogOpenAndClose() {
+        final var page = getPage();
+
+        // navigate to events page
+        page.navigate("http://localhost:8081/events");
+        page.waitForURL("**/events");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("loginDialogOpenAndClose_before-login");
+
+        // open avatar menu
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        captureScreenshot("loginDialogOpenAndClose_profile-menu-before-login");
+
+        // click on login menu item
+        page.click(LOGIN_MENU_ITEM_SELECTOR);
+
+        // wait for login dialog to appear
+        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
+                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
+        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        captureScreenshot("loginDialogOpenAndClose_login-dialog-empty");
+
+        // close the dialog
+        final var closeButton = page.locator("vaadin-button.close-dialog-button");
+        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        closeButton.click();
+    }
+
+    @Test
+    void loginDialogCancel() {
+        final var page = getPage();
+
+        // navigate to events page
+        page.navigate("http://localhost:8081/events");
+        page.waitForURL("**/events");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("loginDialogCancel_before-login");
+
+        // open avatar menu
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        captureScreenshot("loginDialogCancel_profile-menu-before-login");
+
+        // click on login menu item
+        page.click(LOGIN_MENU_ITEM_SELECTOR);
+
+        // wait for login dialog to appear
+        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
+                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
+        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        captureScreenshot("loginDialogCancel_login-dialog-empty");
+
+        // cancel the dialog
+        final var cancelButton = page.locator("vaadin-button.cancel-button");
+        cancelButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        cancelButton.click();
     }
 
 }

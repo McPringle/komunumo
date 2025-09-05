@@ -16,6 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "components/confirmation-dialog.css";
 @import "components/info-banner.css";
 @import "components/komunumo-card.css";
 @import "components/komunumo-grid.css";

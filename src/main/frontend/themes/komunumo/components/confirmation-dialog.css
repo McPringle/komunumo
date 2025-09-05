@@ -1,4 +1,4 @@
-/*
+/**
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,22 +15,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
 
-import org.jetbrains.annotations.NotNull;
+.confirmation-dialog {
+    width: 30em;
+}
 
-public enum UserRole {
-    ADMIN("ROLE_ADMIN"),
-    USER("ROLE_USER");
+.confirmation-dialog .custom-message {
+    font-weight: bold;
+}
 
-    private final @NotNull String role;
-
-    UserRole(final @NotNull String role) {
-        this.role = role;
-    }
-
-    public @NotNull String getRole() {
-        return role;
-    }
-
+.confirmation-dialog .email-button {
+    margin-right: auto;
 }

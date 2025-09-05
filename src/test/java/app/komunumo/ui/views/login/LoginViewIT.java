@@ -15,22 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.ui.views.login;
 
-import org.jetbrains.annotations.NotNull;
+import app.komunumo.ui.IntegrationTest;
+import com.vaadin.flow.component.UI;
+import org.junit.jupiter.api.Test;
 
-public enum UserRole {
-    ADMIN("ROLE_ADMIN"),
-    USER("ROLE_USER");
+import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    private final @NotNull String role;
+class LoginViewIT extends IntegrationTest {
 
-    UserRole(final @NotNull String role) {
-        this.role = role;
-    }
-
-    public @NotNull String getRole() {
-        return role;
+    @Test
+    void loginDialogShouldOpenAutomatically() {
+        UI.getCurrent().navigate(LoginView.class);
+        final var loginDialog = _get(LoginDialog.class);
+        assertThat(loginDialog).isNotNull();
+        assertThat(loginDialog.isOpened()).isTrue();
     }
 
 }
