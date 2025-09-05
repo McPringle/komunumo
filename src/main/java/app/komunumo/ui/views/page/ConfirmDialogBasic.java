@@ -71,7 +71,7 @@ public class ConfirmDialogBasic extends Div {
                 .set("align-items", "center").set("justify-content", "center");
     }
 
-    private void setStatus(String value) {
+    private void setStatus(final String value) {
         status.setText("Status: " + value);
         status.setVisible(true);
     }
