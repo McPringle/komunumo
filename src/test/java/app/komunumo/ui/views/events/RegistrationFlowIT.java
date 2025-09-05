@@ -17,13 +17,16 @@
  */
 package app.komunumo.ui.views.events;
 
+import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.EventService;
 import app.komunumo.ui.BrowserTest;
+import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.extractLinkFromText;
@@ -34,11 +37,10 @@ import static org.awaitility.Awaitility.await;
 
 class RegistrationFlowIT extends BrowserTest {
 
-    private static final @NotNull String EMAIL_ADDRESS = "test@komunumo.app";
     private static final String REGISTRATION_BUTTON_SELECTOR = "vaadin-button:has-text('Register')";
 
     @Test
-    void testRegistrationFlowSuccess() throws MessagingException {
+    void testRegistrationFlowSuccess_withAnonymousUser() throws MessagingException {
         // prepare a test event
         final var eventService = getBean(EventService.class);
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
@@ -67,7 +69,7 @@ class RegistrationFlowIT extends BrowserTest {
 
         // fill in email address
         final var emailInput = page.locator("vaadin-email-field").locator("input");
-        emailInput.fill(EMAIL_ADDRESS);
+        emailInput.fill("anonymous@example.com");
         captureScreenshot("registration-dialog-filled");
 
         // click on the request email button
@@ -103,9 +105,84 @@ class RegistrationFlowIT extends BrowserTest {
     }
 
     @Test
+    void testRegistrationFlowSuccess_withLocalUser() throws MessagingException, FolderException {
+        // prepare a test event
+        final var eventService = getBean(EventService.class);
+        final var testEventWithImage = eventService.getUpcomingEventsWithImage()
+                .stream()
+                .filter(eventWithImage -> eventWithImage.image() != null)
+                .findAny()
+                .orElseThrow();
+        final var testEvent = testEventWithImage.event();
+
+        // prepare a test user
+        final var userService = getBean(app.komunumo.data.service.UserService.class);
+        final var testUser = userService.storeUser(new UserDto(null, null, null,
+                "@test@example.com", "test@example.com", "Test User", "This is a test user.", null,
+                UserRole.USER, UserType.LOCAL));
+
+        // log in as the test user
+        login(testUser);
+        greenMail.purgeEmailFromAllMailboxes();
+
+        // navigate to events page
+        final var page = getPage();
+        page.navigate("http://localhost:8081/events/" + testEvent.id());
+        page.waitForURL("**/events/" + testEvent.id());
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("events-page");
+
+        // click on registration button
+        page.click(REGISTRATION_BUTTON_SELECTOR);
+
+        // wait for registration dialog to appear
+        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
+                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
+        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+
+        // check prefilled email address
+        final var emailInput = page.locator("vaadin-email-field").locator("input");
+        captureScreenshot("registration-dialog-filled");
+        assertThat(emailInput.inputValue()).isEqualTo("test@example.com");
+
+        // click on the request email button
+        page.locator("vaadin-button.email-button").click();
+
+        // close the dialog
+        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
+        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        captureScreenshot("registration-dialog-after-email-requested");
+        closeButton.click();
+
+        // wait for email confirmation mail
+        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
+        final var receivedMessage = greenMail.getReceivedMessages()[0];
+        assertThat(receivedMessage.getSubject()).isEqualTo("[Your Instance Name] Please confirm your email address");
+
+        // extract the confirmation link
+        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var confirmationLink = extractLinkFromText(mailBody);
+        assertThat(confirmationLink).isNotNull();
+
+        // open the confirmation link
+        page.navigate(confirmationLink);
+        page.waitForURL("**/confirm**");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("confirmation-page");
+
+        // wait for registration confirmation mail
+        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 2);
+        final var successMessage = greenMail.getReceivedMessages()[1];
+        assertThat(successMessage.getSubject()).isEqualTo("[Your Instance Name] Your registration is confirmed");
+        assertThat(getBody(successMessage)).contains("You are now officially signed up for the event.");
+
+        // logout the test user
+        logout();
+    }
+
+    @Test
     void testRegistrationFlowError() throws MessagingException {
-
-
         // prepare a test event
         final var eventService = getBean(EventService.class);
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
@@ -134,7 +211,7 @@ class RegistrationFlowIT extends BrowserTest {
 
         // fill in email address
         final var emailInput = page.locator("vaadin-email-field").locator("input");
-        emailInput.fill(EMAIL_ADDRESS);
+        emailInput.fill("error@example.com");
         captureScreenshot("registration-dialog-filled");
 
         // click on the request email button

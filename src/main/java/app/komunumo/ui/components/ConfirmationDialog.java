@@ -19,7 +19,6 @@ package app.komunumo.ui.components;
 
 import app.komunumo.data.service.ConfirmationContext;
 import app.komunumo.data.service.ConfirmationResult;
-import app.komunumo.data.service.ConfirmationService;
 import app.komunumo.data.service.ServiceProvider;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.button.Button;
@@ -40,14 +39,14 @@ import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
 
 public abstract class ConfirmationDialog extends Dialog {
 
-    private final transient @NotNull ConfirmationService confirmationService;
+    private final transient @NotNull ServiceProvider serviceProvider;
 
     private final @NotNull Markdown customMessage = new Markdown();
     private @NotNull ConfirmationContext confirmationContext = ConfirmationContext.empty();
 
     public ConfirmationDialog(final @NotNull ServiceProvider serviceProvider) {
         super();
-        this.confirmationService = serviceProvider.confirmationService();
+        this.serviceProvider = serviceProvider;
         addClassName("confirmation-dialog");
 
         setCloseOnEsc(true);
@@ -71,7 +70,7 @@ public abstract class ConfirmationDialog extends Dialog {
         customMessage.addClassName("custom-message");
         add(customMessage);
 
-        final var confirmationTimeout = confirmationService.getConfirmationTimeoutText(getLocale());
+        final var confirmationTimeout = serviceProvider.confirmationService().getConfirmationTimeoutText(getLocale());
         final var infoText = new Paragraph(getTranslation("ui.components.ConfirmationDialog.infoText", confirmationTimeout));
         add(infoText);
 
@@ -102,7 +101,7 @@ public abstract class ConfirmationDialog extends Dialog {
 
         emailButton.addClickListener(evt -> {
             final var email = emailField.getValue();
-            confirmationService.startConfirmationProcess(
+            serviceProvider.confirmationService().startConfirmationProcess(
                     email,
                     customMessage.getContent(),
                     getLocale(),
@@ -126,6 +125,11 @@ public abstract class ConfirmationDialog extends Dialog {
                 emailField.focus();
             }
         });
+
+        // prefill email field if user is logged in
+        serviceProvider.loginService().getLoggedInUser().ifPresent(
+                user -> emailField.setValue(user.email())
+        );
     }
 
     /**
@@ -175,8 +179,8 @@ public abstract class ConfirmationDialog extends Dialog {
     }
 
     /**
-     * <p>Callback that is invoked by the {@link ConfirmationService} after an email
-     * address has been successfully verified.</p>
+     * <p>Callback that is invoked by the {@link app.komunumo.data.service.ConfirmationService}
+     * after an email address has been successfully verified.</p>
      *
      * <p>Implementations can perform any required actions in response to the confirmation,
      * such as logging in the user, updating application state, or triggering further
