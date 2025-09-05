@@ -252,17 +252,4 @@ public abstract class BrowserTest {
         captureScreenshot("logout_done");
     }
 
-    /**
-     * <p>Asserts that an anchor link with the given {@code href} is visible on the current page.</p>
-     *
-     * <p>This method searches for an {@code <a>} tag with the specified {@code href} attribute
-     * and fails the test if the element is not visible.</p>
-     *
-     * @param href the target {@code href} attribute value (e.g. {@code "/login"})
-     * @throws AssertionError if the element is not found or not visible
-     */
-    protected void assertLinkIsVisible(final @NotNull String href) {
-        assertThat(page.locator("a[href='%s']".formatted(href)).isVisible()).isTrue();
-    }
-
 }
