@@ -116,7 +116,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         pageContent.add(description);
 
         final var registrationButton = new Button(getTranslation("ui.views.events.EventDetailView.register"));
-        registrationButton.addClickListener(e -> new RegisterDialog(serviceProvider, translationProvider, locale, event).open());
+        registrationButton.addClickListener(e -> new RegisterDialog(serviceProvider, event).open());
         registrationButton.addClassName("registration-button");
         pageContent.add(registrationButton);
     }

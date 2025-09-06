@@ -18,7 +18,6 @@
 package app.komunumo.ui.components;
 
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.views.community.CommunityGridView;
 import app.komunumo.ui.views.events.EventGridView;
 import app.komunumo.ui.views.login.LoginDialog;
@@ -37,8 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 public final class NavigationBar extends HorizontalLayout {
 
-    public NavigationBar(final @NotNull ServiceProvider serviceProvider,
-                         final @NotNull TranslationProvider translationProvider) {
+    public NavigationBar(final @NotNull ServiceProvider serviceProvider) {
         super();
         final var ui = UI.getCurrent();
         addClassName("navigation-bar");
@@ -48,7 +46,7 @@ public final class NavigationBar extends HorizontalLayout {
         menuContainer.add(getNavigationBar(ui, serviceProvider));
         addToStart(menuContainer);
 
-        addToEnd(getAvatar(ui, serviceProvider, translationProvider));
+        addToEnd(getAvatar(ui, serviceProvider));
     }
 
     private Component getNavigationBar(final @NotNull UI ui,
@@ -66,8 +64,7 @@ public final class NavigationBar extends HorizontalLayout {
     }
 
     private Component getAvatar(final @NotNull UI ui,
-                                final @NotNull ServiceProvider serviceProvider,
-                                final @NotNull TranslationProvider translationProvider) {
+                                final @NotNull ServiceProvider serviceProvider) {
         final var avatar = new Avatar();
         final var avatarMenu = new ContextMenu(avatar);
         avatarMenu.setOpenOnClick(true);
@@ -75,7 +72,7 @@ public final class NavigationBar extends HorizontalLayout {
         // login as first entry in the menu
         if (!serviceProvider.loginService().isUserLoggedIn()) {
             avatarMenu.addItem(ui.getTranslation("login.title"), e ->
-                    new LoginDialog(serviceProvider, translationProvider, getLocale()).open()
+                    new LoginDialog(serviceProvider).open()
             );
         }
 

@@ -51,6 +51,6 @@ public final class LoginView extends AbstractView implements BeforeEnterObserver
 
     @Override
     public void beforeEnter(final @Nullable BeforeEnterEvent beforeEnterEvent) {
-        new LoginDialog(serviceProvider, translationProvider, getLocale()).open();
+        new LoginDialog(serviceProvider).open();
     }
 }

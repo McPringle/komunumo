@@ -22,7 +22,6 @@ import app.komunumo.data.service.ConfirmationContext;
 import app.komunumo.data.service.ConfirmationResult;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
 import app.komunumo.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
@@ -38,8 +37,6 @@ public final class RegisterDialog extends ConfirmationDialog {
     private final @NotNull Locale locale;
 
     public RegisterDialog(final @NotNull ServiceProvider serviceProvider,
-                          final @NotNull TranslationProvider translationProvider,
-                          final @NotNull Locale locale,
                           final @NotNull EventDto event)  {
         super(serviceProvider);
         this.participationService = serviceProvider.participationService();

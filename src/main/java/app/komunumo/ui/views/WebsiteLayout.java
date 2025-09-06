@@ -69,7 +69,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         }
 
         addPageHeader(serviceProvider);
-        addNavigationBar(serviceProvider, translationProvider);
+        addNavigationBar(serviceProvider);
 
         main = new Main();
         add(main);
@@ -85,9 +85,8 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         add(new PageHeader(instanceTitle, instanceSlogan));
     }
 
-    private void addNavigationBar(final @NotNull ServiceProvider serviceProvider,
-                                  final @NotNull TranslationProvider translationProvider) {
-        add(new NavigationBar(serviceProvider, translationProvider));
+    private void addNavigationBar(final @NotNull ServiceProvider serviceProvider) {
+        add(new NavigationBar(serviceProvider));
     }
 
     private void addFooter(final @NotNull ServiceProvider serviceProvider) {

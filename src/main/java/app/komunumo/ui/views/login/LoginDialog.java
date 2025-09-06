@@ -21,20 +21,15 @@ import app.komunumo.data.service.ConfirmationContext;
 import app.komunumo.data.service.ConfirmationResult;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.ServiceProvider;
-import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 public final class LoginDialog extends ConfirmationDialog {
 
     private final @NotNull LoginService loginService;
 
-    public LoginDialog(final @NotNull ServiceProvider serviceProvider,
-                       final @NotNull TranslationProvider translationProvider,
-                       final @NotNull Locale locale)  {
+    public LoginDialog(final @NotNull ServiceProvider serviceProvider)  {
         super(serviceProvider);
         this.loginService = serviceProvider.loginService();
 
