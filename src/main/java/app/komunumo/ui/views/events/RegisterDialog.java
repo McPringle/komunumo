@@ -46,7 +46,7 @@ public final class RegisterDialog extends ConfirmationDialog {
         this.locale = getLocale();
 
         setHeaderTitle(getTranslation("ui.views.events.RegisterDialog.title"));
-        setCustomMessage(getTranslation("ui.views.events.RegisterDialog.infoText"));
+        setCustomMessage(getTranslation("ui.views.events.RegisterDialog.actionText"));
         setContext(ConfirmationContext.of(Map.entry(CONTEXT_KEY_EVENT, event)));
     }
 
