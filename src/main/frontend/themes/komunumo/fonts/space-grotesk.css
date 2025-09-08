@@ -16,14 +16,18 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "fonts/space-grotesk.css";
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('SpaceGrotesk.woff2') format('woff2');
+    font-weight: 300 700;
+    font-style: normal;
+    font-display: swap;
+}
 
-@import "components/confirmation-dialog.css";
-@import "components/info-banner.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
-@import "components/navigation-bar.css";
-@import "components/page-footer.css";
-@import "components/page-header.css";
+:root {
+    --komunumo-font-sans: 'Space Grotesk', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+}
 
-@import "views/confirmation-view.css";
+html, body {
+    font-family: var(--komunumo-font-sans), sans-serif;
+}
