@@ -22,6 +22,7 @@ import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.servlets.images.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import jakarta.servlet.http.HttpServlet;
@@ -39,6 +40,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @Push
 @Theme(value = "komunumo")
+@Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes, viewport-fit=cover")
 @PWA(name = "Komunumo - Open Source Community Manager", shortName = "Komunumo")
 @EnableScheduling
 @SpringBootApplication
