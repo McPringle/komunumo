@@ -23,6 +23,7 @@ import app.komunumo.servlets.images.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
+import com.vaadin.flow.server.AppShellSettings;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import jakarta.servlet.http.HttpServlet;
@@ -34,6 +35,9 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * The entry point of the Spring Boot application.
@@ -47,8 +51,41 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableConfigurationProperties(AppConfig.class)
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
+    private final @NotNull AppConfig appConfig;
+
     public static void main(final @NotNull String... args) {
         SpringApplication.run(Application.class, args);
+    }
+
+    public Application(final @NotNull AppConfig appConfig) {
+        super();
+        this.appConfig = appConfig;
+    }
+
+    /**
+     * <p>Configures the initial page settings for the application shell.</p>
+     *
+     * <p>This method is invoked by Vaadin at application startup and can be used
+     * to customize the HTML page generated for the UI, for example by adding
+     * meta tags, favicons, or viewport settings.</p>
+     *
+     * <p>In this implementation, an optional external stylesheet is added if
+     * configured in the application settings. A timestamp query parameter is
+     * appended to the stylesheet URL to prevent client-side caching issues.</p>
+     *
+     * @param settings the {@link AppShellSettings} used to configure the page,
+     *                 never {@code null}
+     */
+    @Override
+    public void configurePage(final @NotNull AppShellSettings settings) {
+        final var customStyles = appConfig.instance().styles();
+        if (!customStyles.isBlank()) {
+            final var timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
+            final var href = customStyles.contains("?")
+                    ? customStyles + "&ts=" + timestamp
+                    : customStyles + "?ts=" + timestamp;
+            settings.addLink("stylesheet", href);
+        }
     }
 
     /**
