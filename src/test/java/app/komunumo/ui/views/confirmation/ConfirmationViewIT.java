@@ -17,22 +17,33 @@
  */
 package app.komunumo.ui.views.confirmation;
 
-import app.komunumo.data.service.ConfirmationResult;
-import app.komunumo.data.service.ConfirmationService;
+import app.komunumo.data.service.confirmation.ConfirmationResponse;
+import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.data.service.confirmation.ConfirmationStatus;
 import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.components.PersistentNotification;
+import app.komunumo.ui.views.events.EventGridView;
+import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;
-import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.router.QueryParameters;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.Map;
 
 import static app.komunumo.util.TestUtil.findComponent;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._assertNone;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
+import static com.github.mvysny.kaributesting.v10.NotificationsKt.expectNotifications;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -43,52 +54,112 @@ class ConfirmationViewIT extends IntegrationTest {
     @MockitoBean
     private ConfirmationService confirmationService;
 
+    @ParameterizedTest
+    @ValueSource(strings = {"", "/events"}) // test with and without redirection location
+    void testSuccessResponse(final @NotNull String redirectLocation) {
+        when(confirmationService.confirm(anyString(), any()))
+                .thenReturn(new ConfirmationResponse(ConfirmationStatus.SUCCESS,
+                        "This is a success message.", redirectLocation));
+
+        UI.getCurrent().navigate(
+                ConfirmationView.class,
+                new QueryParameters(Map.of("id", List.of("12345")))
+        );
+
+        MockVaadin.clientRoundtrip();
+
+        if (redirectLocation.isBlank()) {
+            assertThat(currentViewClass()).isEqualTo(ConfirmationView.class);
+            final var main = _get(Main.class);
+            final var h2 = _get(main, H2.class);
+            assertThat(h2.getText()).isEqualTo("Confirmation of your email address");
+        } else {
+            assertThat(currentViewClass()).isEqualTo(EventGridView.class);
+        }
+
+        expectNotifications("This is a success message.");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "/events"}) // test with and without redirection location
+    void testWarningResponse(final @NotNull String redirectLocation) {
+        when(confirmationService.confirm(anyString(), any()))
+                .thenReturn(new ConfirmationResponse(ConfirmationStatus.WARNING,
+                        "This is a warning message.", redirectLocation));
+
+        UI.getCurrent().navigate(
+                ConfirmationView.class,
+                new QueryParameters(Map.of("id", List.of("12345")))
+        );
+
+        MockVaadin.clientRoundtrip();
+
+        if (redirectLocation.isBlank()) {
+            assertThat(currentViewClass()).isEqualTo(ConfirmationView.class);
+            final var main = _get(Main.class);
+            final var h2 = _get(main, H2.class);
+            assertThat(h2.getText()).isEqualTo("Confirmation of your email address");
+        } else {
+            assertThat(currentViewClass()).isEqualTo(EventGridView.class);
+        }
+
+        final var notification = _get(PersistentNotification.class);
+        assertThat(notification.isOpened()).isTrue();
+
+        final var div = _get(notification, Div.class);
+        assertThat(div.getText()).isEqualTo("This is a warning message.");
+
+        final var closeButton = _get(notification, Button.class);
+        _click(closeButton);
+
+        MockVaadin.clientRoundtrip();
+
+        assertThat(notification.isOpened()).isFalse();
+        _assertNone(PersistentNotification.class);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "/events"}) // redirection location should be ignored for error status
+    void testErrorResponse(final @NotNull String redirectLocation) {
+        when(confirmationService.confirm(anyString(), any()))
+                .thenReturn(new ConfirmationResponse(ConfirmationStatus.ERROR,
+                        "This is an error message.", redirectLocation));
+
+        UI.getCurrent().navigate(
+                ConfirmationView.class,
+                new QueryParameters(Map.of("id", List.of("12345")))
+        );
+
+        MockVaadin.clientRoundtrip();
+
+        assertThat(currentViewClass()).isEqualTo(ConfirmationView.class);
+        final var main = _get(Main.class);
+        final var h2 = _get(main, H2.class);
+        assertThat(h2.getText()).isEqualTo("Confirmation of your email address");
+
+        final var notification = _get(PersistentNotification.class);
+        assertThat(notification.isOpened()).isTrue();
+
+        final var div = _get(notification, Div.class);
+        assertThat(div.getText()).isEqualTo("This is an error message.");
+
+        final var closeButton = _get(notification, Button.class);
+        _click(closeButton);
+
+        MockVaadin.clientRoundtrip();
+
+        assertThat(notification.isOpened()).isFalse();
+        _assertNone(PersistentNotification.class);
+    }
+
     @Test
-    void missingConfirmationId() {
+    void missingConfirmationIdLeadsTo404NotFound() {
         UI.getCurrent().navigate(ConfirmationView.class);
 
         final var main = _get(Main.class);
         final var h2 = findComponent(main, H2.class);
         assertThat(h2).isNotNull();
         assertThat(h2.getText()).isEqualTo("Page not found");
-    }
-
-    @Test
-    void invalidConfirmationId() {
-        when(confirmationService.confirm(anyString(), any()))
-                .thenReturn(new ConfirmationResult(ConfirmationResult.Type.ERROR, "Invalid confirmation ID"));
-
-        UI.getCurrent().navigate(
-                ConfirmationView.class,
-                new QueryParameters(Map.of("id", List.of("12345")))
-        );
-
-        final var main = _get(Main.class);
-        final var h2 = findComponent(main, H2.class);
-        assertThat(h2).isNotNull();
-        assertThat(h2.getText()).isEqualTo("Confirmation of your email address");
-        final var markdown = findComponent(main, Markdown.class);
-        assertThat(markdown).isNotNull();
-        assertThat(markdown.getContent()).isEqualTo("Invalid confirmation ID");
-    }
-
-    @Test
-    void correctConfirmationId() {
-        when(confirmationService.confirm(anyString(), any()))
-                .thenReturn(new ConfirmationResult(ConfirmationResult.Type.SUCCESS, "**successful** confirmation"));
-
-        UI.getCurrent().navigate(
-                ConfirmationView.class,
-                new QueryParameters(Map.of("id", List.of("12345")))
-        );
-
-        final var main = _get(Main.class);
-        final var h2 = findComponent(main, H2.class);
-        assertThat(h2).isNotNull();
-        assertThat(h2.getText()).isEqualTo("Confirmation of your email address");
-        final var markdown = findComponent(main, Markdown.class);
-        assertThat(markdown).isNotNull();
-        assertThat(markdown.getContent()).isEqualTo("**successful** confirmation");
     }
 
 }

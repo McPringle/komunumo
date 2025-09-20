@@ -22,7 +22,7 @@ import app.komunumo.configuration.DemoConfig;
 import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.InstanceConfig;
 import app.komunumo.configuration.MailConfig;
-import app.komunumo.ui.TranslationProvider;
+import app.komunumo.data.service.confirmation.ConfirmationService;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

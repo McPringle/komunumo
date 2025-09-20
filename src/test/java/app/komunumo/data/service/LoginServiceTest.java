@@ -20,6 +20,8 @@ package app.komunumo.data.service;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
+import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.ui.TranslationProvider;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.server.VaadinService;
@@ -48,7 +50,10 @@ class LoginServiceTest {
         final var userService = mock(UserService.class);
         when(userService.getUserByEmail(email)).thenReturn(Optional.empty());
 
-        final var loginService = new LoginService(userService);
+        final var confirmationService = mock(ConfirmationService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+
+        final var loginService = new LoginService(userService, confirmationService, translationProvider);
         assertThat(loginService.login(email)).isFalse();
         assertThat(loginService.isUserLoggedIn()).isFalse();
 
@@ -65,7 +70,10 @@ class LoginServiceTest {
         final var userService = mock(UserService.class);
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var loginService = new LoginService(userService);
+        final var confirmationService = mock(ConfirmationService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+
+        final var loginService = new LoginService(userService, confirmationService, translationProvider);
         assertThat(loginService.login(email)).isFalse();
         assertThat(loginService.isUserLoggedIn()).isFalse();
 
@@ -84,7 +92,10 @@ class LoginServiceTest {
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var loginService = new LoginService(userService);
+        final var confirmationService = mock(ConfirmationService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+
+        final var loginService = new LoginService(userService, confirmationService, translationProvider);
         assertThat(loginService.login(email)).isTrue();
         assertThat(loginService.isUserLoggedIn()).isTrue();
 
@@ -104,7 +115,10 @@ class LoginServiceTest {
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var loginService = new LoginService(userService);
+        final var confirmationService = mock(ConfirmationService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+
+        final var loginService = new LoginService(userService, confirmationService, translationProvider);
         try (final var vaadinService = mockStatic(VaadinService.class)) {
             vaadinService.when(VaadinService::getCurrentRequest).thenReturn(mock(VaadinServletRequest.class));
             assertThat(loginService.login(email)).isTrue();
@@ -128,7 +142,11 @@ class LoginServiceTest {
         final var vaadinServletRequest = mock(VaadinServletRequest.class);
         when(vaadinServletRequest.getHttpServletRequest()).thenReturn(httpServletRequest);
 
-        final var loginService = new LoginService(mock(UserService.class));
+        final var userService = mock(UserService.class);
+        final var confirmationService = mock(ConfirmationService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+
+        final var loginService = new LoginService(userService, confirmationService, translationProvider);
         try (final var staticUI = mockStatic(UI.class);
              final var staticVaadinServletRequest = mockStatic(VaadinServletRequest.class);
              final var staticSecurityContextHolder = mockStatic(SecurityContextHolder.class);

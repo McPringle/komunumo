@@ -124,8 +124,9 @@ class LoginFlowIT extends BrowserTest {
         captureScreenshot("loginFails_confirmation-page");
 
         // check for error message
-        final var message = page.locator("vaadin-markdown.error-message").textContent();
-        assertThat(message).startsWith("The login to your profile was not successful.");
+        final var message = page.locator("vaadin-notification-card").first();
+        assertThat(message.isVisible()).isTrue();
+        assertThat(message.textContent()).startsWith("The login to your profile was not successful.");
     }
 
     @Test

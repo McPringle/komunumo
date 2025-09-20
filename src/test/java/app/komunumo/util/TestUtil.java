@@ -18,6 +18,7 @@
 package app.komunumo.util;
 
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;

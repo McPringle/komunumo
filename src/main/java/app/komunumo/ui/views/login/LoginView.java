@@ -21,6 +21,7 @@ import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.security.SecurityConfig;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.util.LocationUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -47,6 +48,7 @@ public final class LoginView extends AbstractView implements BeforeEnterObserver
 
     @Override
     public void beforeEnter(final @Nullable BeforeEnterEvent beforeEnterEvent) {
-        new LoginDialog(serviceProvider).open();
+        final var ui = UI.getCurrent();
+        serviceProvider.loginService().startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui));
     }
 }

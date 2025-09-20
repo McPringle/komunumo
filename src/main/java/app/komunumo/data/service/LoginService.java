@@ -19,8 +19,15 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.service.confirmation.ConfirmationContext;
+import app.komunumo.data.service.confirmation.ConfirmationHandler;
+import app.komunumo.data.service.confirmation.ConfirmationRequest;
+import app.komunumo.data.service.confirmation.ConfirmationResponse;
+import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.data.service.confirmation.ConfirmationStatus;
 import app.komunumo.security.SecurityConfig;
 import app.komunumo.security.UserPrincipal;
+import app.komunumo.ui.TranslationProvider;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
@@ -38,18 +45,27 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
 public final class LoginService {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(LoginService.class);
+    private static final @NotNull String CONTEXT_LOGIN_LOCATION = "location";
+
 
     private final @NotNull UserService userService;
+    private final @NotNull ConfirmationService confirmationService;
+    private final @NotNull TranslationProvider translationProvider;
 
-    public LoginService(final @NotNull UserService userService) {
+    public LoginService(final @NotNull UserService userService,
+                        final @NotNull ConfirmationService confirmationService,
+                        final @NotNull TranslationProvider translationProvider) {
         super();
         this.userService = userService;
+        this.confirmationService = confirmationService;
+        this.translationProvider = translationProvider;
     }
 
     public boolean login(final @NotNull String emailAddress) {
@@ -112,6 +128,19 @@ public final class LoginService {
         return Optional.empty();
     }
 
+    public static @NotNull Optional<String> getLoggedInUserEmail() {
+        final var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            return Optional.empty();
+        }
+
+        if (auth.getPrincipal() instanceof UserPrincipal principal) {
+            return Optional.of(principal.getEmail());
+        }
+
+        return Optional.empty();
+    }
+
     public boolean isUserLoggedIn() {
         return getLoggedInUser().isPresent();
     }
@@ -125,6 +154,33 @@ public final class LoginService {
         SecurityContextHolder.clearContext();
         final var logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
+    }
+
+    public void startLoginProcess(final @NotNull Locale locale,
+                                  final @NotNull String location) {
+        final var actionMessage = translationProvider.getTranslation("app.komunumo.data.service.LoginService.actionText", locale);
+        final ConfirmationHandler actionHandler = this::passwordlessLoginHandler;
+        final var actionContext = ConfirmationContext.of(CONTEXT_LOGIN_LOCATION, location);
+        final var confirmationRequest = new ConfirmationRequest(
+                actionMessage,
+                actionHandler,
+                actionContext,
+                locale
+        );
+        confirmationService.startConfirmationProcess(confirmationRequest);
+    }
+
+    private @NotNull ConfirmationResponse passwordlessLoginHandler(final @NotNull String email,
+                                                                   final @NotNull ConfirmationContext context,
+                                                                   final @NotNull Locale locale) {
+        if (login(email)) {
+            final var status = ConfirmationStatus.SUCCESS;
+            final var message = translationProvider.getTranslation("app.komunumo.data.service.LoginService.successMessage", locale);
+            final var location = (String) context.getOrDefault(CONTEXT_LOGIN_LOCATION, "");
+            return new ConfirmationResponse(status, message, location);
+        }
+        final var message = translationProvider.getTranslation("app.komunumo.data.service.LoginService.failedMessage", locale);
+        return new ConfirmationResponse(ConfirmationStatus.ERROR, message, "");
     }
 
 }

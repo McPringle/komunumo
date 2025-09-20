@@ -18,9 +18,13 @@
 package app.komunumo.ui.views.login;
 
 import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.components.ConfirmationDialog;
+import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import org.junit.jupiter.api.Test;
 
+import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,9 +33,50 @@ class LoginViewIT extends IntegrationTest {
     @Test
     void loginDialogShouldOpenAutomatically() {
         UI.getCurrent().navigate(LoginView.class);
-        final var loginDialog = _get(LoginDialog.class);
+
+        MockVaadin.clientRoundtrip();
+
+        final var loginDialog = _get(ConfirmationDialog.class);
         assertThat(loginDialog).isNotNull();
         assertThat(loginDialog.isOpened()).isTrue();
+    }
+
+    @Test
+    void loginDialogIsClosable() {
+        UI.getCurrent().navigate(LoginView.class);
+
+        MockVaadin.clientRoundtrip();
+
+        final var loginDialog = _get(ConfirmationDialog.class);
+        assertThat(loginDialog).isNotNull();
+        assertThat(loginDialog.isOpened()).isTrue();
+
+        final var closeButton = _get(loginDialog, Button.class, spec -> spec.withClasses("close-dialog-button"));
+        assertThat(closeButton).isNotNull();
+        _click(closeButton);
+
+        MockVaadin.clientRoundtrip();
+
+        assertThat(loginDialog.isOpened()).isFalse();
+    }
+
+    @Test
+    void loginDialogCanBeCanceled() {
+        UI.getCurrent().navigate(LoginView.class);
+
+        MockVaadin.clientRoundtrip();
+
+        final var loginDialog = _get(ConfirmationDialog.class);
+        assertThat(loginDialog).isNotNull();
+        assertThat(loginDialog.isOpened()).isTrue();
+
+        final var cancelButton = _get(loginDialog, Button.class, spec -> spec.withText("Cancel"));
+        assertThat(cancelButton).isNotNull();
+        _click(cancelButton);
+
+        MockVaadin.clientRoundtrip();
+
+        assertThat(loginDialog.isOpened()).isFalse();
     }
 
 }

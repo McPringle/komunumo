@@ -15,10 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.data.service.confirmation;
 
-import app.komunumo.data.service.interfaces.ConfirmationHandler;
+import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.data.service.MailService;
 import app.komunumo.ui.TranslationProvider;
+import app.komunumo.ui.components.ConfirmationDialog;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;
@@ -64,30 +66,33 @@ public final class ConfirmationService {
         this.translationProvider = translationProvider;
     }
 
-    public void startConfirmationProcess(final @NotNull String email,
-                                         final @NotNull String customMessage,
-                                         final @NotNull Locale locale,
-                                         final @NotNull ConfirmationHandler confirmationHandler,
-                                         final @NotNull ConfirmationContext confirmationContext) {
+    public void startConfirmationProcess(final @NotNull ConfirmationRequest confirmationRequest) {
+        new ConfirmationDialog(this, confirmationRequest).open();
+    }
+
+    public void sendConfirmationMail(final @NotNull String email,
+                                     final @NotNull ConfirmationRequest confirmationRequest) {
         final var confirmationId = UUID.randomUUID().toString();
-        final var confirmationData = new ConfirmationData(confirmationId, email, customMessage, locale,
-                confirmationHandler, confirmationContext);
+        final var confirmationData = new ConfirmationData(confirmationId, email, confirmationRequest);
         confirmationCache.put(confirmationId, confirmationData);
 
+        final var locale = confirmationRequest.locale();
         final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
         final var confirmationLink = generateConfirmationLink(confirmationData);
         final var confirmationTimeout = getConfirmationTimeoutText(locale);
+        final var actionMessage = confirmationRequest.actionMessage();
 
         final Map<String, String> variables = Map.of(
                 "instanceName", instanceName,
                 "confirmationLink", confirmationLink,
                 "confirmationTimeout", confirmationTimeout,
-                "customMessage", customMessage);
+                "actionMessage", actionMessage);
         mailService.sendMail(CONFIRMATION_PROCESS, locale, MARKDOWN, variables, email);
     }
 
     private String generateConfirmationLink(final @NotNull ConfirmationData confirmationData) {
-        final var instanceUrl = configurationService.getConfiguration(INSTANCE_URL, confirmationData.locale());
+        final var locale = confirmationData.confirmationRequest().locale();
+        final var instanceUrl = configurationService.getConfiguration(INSTANCE_URL, locale);
         return UriComponentsBuilder
                 .fromUriString(instanceUrl)
                 .path(CONFIRMATION_PATH)
@@ -106,37 +111,36 @@ public final class ConfirmationService {
         return translationProvider.getTranslation("confirmation.timeout.minutes", locale, minutes);
     }
 
-    public @NotNull ConfirmationResult confirm(final @NotNull String confirmationId,
-                                               final @Nullable Locale locale) {
+    public @NotNull ConfirmationResponse confirm(final @NotNull String confirmationId,
+                                                 final @NotNull Locale locale) {
         final var confirmationData = confirmationCache.getIfPresent(confirmationId);
         if (confirmationData != null) {
             try {
                 final var email = confirmationData.email();
-                final var confirmationContext = confirmationData.context();
-                final var result = confirmationData.confirmationHandler().handle(email, confirmationContext);
-                if (result.type().equals(ConfirmationResult.Type.SUCCESS)) {
-                    confirmationCache.invalidate(confirmationId); // only allow one successful confirmation
+                final var confirmationRequest = confirmationData.confirmationRequest();
+                final var actionContext = confirmationRequest.actionContext();
+                final var actionHandler = confirmationRequest.actionHandler();
+                final var response = actionHandler.handle(email, actionContext, locale);
+                if (!response.confirmationStatus().equals(ConfirmationStatus.ERROR)) {
+                    confirmationCache.invalidate(confirmationId);
                 }
-                return result;
+                return response;
             } catch (final Exception exception) {
-                LOGGER.error("Error in 'confirmationHandler' for confirmation ID {}: {}",
+                LOGGER.error("Error in 'actionHandler' for confirmation ID {}: {}",
                         confirmationId, exception.getMessage(), exception);
                 final var message = translationProvider.getTranslation("confirmation.view.handlerError", locale);
-                return new ConfirmationResult(ConfirmationResult.Type.ERROR, message);
+                return new ConfirmationResponse(ConfirmationStatus.ERROR, message, "");
             }
         }
         LOGGER.warn("Invalid or expired confirmation ID: {}", confirmationId);
         final var confirmationTimeout = getConfirmationTimeoutText(locale);
         final var message = translationProvider.getTranslation("confirmation.view.error", locale, confirmationTimeout);
-        return new ConfirmationResult(ConfirmationResult.Type.ERROR, message);
+        return new ConfirmationResponse(ConfirmationStatus.ERROR, message, "");
     }
 
     private record ConfirmationData(
             @NotNull String id,
             @NotNull String email,
-            @NotNull String infoText,
-            @NotNull Locale locale,
-            @NotNull ConfirmationHandler confirmationHandler,
-            @NotNull ConfirmationContext context) { }
+            @NotNull ConfirmationRequest confirmationRequest) { }
 
 }

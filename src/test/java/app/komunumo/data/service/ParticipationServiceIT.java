@@ -20,6 +20,9 @@ package app.komunumo.data.service;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
+import app.komunumo.data.service.confirmation.ConfirmationContext;
+import app.komunumo.data.service.confirmation.ConfirmationResponse;
+import app.komunumo.data.service.confirmation.ConfirmationStatus;
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -28,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
+import static app.komunumo.data.service.ParticipationService.CONTEXT_KEY_EVENT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ParticipationServiceIT extends IntegrationTest {
@@ -56,8 +60,10 @@ class ParticipationServiceIT extends IntegrationTest {
         final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
         assertThat(event).isNotNull();
 
+        final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
-        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+        final var confirmationResponse = participationService.registerForEvent(email, context, locale);
+        assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         final var participations = participationService.getParticipations();
         assertThat(participations).hasSize(1);
@@ -88,11 +94,14 @@ class ParticipationServiceIT extends IntegrationTest {
         final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
         assertThat(event).isNotNull();
 
+        final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
-        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+        final var confirmationResponse1 = participationService.registerForEvent(email, context, locale);
+        assertThat(confirmationResponse1.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         // try to join again with the same email
-        assertThat(participationService.joinEvent(event, email, locale)).isTrue();
+        final var confirmationResponse2 = participationService.registerForEvent(email, context, locale);
+        assertThat(confirmationResponse2.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         final var participations = participationService.getParticipations();
         assertThat(participations).hasSize(1);

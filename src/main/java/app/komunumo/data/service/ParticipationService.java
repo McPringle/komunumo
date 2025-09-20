@@ -23,7 +23,16 @@ import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.ParticipationDto;
 import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.service.confirmation.ConfirmationContext;
+import app.komunumo.data.service.confirmation.ConfirmationHandler;
+import app.komunumo.data.service.confirmation.ConfirmationRequest;
+import app.komunumo.data.service.confirmation.ConfirmationResponse;
+import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.data.service.confirmation.ConfirmationStatus;
+import app.komunumo.ui.TranslationProvider;
+import app.komunumo.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
@@ -39,22 +48,48 @@ import static app.komunumo.data.db.tables.Participation.PARTICIPATION;
 @Service
 public final class ParticipationService {
 
+    @VisibleForTesting
+    static final @NotNull String CONTEXT_KEY_EVENT = "event";
+
     private final @NotNull DSLContext dsl;
     private final @NotNull MailService mailService;
     private final @NotNull UserService userService;
+    private final @NotNull ConfirmationService confirmationService;
+    private final @NotNull TranslationProvider translationProvider;
 
     public ParticipationService(final @NotNull DSLContext dsl,
                                 final @NotNull MailService mailService,
-                                final @NotNull UserService userService) {
+                                final @NotNull UserService userService,
+                                final @NotNull ConfirmationService confirmationService,
+                                final @NotNull TranslationProvider translationProvider) {
         super();
         this.dsl = dsl;
         this.mailService = mailService;
         this.userService = userService;
+        this.confirmationService = confirmationService;
+        this.translationProvider = translationProvider;
     }
 
-    public boolean joinEvent(final @NotNull EventDto event,
-                             final @NotNull String email,
-                             final @NotNull Locale locale) {
+    public void startConfirmationProcess(final @NotNull EventDto event,
+                                         final @NotNull Locale locale) {
+        final var actionMessage = translationProvider.getTranslation(
+                "app.komunumo.data.service.ParticipationService.actionText", locale, event.title());
+        final ConfirmationHandler actionHandler = this::registerForEvent;
+        final var actionContext = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
+        final var confirmationRequest = new ConfirmationRequest(
+                actionMessage,
+                actionHandler,
+                actionContext,
+                locale
+        );
+        confirmationService.startConfirmationProcess(confirmationRequest);
+    }
+
+    @VisibleForTesting
+    @NotNull ConfirmationResponse registerForEvent(final @NotNull String email,
+                                                   final @NotNull ConfirmationContext context,
+                                                   final @NotNull Locale locale) {
+        final var event = (EventDto) context.get(CONTEXT_KEY_EVENT);
         final var user = userService.getUserByEmail(email)
                 .orElseGet(() -> userService.createAnonymousUserWithEmail(email));
 
@@ -64,12 +99,19 @@ public final class ParticipationService {
         storeParticipation(participation);
 
         final var eventTitle = event.title();
-        final Map<String, String> mailVariables = Map.of("eventTitle", eventTitle);
-        return mailService.sendMail(MailTemplateId.EVENT_REGISTRATION_SUCCESS, locale, MailFormat.MARKDOWN,
+        final var eventLink = LinkUtil.getLink(event);
+
+        final Map<String, String> mailVariables = Map.of("eventTitle", eventTitle, "eventLink", eventLink);
+        mailService.sendMail(MailTemplateId.EVENT_REGISTRATION_SUCCESS, locale, MailFormat.MARKDOWN,
                 mailVariables, email);
+
+        final var status = ConfirmationStatus.SUCCESS;
+        final var message = translationProvider.getTranslation("app.komunumo.data.service.ParticipationService.successMessage",
+                locale, eventTitle);
+        return new ConfirmationResponse(status, message, eventLink);
     }
 
-    public @NotNull ParticipationDto storeParticipation(final @NotNull ParticipationDto participation) {
+    public void storeParticipation(final @NotNull ParticipationDto participation) {
         final ParticipationRecord participationRecord = dsl.fetchOptional(PARTICIPATION,
                         PARTICIPATION.EVENT_ID.eq(participation.eventId())
                                 .and(PARTICIPATION.USER_ID.eq(participation.userId())))
@@ -81,7 +123,6 @@ public final class ParticipationService {
             participationRecord.setRegistered(now);
         }
         participationRecord.store();
-        return participationRecord.into(ParticipationDto.class);
     }
 
     public @NotNull List<@NotNull ParticipationDto> getParticipations() {

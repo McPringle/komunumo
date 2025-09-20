@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,15 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.data.service.confirmation;
 
-.confirmation-dialog {
-    width: 30em;
-}
+import com.vaadin.flow.component.notification.NotificationVariant;
+import org.jetbrains.annotations.NotNull;
 
-.confirmation-dialog .action-message {
-    font-weight: bold;
-}
+public enum ConfirmationStatus {
+        SUCCESS(NotificationVariant.LUMO_SUCCESS),
+        WARNING(NotificationVariant.LUMO_WARNING),
+        ERROR(NotificationVariant.LUMO_ERROR);
 
-.confirmation-dialog .email-button {
-    margin-right: auto;
-}
+        private final @NotNull NotificationVariant notificationVariant;
+
+        ConfirmationStatus(final @NotNull NotificationVariant notificationVariant) {
+            this.notificationVariant = notificationVariant;
+        }
+
+        public @NotNull NotificationVariant getNotificationVariant() {
+            return notificationVariant;
+        }
+    }

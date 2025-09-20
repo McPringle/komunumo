@@ -18,25 +18,25 @@
 package app.komunumo.ui.views.confirmation;
 
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.ConfirmationService;
+import app.komunumo.data.service.confirmation.ConfirmationService;
 import app.komunumo.ui.components.AbstractView;
+import app.komunumo.ui.components.PersistentNotification;
 import app.komunumo.ui.views.WebsiteLayout;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.markdown.Markdown;
-import com.vaadin.flow.router.BeforeEnterEvent;
-import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Route(value = "confirm", layout = WebsiteLayout.class)
 @AnonymousAllowed
-public final class ConfirmationView extends AbstractView implements BeforeEnterObserver {
+public final class ConfirmationView extends AbstractView implements AfterNavigationObserver {
 
-    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ConfirmationView.class);
+    private static final int NOTIFICATION_DURATION = 10_000;
 
     private final transient @NotNull ConfirmationService confirmationService;
 
@@ -54,8 +54,8 @@ public final class ConfirmationView extends AbstractView implements BeforeEnterO
     }
 
     @Override
-    public void beforeEnter(final @NotNull BeforeEnterEvent beforeEnterEvent) {
-        final var confirmationId = beforeEnterEvent
+    public void afterNavigation(final @NotNull AfterNavigationEvent afterNavigationEvent) {
+        final var confirmationId = afterNavigationEvent
                 .getLocation()
                 .getQueryParameters()
                 .getSingleParameter("id")
@@ -63,12 +63,36 @@ public final class ConfirmationView extends AbstractView implements BeforeEnterO
                 .trim();
 
         final var confirmationResult = confirmationService.confirm(confirmationId, getLocale());
-        final var type = confirmationResult.type();
-        var message = confirmationResult.message();
+        final var status = confirmationResult.confirmationStatus();
+        final var message = confirmationResult.message();
+        final var location = confirmationResult.location();
 
-        final var markdown = new Markdown(message);
-        markdown.addClassName(type.getClassName());
-        add(markdown);
+        // explicit switch expression to force compile error on status enum modification
+        final Runnable checkStatus = switch (status) {
+            case SUCCESS -> () -> {
+                final var notification = new Notification(message);
+                notification.addThemeVariants(status.getNotificationVariant());
+                notification.setDuration(NOTIFICATION_DURATION);
+                notification.open();
+                if (!location.isBlank()) {
+                    UI.getCurrent().navigate(location);
+                }
+            };
+            case WARNING -> () -> {
+                final var notification = new PersistentNotification(message);
+                notification.addThemeVariants(status.getNotificationVariant());
+                notification.open();
+                if (!location.isBlank()) {
+                    UI.getCurrent().navigate(location);
+                }
+            };
+            case ERROR -> () -> {
+                final var notification = new PersistentNotification(message);
+                notification.addThemeVariants(status.getNotificationVariant());
+                notification.open();
+            };
+        };
+        checkStatus.run();
     }
 
 }

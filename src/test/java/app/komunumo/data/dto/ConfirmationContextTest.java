@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.dto;
 
-import app.komunumo.data.service.ConfirmationContext;
+import app.komunumo.data.service.confirmation.ConfirmationContext;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

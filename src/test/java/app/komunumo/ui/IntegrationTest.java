@@ -30,7 +30,9 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.VaadinServletRequest;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -132,6 +134,46 @@ public abstract class IntegrationTest {
     @AfterEach
     public void tearDown() {
         MockVaadin.tearDown();
+    }
+
+    /**
+     * <p>Returns the class of the currently active Vaadin view in the UI
+     * (excludes RouterLayouts like WebsiteLayout).</p>
+     *
+     * <p>This helper is primarily intended for use in Karibu-Testing based unit tests
+     * to assert that a navigation or redirect has led to the expected view. It inspects
+     * the Vaadin {@link com.vaadin.flow.component.UI#getCurrent() current UI}'s router
+     * internals and retrieves the last entry of the active router target chain, which
+     * represents the active view instance.</p>
+     *
+     * <p>Example usage:</p>
+     * <pre>{@code
+     * assertThat(currentViewClass()).isEqualTo(EventsView.class);
+     * }</pre>
+     *
+     * @param <T> the expected view type (used for generic casting in tests)
+     * @return the class of the currently active view (excludes RouterLayouts)
+     * @throws IllegalStateException if there is no active UI or no active view
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Component> Class<? extends T> currentViewClass() {
+        final var ui = UI.getCurrent();
+        if (ui == null) {
+            throw new IllegalStateException("No current UI available");
+        }
+
+        final var chain = ui.getInternals().getActiveRouterTargetsChain();
+        if (chain.isEmpty()) {
+            throw new IllegalStateException("No active view found in router target chain");
+        }
+
+        for (int index = chain.size() - 1; index >= 0; index--) {
+            final var element = chain.get(index);
+            if (!(element instanceof RouterLayout)) {
+                return (Class<? extends T>) element.getClass();
+            }
+        }
+        throw new IllegalStateException("No concrete view found (only RouterLayouts present)");
     }
 
     /**

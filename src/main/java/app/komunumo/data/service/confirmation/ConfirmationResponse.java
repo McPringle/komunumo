@@ -15,13 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service.interfaces;
+package app.komunumo.data.service.confirmation;
 
-import app.komunumo.data.service.ConfirmationContext;
-import app.komunumo.data.service.ConfirmationResult;
 import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-public interface ConfirmationHandler {
-    @NotNull ConfirmationResult handle(@NotNull String email, @NotNull ConfirmationContext context);
-}
+public record ConfirmationResponse(@NotNull ConfirmationStatus confirmationStatus,
+                                   @NotNull String message,
+                                   @NotNull String location) { }

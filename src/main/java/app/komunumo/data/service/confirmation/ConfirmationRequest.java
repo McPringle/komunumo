@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,15 +15,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.data.service.confirmation;
 
-.confirmation-dialog {
-    width: 30em;
-}
+import org.jetbrains.annotations.NotNull;
 
-.confirmation-dialog .action-message {
-    font-weight: bold;
-}
+import java.util.Locale;
 
-.confirmation-dialog .email-button {
-    margin-right: auto;
+public record ConfirmationRequest(@NotNull String actionMessage,
+                                  @NotNull ConfirmationHandler actionHandler,
+                                  @NotNull ConfirmationContext actionContext,
+                                  @NotNull Locale locale) {
 }

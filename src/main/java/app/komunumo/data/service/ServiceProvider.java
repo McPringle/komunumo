@@ -18,6 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.configuration.AppConfig;
+import app.komunumo.data.service.confirmation.ConfirmationService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
