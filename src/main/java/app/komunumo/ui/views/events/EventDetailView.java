@@ -92,7 +92,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
 
         if (image != null) {
             final var imageUrl = ImageUtil.resolveImageUrl(image);
-            final var altText = getTranslation(locale, "event.details.image.altText", event.title());
+            final var altText = getTranslation(locale, "ui.views.events.EventDetailView.image", event.title());
             final var htmlImage = new Image(imageUrl, altText);
             htmlImage.addClassName("event-image");
             pageContent.add(htmlImage);
@@ -103,12 +103,12 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         pageContent.add(title);
 
         final var location = new Paragraph(
-                getTranslation(locale, "event.details.location") + ": " + event.location());
+                getTranslation(locale, "ui.views.events.EventDetailView.location") + ": " + event.location());
         location.addClassName("event-location");
         pageContent.add(location);
 
-        addDateTimeText(event.begin(), locale, "event.details.beginDate", "event-date-begin");
-        addDateTimeText(event.end(), locale, "event.details.endDate", "event-date-end");
+        addDateTimeText(event.begin(), locale, "ui.views.events.EventDetailView.beginDate", "event-date-begin");
+        addDateTimeText(event.end(), locale, "ui.views.events.EventDetailView.endDate", "event-date-end");
 
         final var description = new Markdown(event.description());
         description.addClassName("event-description");

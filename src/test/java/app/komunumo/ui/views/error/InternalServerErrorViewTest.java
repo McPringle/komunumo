@@ -38,7 +38,7 @@ class InternalServerErrorViewTest {
     void checkErrorMessage() {
 
         // Arrange
-        final var ui = TestUIProvider.mockUiWithTranslation("error.page.internal-server-error", "Test Error Message");
+        final var ui = TestUIProvider.mockUiWithTranslation("ui.views.error.ErrorView.internalServerError", "Test Error Message");
         final var beforeEnterEvent = mock(BeforeEnterEvent.class);
         when(beforeEnterEvent.getUI()).thenReturn(ui);
         final var configurationService = mock(ConfigurationService.class);

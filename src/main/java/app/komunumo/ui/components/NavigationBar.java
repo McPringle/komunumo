@@ -53,9 +53,9 @@ public final class NavigationBar extends HorizontalLayout {
                                        final @NotNull ServiceProvider serviceProvider) {
         final var menuBar = new Nav();
         menuBar.addClassName("menu-bar");
-        menuBar.add(new RouterLink(ui.getTranslation("events.title"), EventGridView.class));
+        menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.events"), EventGridView.class));
         if (!serviceProvider.getAppConfig().instance().hideCommunities()) {
-            menuBar.add(new RouterLink(ui.getTranslation("communities.title"), CommunityGridView.class));
+            menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.communities"), CommunityGridView.class));
         }
         serviceProvider.globalPageService()
                 .getGlobalPages(ui.getLocale())
@@ -71,17 +71,17 @@ public final class NavigationBar extends HorizontalLayout {
 
         // login as first entry in the menu
         if (!serviceProvider.loginService().isUserLoggedIn()) {
-            avatarMenu.addItem(ui.getTranslation("login.title"), e ->
+            avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), e ->
                     serviceProvider.loginService().startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
             );
         }
 
         // dark theme toggle
-        avatarMenu.addItem(ui.getTranslation("avatar.menu.toggleDarkMode"), e -> ThemeUtil.toggleDarkMode());
+        avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.toggleDarkMode"), e -> ThemeUtil.toggleDarkMode());
 
         // logout as last entry in the menu
         if (serviceProvider.loginService().isUserLoggedIn()) {
-            avatarMenu.addItem(ui.getTranslation("logout.title"), e ->
+            avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.logout"), e ->
                     ui.navigate(LogoutView.class)
             );
         }

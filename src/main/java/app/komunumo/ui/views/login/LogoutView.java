@@ -39,7 +39,7 @@ public final class LogoutView extends AbstractView {
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation(UI.getCurrent().getLocale(), "logout.title");
+        return getTranslation(UI.getCurrent().getLocale(), "ui.views.logout.title");
     }
 
 }

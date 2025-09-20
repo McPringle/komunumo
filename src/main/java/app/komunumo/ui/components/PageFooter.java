@@ -32,7 +32,7 @@ public final class PageFooter extends Footer {
         super();
         addClassName("page-footer");
 
-        final var komunumoFooter = ui.getTranslation("komunumo.footer", version, Year.now());
+        final var komunumoFooter = ui.getTranslation("ui.components.PageFooter.komunumo", version, Year.now());
         add(new Anchor("https://komunumo.app/", komunumoFooter, AnchorTarget.BLANK));
     }
 

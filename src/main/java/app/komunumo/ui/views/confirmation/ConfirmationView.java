@@ -45,12 +45,12 @@ public final class ConfirmationView extends AbstractView implements AfterNavigat
         super(configurationService);
         this.confirmationService = confirmationService;
         addClassName("confirmation-view");
-        add(new H2(getTranslation("confirmation.view.title")));
+        add(new H2(getTranslation("ui.views.confirmation.ConfirmationView.title")));
     }
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation("confirmation.view.title");
+        return getTranslation("ui.views.confirmation.ConfirmationView.title");
     }
 
     @Override

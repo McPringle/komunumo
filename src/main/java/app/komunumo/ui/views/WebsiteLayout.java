@@ -46,7 +46,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         ui = UI.getCurrent();
 
         if (serviceProvider.getAppConfig().demo().enabled()) {
-            add(new InfoBanner(ui.getTranslation("demo.mode.enabled")));
+            add(new InfoBanner(ui.getTranslation("ui.views.WebsiteLayout.demoMode")));
         }
 
         addPageHeader(serviceProvider);

@@ -41,49 +41,49 @@ class TranslationProviderTest {
 
     @Test
     void testGetMessageInEnglish() {
-        assertThat(translationProvider.getTranslation("events.title", Locale.ENGLISH))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.ENGLISH))
                 .isEqualTo("Events");
     }
 
     @Test
     void testTranslationInGerman() {
-        assertThat(translationProvider.getTranslation("events.title", Locale.GERMAN))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.GERMAN))
                 .isEqualTo("Veranstaltungen");
     }
 
     @Test
     void testSwissGermanFallbackToGerman() {
-        assertThat(translationProvider.getTranslation("events.title", Locale.forLanguageTag("de-CH")))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.forLanguageTag("de-CH")))
                 .isEqualTo("Veranstaltungen");
     }
 
     @Test
     void testFallbackToEnglish() {
-        assertThat(translationProvider.getTranslation("events.title", Locale.ITALIAN))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.ITALIAN))
                 .isEqualTo("Events");
     }
 
     @Test
     void testFallbackWhenLocaleIsNull() {
-        assertThat(translationProvider.getTranslation("events.title", null))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", null))
                 .isEqualTo("Events");
     }
 
     @Test
     void testWithPlaceholder() {
-        assertThat(translationProvider.getTranslation("communities.profileImage.altText", Locale.ENGLISH, "foobar"))
+        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", Locale.ENGLISH, "foobar"))
                 .isEqualTo("Profile picture of foobar");
     }
 
     @Test
     void testWithMissingPlaceholder() {
-        assertThat(translationProvider.getTranslation("communities.profileImage.altText", Locale.ENGLISH))
+        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", Locale.ENGLISH))
                 .isEqualTo("Profile picture of {0}");
     }
 
     @Test
     void testMissingPlaceholder() {
-        assertThat(translationProvider.getTranslation("events.title", Locale.ENGLISH, "foobar"))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.ENGLISH, "foobar"))
                 .isEqualTo("Events");
     }
 

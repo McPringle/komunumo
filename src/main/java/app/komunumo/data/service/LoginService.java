@@ -158,7 +158,7 @@ public final class LoginService {
 
     public void startLoginProcess(final @NotNull Locale locale,
                                   final @NotNull String location) {
-        final var actionMessage = translationProvider.getTranslation("app.komunumo.data.service.LoginService.actionText", locale);
+        final var actionMessage = translationProvider.getTranslation("data.service.LoginService.actionText", locale);
         final ConfirmationHandler actionHandler = this::passwordlessLoginHandler;
         final var actionContext = ConfirmationContext.of(CONTEXT_LOGIN_LOCATION, location);
         final var confirmationRequest = new ConfirmationRequest(
@@ -175,11 +175,11 @@ public final class LoginService {
                                                                    final @NotNull Locale locale) {
         if (login(email)) {
             final var status = ConfirmationStatus.SUCCESS;
-            final var message = translationProvider.getTranslation("app.komunumo.data.service.LoginService.successMessage", locale);
+            final var message = translationProvider.getTranslation("data.service.LoginService.successMessage", locale);
             final var location = (String) context.getOrDefault(CONTEXT_LOGIN_LOCATION, "");
             return new ConfirmationResponse(status, message, location);
         }
-        final var message = translationProvider.getTranslation("app.komunumo.data.service.LoginService.failedMessage", locale);
+        final var message = translationProvider.getTranslation("data.service.LoginService.failedMessage", locale);
         return new ConfirmationResponse(ConfirmationStatus.ERROR, message, "");
     }
 

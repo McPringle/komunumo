@@ -85,7 +85,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
 
         if (image != null) {
             final var imageUrl = ImageUtil.resolveImageUrl(image);
-            final var altText = getTranslation(locale, "communities.profileImage.altText", community.name());
+            final var altText = getTranslation(locale, "ui.views.community.CommunityDetailView.profileImage", community.name());
             final var htmlImage = new Image(imageUrl, altText);
             htmlImage.addClassName("community-image");
             pageContent.add(htmlImage);
@@ -100,7 +100,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         pageContent.add(profile);
 
         final var prettyTime = new PrettyTime(locale);
-        final var createdText = getTranslation(locale, "communities.details.created",
+        final var createdText = getTranslation(locale, "ui.views.community.CommunityDetailView.created",
                 prettyTime.format(community.created()));
         final var created = new Paragraph(createdText);
         created.addClassName("community-created");

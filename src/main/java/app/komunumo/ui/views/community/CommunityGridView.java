@@ -38,6 +38,6 @@ public final class CommunityGridView extends AbstractView {
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation(UI.getCurrent().getLocale(), "communities.title");
+        return getTranslation(UI.getCurrent().getLocale(), "ui.views.community.CommunityGridView.title");
     }
 }

@@ -108,7 +108,8 @@ public final class ConfirmationService {
 
     public @NotNull String getConfirmationTimeoutText(final @Nullable Locale locale) {
         final long minutes = CONFIRMATION_TIMEOUT.toMinutes();
-        return translationProvider.getTranslation("confirmation.timeout.minutes", locale, minutes);
+        return translationProvider.getTranslation(
+                "data.service.confirmation.ConfirmationService.timeout", locale, minutes);
     }
 
     public @NotNull ConfirmationResponse confirm(final @NotNull String confirmationId,
@@ -128,13 +129,15 @@ public final class ConfirmationService {
             } catch (final Exception exception) {
                 LOGGER.error("Error in 'actionHandler' for confirmation ID {}: {}",
                         confirmationId, exception.getMessage(), exception);
-                final var message = translationProvider.getTranslation("confirmation.view.handlerError", locale);
+                final var message = translationProvider.getTranslation(
+                        "data.service.confirmation.ConfirmationService.handlerError", locale);
                 return new ConfirmationResponse(ConfirmationStatus.ERROR, message, "");
             }
         }
         LOGGER.warn("Invalid or expired confirmation ID: {}", confirmationId);
         final var confirmationTimeout = getConfirmationTimeoutText(locale);
-        final var message = translationProvider.getTranslation("confirmation.view.error", locale, confirmationTimeout);
+        final var message = translationProvider.getTranslation(
+                "data.service.confirmation.ConfirmationService.error", locale, confirmationTimeout);
         return new ConfirmationResponse(ConfirmationStatus.ERROR, message, "");
     }
 

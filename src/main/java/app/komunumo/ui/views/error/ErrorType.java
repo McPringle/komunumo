@@ -20,8 +20,8 @@ package app.komunumo.ui.views.error;
 import org.jetbrains.annotations.NotNull;
 
 enum ErrorType {
-        NOT_FOUND("not-found"),
-        INTERNAL_SERVER_ERROR("internal-server-error");
+        NOT_FOUND("notFound"),
+        INTERNAL_SERVER_ERROR("internalServerError");
 
         private final @NotNull String translationKey;
 
