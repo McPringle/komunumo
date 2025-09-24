@@ -18,9 +18,9 @@ The data sovereignty of individuals and communities is the key concern of Komunu
 
 - **Freedom through Decentralization**  
   Komunumo is not a central service controlled by a company. Anyone can run their own instance: for themselves, for a community, or as a public service for others. Moving between instances is easy, and no one can "take over" or commercially exploit the entire network.
-- *Seamless Networking through Federation**  
+- **Seamless Networking through Federation**  
   Thanks to the open ActivityPub protocol, Komunumo instances not only exchange events with each other but also with other federated platforms such as Mobilizon. Users of Mastodon and other ActivityPub services can follow communities, share events, like them, and register with a single click – even without a Komunumo account.
-- *Privacy by Default**  
+- **Privacy by Default**  
   We respect the choice between public presence and complete anonymity. Event registration is also possible without an account. For fully anonymous events, no personal data is shared with organizers – only the number of registrations. In addition, the browser exclusively sends requests to its own Komunumo server; external content is fetched server-side. This way, IP addresses and other visitor data remain protected.
 - **Transparency & Openness**  
   Komunumo is free open-source software under the AGPL v3 license. The source code is publicly available, the development process transparent, and there are no proprietary modules, no paywalls, and no dual licensing. We rely on open standards such as ActivityPub to achieve maximum interoperability.
@@ -36,4 +36,4 @@ The future of event organization does not lie in isolated, regulated, data-hungr
 Komunumo combines digital sovereignty, data protection, and networking – and makes it easy to become part of this future.
 
 Whether as a developer, designer, community organizer, or sponsor:  
-Join us in building a sustainable, fair, and sovereign event ecosystem.
+**Join us in building a sustainable, fair, and sovereign event ecosystem.**
