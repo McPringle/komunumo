@@ -32,6 +32,8 @@ With *Komunumo* you can manage your community members (including self-management
 
 We have set ourselves the goal of implementing all important [Meetup](https://www.meetup.com/) functions for communities in *Komunumo*. We strive for full compatibility with the [Fediverse](https://en.wikipedia.org/wiki/Fediverse) to ensure smooth data exchange with [Mastodon](https://en.wikipedia.org/wiki/Mastodon_(social_network)), [Mobilizon](https://en.wikipedia.org/wiki/Mobilizon), and other services using the [ActivityPub](https://en.wikipedia.org/wiki/ActivityPub) protocol.
 
+**Please read more about the vision of *Komunumo* in the separate file [VISION.md](VISION.md).**
+
 ## Versioning
 
 *Komunumo* follows [Semantic Versioning 2.0.0](https://semver.org/spec/v2.0.0.html). Version numbers are structured as `MAJOR.MINOR.PATCH`:
