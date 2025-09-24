@@ -177,7 +177,7 @@ This guide helps you get *Komunumo* up and running on your local machine for dev
 Make sure the following tools are installed:
 
 - Git
-- Java LTS (currently version 21) - check with `java -version`
+- Java LTS (currently version 25) - check with `java -version`
 - Podman or Docker
 
 ### Clone and Verify

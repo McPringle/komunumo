@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21
+FROM eclipse-temurin:25
 COPY target/komunumo-*.jar /usr/app/app.jar
 RUN groupadd -g 1001 komunumo && useradd -m -u 1001 -g 1001 komunumo
 USER komunumo

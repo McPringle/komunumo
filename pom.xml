@@ -76,8 +76,8 @@
     </scm>
 
     <properties>
-        <java.version>21</java.version>
-        <jooq.version>3.20.8</jooq.version>
+        <java.version>25</java.version>
+        <jooq.version>3.20.7</jooq.version>
         <maven.version>3.9.9</maven.version>
         <mockito.version>5.20.0</mockito.version>
         <vaadin.version>24.9.2</vaadin.version>
