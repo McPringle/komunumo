@@ -21,14 +21,19 @@ import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.security.UserPrincipal;
 import app.komunumo.ui.TranslationProvider;
+import app.komunumo.ui.signals.AuthenticationSignal;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.Assertions;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
@@ -40,9 +45,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 class LoginServiceTest {
+
+    private static LoginService createLoginServiceWithMocks(final @NotNull UserService userService) {
+        final var confirmationService = mock(ConfirmationService.class);
+        final var translationProvider = mock(TranslationProvider.class);
+        final var authenticationSignal = mock(AuthenticationSignal.class);
+        return new LoginService(userService, confirmationService, translationProvider, authenticationSignal);
+    }
 
     @Test
     void userNotFound() {
@@ -50,10 +64,7 @@ class LoginServiceTest {
         final var userService = mock(UserService.class);
         when(userService.getUserByEmail(email)).thenReturn(Optional.empty());
 
-        final var confirmationService = mock(ConfirmationService.class);
-        final var translationProvider = mock(TranslationProvider.class);
-
-        final var loginService = new LoginService(userService, confirmationService, translationProvider);
+        final var loginService = createLoginServiceWithMocks(userService);
         assertThat(loginService.login(email)).isFalse();
         assertThat(loginService.isUserLoggedIn()).isFalse();
 
@@ -70,10 +81,7 @@ class LoginServiceTest {
         final var userService = mock(UserService.class);
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var confirmationService = mock(ConfirmationService.class);
-        final var translationProvider = mock(TranslationProvider.class);
-
-        final var loginService = new LoginService(userService, confirmationService, translationProvider);
+        final var loginService = createLoginServiceWithMocks(userService);
         assertThat(loginService.login(email)).isFalse();
         assertThat(loginService.isUserLoggedIn()).isFalse();
 
@@ -92,10 +100,7 @@ class LoginServiceTest {
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var confirmationService = mock(ConfirmationService.class);
-        final var translationProvider = mock(TranslationProvider.class);
-
-        final var loginService = new LoginService(userService, confirmationService, translationProvider);
+        final var loginService = createLoginServiceWithMocks(userService);
         assertThat(loginService.login(email)).isTrue();
         assertThat(loginService.isUserLoggedIn()).isTrue();
 
@@ -115,10 +120,7 @@ class LoginServiceTest {
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var confirmationService = mock(ConfirmationService.class);
-        final var translationProvider = mock(TranslationProvider.class);
-
-        final var loginService = new LoginService(userService, confirmationService, translationProvider);
+        final var loginService = createLoginServiceWithMocks(userService);
         try (final var vaadinService = mockStatic(VaadinService.class)) {
             vaadinService.when(VaadinService::getCurrentRequest).thenReturn(mock(VaadinServletRequest.class));
             assertThat(loginService.login(email)).isTrue();
@@ -143,14 +145,11 @@ class LoginServiceTest {
         when(vaadinServletRequest.getHttpServletRequest()).thenReturn(httpServletRequest);
 
         final var userService = mock(UserService.class);
-        final var confirmationService = mock(ConfirmationService.class);
-        final var translationProvider = mock(TranslationProvider.class);
-
-        final var loginService = new LoginService(userService, confirmationService, translationProvider);
+        final var loginService = createLoginServiceWithMocks(userService);
         try (final var staticUI = mockStatic(UI.class);
              final var staticVaadinServletRequest = mockStatic(VaadinServletRequest.class);
              final var staticSecurityContextHolder = mockStatic(SecurityContextHolder.class);
-             final var staticLogoutHandler = mockConstruction(SecurityContextLogoutHandler.class)) {
+             final var ignored = mockConstruction(SecurityContextLogoutHandler.class)) {
 
             // Static stubs
             staticUI.when(UI::getCurrent).thenReturn(ui);
@@ -164,6 +163,102 @@ class LoginServiceTest {
 
             // Verify: security context cleared (static verification)
             staticSecurityContextHolder.verify(SecurityContextHolder::clearContext);
+        }
+    }
+
+    @Test
+    void getLoggedInUser_returnsEmpty_whenAuthenticationIsNull() {
+        try {
+            SecurityContextHolder.clearContext();
+
+            final var userService = mock(UserService.class);
+            final var loginService = createLoginServiceWithMocks(userService);
+
+            final var result = loginService.getLoggedInUser();
+
+            assertThat(result).isEmpty();
+            verifyNoInteractions(userService);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void getLoggedInUser_returnsEmpty_whenPrincipalIsNotUserPrincipal() {
+        try {
+            final var auth = mock(Authentication.class);
+            when(auth.getPrincipal()).thenReturn("anonymousUser");
+            final var ctx = mock(SecurityContext.class);
+            when(ctx.getAuthentication()).thenReturn(auth);
+            SecurityContextHolder.setContext(ctx);
+
+            final var userService = mock(UserService.class);
+            final var loginService = createLoginServiceWithMocks(userService);
+
+            final var result = loginService.getLoggedInUser();
+
+            assertThat(result).isEmpty();
+            verifyNoInteractions(userService);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void getLoggedInUser_returnsUser_whenPrincipalIsUserPrincipal_andUserExists() {
+        try {
+            final var userId = UUID.randomUUID();
+            final var principal = mock(UserPrincipal.class);
+            when(principal.getUserId()).thenReturn(userId);
+
+            final var auth = mock(Authentication.class);
+            when(auth.getPrincipal()).thenReturn(principal);
+            final var ctx = mock(SecurityContext.class);
+            when(ctx.getAuthentication()).thenReturn(auth);
+            SecurityContextHolder.setContext(ctx);
+
+            final var userService = mock(UserService.class);
+            final var loginService = createLoginServiceWithMocks(userService);
+
+            final var user = new UserDto(userId, null, null, null, null, "", "",
+                    null, UserRole.USER, UserType.LOCAL);
+            when(userService.getUserById(userId)).thenReturn(Optional.of(user));
+
+            final var result = loginService.getLoggedInUser();
+
+            assertThat(result).containsSame(user);
+            verify(userService).getUserById(userId);
+            verifyNoMoreInteractions(userService);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void getLoggedInUser_returnsEmpty_whenPrincipalIsUserPrincipal_butUserNotFound() {
+        try {
+            final var userId = UUID.randomUUID();
+            final var principal = mock(UserPrincipal.class);
+            when(principal.getUserId()).thenReturn(userId);
+
+            final var auth = mock(Authentication.class);
+            when(auth.getPrincipal()).thenReturn(principal);
+            final var ctx = mock(SecurityContext.class);
+            when(ctx.getAuthentication()).thenReturn(auth);
+            SecurityContextHolder.setContext(ctx);
+
+            final var userService = mock(UserService.class);
+            final var loginService = createLoginServiceWithMocks(userService);
+
+            when(userService.getUserById(userId)).thenReturn(Optional.empty());
+
+            final var result = loginService.getLoggedInUser();
+
+            assertThat(result).isEmpty();
+            verify(userService).getUserById(userId);
+            verifyNoMoreInteractions(userService);
+        } finally {
+            SecurityContextHolder.clearContext();
         }
     }
 

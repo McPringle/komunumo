@@ -22,6 +22,7 @@ import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.components.PageFooter;
 import app.komunumo.ui.components.PageHeader;
+import app.komunumo.ui.signals.AuthenticationSignal;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
@@ -41,7 +42,8 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
     private final @NotNull UI ui;
     private final @NotNull Main main;
 
-    public WebsiteLayout(final @NotNull ServiceProvider serviceProvider) {
+    public WebsiteLayout(final @NotNull ServiceProvider serviceProvider,
+                         final @NotNull AuthenticationSignal authenticationSignal) {
         super();
         ui = UI.getCurrent();
 
@@ -50,7 +52,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         }
 
         addPageHeader(serviceProvider);
-        addNavigationBar(serviceProvider);
+        addNavigationBar(serviceProvider, authenticationSignal);
 
         main = new Main();
         add(main);
@@ -66,8 +68,9 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         add(new PageHeader(instanceTitle, instanceSlogan));
     }
 
-    private void addNavigationBar(final @NotNull ServiceProvider serviceProvider) {
-        add(new NavigationBar(serviceProvider));
+    private void addNavigationBar(final @NotNull ServiceProvider serviceProvider,
+                                  final @NotNull AuthenticationSignal authenticationSignal) {
+        add(new NavigationBar(serviceProvider, authenticationSignal));
     }
 
     private void addFooter(final @NotNull ServiceProvider serviceProvider) {

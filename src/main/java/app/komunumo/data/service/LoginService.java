@@ -28,6 +28,7 @@ import app.komunumo.data.service.confirmation.ConfirmationStatus;
 import app.komunumo.security.SecurityConfig;
 import app.komunumo.security.UserPrincipal;
 import app.komunumo.ui.TranslationProvider;
+import app.komunumo.ui.signals.AuthenticationSignal;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
@@ -58,17 +59,26 @@ public final class LoginService {
     private final @NotNull UserService userService;
     private final @NotNull ConfirmationService confirmationService;
     private final @NotNull TranslationProvider translationProvider;
+    private final @NotNull AuthenticationSignal authenticationSignal;
 
     public LoginService(final @NotNull UserService userService,
                         final @NotNull ConfirmationService confirmationService,
-                        final @NotNull TranslationProvider translationProvider) {
+                        final @NotNull TranslationProvider translationProvider,
+                        final @NotNull AuthenticationSignal authenticationSignal) {
         super();
         this.userService = userService;
         this.confirmationService = confirmationService;
         this.translationProvider = translationProvider;
+        this.authenticationSignal = authenticationSignal;
     }
 
     public boolean login(final @NotNull String emailAddress) {
+        final var success = internalLogin(emailAddress);
+        authenticationSignal.setAuthenticated(success);
+        return success;
+    }
+
+    private boolean internalLogin(final @NotNull String emailAddress) {
         final var optUser = userService.getUserByEmail(emailAddress);
         if (optUser.isEmpty()) {
             LOGGER.info("User with email {} not found.", emailAddress);
@@ -154,6 +164,7 @@ public final class LoginService {
         SecurityContextHolder.clearContext();
         final var logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
+        authenticationSignal.setAuthenticated(false);
     }
 
     public void startLoginProcess(final @NotNull Locale locale,

@@ -18,12 +18,14 @@
 package app.komunumo.ui.components;
 
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.ui.signals.AuthenticationSignal;
 import app.komunumo.ui.views.community.CommunityGridView;
 import app.komunumo.ui.views.events.EventGridView;
 import app.komunumo.ui.views.login.LogoutView;
 import app.komunumo.util.LocationUtil;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEffect;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
@@ -36,7 +38,8 @@ import org.jetbrains.annotations.NotNull;
 
 public final class NavigationBar extends HorizontalLayout {
 
-    public NavigationBar(final @NotNull ServiceProvider serviceProvider) {
+    public NavigationBar(final @NotNull ServiceProvider serviceProvider,
+                         final @NotNull AuthenticationSignal authenticationSignal) {
         super();
         final var ui = UI.getCurrent();
         addClassName("navigation-bar");
@@ -46,7 +49,7 @@ public final class NavigationBar extends HorizontalLayout {
         menuContainer.add(getNavigationBar(ui, serviceProvider));
         addToStart(menuContainer);
 
-        addToEnd(getAvatar(ui, serviceProvider));
+        addToEnd(getAvatar(ui, serviceProvider, authenticationSignal));
     }
 
     private Component getNavigationBar(final @NotNull UI ui,
@@ -64,30 +67,35 @@ public final class NavigationBar extends HorizontalLayout {
     }
 
     private Component getAvatar(final @NotNull UI ui,
-                                final @NotNull ServiceProvider serviceProvider) {
+                                final @NotNull ServiceProvider serviceProvider,
+                                final @NotNull AuthenticationSignal authenticationSignal) {
         final var avatar = new Avatar();
         final var avatarMenu = new ContextMenu(avatar);
         avatarMenu.setOpenOnClick(true);
 
         // login as first entry in the menu
-        if (!serviceProvider.loginService().isUserLoggedIn()) {
-            avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), e ->
-                    serviceProvider.loginService().startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
-            );
-            avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), e ->
-                    serviceProvider.accountService().startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
-            );
-        }
+        final var loginItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), e ->
+                serviceProvider.loginService().startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+        );
+        final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), e ->
+                serviceProvider.accountService().startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+        );
 
         // dark theme toggle
         avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.toggleDarkMode"), e -> ThemeUtil.toggleDarkMode());
 
         // logout as last entry in the menu
-        if (serviceProvider.loginService().isUserLoggedIn()) {
-            avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.logout"), e ->
-                    ui.navigate(LogoutView.class)
-            );
-        }
+        final var logoutItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.logout"), e ->
+                ui.navigate(LogoutView.class)
+        );
+
+        // update menu items based on authentication state
+        ComponentEffect.effect(this, () -> {
+            boolean loggedIn = authenticationSignal.isAuthenticated();
+            loginItem.setVisible(!loggedIn);
+            registerItem.setVisible(!loggedIn);
+            logoutItem.setVisible(loggedIn);
+        });
 
         return avatar;
     }
