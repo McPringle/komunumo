@@ -31,6 +31,8 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.ScreenshotType;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import org.jetbrains.annotations.NotNull;
@@ -241,14 +243,18 @@ public abstract class BrowserTest {
     }
 
     protected void logout() {
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+        if (page.locator(LOGOUT_MENU_ITEM_SELECTOR).count() == 0) {
+            page.click(AVATAR_SELECTOR);
+            page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+        }
         captureScreenshot("logout_profile-menu");
 
         page.click(LOGOUT_MENU_ITEM_SELECTOR);
-        assertThatCode(() ->
-                Thread.sleep(500) // wait for the logout process to complete
-        ).doesNotThrowAnyException();
+        page.waitForSelector("vaadin-context-menu-overlay",
+                new Page.WaitForSelectorOptions().setState(WaitForSelectorState.HIDDEN));
+        try {
+            page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(1500));
+        } catch (PlaywrightException ignored) { }
         captureScreenshot("logout_done");
     }
 
