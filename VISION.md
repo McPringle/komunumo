@@ -5,6 +5,8 @@
 - [English](#vision-en)
 - [Deutsch](#vision-de)
 
+---
+
 ## Vision (EN)
 
 **Komunumo stands for a new way of organizing communities: decentralized, open, and fair.**
@@ -16,8 +18,6 @@ We are developing a transparent event platform that ensures the data sovereignty
 Our goal is a world where every community can organize its events independently, without disclosing personal data, and where events are seamlessly interconnected.
 
 The data sovereignty of individuals and communities is the key concern of Komunumo and all federation platforms.
-
----
 
 ### Our Principles
 
@@ -31,8 +31,6 @@ The data sovereignty of individuals and communities is the key concern of Komunu
   Komunumo is free open-source software under the AGPL v3 license. The source code is publicly available, the development process transparent, and there are no proprietary modules, no paywalls, and no dual licensing. We rely on open standards such as ActivityPub to achieve maximum interoperability.
 - **Long-Term Stability through Community**  
   An independent, non-profit association (in formation) manages finances, holds the domain and infrastructure rights, and represents the project legally. This ensures Komunumo remains independent of individuals or companies. Through memberships, donations, and sponsorships, individuals and organizations can support the development. Association members can actively participate in deciding the direction of the project.
-
----
 
 ### Why Now?
 
@@ -58,8 +56,6 @@ Unser Ziel ist eine Welt, in der jede Community ihre Events eigenständig organi
 
 Die Datensouveränität von Einzelpersonen und Gemeinschaften ist das Schlüsselanliegen von Komunumo und aller Föderations-Plattformen.
 
----
-
 ### Unsere Prinzipien
 
 - **Freiheit durch Dezentralität**  
@@ -72,8 +68,6 @@ Die Datensouveränität von Einzelpersonen und Gemeinschaften ist das Schlüssel
   Komunumo ist freie Open-Source-Software unter der AGPL v3-Lizenz. Der Quellcode ist öffentlich einsehbar, die Entwicklung transparent, und es gibt keine proprietären Module, keine Bezahlschranken und keine Doppel-Lizenzierung. Wir setzen auf offene Standards wie ActivityPub, um maximale Interoperabilität zu erreichen.
 - **Langfristige Stabilität durch Gemeinschaft**  
   Ein unabhängiger, gemeinnütziger Verein (in Gründung) verwaltet die Finanzen, hält die Domain und die Infrastrukturrechte und vertritt das Projekt rechtlich. So bleibt Komunumo unabhängig von einzelnen Personen oder Firmen. Über Mitgliedschaften, Spenden und Sponsorings können Privatpersonen und Unternehmen die Entwicklung unterstützen. Vereinsmitglieder können aktiv mitbestimmen, in welche Richtung sich das Projekt entwickelt.
-
----
 
 ### Warum jetzt?
 
