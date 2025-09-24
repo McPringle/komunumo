@@ -100,4 +100,14 @@ public final class UserService {
                 .execute() > 0;
     }
 
+    public UserDto changeUserType(final @NotNull UserDto user, final @NotNull UserType userType) {
+        if (user.id() == null) {
+            throw new IllegalArgumentException("User ID must not be null! Maybe the user is not stored yet?");
+        }
+        dsl.update(USER)
+                .set(USER.TYPE, userType.name())
+                .where(USER.ID.eq(user.id()))
+                .execute();
+        return getUserById(user.id()).orElseThrow();
+    }
 }

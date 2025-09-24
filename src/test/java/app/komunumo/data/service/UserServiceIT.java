@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class UserServiceIT extends IntegrationTest {
 
@@ -178,6 +179,15 @@ class UserServiceIT extends IntegrationTest {
         assertThat(userService.deleteUser(testUser)).isTrue();
         assertThat(userService.deleteUser(testUser)).isFalse();
         assertThat(userService.getUserByEmail(email)).isEmpty();
+    }
+
+    @Test
+    void changeUserType_assertFailsWhenUserIdIsNull() {
+        final var user = new UserDto(null, null, null, null, null, "", "", null,
+                UserRole.USER, UserType.ANONYMOUS);
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> userService.changeUserType(user, UserType.LOCAL))
+                .withMessageContaining("User ID must not be null! Maybe the user is not stored yet?");
     }
 
 }

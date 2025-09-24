@@ -50,10 +50,11 @@ class ServiceProviderTest {
         final var mailService = mock(MailService.class);
         final var participationService = mock(ParticipationService.class);
         final var loginService = mock(LoginService.class);
+        final var accountService = mock(AccountService.class);
 
         final var serviceProvider = new ServiceProvider(appConfig, configurationService, confirmationService,
                 communityService, globalPageService, eventService, imageService, userService, mailService,
-                participationService, loginService);
+                participationService, loginService, accountService);
 
         assertThat(serviceProvider.getAppConfig()).isSameAs(appConfig);
         assertThat(serviceProvider.confirmationService()).isSameAs(confirmationService);
@@ -66,6 +67,7 @@ class ServiceProviderTest {
         assertThat(serviceProvider.mailService()).isSameAs(mailService);
         assertThat(serviceProvider.participationService()).isSameAs(participationService);
         assertThat(serviceProvider.loginService()).isSameAs(loginService);
+        assertThat(serviceProvider.accountService()).isSameAs(accountService);
     }
 
 }

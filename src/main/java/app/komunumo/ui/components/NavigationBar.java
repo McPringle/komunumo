@@ -74,6 +74,9 @@ public final class NavigationBar extends HorizontalLayout {
             avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), e ->
                     serviceProvider.loginService().startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
             );
+            avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), e ->
+                    serviceProvider.accountService().startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+            );
         }
 
         // dark theme toggle
