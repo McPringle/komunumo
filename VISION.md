@@ -1,6 +1,11 @@
 # Komunumo
 
-## Vision
+**Languages:**
+
+- [English](#vision-en)
+- [Deutsch](#vision-de)
+
+## Vision (EN)
 
 **Komunumo stands for a new way of organizing communities: decentralized, open, and fair.**
 
@@ -35,5 +40,47 @@ The future of event organization does not lie in isolated, regulated, data-hungr
 
 Komunumo combines digital sovereignty, data protection, and networking – and makes it easy to become part of this future.
 
-Whether as a developer, designer, community organizer, or sponsor:  
+Whether as a developer, designer, community organizer, or sponsor:
+
 **Join us in building a sustainable, fair, and sovereign event ecosystem.**
+
+---
+
+## Vision (DE)
+
+**Komunumo steht für eine neue Art, Gemeinschaften zu organisieren: dezentral, offen und fair.**
+
+Wir glauben, dass Daten den Datenerzeugern (Instanzen) gehören – und nicht datenhungrigen Konzernen.
+
+Wir entwickeln eine transparente Eventplattform, die die Daten-Souveränität von Einzelpersonen und Gruppen gewährleistet. Wir sind überzeugt, dass Menschen und Organisationen am besten zusammenkommen, wenn sie selbst bestimmen können, wo und wie ihre Veranstaltungen publiziert werden – ohne Abhängigkeit von zentralen Plattformen, kommerziellen Interessen oder intransparenten Geschäftsmodellen.
+
+Unser Ziel ist eine Welt, in der jede Community ihre Events eigenständig organisieren kann, ohne persönliche Daten preiszugeben, und in der Veranstaltungen grenzenlos miteinander vernetzt sind.
+
+Die Datensouveränität von Einzelpersonen und Gemeinschaften ist das Schlüsselanliegen von Komunumo und aller Föderations-Plattformen.
+
+---
+
+### Unsere Prinzipien
+
+- **Freiheit durch Dezentralität**  
+  Komunumo ist kein zentraler Dienst, den eine Firma kontrolliert. Jede\*r kann eine eigene Instanz betreiben: für sich selbst, für eine Community oder als öffentliches Angebot für andere. Der Umzug zwischen Instanzen ist einfach, und niemand kann das gesamte Netzwerk „übernehmen“ oder kommerziell ausschlachten.
+- **Durchgängige Vernetzung durch Föderation**  
+  Dank des offenen ActivityPub-Protokolls tauschen Komunumo-Instanzen nicht nur untereinander Events aus, sondern auch mit anderen föderierten Plattformen wie Mobilizon. Nutzer\*innen von Mastodon und anderen ActivityPub-Diensten können Communities folgen, Events teilen, liken und sich mit einem Klick anmelden – sogar ohne eigenen Komunumo-Account.
+- **Privatsphäre als Standard**  
+  Wir respektieren die Wahl zwischen öffentlicher Präsenz und vollständiger Anonymität. Anmeldungen zu Events sind auch ohne Account möglich. Bei vollständig anonymen Veranstaltungen werden keine persönlichen Daten an Veranstaltende weitergegeben – nur die Anzahl der Anmeldungen. Zusätzlich führt der Browser ausschliesslich Anfragen an den eigenen Komunumo-Server aus; externe Inhalte werden serverseitig eingebunden. So bleiben IP-Adressen und andere Besucherdaten geschützt.
+- **Transparenz & Offenheit**  
+  Komunumo ist freie Open-Source-Software unter der AGPL v3-Lizenz. Der Quellcode ist öffentlich einsehbar, die Entwicklung transparent, und es gibt keine proprietären Module, keine Bezahlschranken und keine Doppel-Lizenzierung. Wir setzen auf offene Standards wie ActivityPub, um maximale Interoperabilität zu erreichen.
+- **Langfristige Stabilität durch Gemeinschaft**  
+  Ein unabhängiger, gemeinnütziger Verein (in Gründung) verwaltet die Finanzen, hält die Domain und die Infrastrukturrechte und vertritt das Projekt rechtlich. So bleibt Komunumo unabhängig von einzelnen Personen oder Firmen. Über Mitgliedschaften, Spenden und Sponsorings können Privatpersonen und Unternehmen die Entwicklung unterstützen. Vereinsmitglieder können aktiv mitbestimmen, in welche Richtung sich das Projekt entwickelt.
+
+---
+
+### Warum jetzt?
+
+Die Zukunft der Event-Organisation liegt nicht in isolierten, regulierten, datenhungrigen Plattformen, sondern in offenen Netzwerken, die Menschen, Gruppen und Organisationen verbinden – ohne ihre Freiheit einzuschränken. Die wachsende Beliebtheit der Föderations-Plattformen von z.B. Mastodon unterstreichen das Bedürfnis des Einzelnen nach Datensouveränität.
+
+Komunumo vereint digitale Souveränität, Datenschutz und Vernetzung und macht es einfach, Teil dieser Zukunft zu werden.
+
+Ob als Entwickler\*in, Designer\*in, Community-Organisator\*in oder Sponsor:
+
+**Gestalte mit uns ein nachhaltiges, faires und souveränes Event-Ökosystem.**
