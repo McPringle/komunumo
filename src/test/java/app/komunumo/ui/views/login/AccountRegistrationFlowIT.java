@@ -37,7 +37,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-public class RegistrationFlowIT extends BrowserTest {
+public class AccountRegistrationFlowIT extends BrowserTest {
 
     private static final String REGISTER_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Register')";
 

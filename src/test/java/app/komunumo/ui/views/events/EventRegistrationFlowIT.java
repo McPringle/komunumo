@@ -35,7 +35,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-class RegistrationFlowIT extends BrowserTest {
+class EventRegistrationFlowIT extends BrowserTest {
 
     private static final String REGISTRATION_BUTTON_SELECTOR = "vaadin-button:has-text('Register')";
 
