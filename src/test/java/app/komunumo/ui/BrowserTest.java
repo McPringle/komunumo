@@ -106,7 +106,7 @@ public abstract class BrowserTest {
 
         context = SpringApplication.run(Application.class, args);
         playwright = Playwright.create();
-        browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(true));
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
 
         screenshotDir = SCREENSHOT_DIR.resolve(getClass().getName()).resolve(browser.browserType().name());
         screenshotOptions = new Page.ScreenshotOptions()
