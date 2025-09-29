@@ -59,17 +59,17 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
         final var slot = params.get("slot").orElse("");
         final var ui = beforeEnterEvent.getUI();
         final var locale = ui.getLocale();
-        ContextMenu menu = new ContextMenu();
-
-        menu.setTarget(pageContent);
-        menu.addItem("Edit", event -> {
-            new EditorDialog().open();
-        });
 
         globalPageService.getGlobalPage(slot, locale).ifPresentOrElse(globalPage -> {
             pageContent.removeAll();
             pageContent.add(new Markdown(globalPage.markdown()));
+            pageContent.setWidthFull();
             pageTitle = globalPage.title();
+
+            final var menu = new ContextMenu();
+            menu.setTarget(pageContent);
+            menu.addItem(getTranslation("ui.views.page.GlobalPageView.edit"),
+                    event -> new GlobalPageEditorDialog(globalPageService, globalPage).open());
         }, () -> {
             LOGGER.warn("No global page found with slot '{}' and locale '{}'!", slot, locale);
             beforeEnterEvent.rerouteToError(NotFoundException.class);

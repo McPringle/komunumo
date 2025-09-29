@@ -16,15 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "fonts/space-grotesk.css";
-
-@import "components/confirmation-dialog.css";
-@import "components/info-banner.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
-@import "components/navigation-bar.css";
-@import "components/page-footer.css";
-@import "components/page-header.css";
-
-@import "views/confirmation-view.css";
-@import "views/global-page-view.css";
+.global-page-editor-dialog::part(overlay) {
+    width: 80vw;
+    height: 80vh;
+}

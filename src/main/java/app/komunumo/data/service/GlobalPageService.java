@@ -126,4 +126,14 @@ public final class GlobalPageService {
         ).orElse(0);
     }
 
+    public boolean updateGlobalPage(final @NotNull GlobalPageDto globalPage, final String markdown) {
+        final var slot = globalPage.slot();
+        final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());
+        return dsl.update(GLOBAL_PAGE)
+                .set(GLOBAL_PAGE.MARKDOWN, markdown)
+                .set(GLOBAL_PAGE.UPDATED, ZonedDateTime.now(ZoneOffset.UTC))
+                .where(GLOBAL_PAGE.SLOT.eq(slot)
+                        .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode)))
+                .execute() == 1;
+    }
 }
