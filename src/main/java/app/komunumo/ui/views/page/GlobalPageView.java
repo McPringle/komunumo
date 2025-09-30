@@ -32,6 +32,8 @@ import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,11 +48,13 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
     private final @NotNull HtmlContainer pageContent = new Div();
 
     private @NotNull String pageTitle = "";
+    private @Nullable ContextMenu contextMenu;
 
     public GlobalPageView(final @NotNull ServiceProvider serviceProvider) {
         super(serviceProvider.configurationService());
         this.globalPageService = serviceProvider.globalPageService();
         addClassName("global-page-view");
+        pageContent.setClassName("global-page-content");
         add(pageContent);
     }
 
@@ -68,8 +72,7 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
             pageTitle = globalPage.title();
 
             if (SecurityUtil.isAdmin()) {
-                final var contextMenu = new ContextMenu();
-                contextMenu.setTarget(pageContent);
+                contextMenu = new ContextMenu(pageContent);
                 contextMenu.addItem(getTranslation("ui.views.page.GlobalPageView.edit"),
                         event -> new GlobalPageEditorDialog(globalPageService, globalPage).open());
             }
@@ -84,4 +87,8 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
         return pageTitle;
     }
 
+    @VisibleForTesting
+    @Nullable ContextMenu getContextMenu() {
+        return contextMenu;
+    }
 }
