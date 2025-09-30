@@ -22,6 +22,8 @@ import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.ui.components.PersistentNotification;
 import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.HasValue.ValueChangeEvent;
+import com.vaadin.flow.component.HasValue.ValueChangeListener;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -30,8 +32,10 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +45,7 @@ public class GlobalPageEditorDialog extends Dialog {
     private final @NotNull GlobalPageService globalPageService;
     private final @NotNull GlobalPageDto globalPage;
 
+    private final @NotNull TextField pageTitle;
     private final @NotNull TextArea pageEditor;
     private final @NotNull Markdown pagePreview;
 
@@ -63,18 +68,30 @@ public class GlobalPageEditorDialog extends Dialog {
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         getHeader().add(closeButton);
 
+        // TextField for editing title
+        pageTitle = new TextField();
+        pageTitle.setLabel(getTranslation("ui.views.page.GlobalPageEditorDialog.pageTitle"));
+        pageTitle.setValue(globalPage.title());
+        pageTitle.setValueChangeMode(ValueChangeMode.EAGER);
+        pageTitle.setWidthFull();
+
         // TextArea for editing markdown
         pageEditor = new TextArea();
+        pageEditor.setLabel(getTranslation("ui.views.page.GlobalPageEditorDialog.pageEditor"));
         pageEditor.setValue(globalPage.markdown());
         pageEditor.setValueChangeMode(ValueChangeMode.EAGER);
         pageEditor.setSizeFull();
+
+        // Layout to hold title and editor
+        final var editorLayout = new VerticalLayout(pageTitle, pageEditor);
+        editorLayout.setSizeFull();
 
         // Markdown component for preview
         pagePreview = new Markdown();
 
         // Tab sheet to switch between edit and preview
         final var tabSheet = new TabSheet();
-        tabSheet.add(getTranslation("ui.views.page.GlobalPageEditorDialog.edit"), pageEditor);
+        tabSheet.add(getTranslation("ui.views.page.GlobalPageEditorDialog.edit"), editorLayout);
         tabSheet.add(getTranslation("ui.views.page.GlobalPageEditorDialog.preview"), pagePreview);
         tabSheet.setSizeFull();
         add(tabSheet);
@@ -96,16 +113,18 @@ public class GlobalPageEditorDialog extends Dialog {
         saveButton.setEnabled(false);
         footer.add(saveButton);
 
-        // Enable save button only if page was modified
-        pageEditor.addValueChangeListener(event -> {
+        // Enable save button only if changes are made
+        ValueChangeListener<? super ValueChangeEvent<String>> valueChangeListener = event -> {
             if (!saveButton.isEnabled()) {
                 saveButton.setEnabled(true);
             }
-        });
+        };
+        pageTitle.addValueChangeListener(valueChangeListener);
+        pageEditor.addValueChangeListener(valueChangeListener);
     }
 
     private void save(final @Nullable ClickEvent<Button> buttonClickEvent) {
-        if (globalPageService.updateGlobalPage(globalPage, pageEditor.getValue())) {
+        if (globalPageService.updateGlobalPage(globalPage, pageTitle.getValue(), pageEditor.getValue())) {
             saveButton.setEnabled(false);
             close();
             UI.getCurrent().refreshCurrentRoute(false);
