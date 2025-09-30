@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Duration;
 import java.util.Locale;
 import java.util.function.Function;
 
@@ -145,7 +146,7 @@ class GlobalPageServiceIT extends IntegrationTest {
     }
 
     @Test
-    void storeUpdateAndDeleteGlobalPage() {
+    void storeReplaceAndDeleteGlobalPage() throws InterruptedException {
         var testee = new GlobalPageDto("test", Locale.ENGLISH, null, null,
                 "Test", "## Test");
         assertThat(testee.created()).isNull();
@@ -162,8 +163,10 @@ class GlobalPageServiceIT extends IntegrationTest {
             assertThat(testee.title()).isEqualTo("Test");
             assertThat(testee.markdown()).isEqualTo("## Test");
 
+            Thread.sleep(Duration.ofSeconds(1)); // ensure updated timestamp is different
+
             testee = new GlobalPageDto(testee.slot(), testee.language(), testee.created(), testee.updated(),
-                    testee.title(), "## Updated Test");
+                    testee.title(), "## Replaced Test");
             testee = globalPageService.storeGlobalPage(testee);
             assertThat(testee).isNotNull();
             assertThat(testee.slot()).isEqualTo("test");
@@ -172,12 +175,70 @@ class GlobalPageServiceIT extends IntegrationTest {
             assertThat(testee.updated()).isNotNull();
             assertThat(testee.updated()).isAfter(testee.created());
             assertThat(testee.title()).isEqualTo("Test");
-            assertThat(testee.markdown()).isEqualTo("## Updated Test");
+            assertThat(testee.markdown()).isEqualTo("## Replaced Test");
 
         } finally {
             assertThat(testee).isNotNull();
             assertThat(globalPageService.deleteGlobalPage(testee)).isTrue();
             assertThat(globalPageService.deleteGlobalPage(testee)).isFalse();
         }
+    }
+
+    @Test
+    void updateGlobalPageSuccess() throws InterruptedException {
+        final var slot = "test";
+        final var locale = Locale.ENGLISH;
+        final var title = "Test Title";
+        final var titleUpdated = "Test Title Updated";
+        final var markdown = "## Test Page Content";
+        final var markdownUpdated = "## Test Page Content Updated";
+
+        final var testPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
+        final var originalTestPage = globalPageService.storeGlobalPage(testPage);
+        assertThat(originalTestPage).isNotNull();
+
+        try {
+            final var testPageBeforeUpdate = globalPageService.getGlobalPage(slot, locale).orElseThrow();
+            assertThat(testPageBeforeUpdate).isNotNull();
+            assertThat(testPageBeforeUpdate.slot()).isEqualTo(slot);
+            assertThat(testPageBeforeUpdate.language()).isEqualTo(locale);
+            assertThat(testPageBeforeUpdate.created()).isNotNull();
+            assertThat(testPageBeforeUpdate.updated()).isNotNull();
+            assertThat(testPageBeforeUpdate.updated()).isEqualTo(testPageBeforeUpdate.created());
+            assertThat(testPageBeforeUpdate.title()).isEqualTo(title);
+            assertThat(testPageBeforeUpdate.markdown()).isEqualTo(markdown);
+
+            Thread.sleep(Duration.ofSeconds(1)); // ensure updated timestamp is different
+
+            final var updateResult = globalPageService.updateGlobalPage(testPageBeforeUpdate, titleUpdated, markdownUpdated);
+            assertThat(updateResult).isTrue();
+
+            final var testPageAfterUpdate = globalPageService.getGlobalPage(slot, locale).orElseThrow();
+            assertThat(testPageAfterUpdate).isNotNull();
+            assertThat(testPageAfterUpdate.slot()).isEqualTo(slot);
+            assertThat(testPageAfterUpdate.language()).isEqualTo(locale);
+            assertThat(testPageAfterUpdate.created()).isNotNull();
+            assertThat(testPageAfterUpdate.updated()).isNotNull();
+            assertThat(testPageAfterUpdate.updated()).isAfter(testPageAfterUpdate.created());
+            assertThat(testPageAfterUpdate.title()).isEqualTo(titleUpdated);
+            assertThat(testPageAfterUpdate.markdown()).isEqualTo(markdownUpdated);
+        } finally {
+            globalPageService.deleteGlobalPage(testPage);
+        }
+    }
+
+    @Test
+    void updateGlobalPageError() {
+        final var slot = "test";
+        final var locale = Locale.ENGLISH;
+        final var title = "Test Title";
+        final var titleUpdated = "Test Title Updated";
+        final var markdown = "## Test Page Content";
+        final var markdownUpdated = "## Test Page Content Updated";
+
+        final var testPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
+
+        final var updateResult = globalPageService.updateGlobalPage(testPage, titleUpdated, markdownUpdated);
+        assertThat(updateResult).isFalse();
     }
 }
