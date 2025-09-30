@@ -21,6 +21,7 @@ import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
@@ -66,10 +67,12 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
             pageContent.setWidthFull();
             pageTitle = globalPage.title();
 
-            final var menu = new ContextMenu();
-            menu.setTarget(pageContent);
-            menu.addItem(getTranslation("ui.views.page.GlobalPageView.edit"),
-                    event -> new GlobalPageEditorDialog(globalPageService, globalPage).open());
+            if (SecurityUtil.isAdmin()) {
+                final var contextMenu = new ContextMenu();
+                contextMenu.setTarget(pageContent);
+                contextMenu.addItem(getTranslation("ui.views.page.GlobalPageView.edit"),
+                        event -> new GlobalPageEditorDialog(globalPageService, globalPage).open());
+            }
         }, () -> {
             LOGGER.warn("No global page found with slot '{}' and locale '{}'!", slot, locale);
             beforeEnterEvent.rerouteToError(NotFoundException.class);

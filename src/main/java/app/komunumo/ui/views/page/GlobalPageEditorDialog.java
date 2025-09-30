@@ -21,6 +21,7 @@ package app.komunumo.ui.views.page;
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.ui.components.PersistentNotification;
+import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
@@ -124,12 +125,19 @@ public class GlobalPageEditorDialog extends Dialog {
     }
 
     private void save(final @Nullable ClickEvent<Button> buttonClickEvent) {
-        if (globalPageService.updateGlobalPage(globalPage, pageTitle.getValue(), pageEditor.getValue())) {
-            saveButton.setEnabled(false);
-            close();
-            UI.getCurrent().refreshCurrentRoute(false);
+        if (SecurityUtil.isAdmin()) {
+            if (globalPageService.updateGlobalPage(globalPage, pageTitle.getValue(), pageEditor.getValue())) {
+                saveButton.setEnabled(false);
+                close();
+                UI.getCurrent().refreshCurrentRoute(false);
+            } else {
+                final var message = getTranslation("ui.views.page.GlobalPageEditorDialog.saveError");
+                final var notification = new PersistentNotification(message);
+                notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
+                notification.open();
+            }
         } else {
-            final var message = getTranslation("ui.views.page.GlobalPageEditorDialog.saveError");
+            final var message = getTranslation("ui.views.page.GlobalPageEditorDialog.permissionError");
             final var notification = new PersistentNotification(message);
             notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
             notification.open();
