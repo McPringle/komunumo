@@ -49,7 +49,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -189,7 +188,6 @@ public abstract class IntegrationTest {
                 .toList();
 
         // create a Spring Security user (UserDetails)
-        final var userDetails = new User(user.email(), null, authorities);
         final var userPrincipal = new UserPrincipal(user, authorities);
 
         // create the authentication token
