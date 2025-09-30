@@ -67,6 +67,7 @@ public class GlobalPageEditorDialog extends Dialog {
 
         final var closeButton = new Button(new Icon("lumo", "cross"), this::cancel);
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        closeButton.addClassName("close-button");
         getHeader().add(closeButton);
 
         // TextField for editing title
