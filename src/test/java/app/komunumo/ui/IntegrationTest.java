@@ -224,8 +224,6 @@ public abstract class IntegrationTest {
         final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();
         request.setUserPrincipalInt(authentication);
         request.setUserInRole((principal, role) -> roles.contains(UserRole.valueOf(role)));
-
-        UI.getCurrent().getPage().reload();
     }
 
     /**
@@ -238,7 +236,6 @@ public abstract class IntegrationTest {
             request.setUserInRole((principal, role) -> false);
         }
         loginService.logout();
-        UI.getCurrent().getPage().reload();
     }
 
 }
