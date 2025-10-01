@@ -26,7 +26,6 @@ import app.komunumo.ui.views.WebsiteLayout;
 import app.komunumo.ui.views.events.EventGrid;
 import app.komunumo.util.ImageUtil;
 import com.vaadin.flow.component.HtmlContainer;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
