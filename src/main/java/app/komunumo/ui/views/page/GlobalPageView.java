@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.views.page;
 
+import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.AbstractView;
@@ -66,20 +67,25 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
         final var locale = ui.getLocale();
 
         globalPageService.getGlobalPage(slot, locale).ifPresentOrElse(globalPage -> {
-            pageContent.removeAll();
-            pageContent.add(new Markdown(globalPage.markdown()));
-            pageContent.setWidthFull();
-            pageTitle = globalPage.title();
-
+            renderPage(globalPage);
             if (SecurityUtil.isAdmin()) {
                 contextMenu = new ContextMenu(pageContent);
-                contextMenu.addItem(getTranslation("ui.views.page.GlobalPageView.edit"),
-                        event -> new GlobalPageEditorDialog(globalPageService, globalPage).open());
+                contextMenu.addItem(getTranslation("ui.views.page.GlobalPageView.edit"), event ->
+                        new GlobalPageEditorDialog(globalPageService, globalPage, this::renderPage)
+                                .open());
             }
         }, () -> {
             LOGGER.warn("No global page found with slot '{}' and locale '{}'!", slot, locale);
             beforeEnterEvent.rerouteToError(NotFoundException.class);
         });
+    }
+
+    private void renderPage(final @NotNull GlobalPageDto globalPage) {
+        pageContent.removeAll();
+        pageContent.add(new Markdown(globalPage.markdown()));
+        pageContent.setWidthFull();
+        pageTitle = globalPage.title();
+        updatePageTitle();
     }
 
     @Override

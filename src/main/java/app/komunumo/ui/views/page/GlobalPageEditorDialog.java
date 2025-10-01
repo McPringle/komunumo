@@ -25,7 +25,6 @@ import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -41,10 +40,13 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 public class GlobalPageEditorDialog extends Dialog {
 
     private final @NotNull GlobalPageService globalPageService;
     private final @NotNull GlobalPageDto globalPage;
+    private final @NotNull Consumer<GlobalPageDto> onSavedCallback;
 
     private final @NotNull TextField pageTitle;
     private final @NotNull TextArea pageEditor;
@@ -53,10 +55,12 @@ public class GlobalPageEditorDialog extends Dialog {
     private final @NotNull Button saveButton;
 
     public GlobalPageEditorDialog(final @NotNull GlobalPageService globalPageService,
-                                  final @NotNull GlobalPageDto globalPage) {
+                                  final @NotNull GlobalPageDto globalPage,
+                                  final @NotNull Consumer<GlobalPageDto> onSavedCallback) {
         super();
         this.globalPageService = globalPageService;
         this.globalPage = globalPage;
+        this.onSavedCallback = onSavedCallback;
 
         setModal(true);
         setCloseOnEsc(true);
@@ -128,9 +132,10 @@ public class GlobalPageEditorDialog extends Dialog {
     private void save(final @Nullable ClickEvent<Button> buttonClickEvent) {
         if (SecurityUtil.isAdmin()) {
             if (globalPageService.updateGlobalPage(globalPage, pageTitle.getValue(), pageEditor.getValue())) {
+                onSavedCallback.accept(globalPageService.getGlobalPage(globalPage.slot(), globalPage.language())
+                        .orElse(globalPage));
                 saveButton.setEnabled(false);
                 close();
-                UI.getCurrent().refreshCurrentRoute(false);
             } else {
                 final var message = getTranslation("ui.views.page.GlobalPageEditorDialog.saveError");
                 final var notification = new PersistentNotification(message);
