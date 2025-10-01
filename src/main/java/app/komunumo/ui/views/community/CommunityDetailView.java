@@ -115,7 +115,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         description.addClassName("community-description");
         pageContent.add(description);
 
-        final var events = eventService.getUpcomingEventsWithImage();
+        final var events = eventService.getUpcomingEventsWithImage(community);
         pageContent.add(new EventGrid(events));
     }
 
