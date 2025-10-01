@@ -24,6 +24,7 @@ import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.markdown.Markdown;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.junit.jupiter.api.Test;
@@ -327,6 +328,81 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             // check that the view has changed
             assertThat(_get(view, Markdown.class).getContent()).startsWith("## New Legal Notice");
+
+            logout();
+        } finally {
+            globalPageService.storeGlobalPage(originalPage);
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void editGlobalPage_checkPreview() {
+        final var ui = UI.getCurrent();
+        final var originalPage = globalPageService.getGlobalPage("imprint", ui.getLocale()).orElseThrow();
+
+        try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            // important: navigate after login, so that the Vaadin request is updated
+            ui.navigate("page/imprint");
+
+            // verify that the page is loaded correctly
+            final var view = _get(GlobalPageView.class,
+                    spec -> spec.withClasses("global-page-view"));
+            assertThat(_get(view, Markdown.class).getContent()).startsWith("## Legal Notice");
+
+            // verify that a context menu is attached to the page content
+            final var pageContent = _get(HtmlContainer.class,
+                    spec -> spec.withClasses("global-page-content"));
+            final var contextMenu = view.getContextMenu();
+            assertThat(contextMenu).isNotNull();
+            assertThat(contextMenu.getTarget()).isSameAs(pageContent);
+
+            // click the "Edit page content" menu item to open the editor dialog
+            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var editItem = contextMenu.getItems().stream()
+                    .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Edit menu item not found"));
+            _click(editItem);
+
+            // check that the dialog opens correctly
+            final var dialog = _get(GlobalPageEditorDialog.class);
+            assertThat(dialog.isOpened()).isTrue();
+
+            // check that the dialog contains the correct initial values
+            final var titleField = _get(dialog, TextField.class);
+            assertThat(titleField).isNotNull();
+            assertThat(titleField.getValue()).isEqualTo("Legal Notice");
+            final var textArea = _get(dialog, TextArea.class);
+            assertThat(textArea).isNotNull();
+            assertThat(textArea.getValue()).startsWith("## Legal Notice");
+
+            // switch to the preview tab
+            final var tabSheet = _get(dialog, TabSheet.class);
+            assertThat(tabSheet).isNotNull();
+            tabSheet.setSelectedIndex(1);
+
+            // check that the preview has the correct initial content
+            final var markdown = findComponent(dialog, Markdown.class);
+            assertThat(markdown).isNotNull();
+            assertThat(markdown.getContent()).startsWith("## Legal Notice");
+
+            // switch back to the editor tab
+            tabSheet.setSelectedIndex(0);
+
+            // modify the title and content
+            titleField.setValue("New Legal Notice");
+            textArea.setValue("## New Legal Notice\n\nThis is the **updated** legal notice.");
+
+            // switch to the preview tab again
+            tabSheet.setSelectedIndex(1);
+
+            // check that the preview has updated content
+            assertThat(markdown.getContent()).startsWith("## New Legal Notice");
 
             logout();
         } finally {
