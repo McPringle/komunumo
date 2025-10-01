@@ -19,9 +19,11 @@ package app.komunumo.ui.views.community;
 
 import app.komunumo.data.dto.CommunityWithImageDto;
 import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.ui.views.events.EventGrid;
 import app.komunumo.util.ImageUtil;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.html.Div;
@@ -50,12 +52,14 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
     private final transient @NotNull CommunityService communityService;
 
     private final @NotNull HtmlContainer pageContent = new Div();
+    private final @NotNull EventService eventService;
 
     private @NotNull String pageTitle = "";
 
     public CommunityDetailView(final @NotNull ServiceProvider serviceProvider) {
         super(serviceProvider.configurationService());
         this.communityService = serviceProvider.communityService();
+        this.eventService = serviceProvider.eventService();
         addClassName("community-detail-view");
         add(pageContent);
     }
@@ -109,6 +113,9 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         final var description = new Markdown(community.description());
         description.addClassName("community-description");
         pageContent.add(description);
+
+        final var events = eventService.getUpcomingEventsWithImage(community);
+        pageContent.add(new EventGrid(events));
     }
 
     @Override
