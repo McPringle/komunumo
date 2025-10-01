@@ -6,7 +6,6 @@
     "@polymer/polymer": "3.5.2",
     "@vaadin/bundles": "24.9.0",
     "@vaadin/common-frontend": "0.0.19",
-    "@vaadin/cookie-consent": "24.9.0",
     "@vaadin/polymer-legacy-adapter": "24.9.0",
     "@vaadin/react-components": "24.9.0",
     "@vaadin/vaadin-development-mode-detector": "2.0.7",
@@ -119,15 +118,13 @@
     "@vaadin/upload": "24.9.0",
     "@vaadin/router": "2.0.0",
     "@vaadin/vertical-layout": "24.9.0",
-    "@vaadin/virtual-list": "24.9.0",
-    "@vaadin/cookie-consent": "$@vaadin/cookie-consent"
+    "@vaadin/virtual-list": "24.9.0"
   },
   "vaadin": {
     "dependencies": {
       "@polymer/polymer": "3.5.2",
       "@vaadin/bundles": "24.9.0",
       "@vaadin/common-frontend": "0.0.19",
-      "@vaadin/cookie-consent": "24.9.0",
       "@vaadin/polymer-legacy-adapter": "24.9.0",
       "@vaadin/react-components": "24.9.0",
       "@vaadin/vaadin-development-mode-detector": "2.0.7",
@@ -164,6 +161,6 @@
       "workbox-core": "7.3.0",
       "workbox-precaching": "7.3.0"
     },
-    "hash": "4f6f26d11e5237d65b723f34004cf576a5ca1c81d9e090dc237cf75c00724832"
+    "hash": "ee441296481c868efe71c2562df6c51ea6f12f1cd08e3ef1986720a365b8ee0c"
   }
 }
