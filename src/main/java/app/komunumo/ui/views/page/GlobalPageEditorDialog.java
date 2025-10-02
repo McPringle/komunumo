@@ -168,7 +168,10 @@ public class GlobalPageEditorDialog extends Dialog {
             });
 
             confirmDialog.setConfirmText(getTranslation("ui.views.page.GlobalPageEditorDialog.unsavedChanges.save"));
-            confirmDialog.addConfirmListener(event -> save(null));
+            confirmDialog.addConfirmListener(event -> {
+                confirmDialog.close();
+                save(null);
+            });
 
             confirmDialog.open();
         } else {

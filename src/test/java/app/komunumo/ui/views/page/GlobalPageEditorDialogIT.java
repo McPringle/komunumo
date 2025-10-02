@@ -26,6 +26,7 @@ import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.tabs.TabSheet;
@@ -41,6 +42,7 @@ import static app.komunumo.util.TestUtil.findComponent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._assertNone;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
+import static com.vaadin.flow.component.ComponentUtil.fireEvent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalPageEditorDialogIT extends IntegrationTest {
@@ -339,6 +341,171 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
             logout();
         } finally {
             globalPageService.storeGlobalPage(originalPage);
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void editGlobalPage_confirmDialog_keepEditing() {
+        final var ui = UI.getCurrent();
+
+        try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            // important: navigate after login, so that the Vaadin request is updated
+            ui.navigate("page/imprint");
+
+            // start editing the page
+            final var view = _get(GlobalPageView.class,
+                    spec -> spec.withClasses("global-page-view"));
+            final var contextMenu = view.getContextMenu();
+            assertThat(contextMenu).isNotNull();
+            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var editItem = contextMenu.getItems().stream()
+                    .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Edit menu item not found"));
+            _click(editItem);
+
+            // change the title and content
+            final var dialog = _get(GlobalPageEditorDialog.class);
+            final var titleField = _get(dialog, TextField.class);
+            final var textArea = _get(dialog, TextArea.class);
+            titleField.setValue("New Legal Notice");
+            textArea.setValue("## New Legal Notice\n\nThis is the **updated** legal notice.");
+
+            // click the cancel button
+            final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
+                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+            _click(cancelButton);
+
+            // check that the confirmation dialog appears
+            final var confirmDialog = _get(ConfirmDialog.class);
+            assertThat(confirmDialog.isOpened()).isTrue();
+
+            // keep editing by firing a CancelEvent on the confirmation dialog
+            fireEvent(confirmDialog, new ConfirmDialog.CancelEvent(confirmDialog, true));
+
+            // check that the confirmation dialog is closed and the editor dialog is still open
+            assertThat(confirmDialog.isOpened()).isFalse();
+            assertThat(dialog.isOpened()).isTrue();
+
+            logout();
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void editGlobalPage_confirmDialog_discard() {
+        final var ui = UI.getCurrent();
+
+        try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            // important: navigate after login, so that the Vaadin request is updated
+            ui.navigate("page/imprint");
+
+            // start editing the page
+            final var view = _get(GlobalPageView.class,
+                    spec -> spec.withClasses("global-page-view"));
+            final var contextMenu = view.getContextMenu();
+            assertThat(contextMenu).isNotNull();
+            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var editItem = contextMenu.getItems().stream()
+                    .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Edit menu item not found"));
+            _click(editItem);
+
+            // change the title and content
+            final var dialog = _get(GlobalPageEditorDialog.class);
+            final var titleField = _get(dialog, TextField.class);
+            final var textArea = _get(dialog, TextArea.class);
+            titleField.setValue("New Legal Notice");
+            textArea.setValue("## New Legal Notice\n\nThis is the **updated** legal notice.");
+
+            // click the cancel button
+            final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
+                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+            _click(cancelButton);
+
+            // check that the confirmation dialog appears
+            final var confirmDialog = _get(ConfirmDialog.class);
+            assertThat(confirmDialog.isOpened()).isTrue();
+
+            // discard by firing a RejectEvent on the confirmation dialog
+            fireEvent(confirmDialog, new ConfirmDialog.RejectEvent(confirmDialog, true));
+
+            // check that the confirmation dialog and the editor dialog are closed
+            assertThat(confirmDialog.isOpened()).isFalse();
+            assertThat(dialog.isOpened()).isFalse();
+
+            // check that the view has not changed
+            assertThat(_get(view, Markdown.class).getContent()).startsWith("## Legal Notice");
+
+            logout();
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void editGlobalPage_confirmDialog_save() {
+        final var ui = UI.getCurrent();
+
+        try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            // important: navigate after login, so that the Vaadin request is updated
+            ui.navigate("page/imprint");
+
+            // start editing the page
+            final var view = _get(GlobalPageView.class,
+                    spec -> spec.withClasses("global-page-view"));
+            final var contextMenu = view.getContextMenu();
+            assertThat(contextMenu).isNotNull();
+            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var editItem = contextMenu.getItems().stream()
+                    .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Edit menu item not found"));
+            _click(editItem);
+
+            // change the title and content
+            final var dialog = _get(GlobalPageEditorDialog.class);
+            final var titleField = _get(dialog, TextField.class);
+            final var textArea = _get(dialog, TextArea.class);
+            titleField.setValue("New Legal Notice");
+            textArea.setValue("## New Legal Notice\n\nThis is the **updated** legal notice.");
+
+            // click the cancel button
+            final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
+                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+            _click(cancelButton);
+
+            // check that the confirmation dialog appears
+            final var confirmDialog = _get(ConfirmDialog.class);
+            assertThat(confirmDialog.isOpened()).isTrue();
+
+            // save by firing a ConfirmEvent on the confirmation dialog
+            fireEvent(confirmDialog, new ConfirmDialog.ConfirmEvent(confirmDialog, true));
+
+            // check that the confirmation dialog and the editor dialog are closed
+            assertThat(confirmDialog.isOpened()).isFalse();
+            assertThat(dialog.isOpened()).isFalse();
+
+            // check that the view has not changed
+            assertThat(_get(view, Markdown.class).getContent()).startsWith("## New Legal Notice");
+
+            logout();
+        } finally {
             SecurityContextHolder.clearContext();
         }
     }
