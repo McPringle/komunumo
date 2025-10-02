@@ -22,6 +22,7 @@ Special thanks for all these wonderful people who had helped this project so far
       <td align="center" valign="top" width="14.28%"><a href="http://www.bendisposto.de/"><img src="https://avatars.githubusercontent.com/u/333953?v=4?s=100" width="100px;" alt="Jens Bendisposto"/><br /><sub><b>Jens Bendisposto</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=bendisposto" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.sandra-parsick.de/"><img src="https://avatars.githubusercontent.com/u/976007?v=4?s=100" width="100px;" alt="Sandra Parsick"/><br /><sub><b>Sandra Parsick</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=sparsick" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ixchelruiz"><img src="https://avatars.githubusercontent.com/u/1284934?v=4?s=100" width="100px;" alt="Ix-chel Ruiz"/><br /><sub><b>Ix-chel Ruiz</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=ixchelruiz" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://andresalmiray.com/"><img src="https://avatars.githubusercontent.com/u/13969?v=4?s=100" width="100px;" alt="Andres Almiray"/><br /><sub><b>Andres Almiray</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=aalmiray" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
