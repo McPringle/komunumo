@@ -457,6 +457,7 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
     @Test
     void editGlobalPage_confirmDialog_save() {
         final var ui = UI.getCurrent();
+        final var originalPage = globalPageService.getGlobalPage("imprint", ui.getLocale()).orElseThrow();
 
         try {
             // login as admin
@@ -506,6 +507,7 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             logout();
         } finally {
+            globalPageService.storeGlobalPage(originalPage);
             SecurityContextHolder.clearContext();
         }
     }
