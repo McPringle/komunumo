@@ -20,9 +20,12 @@ package app.komunumo.ui.views.page;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.components.PersistentNotification;
+import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -32,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import static app.komunumo.util.TestUtil.findComponent;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._assertNone;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -332,6 +336,72 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
             logout();
         } finally {
             globalPageService.storeGlobalPage(originalPage);
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void editGlobalPage_openEditTimeoutSaveError() {
+        final var ui = UI.getCurrent();
+
+        try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            // important: navigate after login, so that the Vaadin request is updated
+            ui.navigate("page/imprint");
+
+            // start editing the page
+            final var view = _get(GlobalPageView.class,
+                    spec -> spec.withClasses("global-page-view"));
+            final var pageContent = _get(HtmlContainer.class,
+                    spec -> spec.withClasses("global-page-content"));
+            final var contextMenu = view.getContextMenu();
+            assertThat(contextMenu).isNotNull();
+            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var editItem = contextMenu.getItems().stream()
+                    .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Edit menu item not found"));
+            _click(editItem);
+
+            // change the title and content
+            final var dialog = _get(GlobalPageEditorDialog.class);
+            final var titleField = _get(dialog, TextField.class);
+            final var textArea = _get(dialog, TextArea.class);
+            titleField.setValue("New Legal Notice");
+            textArea.setValue("## New Legal Notice\n\nThis is the **updated** legal notice.");
+
+            // clear the security context to simulate session expiration or logout
+            SecurityContextHolder.clearContext();
+
+            // try to save the changes
+            final var saveButton = _get(dialog, Button.class, spec -> spec.withText(
+                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.save")));
+            assertThat(saveButton.isEnabled()).isTrue();
+            _click(saveButton);
+
+            // check that an error notification is shown
+            final var notification = _get(PersistentNotification.class);
+            assertThat(notification.isOpened()).isTrue();
+
+            // check that the notification contains the correct error message
+            final var div = _get(notification, Div.class);
+            assertThat(div.getText()).startsWith("You do not have permission to edit the content of this page.");
+
+            // close the notification
+            final var notificationCloseButton = _get(notification, Button.class);
+            _click(notificationCloseButton);
+            MockVaadin.clientRoundtrip();
+            assertThat(notification.isOpened()).isFalse();
+            _assertNone(PersistentNotification.class);
+
+            // check that the dialog is still open
+            assertThat(dialog.isOpened()).isTrue();
+
+            logout();
+        } finally {
             SecurityContextHolder.clearContext();
         }
     }
