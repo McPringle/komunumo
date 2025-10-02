@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.views.community;
 
+import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.CommunityWithImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.EventService;
@@ -25,12 +26,14 @@ import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import app.komunumo.ui.views.events.EventGrid;
 import app.komunumo.util.ImageUtil;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.markdown.Markdown;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.NotFoundException;
@@ -114,8 +117,21 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         description.addClassName("community-description");
         pageContent.add(description);
 
+        final var tabEvents = new TabSheet();
+        tabEvents.add(
+                getTranslation(locale, "ui.views.community.CommunityDetailView.upcomingEvents"),
+                getUpcomingEventsComponent(community, locale));
+        tabEvents.setWidthFull();
+        pageContent.add(tabEvents);
+    }
+
+    private Component getUpcomingEventsComponent(final @NotNull CommunityDto community,
+                                                 final @NotNull Locale locale) {
         final var events = eventService.getUpcomingEventsWithImage(community);
-        pageContent.add(new EventGrid(events));
+        if (events.isEmpty()) {
+            return new Paragraph(getTranslation(locale, "ui.views.community.CommunityDetailView.noUpcomingEvents"));
+        }
+        return new EventGrid(events);
     }
 
     @Override

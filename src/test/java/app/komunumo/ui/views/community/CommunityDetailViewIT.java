@@ -25,6 +25,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.tabs.TabSheet;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.findComponent;
@@ -72,9 +73,11 @@ class CommunityDetailViewIT extends IntegrationTest {
         assertThat(h2).isNotNull();
         assertThat(h2.getText()).isEqualTo("Demo Community 1");
 
-        final var eventGrid = _get(EventGrid.class);
-        final var eventCards = _find(eventGrid, EventCard.class);
-        assertThat(eventCards).isEmpty();
+        final var tabSheet = _get(TabSheet.class);
+        final var eventGrids = _find(tabSheet, EventGrid.class);
+        assertThat(eventGrids).isEmpty();
+        final var eventText = _get(tabSheet, Paragraph.class);
+        assertThat(eventText.getText()).isEqualTo("No events are currently planned");
     }
 
     @Test
