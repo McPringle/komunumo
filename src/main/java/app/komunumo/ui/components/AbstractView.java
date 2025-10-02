@@ -67,4 +67,21 @@ public abstract class AbstractView extends VerticalLayout implements HasDynamicT
         return getViewTitle() + " – " + instanceName;
     }
 
+    /**
+     * <p>Updates the browser page title based on the current value returned
+     * by {@link #getPageTitle()}.</p>
+     *
+     * <p>Normally, Vaadin sets the page title automatically during navigation
+     * by calling {@link HasDynamicTitle#getPageTitle()}. However, if the view
+     * content and title are updated dynamically without triggering a new
+     * navigation, the browser title will not change automatically.</p>
+     *
+     * <p>This helper method allows views to explicitly refresh the title shown
+     * in the browser tab. It retrieves the current UI and calls
+     * {@code getPageTitle()}. If no UI is available, the call is ignored.</p>
+     */
+    protected void updatePageTitle() {
+        getUI().ifPresent(ui -> ui.getPage().setTitle(getPageTitle()));
+    }
+
 }

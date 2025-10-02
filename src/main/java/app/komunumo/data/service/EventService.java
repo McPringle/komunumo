@@ -18,6 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.EventRecord;
+import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
@@ -25,6 +26,7 @@ import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,7 @@ import java.util.UUID;
 
 import static app.komunumo.data.db.tables.Event.EVENT;
 import static app.komunumo.data.db.tables.Image.IMAGE;
+import static org.jooq.impl.DSL.noCondition;
 
 @Service
 public final class EventService {
@@ -95,6 +98,10 @@ public final class EventService {
     }
 
     public @NotNull List<@NotNull EventWithImageDto> getUpcomingEventsWithImage() {
+        return getUpcomingEventsWithImage(null);
+    }
+
+    public @NotNull List<@NotNull EventWithImageDto> getUpcomingEventsWithImage(final @Nullable CommunityDto community) {
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
         return dsl.select()
                 .from(EVENT)
@@ -104,7 +111,8 @@ public final class EventService {
                                 .and(EVENT.END.isNotNull())
                                 .and(EVENT.END.gt(now))
                                 .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
-                                .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))
+                                .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED))
+                                .and(community != null ? EVENT.COMMUNITY_ID.eq(community.id()) : noCondition()))
                 .orderBy(EVENT.BEGIN.asc())
                 .fetch(rec -> new EventWithImageDto(
                         rec.into(EVENT).into(EventDto.class),

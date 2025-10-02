@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,16 +15,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.ui;
 
-@import "fonts/space-grotesk.css";
+import org.jetbrains.annotations.NotNull;
 
-@import "components/confirmation-dialog.css";
-@import "components/info-banner.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
-@import "components/navigation-bar.css";
-@import "components/page-footer.css";
-@import "components/page-header.css";
+import java.util.UUID;
 
-@import "views/confirmation-view.css";
-@import "views/global-page-view.css";
+public interface TestConstants {
+
+    /**
+     * UUID of the predefined regular test user.
+     */
+    @NotNull UUID USER_ID_TEST = UUID.fromString("11111111-1111-1111-1111-111111111111");
+
+    /**
+     * UUID of the predefined admin test user.
+     */
+    @NotNull UUID USER_ID_ADMIN = UUID.fromString("22222222-2222-2222-2222-222222222222");
+
+}

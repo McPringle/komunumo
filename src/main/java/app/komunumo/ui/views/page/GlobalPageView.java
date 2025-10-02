@@ -17,11 +17,14 @@
  */
 package app.komunumo.ui.views.page;
 
+import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -30,6 +33,8 @@ import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +49,13 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
     private final @NotNull HtmlContainer pageContent = new Div();
 
     private @NotNull String pageTitle = "";
+    private @Nullable ContextMenu contextMenu;
 
     public GlobalPageView(final @NotNull ServiceProvider serviceProvider) {
         super(serviceProvider.configurationService());
         this.globalPageService = serviceProvider.globalPageService();
         addClassName("global-page-view");
+        pageContent.setClassName("global-page-content");
         add(pageContent);
     }
 
@@ -60,13 +67,25 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
         final var locale = ui.getLocale();
 
         globalPageService.getGlobalPage(slot, locale).ifPresentOrElse(globalPage -> {
-            pageContent.removeAll();
-            pageContent.add(new Markdown(globalPage.markdown()));
-            pageTitle = globalPage.title();
+            renderPage(globalPage);
+            if (SecurityUtil.isAdmin()) {
+                contextMenu = new ContextMenu(pageContent);
+                contextMenu.addItem(getTranslation("ui.views.page.GlobalPageView.edit"), event ->
+                        new GlobalPageEditorDialog(globalPageService, globalPage, this::renderPage)
+                                .open());
+            }
         }, () -> {
             LOGGER.warn("No global page found with slot '{}' and locale '{}'!", slot, locale);
             beforeEnterEvent.rerouteToError(NotFoundException.class);
         });
+    }
+
+    private void renderPage(final @NotNull GlobalPageDto globalPage) {
+        pageContent.removeAll();
+        pageContent.add(new Markdown(globalPage.markdown()));
+        pageContent.setWidthFull();
+        pageTitle = globalPage.title();
+        updatePageTitle();
     }
 
     @Override
@@ -74,4 +93,8 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
         return pageTitle;
     }
 
+    @VisibleForTesting
+    @Nullable ContextMenu getContextMenu() {
+        return contextMenu;
+    }
 }

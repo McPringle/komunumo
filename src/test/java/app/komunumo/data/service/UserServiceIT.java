@@ -36,7 +36,8 @@ class UserServiceIT extends IntegrationTest {
     @Test
     @SuppressWarnings("java:S5961")
     void happyCase() {
-        assertThat(userService.getAdminCount()).isZero();
+        // count original admins
+        final var originalAdminCount = userService.getAdminCount();
 
         // create a new user
         var testUser = new UserDto(null, null, null,
@@ -61,7 +62,7 @@ class UserServiceIT extends IntegrationTest {
             assertThat(testee.role()).isEqualTo(UserRole.USER);
         });
 
-        assertThat(userService.getAdminCount()).isZero();
+        assertThat(userService.getAdminCount()).isEqualTo(originalAdminCount);
 
         // read user by email
         testUser = userService.getUserByEmail("test@example.eu").orElseThrow();
@@ -93,7 +94,7 @@ class UserServiceIT extends IntegrationTest {
             assertThat(testee.role()).isEqualTo(UserRole.USER);
         });
 
-        assertThat(userService.getAdminCount()).isZero();
+        assertThat(userService.getAdminCount()).isEqualTo(originalAdminCount);
 
         // create a new admin
         var testAdmin = new UserDto(null, null, null,
@@ -118,17 +119,17 @@ class UserServiceIT extends IntegrationTest {
             assertThat(testee.role()).isEqualTo(UserRole.ADMIN);
         });
 
-        assertThat(userService.getAdminCount()).isEqualTo(1);
+        assertThat(userService.getAdminCount()).isEqualTo(originalAdminCount + 1);
 
         // delete the existing user
         assertThat(userService.deleteUser(testUser)).isTrue();
         assertThat(userService.deleteUser(testUser)).isFalse();
-        assertThat(userService.getAdminCount()).isEqualTo(1);
+        assertThat(userService.getAdminCount()).isEqualTo(originalAdminCount + 1);
 
         // delete the existing admin
         assertThat(userService.deleteUser(testAdmin)).isTrue();
         assertThat(userService.deleteUser(testAdmin)).isFalse();
-        assertThat(userService.getAdminCount()).isZero();
+        assertThat(userService.getAdminCount()).isEqualTo(originalAdminCount);
     }
 
     @Test
