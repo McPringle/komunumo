@@ -358,8 +358,6 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
             // start editing the page
             final var view = _get(GlobalPageView.class,
                     spec -> spec.withClasses("global-page-view"));
-            final var pageContent = _get(HtmlContainer.class,
-                    spec -> spec.withClasses("global-page-content"));
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
             final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
@@ -426,8 +424,6 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
             // start editing the page
             final var view = _get(GlobalPageView.class,
                     spec -> spec.withClasses("global-page-view"));
-            final var pageContent = _get(HtmlContainer.class,
-                    spec -> spec.withClasses("global-page-content"));
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
             final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
