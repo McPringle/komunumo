@@ -153,21 +153,21 @@ public class GlobalPageEditorDialog extends Dialog {
     private void cancel(final @Nullable ClickEvent<Button> buttonClickEvent) {
         if (saveButton.isEnabled()) {
             final var confirmDialog = new ConfirmDialog();
-            confirmDialog.setHeader(getTranslation("ui.views.page.GlobalPageEditorDialog.unsavedChanges.title"));
-            confirmDialog.setText(getTranslation("ui.views.page.GlobalPageEditorDialog.unsavedChanges.text"));
+            confirmDialog.setHeader(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.title"));
+            confirmDialog.setText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.text"));
 
             confirmDialog.setCancelable(true);
-            confirmDialog.setCancelText(getTranslation("ui.views.page.GlobalPageEditorDialog.unsavedChanges.keepEditing"));
+            confirmDialog.setCancelText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.keepEditing"));
             confirmDialog.addCancelListener(event -> confirmDialog.close());
 
             confirmDialog.setRejectable(true);
-            confirmDialog.setRejectText(getTranslation("ui.views.page.GlobalPageEditorDialog.unsavedChanges.discard"));
+            confirmDialog.setRejectText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.discard"));
             confirmDialog.addRejectListener(event -> {
                 confirmDialog.close();
                 close();
             });
 
-            confirmDialog.setConfirmText(getTranslation("ui.views.page.GlobalPageEditorDialog.unsavedChanges.save"));
+            confirmDialog.setConfirmText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.save"));
             confirmDialog.addConfirmListener(event -> {
                 confirmDialog.close();
                 save(null);
