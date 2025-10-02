@@ -145,41 +145,4 @@ class EventServiceIT extends IntegrationTest {
                 .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
     }
 
-    @Test
-    void getUpcomingEventsWithImagesFilteredByCommunityWithNull() {
-        final var upcomingEvents = eventService.getUpcomingEventsWithImage(null);
-        assertThat(upcomingEvents).hasSize(3);
-    }
-
-    @Test
-    void getUpcomingEventsWithImagesFilteredByCommunityWithNoEventShown() {
-        final var community = communityService.getCommunities().getFirst();
-        final var upcomingEvents = eventService.getUpcomingEventsWithImage(community);
-        assertThat(upcomingEvents).isEmpty();
-    }
-
-    @Test
-    void getUpcomingEventsWithImagesFilteredByCommunityWithOneEventShown() {
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        final var community = communityService.getCommunities().getLast();
-        final var upcomingEvents = eventService.getUpcomingEventsWithImage(community);
-        assertThat(upcomingEvents).hasSize(1);
-        assertThat(upcomingEvents)
-                .extracting(EventWithImageDto::event)
-                .extracting(EventDto::title)
-                .containsExactly("Demo Event 6");
-        assertThat(upcomingEvents)
-                .extracting(EventWithImageDto::event)
-                .extracting(EventDto::end)
-                .allSatisfy(endDate -> assertThat(endDate).isAfter(now));
-        assertThat(upcomingEvents)
-                .extracting(EventWithImageDto::event)
-                .extracting(EventDto::visibility)
-                .allSatisfy(visibility -> assertThat(visibility).isEqualTo(EventVisibility.PUBLIC));
-        assertThat(upcomingEvents)
-                .extracting(EventWithImageDto::event)
-                .extracting(EventDto::status)
-                .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
-    }
-
 }

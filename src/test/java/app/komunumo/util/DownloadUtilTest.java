@@ -17,35 +17,62 @@
  */
 package app.komunumo.util;
 
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DownloadUtilTest {
 
+    private MockWebServer server;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        server = new MockWebServer();
+        server.start();
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        server.shutdown();
+    }
+
     @Test
     void getString() throws Exception {
-        final String string = DownloadUtil.getString("http://localhost:8082/custom-styles/styles.css").trim();
-        assertThat(string).startsWith("body::after {").endsWith("}");
+        String css = "body::after { content: 'test'; }";
+        server.enqueue(new MockResponse().setBody(css).setResponseCode(200));
+
+        String url = server.url("/styles.css").toString();
+        String string = DownloadUtil.getString(url).trim();
+
+        assertThat(string).isEqualTo(css);
     }
 
     @Test
-    void downloadFileSuccess() {
-        final var path = DownloadUtil.downloadFile("http://localhost:8082/custom-styles/styles.css");
+    void downloadFileSuccess() throws Exception {
+        String content = "hello world";
+        server.enqueue(new MockResponse().setBody(content).setResponseCode(200));
+
+        String url = server.url("/file.txt").toString();
+        var path = DownloadUtil.downloadFile(url);
+
         assertThat(path).isNotNull().exists();
+        assertThat(Files.readString(path, StandardCharsets.UTF_8)).isEqualTo(content);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "http://localhost:8082/99",
-            "http://localhost:8082/non-existing",
-            "http://localhost:8888/"
-    })
-    void shouldReturnNullForInvalidOrUnreachableUrls(final String url) {
-        final var path = DownloadUtil.downloadFile(url);
+    @Test
+    void shouldReturnNullForInvalidStatusCode() {
+        server.enqueue(new MockResponse().setResponseCode(404));
+
+        String url = server.url("/not-found").toString();
+        var path = DownloadUtil.downloadFile(url);
+
         assertThat(path).isNull();
     }
-
 }

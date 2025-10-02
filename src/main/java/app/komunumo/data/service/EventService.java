@@ -18,7 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.EventRecord;
-import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
@@ -26,7 +26,6 @@ import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +37,8 @@ import java.util.UUID;
 
 import static app.komunumo.data.db.tables.Event.EVENT;
 import static app.komunumo.data.db.tables.Image.IMAGE;
-import static org.jooq.impl.DSL.noCondition;
+import static app.komunumo.data.db.tables.Community.COMMUNITY;;
+
 
 @Service
 public final class EventService {
@@ -80,17 +80,40 @@ public final class EventService {
     }
 
     public @NotNull Optional<EventWithImageDto> getEventWithImage(final @NotNull UUID id) {
+        var cimg = IMAGE.as("cimg");
+        var cimgId = cimg.ID;
+        var cimgContentType = cimg.CONTENT_TYPE;
+
         return dsl.select()
                 .from(EVENT)
-                .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
+                .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))   // Event image
+                .leftJoin(COMMUNITY).on(EVENT.COMMUNITY_ID.eq(COMMUNITY.ID))
+                .leftJoin(cimg).on(COMMUNITY.IMAGE_ID.eq(cimgId)) // ✅ use alias field
                 .where(EVENT.ID.eq(id)
                         .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
                         .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))
-                .fetchOptional(rec -> new EventWithImageDto(
-                        rec.into(EVENT).into(EventDto.class),
-                        rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
-                ));
+                .fetchOptional(rec -> {
+                    var eventDto = rec.into(EVENT).into(EventDto.class);
+
+                    ImageDto imageDto = null;
+                    if (rec.get(IMAGE.ID) != null) {
+                        imageDto = new ImageDto(
+                            rec.get(IMAGE.ID, UUID.class),
+                            rec.get(IMAGE.CONTENT_TYPE, ContentType.class)
+                        );
+                    } else if (rec.get(cimgId) != null) {
+                        imageDto = new ImageDto(
+                                rec.get(cimgId, UUID.class),
+                                rec.get(cimgContentType, ContentType.class)
+                            );
+                        }
+
+
+                    return new EventWithImageDto(eventDto, imageDto);
+                });
     }
+
+
 
     public @NotNull List<@NotNull EventDto> getEvents() {
         return dsl.selectFrom(EVENT)
@@ -98,26 +121,43 @@ public final class EventService {
     }
 
     public @NotNull List<@NotNull EventWithImageDto> getUpcomingEventsWithImage() {
-        return getUpcomingEventsWithImage(null);
-    }
-
-    public @NotNull List<@NotNull EventWithImageDto> getUpcomingEventsWithImage(final @Nullable CommunityDto community) {
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
+
+        var cimg = IMAGE.as("cimg");
+        var cimgId = cimg.ID;
+        var cimgContentType = cimg.CONTENT_TYPE;
+
+
         return dsl.select()
                 .from(EVENT)
-                .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
-                .where(
-                        EVENT.BEGIN.isNotNull()
-                                .and(EVENT.END.isNotNull())
-                                .and(EVENT.END.gt(now))
-                                .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
-                                .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED))
-                                .and(community != null ? EVENT.COMMUNITY_ID.eq(community.id()) : noCondition()))
+                .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))   // Event image
+                .leftJoin(COMMUNITY).on(EVENT.COMMUNITY_ID.eq(COMMUNITY.ID))
+                .leftJoin(cimg).on(COMMUNITY.IMAGE_ID.eq(cimgId)) // ✅ use alias field
+                .where(EVENT.BEGIN.isNotNull()
+                        .and(EVENT.END.isNotNull())
+                        .and(EVENT.END.gt(now))
+                        .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
+                        .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))
                 .orderBy(EVENT.BEGIN.asc())
-                .fetch(rec -> new EventWithImageDto(
-                        rec.into(EVENT).into(EventDto.class),
-                        rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
-                ));
+                .fetch(rec -> {
+                    var eventDto = rec.into(EVENT).into(EventDto.class);
+
+                    ImageDto imageDto = null;
+                    if (rec.get(IMAGE.ID) != null) {
+                        imageDto = new ImageDto(
+                            rec.get(IMAGE.ID, UUID.class),
+                            rec.get(IMAGE.CONTENT_TYPE, ContentType.class)
+                        );
+                    } else if (rec.get(cimgId) != null) {
+                        imageDto = new ImageDto(
+                                rec.get(cimgId, UUID.class),
+                                rec.get(cimgContentType, ContentType.class)
+                            );
+                        }
+
+
+                    return new EventWithImageDto(eventDto, imageDto);
+                });
     }
 
     public int getEventCount() {

@@ -107,7 +107,7 @@ class ParticipationServiceIT extends IntegrationTest {
         assertThat(participations).hasSize(1);
 
         final var user = userService.getUserByEmail(email).orElseThrow();
-        assertThat(user).isNotNull();
+        assertThat(user.email()).isEqualTo(email);
 
         final var participation = participations.getFirst();
         assertThat(participation).isNotNull().satisfies(testee -> {

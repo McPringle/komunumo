@@ -58,13 +58,15 @@ public final class ImageUtil {
         uploadImagePath = appConfig.files().basedir().resolve(RELATIVE_IMAGE_PATH);
     }
 
-    public static @Nullable String resolveImageUrl(final @Nullable ImageDto image) {
+    public static @NotNull String resolveImageUrl(final @Nullable ImageDto image) {
         if (image == null || image.id() == null) {
-            return null;
+            return "/images/komunumo.svg"; // placeholder
         }
-        final String id = image.id().toString();
-        return IMAGE_URL_PREFIX + id + image.contentType().getExtension();
+
+        // Just return URL based on ID, don't check if file exists
+        return IMAGE_URL_PREFIX + image.id() + image.contentType().getExtension();
     }
+
 
     public static @Nullable Path resolveImagePath(final @Nullable ImageDto image) {
         if (image == null || image.id() == null) {

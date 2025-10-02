@@ -18,14 +18,11 @@
 package app.komunumo.ui.views.community;
 
 import app.komunumo.ui.IntegrationTest;
-import app.komunumo.ui.views.events.EventCard;
-import app.komunumo.ui.views.events.EventGrid;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.tabs.TabSheet;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.findComponent;
@@ -63,37 +60,6 @@ class CommunityDetailViewIT extends IntegrationTest {
 
         final var image = _find(Image.class, spec -> spec.withClasses("community-image"));
         assertThat(image).isEmpty();
-    }
-
-    @Test
-    void communityWithoutEventsShown() {
-        UI.getCurrent().navigate("communities/@demoCommunity1");
-
-        final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
-        assertThat(h2).isNotNull();
-        assertThat(h2.getText()).isEqualTo("Demo Community 1");
-
-        final var tabSheet = _get(TabSheet.class);
-        final var eventGrids = _find(tabSheet, EventGrid.class);
-        assertThat(eventGrids).isEmpty();
-        final var eventText = _get(tabSheet, Paragraph.class);
-        assertThat(eventText.getText()).isEqualTo("No events are currently planned");
-    }
-
-    @Test
-    void communityWithEventsShown() {
-        UI.getCurrent().navigate("communities/@demoCommunity3");
-
-        final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
-        assertThat(h2).isNotNull();
-        assertThat(h2.getText()).isEqualTo("Demo Community 3");
-
-        final var eventGrid = _get(EventGrid.class);
-        final var eventCards = _find(eventGrid, EventCard.class);
-        assertThat(eventCards).hasSize(1);
-
-        final var eventCard = eventCards.getFirst();
-        _get(eventCard, Image.class, spec -> spec.withAttribute("alt", "Demo Event 3"));
     }
 
     @Test

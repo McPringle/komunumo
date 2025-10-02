@@ -43,6 +43,8 @@ class DemoDataCreatorJsonIT extends BrowserTest {
         page.waitForSelector("h1:has-text('Komunumo Test')");
         captureScreenshot("home-page-with-demo-data");
 
+        page.waitForSelector("vaadin-card");
+        
         final var eventCards = page.locator("vaadin-card");
         assertThat(eventCards.count()).isEqualTo(2);
 

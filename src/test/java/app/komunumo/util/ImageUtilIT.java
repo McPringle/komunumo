@@ -41,37 +41,43 @@ class ImageUtilIT extends IntegrationTest {
     @Autowired
     private @NotNull ImageService imageService;
 
+    private static String getSubFolder(final @NotNull UUID imageId) {
+        final String id = imageId.toString();
+        final String prefix1 = id.substring(0, 2);
+        final String prefix2 = id.substring(2, 4);
+        return prefix1 + java.io.File.separator + prefix2;
+    }
+
     @Test
     void resolveImageUrl() {
-        assertThat(ImageUtil.resolveImageUrl(null)).isNull();
+        // null should give placeholder now
+        assertThat(ImageUtil.resolveImageUrl(null)).isEqualTo("/images/komunumo.svg");
 
         final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
-        assertThat(ImageUtil.resolveImageUrl(imageWithoutId)).isNull();
+        // no id → placeholder
+        assertThat(ImageUtil.resolveImageUrl(imageWithoutId)).isEqualTo("/images/komunumo.svg");
 
         final var imageId = UUID.randomUUID();
         final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG);
         assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo("/images/" + imageId + ".jpg");
     }
 
+
     @Test
     void resolveImagePath() {
         assertThat(ImageUtil.resolveImagePath(null)).isNull();
 
         final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
+        // path should still be null because placeholder isn’t a real file
         assertThat(ImageUtil.resolveImagePath(imageWithoutId)).isNull();
 
         final var imageId = UUID.randomUUID();
         final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG);
         final var path = ImageUtil.resolveImagePath(imageWithId);
         assertThat(path).isNotNull();
-        assertThat(path.toString()).endsWith(separator + "images" + separator + getSubFolder(imageId) + separator + imageId + ".jpg");
-    }
-
-    private static String getSubFolder(final @NotNull UUID imageId) {
-        final String id = imageId.toString();
-        final String prefix1 = id.substring(0, 2);
-        final String prefix2 = id.substring(2, 4);
-        return prefix1 + separator + prefix2;
+        assertThat(path.toString()).endsWith(
+            separator + "images" + separator + getSubFolder(imageId) + separator + imageId + ".jpg"
+        );
     }
 
     @Test
@@ -79,17 +85,16 @@ class ImageUtilIT extends IntegrationTest {
         assertThat(ImageUtil.loadImage(null)).isEmpty();
 
         final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
+        // placeholder isn’t on disk → should still be empty
         assertThat(ImageUtil.loadImage(imageWithoutId)).isEmpty();
 
         final var randomImageId = UUID.randomUUID();
         final var imageWithRandomId = new ImageDto(randomImageId, ContentType.IMAGE_JPEG);
-        final var emptyStream = ImageUtil.loadImage(imageWithRandomId);
-        assertThat(emptyStream).isEmpty();
+        assertThat(ImageUtil.loadImage(imageWithRandomId)).isEmpty();
 
         final var existingImageId = imageService.getImages().getFirst().id();
         final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_JPEG);
-        final var stream = ImageUtil.loadImage(imageWithExistingId);
-        assertThat(stream).isNotEmpty();
+        assertThat(ImageUtil.loadImage(imageWithExistingId)).isNotEmpty();
     }
 
     @Test

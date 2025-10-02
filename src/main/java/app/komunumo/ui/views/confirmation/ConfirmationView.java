@@ -75,8 +75,9 @@ public final class ConfirmationView extends AbstractView implements AfterNavigat
                 notification.setDuration(NOTIFICATION_DURATION);
                 notification.open();
                 if (!location.isBlank()) {
-                    UI.getCurrent().navigate(location);
+                    UI.getCurrent().navigate(location.startsWith("/") ? location.substring(1) : location);
                 }
+
             };
             case WARNING -> () -> {
                 final var notification = new PersistentNotification(message);
