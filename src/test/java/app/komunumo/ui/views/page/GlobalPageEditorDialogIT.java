@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.views.page;
 
+import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.ui.IntegrationTest;
@@ -33,6 +34,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.Locale;
 
 import static app.komunumo.util.TestUtil.findComponent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._assertNone;
@@ -402,6 +405,75 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             logout();
         } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void editGlobalPage_openEditSaveError() {
+        final var ui = UI.getCurrent();
+        final var testPage = globalPageService.storeGlobalPage(new GlobalPageDto(
+                "test", Locale.ENGLISH, null, null, "Test Page", "## Test Page"));
+
+        try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            // important: navigate after login, so that the Vaadin request is updated
+            ui.navigate("page/test");
+
+            // start editing the page
+            final var view = _get(GlobalPageView.class,
+                    spec -> spec.withClasses("global-page-view"));
+            final var pageContent = _get(HtmlContainer.class,
+                    spec -> spec.withClasses("global-page-content"));
+            final var contextMenu = view.getContextMenu();
+            assertThat(contextMenu).isNotNull();
+            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var editItem = contextMenu.getItems().stream()
+                    .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Edit menu item not found"));
+            _click(editItem);
+
+            // change the title and content
+            final var dialog = _get(GlobalPageEditorDialog.class);
+            final var titleField = _get(dialog, TextField.class);
+            final var textArea = _get(dialog, TextArea.class);
+            titleField.setValue("New Test Page");
+            textArea.setValue("## New Test Page\n\nThis is the **updated** test page.");
+
+            // delete the page to simulate a save error
+            globalPageService.deleteGlobalPage(testPage);
+
+            // try to save the changes
+            final var saveButton = _get(dialog, Button.class, spec -> spec.withText(
+                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.save")));
+            assertThat(saveButton.isEnabled()).isTrue();
+            _click(saveButton);
+
+            // check that an error notification is shown
+            final var notification = _get(PersistentNotification.class);
+            assertThat(notification.isOpened()).isTrue();
+
+            // check that the notification contains the correct error message
+            final var div = _get(notification, Div.class);
+            assertThat(div.getText()).startsWith("An error occurred while saving the page content.");
+
+            // close the notification
+            final var notificationCloseButton = _get(notification, Button.class);
+            _click(notificationCloseButton);
+            MockVaadin.clientRoundtrip();
+            assertThat(notification.isOpened()).isFalse();
+            _assertNone(PersistentNotification.class);
+
+            // check that the dialog is still open
+            assertThat(dialog.isOpened()).isTrue();
+
+            logout();
+        } finally {
+            globalPageService.deleteGlobalPage(testPage);
             SecurityContextHolder.clearContext();
         }
     }
