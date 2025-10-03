@@ -9,6 +9,7 @@
     - [Sign-off your commits](#sign-off-your-commits)
     - [AI generated code](#ai-generated-code)
     - [Testing](#testing)
+    - [Pull Request Scope](#pull-request-scope)
 - [Quickstart for Local Development](#quickstart-for-local-development)
     - [Prerequisites](#prerequisites)
     - [Clone and Verify](#clone-and-verify)
@@ -159,6 +160,13 @@ class UserServiceIT extends IntegrationTest {
 
 > [!WARNING]
 > Integration tests that do not extend `IntegrationTest` or `BrowserTest` may not run correctly or may produce unforeseen errors.
+
+### Pull Request Scope
+
+Please make sure that each pull request is focused on a single issue or change. Avoid bundling unrelated modifications together in the same PR, as this makes the review process harder and slows down merging. If you want to contribute multiple independent changes, submit them as separate pull requests so they can be reviewed and merged individually.
+
+> [!NOTE]  
+> GitHub only allows one pull request per branch. To open multiple pull requests, you need to create a separate branch for each change.
 
 ## Quickstart for Local Development
 
