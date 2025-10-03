@@ -18,6 +18,7 @@
 package app.komunumo;
 
 import app.komunumo.configuration.AppConfig;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.servlets.images.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
@@ -39,6 +40,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
+
 /**
  * The entry point of the Spring Boot application.
  */
@@ -51,15 +54,15 @@ import java.time.format.DateTimeFormatter;
 @EnableConfigurationProperties(AppConfig.class)
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
-    private final @NotNull AppConfig appConfig;
+    private final @NotNull ConfigurationService configurationService;
 
     public static void main(final @NotNull String... args) {
         SpringApplication.run(Application.class, args);
     }
 
-    public Application(final @NotNull AppConfig appConfig) {
+    public Application(final @NotNull ConfigurationService configurationService) {
         super();
-        this.appConfig = appConfig;
+        this.configurationService = configurationService;
     }
 
     /**
@@ -78,7 +81,7 @@ public class Application extends SpringBootServletInitializer implements AppShel
      */
     @Override
     public void configurePage(final @NotNull AppShellSettings settings) {
-        final var customStyles = appConfig.instance().styles();
+        final var customStyles = configurationService.getConfiguration(INSTANCE_CUSTOM_STYLES);
         if (!customStyles.isBlank()) {
             final var timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
             final var href = customStyles.contains("?")

@@ -74,8 +74,8 @@ class LocaleUtilTest {
     }
 
     @Test
-    void shouldReturnNullIfLocaleIsNull() {
-        assertThat(LocaleUtil.getLanguageCode(null)).isNull();
+    void shouldReturnEmptyStringIfLocaleIsNull() {
+        assertThat(LocaleUtil.getLanguageCode(null)).isEmpty();
     }
 
     @Test

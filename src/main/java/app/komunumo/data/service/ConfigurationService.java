@@ -45,49 +45,69 @@ public final class ConfigurationService {
     }
 
     public @NotNull String getConfiguration(final @NotNull ConfigurationSetting setting) {
-        return getConfiguration(setting, null);
+        return getConfiguration(setting, null, String.class);
     }
 
     public @NotNull String getConfiguration(final @NotNull ConfigurationSetting setting,
                                             final @Nullable Locale locale) {
-        if (locale == null) {
-            return getFromCacheOrDb(setting, null)
-                    .orElse(setting.defaultValue());
-        }
+        return getConfiguration(setting, locale, String.class);
+    }
 
+    public @NotNull <T> T getConfiguration(final @NotNull ConfigurationSetting setting,
+                                           final @NotNull Class<T> type) {
+        return getConfiguration(setting, null, type);
+    }
+
+    public @NotNull <T> T getConfiguration(final @NotNull ConfigurationSetting setting,
+                                           final @Nullable Locale locale,
+                                           final @NotNull Class<T> type) {
         final var languageCode = LocaleUtil.getLanguageCode(locale);
-        return getFromCacheOrDb(setting, languageCode)
-                .or(() -> getFromCacheOrDb(setting, "EN"))
-                .or(() -> getFromCacheOrDb(setting, null))
-                .orElse(setting.defaultValue());
+
+        final var value = locale == null
+                ? getFromCacheOrDb(setting, "")
+                        .orElse(setting.defaultValue())
+                : getFromCacheOrDb(setting, languageCode)
+                        .or(() -> getFromCacheOrDb(setting, "EN"))
+                        .or(() -> getFromCacheOrDb(setting, ""))
+                        .orElse(setting.defaultValue());
+
+        if (type == String.class) {
+            return type.cast(value);
+        } else if (type == Boolean.class) {
+            return type.cast(Boolean.parseBoolean(value));
+        } else {
+            throw new IllegalArgumentException("Unsupported type: " + type);
+        }
     }
 
     private @NotNull Optional<String> getFromCacheOrDb(final @NotNull ConfigurationSetting setting,
-                                                       final @Nullable String language) {
+                                                       final @NotNull String language) {
         return cache.get(new CacheKey(setting, language), cacheKey ->
                 dsl.select(CONFIG.VALUE)
                         .from(CONFIG)
                         .where(CONFIG.SETTING.eq(cacheKey.setting.setting()))
-                        .and(language == null ? CONFIG.LANGUAGE.isNull() : CONFIG.LANGUAGE.eq(language))
+                        .and(CONFIG.LANGUAGE.eq(language))
                         .fetchOptional(CONFIG.VALUE)
         );
     }
 
-    public void setConfiguration(final @NotNull ConfigurationSetting setting,
-                                 final @NotNull String value) {
+    public <T> void setConfiguration(final @NotNull ConfigurationSetting setting,
+                                     final @NotNull T value) {
         setConfiguration(setting, null, value);
     }
 
-    public void setConfiguration(final @NotNull ConfigurationSetting setting,
+    public <T> void setConfiguration(final @NotNull ConfigurationSetting setting,
                                  final @Nullable Locale locale,
-                                 final @NotNull String value) {
+                                 final @NotNull T value) {
+        final var dbValue = value.toString();
         final var languageCode = LocaleUtil.getLanguageCode(locale);
+
         dsl.insertInto(CONFIG)
                 .set(CONFIG.SETTING, setting.setting())
                 .set(CONFIG.LANGUAGE, languageCode)
-                .set(CONFIG.VALUE, value)
+                .set(CONFIG.VALUE, dbValue)
                 .onDuplicateKeyUpdate()
-                .set(CONFIG.VALUE, value)
+                .set(CONFIG.VALUE, dbValue)
                 .execute();
 
         cache.asMap().keySet().removeIf(cacheKey -> cacheKey.setting().equals(setting));
