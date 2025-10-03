@@ -15,9 +15,9 @@ DROP TABLE IF EXISTS config;
 
 CREATE TABLE config (
     setting VARCHAR(255) NOT NULL,
-    language VARCHAR(2) DEFAULT NULL,
+    language VARCHAR(2) NOT NULL DEFAULT '',
     value VARCHAR(255) NOT NULL,
-    CONSTRAINT config_unique UNIQUE (setting, language)
+    PRIMARY KEY (setting, language)
 );
 
 CREATE TABLE mail_template (
