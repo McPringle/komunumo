@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.views.error;
 
+import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
@@ -26,6 +27,8 @@ import com.vaadin.flow.router.NotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +46,8 @@ class NotFoundViewTest {
         final var beforeEnterEvent = mock(BeforeEnterEvent.class);
         when(beforeEnterEvent.getUI()).thenReturn(ui);
         final var configurationService = mock(ConfigurationService.class);
-        when(configurationService.getConfiguration(any(), any())).thenReturn("Komunumo Test");
+        when(configurationService.getConfiguration(any(ConfigurationSetting.class), any(Locale.class)))
+                .thenReturn("Komunumo Test");
 
         try (var mockedStatic = mockStatic(UI.class)) {
             mockedStatic.when(UI::getCurrent).thenReturn(ui);

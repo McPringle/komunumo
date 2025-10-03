@@ -22,12 +22,17 @@ import app.komunumo.ui.IntegrationTest;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Locale;
 
 import static app.komunumo.data.db.tables.Config.CONFIG;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
 class ConfigurationServiceIT extends IntegrationTest {
 
@@ -44,7 +49,7 @@ class ConfigurationServiceIT extends IntegrationTest {
 
     @Test
     void shouldReturnDefaultValueIfNoValueExists() {
-        final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME);
+        final var value = configurationService.getConfiguration(INSTANCE_NAME);
         assertThat(value).isEqualTo("Your Instance Name");
     }
 
@@ -99,16 +104,43 @@ class ConfigurationServiceIT extends IntegrationTest {
 
     @Test
     void shouldStoreAndRetrieveValueWithoutLocale() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_NAME, "Custom Komunumo");
-        final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME);
+        configurationService.setConfiguration(INSTANCE_NAME, "Custom Komunumo");
+        final var value = configurationService.getConfiguration(INSTANCE_NAME);
         assertThat(value).isEqualTo("Custom Komunumo");
     }
 
     @Test
     void shouldReturnValueWithoutLocaleWhenLocaleIsNull() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_NAME, "Neutral Name");
-        final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME, null);
+        configurationService.setConfiguration(INSTANCE_NAME, "Neutral Name");
+        final var value = configurationService.getConfiguration(INSTANCE_NAME, (Locale) null);
         assertThat(value).isEqualTo("Neutral Name");
     }
 
+    static Object[][] getTestDataFor_testGettingConfigurationWithDifferentTypes() {
+        return new Object[][]{
+                {ConfigurationSetting.INSTANCE_URL, String.class, "https://example.com", "https://example.com"},
+                {ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES, Boolean.class, true, true},
+                {ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES, Boolean.class, false, false},
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("getTestDataFor_testGettingConfigurationWithDifferentTypes")
+    <T> void testGettingConfigurationWithDifferentTypes(final ConfigurationSetting setting,
+                                                        final Class<T> type,
+                                                        final T input,
+                                                        final T expected) {
+        configurationService.setConfiguration(setting, input);
+        final var value = configurationService.getConfiguration(setting, type);
+        assertThat(value).isEqualTo(expected);
+    }
+
+    @Test
+    void testGettingConfigurationWithUnsupportedType() {
+        assertThatThrownBy(() ->
+                configurationService.getConfiguration(INSTANCE_NAME, List.class)
+        )
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Unsupported type: interface java.util.List");
+    }
 }
