@@ -17,35 +17,51 @@
  */
 package app.komunumo.ui.views.community;
 
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.views.WebsiteLayout;
+import com.icegreen.greenmail.store.FolderException;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouterLink;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
 import static app.komunumo.util.TestUtil.assertContainsExactlyOneRouterLinkOf;
 import static app.komunumo.util.TestUtil.findComponent;
 import static app.komunumo.util.TestUtil.findComponents;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestPropertySource(properties = "komunumo.instance.hide-communities=true")
 class HideCommunitiesIT extends IntegrationTest {
 
-    @Test
-    void checkCommunityLinkNotVisible() {
-        final var uiParent = UI.getCurrent()
-                .getCurrentView()
-                .getParent().orElseThrow()
-                .getParent().orElseThrow();
-        final var websiteLayout = (WebsiteLayout) uiParent;
+    @Autowired
+    private ConfigurationService configurationService;
 
-        final var navigationBar = findComponent(websiteLayout, NavigationBar.class);
-        assertThat(navigationBar).isNotNull();
-        final var routerLinks = findComponents(navigationBar, RouterLink.class);
-        assertContainsExactlyOneRouterLinkOf(routerLinks, new Anchor("events", "Events"));
+    @Test
+    void checkCommunityLinkNotVisible() throws FolderException {
+        try {
+            configurationService.setConfiguration(INSTANCE_HIDE_COMMUNITIES, true);
+
+            // simulate a full browser-reload by re-initializing the UI to apply the configuration change
+            tearDown();
+            setup();
+
+            final var uiParent = UI.getCurrent()
+                    .getCurrentView()
+                    .getParent().orElseThrow()
+                    .getParent().orElseThrow();
+            final var websiteLayout = (WebsiteLayout) uiParent;
+
+            final var navigationBar = findComponent(websiteLayout, NavigationBar.class);
+            assertThat(navigationBar).isNotNull();
+
+            final var routerLinks = findComponents(navigationBar, RouterLink.class);
+            assertContainsExactlyOneRouterLinkOf(routerLinks, new Anchor("events", "Events"));
+        } finally {
+            configurationService.setConfiguration(INSTANCE_HIDE_COMMUNITIES, false);
+        }
     }
 
 }

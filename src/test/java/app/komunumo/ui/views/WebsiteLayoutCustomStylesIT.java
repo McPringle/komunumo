@@ -17,29 +17,38 @@
  */
 package app.komunumo.ui.views;
 
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.BrowserTest;
-import org.junit.jupiter.api.Test;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
 
 class WebsiteLayoutCustomStylesIT extends BrowserTest {
 
-    @Override
-    protected String[] getProperties() {
-        return new String[] {
-                "--komunumo.instance.styles=http://localhost:8082/custom-styles/styles.css"
-        };
-    }
-
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "http://localhost:8082/custom-styles/styles.css",
+            "http://localhost:8082/custom-styles/styles.css?foo=bar"
+    })
     @SuppressWarnings("java:S2699")
-    void testCustomStylesLoadedAndApplied() {
-        final var page = getPage();
-        page.navigate("http://localhost:8081/");
-        page.waitForFunction("""
-            () => getComputedStyle(document.body, '::after')
-                .getPropertyValue('content')
-                .includes('Custom styles applied!')
-            """);
-        captureScreenshot("home-with-custom-styles");
+    void testCustomStyles(final @NotNull String customStylesUrl) {
+        final var configurationService = getBean(ConfigurationService.class);
+        try {
+            configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, customStylesUrl);
+
+            final var page = getPage();
+            page.navigate("http://localhost:8081/");
+            page.waitForFunction("""
+                    () => getComputedStyle(document.body, '::after')
+                        .getPropertyValue('content')
+                        .includes('Custom styles applied!')
+                    """);
+            captureScreenshot("home-with-custom-styles");
+        } finally {
+            configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, "");
+        }
     }
 
 }

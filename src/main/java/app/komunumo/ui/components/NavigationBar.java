@@ -36,6 +36,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
+
 public final class NavigationBar extends HorizontalLayout {
 
     public NavigationBar(final @NotNull ServiceProvider serviceProvider,
@@ -57,7 +59,9 @@ public final class NavigationBar extends HorizontalLayout {
         final var menuBar = new Nav();
         menuBar.addClassName("menu-bar");
         menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.events"), EventGridView.class));
-        if (!serviceProvider.getAppConfig().instance().hideCommunities()) {
+
+        final var locale = ui.getLocale();
+        if (!serviceProvider.configurationService().getConfiguration(INSTANCE_HIDE_COMMUNITIES, locale, Boolean.class)) {
             menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.communities"), CommunityGridView.class));
         }
         serviceProvider.globalPageService()

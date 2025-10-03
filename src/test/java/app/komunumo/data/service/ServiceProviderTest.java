@@ -37,7 +37,7 @@ class ServiceProviderTest {
         final var demoConfig = new DemoConfig(false, "");
         final var filesConfig = new FilesConfig(Path.of(""));
         final var mailConfig = new MailConfig("test@example.com", "test@example.com");
-        final var instanceConfig = new InstanceConfig("test@example.com", "", false);
+        final var instanceConfig = new InstanceConfig("test@example.com");
         final var appConfig = new AppConfig("0.0.0", demoConfig, filesConfig, instanceConfig, mailConfig);
 
         final var confirmationService = mock(ConfirmationService.class);

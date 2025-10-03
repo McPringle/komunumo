@@ -58,7 +58,7 @@ class ImageUtilTest {
         final var demoConfig = new DemoConfig(false, "");
         final var filesConfig = new FilesConfig(tempDir);
         final var mailConfig = new MailConfig("noreply@foo.bar", "support@foo.bar");
-        final var instanceConfig = new InstanceConfig("admin@foo.bar", "", false);
+        final var instanceConfig = new InstanceConfig("admin@foo.bar");
         final var appConfig = new AppConfig("0.0.0", demoConfig, filesConfig, instanceConfig, mailConfig);
         ImageUtil.initialize(appConfig);
         uploadImagePath = tempDir.resolve("uploads/images");
