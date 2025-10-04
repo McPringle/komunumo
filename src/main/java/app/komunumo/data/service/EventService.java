@@ -19,6 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.EventRecord;
 import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static app.komunumo.data.db.tables.Community.COMMUNITY;
 import static app.komunumo.data.db.tables.Event.EVENT;
 import static app.komunumo.data.db.tables.Image.IMAGE;
 import static org.jooq.impl.DSL.noCondition;
@@ -80,16 +82,34 @@ public final class EventService {
     }
 
     public @NotNull Optional<EventWithImageDto> getEventWithImage(final @NotNull UUID id) {
+        var communityImage = IMAGE.as("COMMUNITY_IMAGE");
         return dsl.select()
                 .from(EVENT)
                 .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
+                .leftJoin(COMMUNITY).on(EVENT.COMMUNITY_ID.eq(COMMUNITY.ID))
+                .leftJoin(communityImage).on(COMMUNITY.IMAGE_ID.eq(communityImage.ID))
                 .where(EVENT.ID.eq(id)
                         .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
                         .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))
-                .fetchOptional(rec -> new EventWithImageDto(
-                        rec.into(EVENT).into(EventDto.class),
-                        rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
-                ));
+                .fetchOptional(rec -> {
+                    final ImageDto image;
+                    if (rec.get(IMAGE.ID) != null) {
+                        image = new ImageDto(
+                                rec.get(IMAGE.ID, UUID.class),
+                                rec.get(IMAGE.CONTENT_TYPE, ContentType.class)
+                        );
+                    } else if (rec.get(communityImage.ID) != null) {
+                        image = new ImageDto(
+                                rec.get(communityImage.ID, UUID.class),
+                                rec.get(communityImage.CONTENT_TYPE, ContentType.class)
+                        );
+                    } else {
+                        image = null;
+                    }
+
+                    final var event = rec.into(EVENT).into(EventDto.class);
+                    return new EventWithImageDto(event, image);
+                });
     }
 
     public @NotNull List<@NotNull EventDto> getEvents() {
@@ -103,9 +123,12 @@ public final class EventService {
 
     public @NotNull List<@NotNull EventWithImageDto> getUpcomingEventsWithImage(final @Nullable CommunityDto community) {
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        var communityImage = IMAGE.as("COMMUNITY_IMAGE");
         return dsl.select()
                 .from(EVENT)
                 .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
+                .leftJoin(COMMUNITY).on(EVENT.COMMUNITY_ID.eq(COMMUNITY.ID))
+                .leftJoin(communityImage).on(COMMUNITY.IMAGE_ID.eq(communityImage.ID))
                 .where(
                         EVENT.BEGIN.isNotNull()
                                 .and(EVENT.END.isNotNull())
@@ -114,10 +137,25 @@ public final class EventService {
                                 .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED))
                                 .and(community != null ? EVENT.COMMUNITY_ID.eq(community.id()) : noCondition()))
                 .orderBy(EVENT.BEGIN.asc())
-                .fetch(rec -> new EventWithImageDto(
-                        rec.into(EVENT).into(EventDto.class),
-                        rec.get(IMAGE.ID) != null ? rec.into(IMAGE).into(ImageDto.class) : null
-                ));
+                .fetch(rec -> {
+                    final ImageDto image;
+                    if (rec.get(IMAGE.ID) != null) {
+                        image = new ImageDto(
+                                rec.get(IMAGE.ID, UUID.class),
+                                rec.get(IMAGE.CONTENT_TYPE, ContentType.class)
+                        );
+                    } else if (rec.get(communityImage.ID) != null) {
+                        image = new ImageDto(
+                                rec.get(communityImage.ID, UUID.class),
+                                rec.get(communityImage.CONTENT_TYPE, ContentType.class)
+                        );
+                    } else {
+                        image = null;
+                    }
+
+                    final var event = rec.into(EVENT).into(EventDto.class);
+                    return new EventWithImageDto(event, image);
+                });
     }
 
     public int getEventCount() {

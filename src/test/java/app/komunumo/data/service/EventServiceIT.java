@@ -182,4 +182,58 @@ class EventServiceIT extends IntegrationTest {
                 .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
     }
 
+    @Test
+    void getEventWithFallbackImage() {
+        final var communityWithImage = communityService.getCommunities().stream()
+                .filter(community -> community.imageId() != null)
+                .findFirst()
+                .orElseThrow();
+        final var beginDate = ZonedDateTime.now(ZoneOffset.UTC).plusDays(1);
+        final var endDate = beginDate.plusHours(1);
+        final var testEvent = eventService.storeEvent(
+                new EventDto(null, communityWithImage.id(), null, null,
+                "Test Event", "This is a test event.", "Test", beginDate, endDate,
+                null, EventVisibility.PUBLIC, EventStatus.PUBLISHED));
+        assertThat(testEvent.id()).isNotNull();
+        try {
+            final var testEventWithImage = eventService.getEventWithImage(testEvent.id()).orElseThrow();
+            assertThat(testEventWithImage.event().imageId()).isNull();
+
+            final var image = testEventWithImage.image();
+            assertThat(image).isNotNull();
+            assertThat(image.id()).isEqualTo(communityWithImage.imageId());
+        } finally {
+            eventService.deleteEvent(testEvent);
+        }
+    }
+
+    @Test
+    void getUpcomingEventsWithFallbackImage() {
+        final var communityWithImage = communityService.getCommunities().stream()
+                .filter(community -> community.imageId() != null)
+                .findFirst()
+                .orElseThrow();
+        final var beginDate = ZonedDateTime.now(ZoneOffset.UTC).plusDays(1);
+        final var endDate = beginDate.plusHours(1);
+        final var testEvent = eventService.storeEvent(
+                new EventDto(null, communityWithImage.id(), null, null,
+                "Test Event", "This is a test event.", "Test", beginDate, endDate,
+                null, EventVisibility.PUBLIC, EventStatus.PUBLISHED));
+        assertThat(testEvent.id()).isNotNull();
+        try {
+            final var testEvents = eventService.getUpcomingEventsWithImage(communityWithImage);
+            final var testEventWithImage = testEvents.stream()
+                    .filter(eventWithImage -> testEvent.id().equals(eventWithImage.event().id()))
+                    .findAny()
+                    .orElseThrow();
+            assertThat(testEventWithImage.event().imageId()).isNull();
+
+            final var image = testEventWithImage.image();
+            assertThat(image).isNotNull();
+            assertThat(image.id()).isEqualTo(communityWithImage.imageId());
+        } finally {
+            eventService.deleteEvent(testEvent);
+        }
+    }
+
 }
