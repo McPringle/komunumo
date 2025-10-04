@@ -27,8 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,33 +35,20 @@ import static app.komunumo.data.db.tables.Community.COMMUNITY;
 import static app.komunumo.data.db.tables.Image.IMAGE;
 
 @Service
-public final class CommunityService {
+public final class CommunityService extends StorageService {
 
     private final @NotNull DSLContext dsl;
-    private final @NotNull UniqueIdGenerator idGenerator;
 
     public CommunityService(final @NotNull DSLContext dsl,
                             final @NotNull UniqueIdGenerator idGenerator) {
-        super();
+        super(idGenerator);
         this.dsl = dsl;
-        this.idGenerator = idGenerator;
     }
 
     public @NotNull CommunityDto storeCommunity(final @NotNull CommunityDto community) {
         final CommunityRecord communityRecord = dsl.fetchOptional(COMMUNITY, COMMUNITY.ID.eq(community.id()))
                 .orElse(dsl.newRecord(COMMUNITY));
-        communityRecord.from(community);
-        if (communityRecord.getId() == null) { // NOSONAR (false positive: ID may be null for new communities)
-            communityRecord.setId(idGenerator.getUniqueID(COMMUNITY));
-        }
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        if (communityRecord.getCreated() == null) { // NOSONAR (false positive: date may be null for new communities)
-            communityRecord.setCreated(now);
-            communityRecord.setUpdated(now);
-        } else {
-            communityRecord.setUpdated(now);
-        }
-        communityRecord.store();
+        createOrUpdate(COMMUNITY, community, communityRecord);
         return communityRecord.into(CommunityDto.class);
     }
 

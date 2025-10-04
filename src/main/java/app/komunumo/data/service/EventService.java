@@ -45,35 +45,20 @@ import static app.komunumo.data.db.tables.Image.IMAGE;
 import static org.jooq.impl.DSL.noCondition;
 
 @Service
-public final class EventService {
+public final class EventService extends StorageService {
 
     private final @NotNull DSLContext dsl;
-    private final @NotNull UniqueIdGenerator idGenerator;
 
     public EventService(final @NotNull DSLContext dsl,
                         final @NotNull UniqueIdGenerator idGenerator) {
-        super();
+        super(idGenerator);
         this.dsl = dsl;
-        this.idGenerator = idGenerator;
     }
 
     public @NotNull EventDto storeEvent(final @NotNull EventDto event) {
         final EventRecord eventRecord = dsl.fetchOptional(EVENT, EVENT.ID.eq(event.id()))
                 .orElse(dsl.newRecord(EVENT));
-        eventRecord.from(event);
-
-        if (eventRecord.getId() == null) { // NOSONAR (false positive: ID may be null for new events)
-            eventRecord.setId(idGenerator.getUniqueID(EVENT));
-        }
-
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        if (eventRecord.getCreated() == null) { // NOSONAR (false positive: date may be null for new events)
-            eventRecord.setCreated(now);
-            eventRecord.setUpdated(now);
-        } else {
-            eventRecord.setUpdated(now);
-        }
-        eventRecord.store();
+        createOrUpdate(EVENT, event, eventRecord);
         return eventRecord.into(EventDto.class);
     }
 

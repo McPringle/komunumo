@@ -26,43 +26,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import static app.komunumo.data.db.tables.User.USER;
 
 @Service
-public final class UserService {
+public final class UserService extends StorageService {
 
     private final @NotNull DSLContext dsl;
-    private final @NotNull UniqueIdGenerator idGenerator;
 
     public UserService(final @NotNull DSLContext dsl,
                        final @NotNull UniqueIdGenerator idGenerator) {
-        super();
+        super(idGenerator);
         this.dsl = dsl;
-        this.idGenerator = idGenerator;
     }
 
     public @NotNull UserDto storeUser(final @NotNull UserDto user) {
         final UserRecord userRecord = dsl.fetchOptional(USER, USER.ID.eq(user.id()))
                 .orElse(dsl.newRecord(USER));
-        userRecord.from(user);
-
-        if (userRecord.getId() == null) { // NOSONAR (false positive: ID may be null for new users)
-            userRecord.setId(idGenerator.getUniqueID(USER));
-        }
-
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        if (userRecord.getCreated() == null) { // NOSONAR (false positive: date may be null for new users)
-            userRecord.setCreated(now);
-            userRecord.setUpdated(now);
-        } else {
-            userRecord.setUpdated(now);
-        }
-        userRecord.store();
+        createOrUpdate(USER, user, userRecord);
         return userRecord.into(UserDto.class);
     }
 

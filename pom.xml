@@ -698,6 +698,16 @@
                                 </property>
                             </properties>
                         </database>
+                        <strategy>
+                            <matchers>
+                                <tables>
+                                    <table>
+                                        <expression>^(COMMUNITY|EVENT|USER)$</expression>
+                                        <recordImplements>app.komunumo.data.RecordWithTimestamps</recordImplements>
+                                    </table>
+                                </tables>
+                            </matchers>
+                        </strategy>
                         <generate>
                             <validationAnnotations>true</validationAnnotations>
                             <javaTimeTypes>true</javaTimeTypes>
