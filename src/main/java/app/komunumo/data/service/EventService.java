@@ -17,6 +17,7 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.db.tables.Image;
 import app.komunumo.data.db.tables.records.EventRecord;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ContentType;
@@ -29,6 +30,7 @@ import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -91,25 +93,7 @@ public final class EventService {
                 .where(EVENT.ID.eq(id)
                         .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
                         .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED)))
-                .fetchOptional(rec -> {
-                    final ImageDto image;
-                    if (rec.get(IMAGE.ID) != null) {
-                        image = new ImageDto(
-                                rec.get(IMAGE.ID, UUID.class),
-                                rec.get(IMAGE.CONTENT_TYPE, ContentType.class)
-                        );
-                    } else if (rec.get(communityImage.ID) != null) {
-                        image = new ImageDto(
-                                rec.get(communityImage.ID, UUID.class),
-                                rec.get(communityImage.CONTENT_TYPE, ContentType.class)
-                        );
-                    } else {
-                        image = null;
-                    }
-
-                    final var event = rec.into(EVENT).into(EventDto.class);
-                    return new EventWithImageDto(event, image);
-                });
+                .fetchOptional(record -> mapRecordToEventWithImage(record, communityImage));
     }
 
     public @NotNull List<@NotNull EventDto> getEvents() {
@@ -137,25 +121,28 @@ public final class EventService {
                                 .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED))
                                 .and(community != null ? EVENT.COMMUNITY_ID.eq(community.id()) : noCondition()))
                 .orderBy(EVENT.BEGIN.asc())
-                .fetch(rec -> {
-                    final ImageDto image;
-                    if (rec.get(IMAGE.ID) != null) {
-                        image = new ImageDto(
-                                rec.get(IMAGE.ID, UUID.class),
-                                rec.get(IMAGE.CONTENT_TYPE, ContentType.class)
-                        );
-                    } else if (rec.get(communityImage.ID) != null) {
-                        image = new ImageDto(
-                                rec.get(communityImage.ID, UUID.class),
-                                rec.get(communityImage.CONTENT_TYPE, ContentType.class)
-                        );
-                    } else {
-                        image = null;
-                    }
+                .fetch(record -> mapRecordToEventWithImage(record, communityImage));
+    }
 
-                    final var event = rec.into(EVENT).into(EventDto.class);
-                    return new EventWithImageDto(event, image);
-                });
+    private @NotNull EventWithImageDto mapRecordToEventWithImage(final @NotNull Record record,
+                                                                 final @NotNull Image communityImage) {
+        final ImageDto image;
+        if (record.get(IMAGE.ID) != null) {
+            image = new ImageDto(
+                    record.get(IMAGE.ID, UUID.class),
+                    record.get(IMAGE.CONTENT_TYPE, ContentType.class)
+            );
+        } else if (record.get(communityImage.ID) != null) {
+            image = new ImageDto(
+                    record.get(communityImage.ID, UUID.class),
+                    record.get(communityImage.CONTENT_TYPE, ContentType.class)
+            );
+        } else {
+            image = null;
+        }
+
+        final var event = record.into(EVENT).into(EventDto.class);
+        return new EventWithImageDto(event, image);
     }
 
     public int getEventCount() {
