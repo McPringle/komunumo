@@ -45,26 +45,26 @@ class ImageUtilIT extends IntegrationTest {
     void resolveImageUrl() {
         assertThat(ImageUtil.resolveImageUrl(null)).isNull();
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_WEBP);
         assertThat(ImageUtil.resolveImageUrl(imageWithoutId)).isNull();
 
         final var imageId = UUID.randomUUID();
-        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG);
-        assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo("/images/" + imageId + ".jpg");
+        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_WEBP);
+        assertThat(ImageUtil.resolveImageUrl(imageWithId)).isEqualTo("/images/" + imageId + ".webp");
     }
 
     @Test
     void resolveImagePath() {
         assertThat(ImageUtil.resolveImagePath(null)).isNull();
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_WEBP);
         assertThat(ImageUtil.resolveImagePath(imageWithoutId)).isNull();
 
         final var imageId = UUID.randomUUID();
-        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_JPEG);
+        final var imageWithId = new ImageDto(imageId, ContentType.IMAGE_WEBP);
         final var path = ImageUtil.resolveImagePath(imageWithId);
         assertThat(path).isNotNull();
-        assertThat(path.toString()).endsWith(separator + "images" + separator + getSubFolder(imageId) + separator + imageId + ".jpg");
+        assertThat(path.toString()).endsWith(separator + "images" + separator + getSubFolder(imageId) + separator + imageId + ".webp");
     }
 
     private static String getSubFolder(final @NotNull UUID imageId) {
@@ -78,16 +78,16 @@ class ImageUtilIT extends IntegrationTest {
     void loadImage() {
         assertThat(ImageUtil.loadImage(null)).isEmpty();
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_WEBP);
         assertThat(ImageUtil.loadImage(imageWithoutId)).isEmpty();
 
         final var randomImageId = UUID.randomUUID();
-        final var imageWithRandomId = new ImageDto(randomImageId, ContentType.IMAGE_JPEG);
+        final var imageWithRandomId = new ImageDto(randomImageId, ContentType.IMAGE_WEBP);
         final var emptyStream = ImageUtil.loadImage(imageWithRandomId);
         assertThat(emptyStream).isEmpty();
 
         final var existingImageId = imageService.getImages().getFirst().id();
-        final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_JPEG);
+        final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_WEBP);
         final var stream = ImageUtil.loadImage(imageWithExistingId);
         assertThat(stream).isNotEmpty();
     }
@@ -98,10 +98,10 @@ class ImageUtilIT extends IntegrationTest {
         // Arrange
         final var image = new ImageDto(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
-                ContentType.IMAGE_JPEG
+                ContentType.IMAGE_WEBP
         );
 
-        final var path = Path.of("/fake/path.jpg");
+        final var path = Path.of("/fake/path.webp");
 
         // Mock resolveImagePath(...) to return the fake path
         try (var mockedImageUtil = mockStatic(ImageUtil.class, CALLS_REAL_METHODS);
@@ -132,7 +132,7 @@ class ImageUtilIT extends IntegrationTest {
 
     @Test
     void storeImageWithException() {
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_JPEG);
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_WEBP);
         final var testPath = Path.of(".");
         assertThatThrownBy(() -> ImageUtil.storeImage(imageWithoutId, testPath))
                 .isInstanceOf(IllegalArgumentException.class)

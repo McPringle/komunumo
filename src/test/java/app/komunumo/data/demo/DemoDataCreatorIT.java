@@ -48,7 +48,7 @@ class DemoDataCreatorIT extends IntegrationTest {
         Assertions.assertThat(serviceProvider.eventService().getEventCount())
                 .isEqualTo(6);
         Assertions.assertThat(serviceProvider.imageService().getImageCount())
-                .isEqualTo(5);
+                .isEqualTo(10);
         Assertions.assertThat(serviceProvider.globalPageService().getGlobalPageCount())
                 .isEqualTo(2);
     }

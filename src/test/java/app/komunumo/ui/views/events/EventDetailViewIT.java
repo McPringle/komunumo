@@ -74,7 +74,7 @@ class EventDetailViewIT extends IntegrationTest {
 
         final var image = _get(Image.class, spec -> spec.withClasses("event-image"));
         assertThat(image).isNotNull();
-        assertThat(image.getSrc()).isNotBlank().isEqualTo("/images/" + testImage.id() + ".jpg");
+        assertThat(image.getSrc()).isNotBlank().isEqualTo("/images/" + testImage.id() + ".webp");
         assertThat(image.getAlt().orElseThrow()).isEqualTo("Event image for: " + testEvent.title());
     }
 

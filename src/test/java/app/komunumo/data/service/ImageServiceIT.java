@@ -44,32 +44,32 @@ class ImageServiceIT extends IntegrationTest {
 
     @Test
     void happyCase() {
-        assertThat(imageService.getImageCount()).isEqualTo(5);
+        assertThat(imageService.getImageCount()).isEqualTo(10);
 
         // store new image
         var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP));
         final var imageId = image.id();
         assertThat(imageId).isNotNull();
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
-        assertThat(imageService.getImageCount()).isEqualTo(6);
+        assertThat(imageService.getImageCount()).isEqualTo(11);
 
         // read the image from the database
         image = imageService.getImage(imageId).orElseThrow();
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
-        assertThat(imageService.getImageCount()).isEqualTo(6);
+        assertThat(imageService.getImageCount()).isEqualTo(11);
 
         // update existing image
         image = imageService.storeImage(new ImageDto(image.id(), ContentType.IMAGE_SVG));
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_SVG);
-        assertThat(imageService.getImageCount()).isEqualTo(6);
+        assertThat(imageService.getImageCount()).isEqualTo(11);
 
         // read the image from the database
         image = imageService.getImage(imageId).orElseThrow();
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_SVG);
-        assertThat(imageService.getImageCount()).isEqualTo(6);
+        assertThat(imageService.getImageCount()).isEqualTo(11);
 
         // read all images from the database
         final var images = imageService.getImages();
@@ -83,7 +83,7 @@ class ImageServiceIT extends IntegrationTest {
         // delete the existing image
         assertThat(imageService.deleteImage(image)).isTrue();
         assertThat(imageService.getImage(imageId)).isEmpty();
-        assertThat(imageService.getImageCount()).isEqualTo(5);
+        assertThat(imageService.getImageCount()).isEqualTo(10);
 
         // find orphaned images again
         assertThat(imageService.findOrphanedImages()).isEmpty();

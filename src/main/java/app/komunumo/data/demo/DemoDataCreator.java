@@ -46,6 +46,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -91,9 +92,10 @@ public final class DemoDataCreator {
 
         LOGGER.info("Creating demo data...");
         if (demoDataUrl.isBlank()) {
-            final var images = createDemoImages(imageService);
-            final var communities = createDemoCommunities(communityService, images);
-            createDemoEvents(eventService, images, communities);
+            final var communityImages = createDemoImages(imageService, "community");
+            final var communities = createDemoCommunities(communityService, communityImages);
+            final var eventImages = createDemoImages(imageService, "event");
+            createDemoEvents(eventService, eventImages, communities);
             createGlobalPages(globalPageService);
         } else {
             final var demoDataImporter = new DemoDataImporter(demoDataUrl);
@@ -110,13 +112,15 @@ public final class DemoDataCreator {
         LOGGER.info("Orphaned image files cleaned up.");
     }
 
-    private List<ImageDto> createDemoImages(final @NotNull ImageService imageService) {
+    private List<ImageDto> createDemoImages(final @NotNull ImageService imageService, final @NotNull String filenamePrefix) {
+        final List<ImageDto> images = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            final var filename = "demo-background-" + i + ".jpg";
-            final var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_JPEG));
+            final var filename = "%s-%d.webp".formatted(filenamePrefix, i);
+            final var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP));
             storeDemoImage(image, filename);
+            images.add(image);
         }
-        return imageService.getImages();
+        return images;
     }
 
     private List<CommunityDto> createDemoCommunities(final @NotNull CommunityService communityService,
@@ -161,13 +165,13 @@ public final class DemoDataCreator {
     @VisibleForTesting
     void storeDemoImage(final @NotNull ImageDto image, final @NotNull String filename) {
         // load resources from classpath
-        try (InputStream inputStream = getClass().getResourceAsStream("/META-INF/resources/images/" + filename)) {
+        try (InputStream inputStream = getClass().getResourceAsStream("/META-INF/resources/images/demo/" + filename)) {
             if (inputStream == null) {
                 throw new FileNotFoundException("Demo image not found: " + filename);
             }
 
             // write them to a temporary file (for transfer to file-based API)
-            final var tempFile = Files.createTempFile("demo-image-", ".jpg");
+            final var tempFile = Files.createTempFile("demo-image-", ".webp");
             tempFile.toFile().deleteOnExit();
             Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
