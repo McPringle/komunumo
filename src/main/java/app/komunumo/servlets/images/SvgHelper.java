@@ -38,7 +38,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringReader;
+import java.io.Reader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
@@ -217,7 +217,7 @@ final class SvgHelper {
      */
     @VisibleForTesting
     static @NotNull EntityResolver noOpEntityResolver() {
-        return (publicId, systemId) -> new InputSource(new StringReader(""));
+        return (publicId, systemId) -> new InputSource(Reader.of(""));
     }
 
     /**

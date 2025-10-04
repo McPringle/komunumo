@@ -34,7 +34,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.Reader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -116,7 +116,7 @@ class SvgHelperTest {
         factory.setNamespaceAware(false);
 
         final var builder = factory.newDocumentBuilder();
-        return builder.parse(new InputSource(new StringReader(xml)));
+        return builder.parse(new InputSource(Reader.of(xml)));
     }
 
     @Test
