@@ -21,7 +21,6 @@ import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.confirmation.ConfirmationContext;
-import app.komunumo.data.service.confirmation.ConfirmationResponse;
 import app.komunumo.data.service.confirmation.ConfirmationStatus;
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
@@ -107,7 +106,7 @@ class ParticipationServiceIT extends IntegrationTest {
         assertThat(participations).hasSize(1);
 
         final var user = userService.getUserByEmail(email).orElseThrow();
-        assertThat(user).isNotNull();
+        assertThat(user.email()).isEqualTo(email);
 
         final var participation = participations.getFirst();
         assertThat(participation).isNotNull().satisfies(testee -> {
