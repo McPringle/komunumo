@@ -90,31 +90,6 @@ If no user with the admin role is found in the database, a new instance admin wi
 > [!WARNING]
 > This mechanism only runs once! It will **not** overwrite or recreate users if an admin already exists.
 
-#### Styles
-
-To configure custom styling, set the environment variable `KOMUNUMO_INSTANCE_STYLES` to the URL of your custom CSS file. This file must be accessible via HTTPS and contain valid CSS.
-
-```
-KOMUNUMO_INSTANCE_STYLES=https://static.example.com/custom.css
-```
-
-The maintainer of the *Komunumo* instance is responsible for hosting the custom CSS file as well as any additional resources referenced within it, such as background images, fonts, or logos. All resources must be accessible via HTTPS.
-
-*Komunumo* uses the Vaadin Flow framework, which provides a set of CSS variables that can be used to customize the appearance of the application. These variables allow you to change colors, fonts, spacing, and other visual aspects of the UI. Please refer to the [Vaadin documentation](https://vaadin.com/docs/latest/styling) for a comprehensive list of available CSS variables.
-
-To make styling easier, Vaadin provides an online theme editor that allows you to experiment with different styles and see the changes in real-time: [Vaadin Theme Editor](https://demo.vaadin.com/lumo-editor/)
-
-> [!NOTE]  
-> When upgrading to a new release of *Komunumo* with an updated Vaadin version, new CSS variables may be added or existing ones removed. Please read the release notes to check for any changes and compare your styles before and after the update.
-
-#### Communities
-
-If you run your own instance and only have a single community, you can configure *Komunumo* to hide the community selection from users. This is useful if you want to use *Komunumo* as a simple event management system without requiring users to deal with communities. By default, this option is disabled (`false`), meaning the communities page remains accessible and users can choose a community.
-
-```
-KOMUNUMO_INSTANCE_HIDE_COMMUNITIES=true
-```
-
 ### File Configuration
 
 | Variable                 | Default                       | Description                            |
