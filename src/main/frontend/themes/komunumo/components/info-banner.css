@@ -21,7 +21,7 @@
     justify-content: center;
     justify-items: center;
     background-color: var(--lumo-warning-color);
-    color: var(--lumo-warning-text-color);
+    color: var(--lumo-warning-contrast-color);
     box-shadow: var(--lumo-box-shadow-s);
     font-size: var(--lumo-font-size-xl);
 }
