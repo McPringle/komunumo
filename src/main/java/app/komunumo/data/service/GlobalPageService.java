@@ -109,15 +109,6 @@ public final class GlobalPageService {
                 .fetchInto(GlobalPageDto.class);
     }
 
-    public boolean deleteGlobalPage(final @NotNull GlobalPageDto globalPage) {
-        final var slot = globalPage.slot();
-        final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());
-        return dsl.delete(GLOBAL_PAGE)
-                .where(GLOBAL_PAGE.SLOT.eq(slot))
-                .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode))
-                .execute() > 0;
-    }
-
     public int getGlobalPageCount() {
         return Optional.ofNullable(
                 dsl.selectCount()
@@ -139,4 +130,14 @@ public final class GlobalPageService {
                         .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode)))
                 .execute() == 1;
     }
+
+    public boolean deleteGlobalPage(final @NotNull GlobalPageDto globalPage) {
+        final var slot = globalPage.slot();
+        final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());
+        return dsl.delete(GLOBAL_PAGE)
+                .where(GLOBAL_PAGE.SLOT.eq(slot))
+                .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode))
+                .execute() > 0;
+    }
+
 }
