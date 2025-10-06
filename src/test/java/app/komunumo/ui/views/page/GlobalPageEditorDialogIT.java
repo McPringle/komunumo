@@ -337,8 +337,6 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             // check that the view has changed
             assertThat(_get(view, Markdown.class).getContent()).startsWith("## New Legal Notice");
-
-            logout();
         } finally {
             globalPageService.storeGlobalPage(originalPage);
             SecurityContextHolder.clearContext();
@@ -391,8 +389,6 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
             // check that the confirmation dialog is closed and the editor dialog is still open
             assertThat(confirmDialog.isOpened()).isFalse();
             assertThat(dialog.isOpened()).isTrue();
-
-            logout();
         } finally {
             SecurityContextHolder.clearContext();
         }
@@ -447,8 +443,6 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             // check that the view has not changed
             assertThat(_get(view, Markdown.class).getContent()).startsWith("## Legal Notice");
-
-            logout();
         } finally {
             SecurityContextHolder.clearContext();
         }
@@ -504,8 +498,6 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             // check that the view has not changed
             assertThat(_get(view, Markdown.class).getContent()).startsWith("## New Legal Notice");
-
-            logout();
         } finally {
             globalPageService.storeGlobalPage(originalPage);
             SecurityContextHolder.clearContext();
@@ -569,8 +561,6 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             // check that the dialog is still open
             assertThat(dialog.isOpened()).isTrue();
-
-            logout();
         } finally {
             SecurityContextHolder.clearContext();
         }
@@ -578,14 +568,15 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
     @Test
     void editGlobalPage_openEditSaveError() {
-        final var ui = UI.getCurrent();
-        final var testPage = globalPageService.storeGlobalPage(new GlobalPageDto(
-                "test", Locale.ENGLISH, null, null, "Test Page", "## Test Page"));
-
+        GlobalPageDto testPage = null;
         try {
             // login as admin
             final var testUser = getTestUser(UserRole.ADMIN);
             login(testUser);
+
+            final var ui = UI.getCurrent();
+            testPage = globalPageService.storeGlobalPage(new GlobalPageDto(
+                    "test", Locale.ENGLISH, null, null, "Test Page", "## Test Page"));
 
             // important: navigate after login, so that the Vaadin request is updated
             ui.navigate("page/test");
@@ -635,10 +626,10 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             // check that the dialog is still open
             assertThat(dialog.isOpened()).isTrue();
-
-            logout();
         } finally {
-            globalPageService.deleteGlobalPage(testPage);
+            if (testPage != null) {
+                globalPageService.deleteGlobalPage(testPage);
+            }
             SecurityContextHolder.clearContext();
         }
     }
@@ -710,8 +701,6 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
 
             // check that the preview has updated content
             assertThat(markdown.getContent()).startsWith("## New Legal Notice");
-
-            logout();
         } finally {
             globalPageService.storeGlobalPage(originalPage);
             SecurityContextHolder.clearContext();

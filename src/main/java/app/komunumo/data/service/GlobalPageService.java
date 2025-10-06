@@ -19,11 +19,10 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.GlobalPageRecord;
 import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.security.RequireAdmin;
 import app.komunumo.util.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -36,18 +35,43 @@ import java.util.stream.Collectors;
 
 import static app.komunumo.data.db.tables.GlobalPage.GLOBAL_PAGE;
 
+/**
+ * <p>Service layer for creating, reading, updating, and deleting global pages backed by the database.</p>
+ *
+ * <p>Read operations are publicly available, while write operations are protected via Spring Security
+ * method security. Only users with the {@code ADMIN} role are allowed to modify global pages.</p>
+ *
+ * <p>Timestamps are managed in UTC, setting {@code created} and {@code updated} accordingly during
+ * insert and update operations.</p>
+ */
 @Service
-public final class GlobalPageService {
-
-    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(GlobalPageService.class);
+public class GlobalPageService {
 
     private final @NotNull DSLContext dsl;
 
+    /**
+     * <p>Creates a new {@code GlobalPageService} using the provided jOOQ {@link DSLContext}.</p>
+     *
+     * @param dsl The jOOQ DSL context used to interact with the database; must not be {@code null}.
+     */
     public GlobalPageService(final @NotNull DSLContext dsl) {
         super();
         this.dsl = dsl;
     }
 
+    /**
+     * <p>Creates or updates (upserts) a global page identified by its {@code slot} and {@code language}.</p>
+     *
+     * <p>If a record already exists for the given slot and language, it is updated and its
+     * {@code updated} timestamp is set to the current UTC time. Otherwise, a new record is inserted
+     * with both {@code created} and {@code updated} set to the current UTC time.</p>
+     *
+     * <p><strong>Security:</strong> Requires the authenticated user to have the {@code ADMIN} role.</p>
+     *
+     * @param globalPage The global page DTO to persist; must not be {@code null}.
+     * @return The persisted global page as a DTO.
+     */
+    @RequireAdmin
     public GlobalPageDto storeGlobalPage(final @NotNull GlobalPageDto globalPage) {
         final var slot = globalPage.slot();
         final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());
@@ -69,8 +93,18 @@ public final class GlobalPageService {
 
     }
 
+    /**
+     * <p>Retrieves a global page for the given {@code slot} and {@link Locale}.</p>
+     *
+     * <p>If no page exists for the requested language and the requested language is not English,
+     * the method falls back to {@link Locale#ENGLISH}.</p>
+     *
+     * @param slot The slot identifier of the page; must not be {@code null}.
+     * @param locale The desired locale; must not be {@code null}.
+     * @return An {@link Optional} containing the page if found, otherwise empty.
+     */
     public @NotNull Optional<GlobalPageDto> getGlobalPage(final @NotNull String slot,
-                                                                   final @NotNull Locale locale) {
+                                                          final @NotNull Locale locale) {
         final var languageCode = LocaleUtil.getLanguageCode(locale);
         final var globalPage = dsl.selectFrom(GLOBAL_PAGE)
                 .where(GLOBAL_PAGE.SLOT.eq(slot))
@@ -84,6 +118,13 @@ public final class GlobalPageService {
         return globalPage;
     }
 
+    /**
+     * <p>Returns at most one global page per slot for the given {@link Locale}, preferring the requested
+     * language and falling back to English where necessary.</p>
+     *
+     * @param locale The desired locale; must not be {@code null}.
+     * @return A list containing one page per slot in the preferred language or English fallback.
+     */
     public @NotNull List<@NotNull GlobalPageDto> getGlobalPages(final @NotNull Locale locale) {
         final var preferredLanguageCode = LocaleUtil.getLanguageCode(locale);
         final var fallbackLanguageCode = "EN";
@@ -104,11 +145,21 @@ public final class GlobalPageService {
         return pageMap.values().stream().toList();
     }
 
+    /**
+     * <p>Retrieves all global pages regardless of slot or language.</p>
+     *
+     * @return A list of all global page DTOs.
+     */
     public @NotNull List<@NotNull GlobalPageDto> getAllGlobalPages() {
         return dsl.selectFrom(GLOBAL_PAGE)
                 .fetchInto(GlobalPageDto.class);
     }
 
+    /**
+     * <p>Counts the total number of global pages.</p>
+     *
+     * @return The total count of global pages; never negative.
+     */
     public int getGlobalPageCount() {
         return Optional.ofNullable(
                 dsl.selectCount()
@@ -117,6 +168,21 @@ public final class GlobalPageService {
         ).orElse(0);
     }
 
+    /**
+     * <p>Updates the title and markdown of an existing global page identified by its {@code slot}
+     * and {@code language}.</p>
+     *
+     * <p>The {@code updated} timestamp is set to the current UTC time. Returns {@code true} if exactly
+     * one record was modified; otherwise {@code false}.</p>
+     *
+     * <p><strong>Security:</strong> Requires the authenticated user to have the {@code ADMIN} role.</p>
+     *
+     * @param globalPage The page whose slot and language identify the record to update; must not be {@code null}.
+     * @param title The new title to set; must not be {@code null}.
+     * @param markdown The new markdown content to set; must not be {@code null}.
+     * @return {@code true} if exactly one row was updated; otherwise {@code false}.
+     */
+    @RequireAdmin
     public boolean updateGlobalPage(final @NotNull GlobalPageDto globalPage,
                                     final @NotNull String title,
                                     final @NotNull String markdown) {
@@ -131,13 +197,24 @@ public final class GlobalPageService {
                 .execute() == 1;
     }
 
+    /**
+     * <p>Deletes the specified global page identified by its {@code slot} and {@code language}.</p>
+     *
+     * <p>Returns {@code true} if exactly one record was removed; otherwise {@code false}.</p>
+     *
+     * <p><strong>Security:</strong> Requires the authenticated user to have the {@code ADMIN} role.</p>
+     *
+     * @param globalPage The page whose slot and language identify the record(s) to delete; must not be {@code null}.
+     * @return {@code true} if exactly one row was deleted; otherwise {@code false}.
+     */
+    @RequireAdmin
     public boolean deleteGlobalPage(final @NotNull GlobalPageDto globalPage) {
         final var slot = globalPage.slot();
         final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());
         return dsl.delete(GLOBAL_PAGE)
                 .where(GLOBAL_PAGE.SLOT.eq(slot))
                 .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode))
-                .execute() > 0;
+                .execute() == 1;
     }
 
 }

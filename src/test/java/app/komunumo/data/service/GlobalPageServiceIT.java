@@ -18,10 +18,12 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.data.dto.UserRole;
 import app.komunumo.ui.IntegrationTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -108,6 +110,10 @@ class GlobalPageServiceIT extends IntegrationTest {
         var contactPage = new GlobalPageDto("contact", Locale.ENGLISH, null, null,
                 "Contact", "## Contact"); // to test english fallback
         try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
             contactPage = globalPageService.storeGlobalPage(contactPage);
             final var pages = globalPageService.getGlobalPages(Locale.GERMAN)
                     .stream()
@@ -125,6 +131,7 @@ class GlobalPageServiceIT extends IntegrationTest {
         } finally {
             final var returnValue = globalPageService.deleteGlobalPage(contactPage);
             assertThat(returnValue).isTrue();
+            SecurityContextHolder.clearContext();
         }
     }
 
@@ -153,6 +160,10 @@ class GlobalPageServiceIT extends IntegrationTest {
         assertThat(testee.updated()).isNull();
 
         try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
             testee = globalPageService.storeGlobalPage(testee);
             assertThat(testee).isNotNull();
             assertThat(testee.slot()).isEqualTo("test");
@@ -181,6 +192,7 @@ class GlobalPageServiceIT extends IntegrationTest {
             assertThat(testee).isNotNull();
             assertThat(globalPageService.deleteGlobalPage(testee)).isTrue();
             assertThat(globalPageService.deleteGlobalPage(testee)).isFalse();
+            SecurityContextHolder.clearContext();
         }
     }
 
@@ -194,10 +206,14 @@ class GlobalPageServiceIT extends IntegrationTest {
         final var markdownUpdated = "## Test Page Content Updated";
 
         final var testPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
-        final var originalTestPage = globalPageService.storeGlobalPage(testPage);
-        assertThat(originalTestPage).isNotNull();
-
         try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            final var originalTestPage = globalPageService.storeGlobalPage(testPage);
+            assertThat(originalTestPage).isNotNull();
+
             final var testPageBeforeUpdate = globalPageService.getGlobalPage(slot, locale).orElseThrow();
             assertThat(testPageBeforeUpdate).isNotNull();
             assertThat(testPageBeforeUpdate.slot()).isEqualTo(slot);
@@ -224,6 +240,7 @@ class GlobalPageServiceIT extends IntegrationTest {
             assertThat(testPageAfterUpdate.markdown()).isEqualTo(markdownUpdated);
         } finally {
             globalPageService.deleteGlobalPage(testPage);
+            SecurityContextHolder.clearContext();
         }
     }
 
@@ -238,7 +255,15 @@ class GlobalPageServiceIT extends IntegrationTest {
 
         final var testPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
 
-        final var updateResult = globalPageService.updateGlobalPage(testPage, titleUpdated, markdownUpdated);
-        assertThat(updateResult).isFalse();
+        try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            final var updateResult = globalPageService.updateGlobalPage(testPage, titleUpdated, markdownUpdated);
+            assertThat(updateResult).isFalse();
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
     }
 }

@@ -29,6 +29,7 @@ import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.security.SystemAuthenticator;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,11 +56,14 @@ public final class DemoDataCreator {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(DemoDataCreator.class);
 
+    private final @NotNull SystemAuthenticator systemAuthenticator;
     private final @NotNull ServiceProvider serviceProvider;
     private final boolean enabled;
     private final @NotNull String demoDataUrl;
 
-    public DemoDataCreator(final @NotNull ServiceProvider serviceProvider) {
+    public DemoDataCreator(final @NotNull SystemAuthenticator systemAuthenticator,
+                           final @NotNull ServiceProvider serviceProvider) {
+        this.systemAuthenticator = systemAuthenticator;
         this.serviceProvider = serviceProvider;
 
         final var demoConfig = serviceProvider.getAppConfig().demo();
@@ -69,6 +73,10 @@ public final class DemoDataCreator {
 
     @Scheduled(cron = "0 0 * * * *")
     public void resetDemoData() {
+        systemAuthenticator.runAsAdmin(this::resetDemoDataAsAdmin);
+    }
+
+    private void resetDemoDataAsAdmin() {
         if (!enabled) {
             LOGGER.info("Demo data plugin is disabled, skipping demo data reset.");
             return;
