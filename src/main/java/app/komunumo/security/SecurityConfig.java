@@ -22,6 +22,7 @@ import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -32,8 +33,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * <p>This class extends {@link VaadinWebSecurity} to integrate Spring Security
  * with Vaadin and define application-specific security rules.</p>
  */
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig extends VaadinWebSecurity {
 
     /**
