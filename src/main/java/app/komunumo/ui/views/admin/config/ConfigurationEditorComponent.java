@@ -20,6 +20,7 @@ package app.komunumo.ui.views.admin.config;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.TranslationProvider;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.Icon;
@@ -29,81 +30,99 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Locale;
 
 class ConfigurationEditorComponent extends VerticalLayout {
+
+    private final @NotNull ConfigurationService configurationService;
+    private final @NotNull ConfigurationSetting configurationSetting;
 
     ConfigurationEditorComponent(final @NotNull ConfigurationService configurationService,
                                  final @NotNull ConfigurationSetting configurationSetting) {
         super();
+        this.configurationService = configurationService;
+        this.configurationSetting = configurationSetting;
+        addClassName("configuration-editor-component");
+        add(createComponent());
+    }
 
+    private @NotNull Component createComponent() {
+        if (configurationSetting.isLanguageDependent()) {
+            final var container = new VerticalLayout();
+            container.addClassName("language-group");
+            for (final var locale : TranslationProvider.getSupportedLocales()) {
+                container.add(createComponent(locale));
+            }
+            return container;
+        }
+
+        return createComponent(null);
+    }
+
+    private @NotNull Component createComponent(final @Nullable Locale locale) {
         final var defaultValue = configurationSetting.defaultValue();
         final var label = getTranslation("ui.views.admin.config.ConfigurationEditorView.label." + configurationSetting.setting());
+        final var localizedLabel = locale != null ? label + " (" + locale.getDisplayLanguage(locale) + ")" : label;
+        final var actualValue = configurationService.getConfiguration(configurationSetting, locale);
+        final var isDefaultValue = defaultValue.equals(actualValue);
 
-        if (configurationSetting.isLanguageDependent()) {
-            for (final var locale : TranslationProvider.getSupportedLocales()) {
-                final var localizedValue = configurationService.getConfiguration(configurationSetting, locale);
-                final var localizedLabel = label + " (" + locale.getDisplayLanguage(locale) + ")";
-                final var textField = new TextField(localizedLabel);
-                textField.setPlaceholder(defaultValue);
-                if (!defaultValue.equals(localizedValue)) {
-                    textField.setValue(localizedValue);
-                }
-                add(textField);
-            }
-        } else {
-            final var actualValue = configurationService.getConfiguration(configurationSetting);
-            final var isDefaultValue = defaultValue.equals(actualValue);
+        final var textField = new TextField();
+        textField.setValueChangeMode(ValueChangeMode.EAGER);
+        textField.setLabel(localizedLabel);
+        textField.setPlaceholder(defaultValue);
+        textField.setWidthFull();
 
-            final var textField = new TextField();
-            textField.setValueChangeMode(ValueChangeMode.EAGER);
-            textField.setLabel(label);
-            textField.setPlaceholder(defaultValue);
-
-            if (!isDefaultValue) {
-                textField.setValue(actualValue);
-            }
-
-            final var defaultButton = new Button(new Icon(VaadinIcon.TRASH));
-            defaultButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
-            defaultButton.setAriaLabel("Reset setting to default value");
-            defaultButton.setTooltipText("Reset setting to default value");
-            defaultButton.setEnabled(!isDefaultValue);
-            defaultButton.addClickListener(_ -> textField.setValue(defaultValue));
-
-            final var resetButton = new Button(new Icon(VaadinIcon.REFRESH));
-            resetButton.addThemeVariants(ButtonVariant.LUMO_ICON);
-            resetButton.setAriaLabel("Reset setting to stored value");
-            resetButton.setTooltipText("Reset setting to stored value");
-            resetButton.setEnabled(false);
-            resetButton.addClickListener(_ -> textField.setValue(actualValue));
-
-            final var saveButton = new Button(new Icon(VaadinIcon.CHECK));
-            saveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
-            saveButton.setAriaLabel("Save and activate setting");
-            saveButton.setTooltipText("Save and activate setting");
-            saveButton.setEnabled(false);
-            saveButton.addClickListener(_ -> {
-                final var newValue = textField.getValue().trim();
-                if (defaultValue.equals(newValue)) {
-                    configurationService.deleteConfiguration(configurationSetting);
-                } else {
-                    configurationService.setConfiguration(configurationSetting, newValue);
-                }
-
-                saveButton.setEnabled(false);
-                resetButton.setEnabled(false);
-                defaultButton.setEnabled(!defaultValue.equals(textField.getValue()));
-            });
-
-            textField.addValueChangeListener(valueChangeEvent -> {
-                final var newValue = valueChangeEvent.getValue();
-                defaultButton.setEnabled(!defaultValue.equals(newValue));
-                resetButton.setEnabled(!isDefaultValue && !actualValue.equals(newValue));
-                saveButton.setEnabled(!actualValue.equals(newValue));
-            });
-
-            add(new HorizontalLayout(textField, defaultButton, resetButton, saveButton));
+        if (!isDefaultValue) {
+            textField.setValue(actualValue);
         }
+
+        final var defaultButton = new Button(new Icon(VaadinIcon.TRASH));
+        defaultButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
+        defaultButton.setAriaLabel("Reset setting to default value");
+        defaultButton.setTooltipText("Reset setting to default value");
+        defaultButton.setEnabled(!isDefaultValue);
+        defaultButton.addClickListener(_ -> textField.setValue(defaultValue));
+
+        final var resetButton = new Button(new Icon(VaadinIcon.REFRESH));
+        resetButton.addThemeVariants(ButtonVariant.LUMO_ICON);
+        resetButton.setAriaLabel("Reset setting to stored value");
+        resetButton.setTooltipText("Reset setting to stored value");
+        resetButton.setEnabled(false);
+        resetButton.addClickListener(_ -> textField.setValue(actualValue));
+
+        final var saveButton = new Button(new Icon(VaadinIcon.CHECK));
+        saveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
+        saveButton.setAriaLabel("Save and activate setting");
+        saveButton.setTooltipText("Save and activate setting");
+        saveButton.setEnabled(false);
+        saveButton.addClickListener(_ -> {
+            final var newValue = textField.getValue().trim();
+            if (defaultValue.equals(newValue)) {
+                configurationService.deleteConfiguration(configurationSetting, locale);
+            } else {
+                configurationService.setConfiguration(configurationSetting, locale, newValue);
+            }
+
+            saveButton.setEnabled(false);
+            resetButton.setEnabled(false);
+            defaultButton.setEnabled(!defaultValue.equals(textField.getValue()));
+        });
+
+        textField.addValueChangeListener(valueChangeEvent -> {
+            final var newValue = valueChangeEvent.getValue();
+            defaultButton.setEnabled(!defaultValue.equals(newValue));
+            resetButton.setEnabled(!isDefaultValue && !actualValue.equals(newValue));
+            saveButton.setEnabled(!actualValue.equals(newValue));
+        });
+
+        final var buttonBar = new HorizontalLayout(defaultButton, resetButton, saveButton);
+        buttonBar.addClassName("button-bar");
+
+        final var component = new VerticalLayout(textField, buttonBar);
+        component.addClassName("configuration-setting-field");
+        return component;
     }
 
 }

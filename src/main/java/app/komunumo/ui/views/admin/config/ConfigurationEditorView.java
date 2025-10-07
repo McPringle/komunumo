@@ -38,6 +38,7 @@ public class ConfigurationEditorView extends AbstractView implements AfterNaviga
     public ConfigurationEditorView(final @NotNull ConfigurationService configurationService) {
         super(configurationService);
         this.configurationService = configurationService;
+        addClassName("configuration-editor-view");
         add(new H2(getTranslation("ui.views.admin.config.ConfigurationEditorView.title")));
     }
 
@@ -49,8 +50,7 @@ public class ConfigurationEditorView extends AbstractView implements AfterNaviga
     @Override
     public void afterNavigation(final @NotNull AfterNavigationEvent afterNavigationEvent) {
         for (final var setting : ConfigurationSetting.values()) {
-            final var editor = new ConfigurationEditorComponent(configurationService, setting);
-            add(editor);
+            add(new ConfigurationEditorComponent(configurationService, setting));
         }
     }
 
