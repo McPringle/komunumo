@@ -16,17 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "fonts/space-grotesk.css";
+.configuration-editor-view vaadin-vertical-layout {
+    padding: 0;
+}
 
-@import "components/confirmation-dialog.css";
-@import "components/info-banner.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
-@import "components/navigation-bar.css";
-@import "components/page-footer.css";
-@import "components/page-header.css";
-
-@import "views/confirmation-view.css";
-@import "views/global-page-view.css";
-
-@import "views/admin/configuration-editor-view.css";
+.configuration-editor-view .configuration-setting-field {
+    border-top: 1px solid #ccc;
+}
