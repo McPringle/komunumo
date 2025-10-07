@@ -101,10 +101,10 @@ public final class NavigationBar extends HorizontalLayout {
 
         // update menu items based on authentication state
         ComponentEffect.effect(this, () -> {
-            final var loggedIn = authenticationSignal.isAuthenticated();
-            loginItem.setVisible(!loggedIn);
-            registerItem.setVisible(!loggedIn);
-            logoutItem.setVisible(loggedIn);
+            final var isLoggedIn = authenticationSignal.isAuthenticated();
+            loginItem.setVisible(!isLoggedIn);
+            registerItem.setVisible(!isLoggedIn);
+            logoutItem.setVisible(isLoggedIn);
 
             final var isAdmin = authenticationSignal.isAdmin();
             configItem.setVisible(isAdmin);

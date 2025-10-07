@@ -17,16 +17,37 @@
  */
 package app.komunumo.ui.signals;
 
+import app.komunumo.security.UserPrincipal;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthenticationSignalTest {
 
+    private AuthenticationSignal signal;
+
+    @BeforeEach
+    void setup() {
+        signal = new AuthenticationSignal();
+        SecurityContextHolder.clearContext();
+    }
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
     @Test
     void uninitialized_isNotAuthenticated_andNotAdmin() {
-        final var signal = new AuthenticationSignal();
-
         assertThat(signal.isAuthenticated()).isFalse();
         assertThat(signal.isAdmin()).isFalse();
     }
@@ -34,8 +55,6 @@ class AuthenticationSignalTest {
 
     @Test
     void setAuthenticated_false_resultsInNotAuthenticated_andNotAdmin() {
-        final var signal = new AuthenticationSignal();
-
         signal.setAuthenticated(false);
 
         assertThat(signal.isAuthenticated()).isFalse();
@@ -45,8 +64,6 @@ class AuthenticationSignalTest {
 
     @Test
     void setAuthenticated_true_resultsInAuthenticated_andNotAdmin() {
-        final var signal = new AuthenticationSignal();
-
         signal.setAuthenticated(true);
 
         assertThat(signal.isAuthenticated()).isTrue();
@@ -55,8 +72,6 @@ class AuthenticationSignalTest {
 
     @Test
     void setAuthenticated_trueAndAdmin_resultsInAuthenticated_andAdmin() {
-        final var signal = new AuthenticationSignal();
-
         signal.setAuthenticated(true, true);
 
         assertThat(signal.isAuthenticated()).isTrue();
@@ -65,8 +80,6 @@ class AuthenticationSignalTest {
 
     @Test
     void setAuthenticated_trueAndNotAdmin_resultsInAuthenticated_andNotAdmin() {
-        final var signal = new AuthenticationSignal();
-
         signal.setAuthenticated(true, false);
 
         assertThat(signal.isAuthenticated()).isTrue();
@@ -75,9 +88,79 @@ class AuthenticationSignalTest {
 
     @Test
     void setAuthenticated_falseAndAdmin_resultsInNotAuthenticated_andNotAdmin() {
-        final var signal = new AuthenticationSignal();
-
         signal.setAuthenticated(false, true);
+
+        assertThat(signal.isAuthenticated()).isFalse();
+        assertThat(signal.isAdmin()).isFalse();
+    }
+
+    @Test
+    void refreshFromSecurityContext_noAuthentication_setsFalseFalse() {
+        signal.refreshFromSecurityContext();
+
+        assertThat(signal.isAuthenticated()).isFalse();
+        assertThat(signal.isAdmin()).isFalse();
+    }
+
+    @Test
+    void refreshFromSecurityContext_nonUserPrincipalPrincipal_setsFalseFalse() {
+        final var auth = new UsernamePasswordAuthenticationToken(
+                "someone", "pw",
+                List.of(
+                        new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("ROLE_ADMIN")
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        signal.refreshFromSecurityContext();
+
+        assertThat(signal.isAuthenticated()).isFalse();
+        assertThat(signal.isAdmin()).isFalse();
+    }
+
+    @Test
+    void refreshFromSecurityContext_authenticatedWithoutAdmin_setsTrueFalse() {
+        final var principal = Mockito.mock(UserPrincipal.class);
+        final var auth = new UsernamePasswordAuthenticationToken(
+                principal, "pw",
+                List.of(new SimpleGrantedAuthority("ROLE_USER"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        signal.refreshFromSecurityContext();
+
+        assertThat(signal.isAuthenticated()).isTrue();
+        assertThat(signal.isAdmin()).isFalse();
+    }
+
+    @Test
+    void refreshFromSecurityContext_authenticatedWithAdmin_setsTrueTrue() {
+        final var principal = Mockito.mock(UserPrincipal.class);
+        final var auth = new UsernamePasswordAuthenticationToken(
+                principal, "pw",
+                List.of(
+                        new SimpleGrantedAuthority("ROLE_USER"),
+                        new SimpleGrantedAuthority("ROLE_ADMIN")
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        signal.refreshFromSecurityContext();
+
+        assertThat(signal.isAuthenticated()).isTrue();
+        assertThat(signal.isAdmin()).isTrue();
+    }
+
+    @Test
+    void refreshFromSecurityContext_anonymousUser_setsFalseFalse() {
+        final var anonymousAuth = new AnonymousAuthenticationToken(
+                "anonymousKey", "anonymousUser",
+                List.of(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))
+        );
+        SecurityContextHolder.getContext().setAuthentication(anonymousAuth);
+
+        signal.refreshFromSecurityContext();
 
         assertThat(signal.isAuthenticated()).isFalse();
         assertThat(signal.isAdmin()).isFalse();

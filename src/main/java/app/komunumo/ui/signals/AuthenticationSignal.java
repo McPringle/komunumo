@@ -17,8 +17,11 @@
  */
 package app.komunumo.ui.signals;
 
+import app.komunumo.util.SecurityUtil;
 import com.vaadin.signals.ValueSignal;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,12 +29,28 @@ import org.springframework.stereotype.Component;
  *
  * <p>This simplified signal tracks whether a user is authenticated and whether the user
  * has the ADMIN role. Components can observe these signals to adjust visibility and behavior.</p>
+ *
+ * <p>This bean is session scoped so each user session has an independent state that mirrors the
+ * Spring Security context.</p>
  */
 @Component
-public final class AuthenticationSignal {
+@Scope(value = "vaadin-session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class AuthenticationSignal {
 
-    private final @NotNull ValueSignal<Boolean> authenticated = new ValueSignal<>(Boolean.FALSE);
-    private final @NotNull ValueSignal<Boolean> admin = new ValueSignal<>(Boolean.FALSE);
+    private final @NotNull ValueSignal<Boolean> authenticated = new ValueSignal<>(false);
+    private final @NotNull ValueSignal<Boolean> admin = new ValueSignal<>(false);
+
+    /**
+     * <p>Refreshes the signal from the current Spring Security context.</p>
+     *
+     * <p>This method reads the active authentication and updates the internal flags accordingly.
+     * Call this at the start of a request or before rendering auth-dependent UI.</p>
+     */
+    public void refreshFromSecurityContext() {
+        final var isAuthenticated = SecurityUtil.isLoggedIn();
+        final var isAdmin = SecurityUtil.isAdmin();
+        setAuthenticated(isAuthenticated, isAdmin);
+    }
 
     /**
      * <p>Sets authentication based on the given state.</p>

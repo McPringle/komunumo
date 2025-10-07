@@ -45,6 +45,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
     public WebsiteLayout(final @NotNull ServiceProvider serviceProvider,
                          final @NotNull AuthenticationSignal authenticationSignal) {
         super();
+        authenticationSignal.refreshFromSecurityContext();
         ui = UI.getCurrent();
 
         if (serviceProvider.getAppConfig().demo().enabled()) {
