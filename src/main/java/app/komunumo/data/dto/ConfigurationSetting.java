@@ -21,17 +21,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public enum ConfigurationSetting {
-    INSTANCE_URL("instance.url", "http://localhost:8080"),
-    INSTANCE_NAME("instance.name", "Your Instance Name"),
-    INSTANCE_SLOGAN("instance.slogan", "Your Instance Slogan"),
-    INSTANCE_CUSTOM_STYLES("instance.custom.styles", ""),
-    INSTANCE_HIDE_COMMUNITIES("instance.hideCommunities", "false"),;
+    INSTANCE_URL("instance.url", false, "http://localhost:8080"),
+    INSTANCE_NAME("instance.name", false, "Your Instance Name"),
+    INSTANCE_SLOGAN("instance.slogan", true, "Your Instance Slogan"),
+    INSTANCE_CUSTOM_STYLES("instance.custom.styles", false, ""),
+    INSTANCE_HIDE_COMMUNITIES("instance.hideCommunities", false, "false"),;
 
     private final String setting;
+    private final boolean languageDependent;
     private final String defaultValue;
 
-    ConfigurationSetting(final @NotNull String setting, final @NotNull String defaultValue) {
+    ConfigurationSetting(final @NotNull String setting,
+                         final boolean languageDependent,
+                         final @NotNull String defaultValue) {
         this.setting = setting;
+        this.languageDependent = languageDependent;
         this.defaultValue = defaultValue;
     }
 
@@ -46,6 +50,10 @@ public enum ConfigurationSetting {
 
     public String setting() {
         return setting;
+    }
+
+    public boolean isLanguageDependent() {
+        return languageDependent;
     }
 
     public String defaultValue() {
