@@ -44,4 +44,14 @@ class ConfigurationSettingTest {
                 .hasMessage("Unknown setting: null");
     }
 
+    @Test
+    void isLanguageDependent_false() {
+        assertThat(ConfigurationSetting.INSTANCE_NAME.isLanguageDependent()).isFalse();
+    }
+
+    @Test
+    void isLanguageDependent_true() {
+        assertThat(ConfigurationSetting.INSTANCE_SLOGAN.isLanguageDependent()).isTrue();
+    }
+
 }
