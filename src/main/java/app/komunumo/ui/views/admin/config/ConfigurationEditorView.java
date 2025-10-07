@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 //TODO @RolesAllowed("ADMIN")
 @AnonymousAllowed
-@Route(value = "config", layout = WebsiteLayout.class)
+@Route(value = "admin/config", layout = WebsiteLayout.class)
 public class ConfigurationEditorView extends AbstractView implements AfterNavigationObserver {
 
     private final @NotNull ConfigurationService configurationService;
