@@ -117,6 +117,22 @@ public final class ConfigurationService {
         cache.invalidateAll();
     }
 
+    public void deleteConfiguration(final @NotNull ConfigurationSetting setting) {
+        deleteConfiguration(setting, null);
+    }
+
+    public void deleteConfiguration(final @NotNull ConfigurationSetting setting,
+                                    final @Nullable Locale locale) {
+        final var languageCode = LocaleUtil.getLanguageCode(locale);
+
+        dsl.deleteFrom(CONFIG)
+                .where(CONFIG.SETTING.eq(setting.setting()))
+                .and(CONFIG.LANGUAGE.eq(languageCode))
+                .execute();
+
+        cache.asMap().keySet().removeIf(cacheKey -> cacheKey.setting().equals(setting));
+    }
+
     public void deleteAllSettings() {
         dsl.delete(CONFIG).execute();
         clearCache();

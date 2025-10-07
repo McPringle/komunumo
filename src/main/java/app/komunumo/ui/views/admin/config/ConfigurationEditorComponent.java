@@ -20,8 +20,14 @@ package app.komunumo.ui.views.admin.config;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.TranslationProvider;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import org.jetbrains.annotations.NotNull;
 
 class ConfigurationEditorComponent extends VerticalLayout {
@@ -46,16 +52,57 @@ class ConfigurationEditorComponent extends VerticalLayout {
             }
         } else {
             final var actualValue = configurationService.getConfiguration(configurationSetting);
+            final var isDefaultValue = defaultValue.equals(actualValue);
 
             final var textField = new TextField();
+            textField.setValueChangeMode(ValueChangeMode.EAGER);
             textField.setLabel(label);
             textField.setPlaceholder(defaultValue);
 
-            if (!defaultValue.equals(actualValue)) {
+            if (!isDefaultValue) {
                 textField.setValue(actualValue);
             }
 
-            add(textField);
+            final var defaultButton = new Button(new Icon(VaadinIcon.TRASH));
+            defaultButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
+            defaultButton.setAriaLabel("Reset setting to default value");
+            defaultButton.setTooltipText("Reset setting to default value");
+            defaultButton.setEnabled(!isDefaultValue);
+            defaultButton.addClickListener(_ -> textField.setValue(defaultValue));
+
+            final var resetButton = new Button(new Icon(VaadinIcon.REFRESH));
+            resetButton.addThemeVariants(ButtonVariant.LUMO_ICON);
+            resetButton.setAriaLabel("Reset setting to stored value");
+            resetButton.setTooltipText("Reset setting to stored value");
+            resetButton.setEnabled(false);
+            resetButton.addClickListener(_ -> textField.setValue(actualValue));
+
+            final var saveButton = new Button(new Icon(VaadinIcon.CHECK));
+            saveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
+            saveButton.setAriaLabel("Save and activate setting");
+            saveButton.setTooltipText("Save and activate setting");
+            saveButton.setEnabled(false);
+            saveButton.addClickListener(_ -> {
+                final var newValue = textField.getValue().trim();
+                if (defaultValue.equals(newValue)) {
+                    configurationService.deleteConfiguration(configurationSetting);
+                } else {
+                    configurationService.setConfiguration(configurationSetting, newValue);
+                }
+
+                saveButton.setEnabled(false);
+                resetButton.setEnabled(false);
+                defaultButton.setEnabled(!defaultValue.equals(textField.getValue()));
+            });
+
+            textField.addValueChangeListener(valueChangeEvent -> {
+                final var newValue = valueChangeEvent.getValue();
+                defaultButton.setEnabled(!defaultValue.equals(newValue));
+                resetButton.setEnabled(!isDefaultValue && !actualValue.equals(newValue));
+                saveButton.setEnabled(!actualValue.equals(newValue));
+            });
+
+            add(new HorizontalLayout(textField, defaultButton, resetButton, saveButton));
         }
     }
 
