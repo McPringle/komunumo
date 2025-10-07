@@ -25,13 +25,12 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
+import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 
-//TODO @RolesAllowed("ADMIN")
-@AnonymousAllowed
+@RolesAllowed("ADMIN")
 @Route(value = "admin/config", layout = WebsiteLayout.class)
-public class ConfigurationEditorView extends AbstractView implements AfterNavigationObserver {
+public final class ConfigurationEditorView extends AbstractView implements AfterNavigationObserver {
 
     private final @NotNull ConfigurationService configurationService;
 

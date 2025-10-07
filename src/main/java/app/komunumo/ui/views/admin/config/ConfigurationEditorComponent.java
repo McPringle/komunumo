@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
-class ConfigurationEditorComponent extends VerticalLayout {
+final class ConfigurationEditorComponent extends VerticalLayout {
 
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull ConfigurationSetting configurationSetting;
