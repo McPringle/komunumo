@@ -32,8 +32,12 @@ public final class TranslationProvider extends DefaultI18NProvider {
     private static final @NotNull List<Locale> SUPPORTED_LOCALES = List.of(
             Locale.ENGLISH, Locale.GERMAN);
 
+    public static @NotNull List<Locale> getSupportedLocales() {
+        return SUPPORTED_LOCALES;
+    }
+
     public TranslationProvider() {
-        super(SUPPORTED_LOCALES);
+        super(getSupportedLocales());
         Locale.setDefault(Locale.ENGLISH);
     }
 
