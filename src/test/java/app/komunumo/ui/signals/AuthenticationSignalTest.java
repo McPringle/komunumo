@@ -24,23 +24,63 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AuthenticationSignalTest {
 
     @Test
-    void uninitialized_isNotAuthenticated() {
-        final var store = new AuthenticationSignal();
-        assertThat(store.isAuthenticated()).isFalse();
+    void uninitialized_isNotAuthenticated_andNotAdmin() {
+        final var signal = new AuthenticationSignal();
+
+        assertThat(signal.isAuthenticated()).isFalse();
+        assertThat(signal.isAdmin()).isFalse();
+    }
+
+
+    @Test
+    void setAuthenticated_false_resultsInNotAuthenticated_andNotAdmin() {
+        final var signal = new AuthenticationSignal();
+
+        signal.setAuthenticated(false);
+
+        assertThat(signal.isAuthenticated()).isFalse();
+        assertThat(signal.isAdmin()).isFalse();
+    }
+
+
+    @Test
+    void setAuthenticated_true_resultsInAuthenticated_andNotAdmin() {
+        final var signal = new AuthenticationSignal();
+
+        signal.setAuthenticated(true);
+
+        assertThat(signal.isAuthenticated()).isTrue();
+        assertThat(signal.isAdmin()).isFalse();
     }
 
     @Test
-    void false_isNotAuthenticated() {
-        final var store = new AuthenticationSignal();
-        store.setAuthenticated(false);
-        assertThat(store.isAuthenticated()).isFalse();
+    void setAuthenticated_trueAndAdmin_resultsInAuthenticated_andAdmin() {
+        final var signal = new AuthenticationSignal();
+
+        signal.setAuthenticated(true, true);
+
+        assertThat(signal.isAuthenticated()).isTrue();
+        assertThat(signal.isAdmin()).isTrue();
     }
 
     @Test
-    void true_isAuthenticated() {
-        final var store = new AuthenticationSignal();
-        store.setAuthenticated(true);
-        assertThat(store.isAuthenticated()).isTrue();
+    void setAuthenticated_trueAndNotAdmin_resultsInAuthenticated_andNotAdmin() {
+        final var signal = new AuthenticationSignal();
+
+        signal.setAuthenticated(true, false);
+
+        assertThat(signal.isAuthenticated()).isTrue();
+        assertThat(signal.isAdmin()).isFalse();
+    }
+
+    @Test
+    void setAuthenticated_falseAndAdmin_resultsInNotAuthenticated_andNotAdmin() {
+        final var signal = new AuthenticationSignal();
+
+        signal.setAuthenticated(false, true);
+
+        assertThat(signal.isAuthenticated()).isFalse();
+        assertThat(signal.isAdmin()).isFalse();
     }
 
 }

@@ -73,21 +73,21 @@ public final class LoginService {
     }
 
     public boolean login(final @NotNull String emailAddress) {
-        final var success = internalLogin(emailAddress);
-        authenticationSignal.setAuthenticated(success);
-        return success;
+        return internalLogin(emailAddress);
     }
 
     private boolean internalLogin(final @NotNull String emailAddress) {
         final var optUser = userService.getUserByEmail(emailAddress);
         if (optUser.isEmpty()) {
             LOGGER.info("User with email {} not found.", emailAddress);
+            authenticationSignal.setAuthenticated(false);
             return false;
         }
 
         final var user = optUser.orElseThrow();
         if (!user.type().isLoginAllowed()) {
             LOGGER.info("User with email {} exists but login is not allowed for type {}", emailAddress, user.type());
+            authenticationSignal.setAuthenticated(false);
             return false;
         }
 
@@ -122,6 +122,7 @@ public final class LoginService {
         }
 
         LOGGER.info("User with email {} successfully logged in.", emailAddress);
+        authenticationSignal.setAuthenticated(true, UserRole.ADMIN.equals(user.role()));
         return true;
     }
 

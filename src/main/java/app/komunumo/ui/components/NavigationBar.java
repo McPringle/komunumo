@@ -19,6 +19,7 @@ package app.komunumo.ui.components;
 
 import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.signals.AuthenticationSignal;
+import app.komunumo.ui.views.admin.config.ConfigurationEditorView;
 import app.komunumo.ui.views.community.CommunityGridView;
 import app.komunumo.ui.views.events.EventGridView;
 import app.komunumo.ui.views.login.LogoutView;
@@ -85,6 +86,11 @@ public final class NavigationBar extends HorizontalLayout {
                 serviceProvider.accountService().startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
+        // admin menu
+        final var configItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), e ->
+                ui.navigate(ConfigurationEditorView.class)
+        );
+
         // dark theme toggle
         avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.toggleDarkMode"), e -> ThemeUtil.toggleDarkMode());
 
@@ -95,10 +101,13 @@ public final class NavigationBar extends HorizontalLayout {
 
         // update menu items based on authentication state
         ComponentEffect.effect(this, () -> {
-            boolean loggedIn = authenticationSignal.isAuthenticated();
+            final var loggedIn = authenticationSignal.isAuthenticated();
             loginItem.setVisible(!loggedIn);
             registerItem.setVisible(!loggedIn);
             logoutItem.setVisible(loggedIn);
+
+            final var isAdmin = authenticationSignal.isAdmin();
+            configItem.setVisible(isAdmin);
         });
 
         return avatar;

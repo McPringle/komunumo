@@ -21,17 +21,55 @@ import com.vaadin.signals.ValueSignal;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>Publishes authentication and authorization state for reactive UI updates.</p>
+ *
+ * <p>This simplified signal tracks whether a user is authenticated and whether the user
+ * has the ADMIN role. Components can observe these signals to adjust visibility and behavior.</p>
+ */
 @Component
 public final class AuthenticationSignal {
 
-  private final @NotNull ValueSignal<Boolean> authenticated = new ValueSignal<>(Boolean.class);
+    private final @NotNull ValueSignal<Boolean> authenticated = new ValueSignal<>(Boolean.FALSE);
+    private final @NotNull ValueSignal<Boolean> admin = new ValueSignal<>(Boolean.FALSE);
 
-  public void setAuthenticated(final boolean value) {
-      authenticated.value(value);
-  }
+    /**
+     * <p>Sets authentication based on the given state.</p>
+     *
+     * @param isAuthenticated true if authenticated, false otherwise
+     */
+    public void setAuthenticated(final boolean isAuthenticated) {
+        setAuthenticated(isAuthenticated, false);
+    }
 
-  public boolean isAuthenticated() {
-      return Boolean.TRUE.equals(authenticated.value());
-  }
+    /**
+     * <p>Sets authentication and admin flags based on the given state.</p>
+     *
+     * @param isAuthenticated true if authenticated, false otherwise
+     * @param isAdmin true if the authenticated user has ADMIN privileges
+     */
+    public void setAuthenticated(final boolean isAuthenticated, final boolean isAdmin) {
+        authenticated.value(isAuthenticated);
+        admin.value(isAuthenticated && isAdmin);
+    }
+
+    /**
+     * <p>Returns whether the current user is authenticated.</p>
+     *
+     * @return true if authenticated, false otherwise
+     */
+    public boolean isAuthenticated() {
+        return Boolean.TRUE.equals(authenticated.value());
+    }
+
+
+    /**
+     * <p>Returns whether the current user has ADMIN privileges.</p>
+     *
+     * @return true if authenticated and ADMIN, false otherwise
+     */
+    public boolean isAdmin() {
+        return isAuthenticated() && Boolean.TRUE.equals(admin.value());
+    }
 
 }
