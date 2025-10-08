@@ -20,6 +20,7 @@ package app.komunumo.ui.views.admin.config;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.TranslationProvider;
+import app.komunumo.util.LocaleUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -65,6 +66,8 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         final var defaultValue = configurationSetting.defaultValue();
         final var label = getTranslation("ui.views.admin.config.ConfigurationEditorView.label." + configurationSetting.setting());
         final var localizedLabel = locale != null ? label + " (" + locale.getDisplayLanguage(locale) + ")" : label;
+        final var className = "setting-" + configurationSetting.setting().replace('.', '-');
+        final var localizedClassName = locale != null ? className + "-" + LocaleUtil.getLanguageCode(locale) : className;
         final var actualValue = configurationService.getConfiguration(configurationSetting, locale);
         final var isDefaultValue = defaultValue.equals(actualValue);
 
@@ -83,6 +86,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         defaultButton.setAriaLabel("Reset setting to default value");
         defaultButton.setTooltipText("Reset setting to default value");
         defaultButton.setEnabled(!isDefaultValue);
+        defaultButton.addClassName("default-button");
         defaultButton.addClickListener(_ -> textField.setValue(defaultValue));
 
         final var resetButton = new Button(new Icon(VaadinIcon.REFRESH));
@@ -90,6 +94,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         resetButton.setAriaLabel("Reset setting to stored value");
         resetButton.setTooltipText("Reset setting to stored value");
         resetButton.setEnabled(false);
+        resetButton.addClassName("reset-button");
         resetButton.addClickListener(_ -> textField.setValue(actualValue));
 
         final var saveButton = new Button(new Icon(VaadinIcon.CHECK));
@@ -97,6 +102,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         saveButton.setAriaLabel("Save and activate setting");
         saveButton.setTooltipText("Save and activate setting");
         saveButton.setEnabled(false);
+        saveButton.addClassName("save-button");
         saveButton.addClickListener(_ -> {
             final var newValue = textField.getValue().trim();
             if (defaultValue.equals(newValue)) {
@@ -121,7 +127,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         buttonBar.addClassName("button-bar");
 
         final var component = new VerticalLayout(textField, buttonBar);
-        component.addClassName("configuration-setting-field");
+        component.addClassNames("configuration-setting-field", localizedClassName);
         return component;
     }
 
