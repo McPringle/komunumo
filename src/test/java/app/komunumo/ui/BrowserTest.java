@@ -20,6 +20,7 @@ package app.komunumo.ui;
 import app.komunumo.Application;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.ConfigurationService;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
@@ -187,6 +188,28 @@ public abstract class BrowserTest {
         } catch (final IOException e) {
             throw new RuntimeException("Failed to capture screenshot", e);
         }
+    }
+
+    /**
+     * Returns the predefined test user for the given role.
+     *
+     * <p>The UUIDs of the test users are fixed in {@link TestConstants} and
+     * the corresponding records are inserted into the database by Flyway
+     * test migrations. This method provides a convenient way for integration
+     * tests to access those users without duplicating IDs.</p>
+     *
+     * @param role the {@link UserRole} to select (USER or ADMIN)
+     * @return the {@link UserDto} for the requested role
+     * @throws IllegalStateException if the user could not be found in the database
+     */
+    protected @NotNull UserDto getTestUser(final @NotNull UserRole role) {
+        final var userService = getBean(app.komunumo.data.service.UserService.class);
+        return switch (role) {
+            case USER -> userService.getUserById(TestConstants.USER_ID_TEST)
+                    .orElseThrow(() -> new IllegalStateException("Test USER not found in database"));
+            case ADMIN -> userService.getUserById(TestConstants.USER_ID_ADMIN)
+                    .orElseThrow(() -> new IllegalStateException("Test ADMIN not found in database"));
+        };
     }
 
     /**
