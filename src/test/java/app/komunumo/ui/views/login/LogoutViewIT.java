@@ -19,15 +19,11 @@ package app.komunumo.ui.views.login;
 
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.ui.IntegrationTest;
-import app.komunumo.ui.components.ConfirmationDialog;
 import app.komunumo.util.SecurityUtil;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import org.junit.jupiter.api.Test;
 
-import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
-import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LogoutViewIT extends IntegrationTest {
