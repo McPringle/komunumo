@@ -19,8 +19,6 @@ package app.komunumo.ui.views.admin.config;
 
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.ui.BrowserTest;
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.options.WaitForSelectorState;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,11 +53,8 @@ class ConfigurationEditorViewIT extends BrowserTest {
         page.navigate("http://localhost:8081/admin/config");
         page.waitForURL("**/admin/config");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
-                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
-        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
         captureScreenshot("anonymousVisitor_manualNavigation");
+        assertThat(page.locator("h2:visible").allInnerTexts()).contains("Confirm your email address");
     }
 
     @Test
