@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Locale;
 
-import static app.komunumo.data.db.tables.Config.CONFIG;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -43,8 +42,8 @@ class ConfigurationServiceIT extends IntegrationTest {
 
     @BeforeEach
     void cleanSetUp() {
-        dsl.deleteFrom(CONFIG).execute();
         configurationService = new ConfigurationService(dsl);
+        configurationService.deleteAllConfigurations();
     }
 
     @Test
@@ -116,6 +115,79 @@ class ConfigurationServiceIT extends IntegrationTest {
         assertThat(value).isEqualTo("Neutral Name");
     }
 
+    @Test
+    void shouldReturnDefaultAfterDeletingNonLanguageSetting() {
+        configurationService.setConfiguration(INSTANCE_NAME, "Custom Komunumo");
+        assertThat(configurationService.getConfiguration(INSTANCE_NAME)).isEqualTo("Custom Komunumo");
+
+        configurationService.deleteConfiguration(INSTANCE_NAME);
+
+        final var value = configurationService.getConfiguration(INSTANCE_NAME);
+        assertThat(value).isEqualTo("Your Instance Name");
+    }
+
+    @Test
+    void shouldDeleteLanguageSpecificValueOnlyForGivenLocale() {
+        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "English Slogan");
+        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+                .isEqualTo("English Slogan");
+        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN, "Deutscher Slogan");
+        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN))
+                .isEqualTo("Deutscher Slogan");
+
+        configurationService.deleteConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN);
+
+        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN))
+                .isEqualTo("English Slogan"); // Fallback
+        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+                .isEqualTo("English Slogan");
+    }
+
+    @Test
+    void shouldFallbackToDefaultAfterDeletingLastLanguageValues() {
+        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "English Slogan");
+        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+                .isEqualTo("English Slogan");
+
+        configurationService.deleteConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH);
+
+        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+                .isEqualTo("Your Instance Slogan");
+    }
+
+    @Test
+    void shouldResolveRegionalLocaleOnDelete() {
+        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN, "Deutscher Slogan");
+        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN))
+                .isEqualTo("Deutscher Slogan");
+
+        final var swissGerman = Locale.of("de", "CH");
+        configurationService.deleteConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, swissGerman);
+
+        // The entry for "de" is considered deleted, therefore fallback to default
+        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, swissGerman))
+                .isEqualTo("Your Instance Slogan");
+    }
+
+    @Test
+    void deletingNonExistingConfigurationIsNoOp() {
+        // Nothing set → Deletion must not fail
+        configurationService.deleteConfiguration(INSTANCE_NAME);
+
+        final var value = configurationService.getConfiguration(INSTANCE_NAME);
+        assertThat(value).isEqualTo("Your Instance Name");
+    }
+
+    @Test
+    void deletingWithNullLocaleForLanguageIndependentSettingDeletesNeutralValue() {
+        configurationService.setConfiguration(INSTANCE_NAME, "Neutral");
+        assertThat(configurationService.getConfiguration(INSTANCE_NAME)).isEqualTo("Neutral");
+
+        configurationService.deleteConfiguration(INSTANCE_NAME, null);
+
+        assertThat(configurationService.getConfiguration(INSTANCE_NAME)).isEqualTo("Your Instance Name");
+    }
+
     static Object[][] getTestDataFor_testGettingConfigurationWithDifferentTypes() {
         return new Object[][]{
                 {ConfigurationSetting.INSTANCE_URL, String.class, "https://example.com", "https://example.com"},
@@ -143,4 +215,5 @@ class ConfigurationServiceIT extends IntegrationTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Unsupported type: interface java.util.List");
     }
+
 }
