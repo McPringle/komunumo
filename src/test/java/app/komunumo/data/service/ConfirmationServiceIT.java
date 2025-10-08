@@ -57,7 +57,7 @@ class ConfirmationServiceIT extends IntegrationTest {
         final var confirmationHandlerCounter = new AtomicInteger(0);
 
         //noinspection ExtractMethodRecommender
-        final ConfirmationHandler actionHandler = (__, context, ___) -> {
+        final ConfirmationHandler actionHandler = (_, _, _) -> {
             final var callCount = confirmationHandlerCounter.incrementAndGet();
             return switch (callCount) {
                 case 1 -> throw new KomunumoException("expected");

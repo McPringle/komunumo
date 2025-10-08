@@ -116,7 +116,7 @@ class UniqueIdGeneratorIT extends IntegrationTest {
         final Field cacheField = UniqueIdGenerator.class.getDeclaredField("idCache");
         cacheField.setAccessible(true);
         @SuppressWarnings("unchecked")
-        final var cache = (Cache<UUID, Boolean>) cacheField.get(generator);
+        final var cache = (Cache<@NotNull UUID, @NotNull Boolean>) cacheField.get(generator);
 
         // Simulate a recently used ID
         cache.put(cachedId, true);

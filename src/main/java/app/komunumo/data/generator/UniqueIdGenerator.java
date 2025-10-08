@@ -49,7 +49,7 @@ public class UniqueIdGenerator {
     }
 
     // Cache for recently generated UUIDs in the format “table:id”
-    private final @NotNull Cache<UUID, Boolean> idCache = Caffeine.newBuilder()
+    private final @NotNull Cache<@NotNull UUID, @NotNull Boolean> idCache = Caffeine.newBuilder()
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .maximumSize(100)
             .build();

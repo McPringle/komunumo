@@ -208,7 +208,7 @@ class ArchitectureTest {
     }
 
     @Test
-    void utilityClassesShouldHavePrivateConstructorsThatThrowExceptions() throws Exception {
+    void utilityClassesShouldHavePrivateConstructorsThatThrowExceptions() {
         for (final JavaClass javaClass : allClasses) {
             if (javaClass.getSimpleName().endsWith("Util")) {
                 final Class<?> clazz = javaClass.reflect();

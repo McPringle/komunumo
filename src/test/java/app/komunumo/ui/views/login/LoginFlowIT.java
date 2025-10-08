@@ -54,7 +54,7 @@ class LoginFlowIT extends BrowserTest {
 
     @Test
     @SuppressWarnings({"java:S2925", "java:S2699"})
-    void loginAndLogoutWorks() throws InterruptedException, MessagingException {
+    void loginAndLogoutWorks() {
         login(testUser);
 
         final var page = getPage();
@@ -105,9 +105,7 @@ class LoginFlowIT extends BrowserTest {
         captureScreenshot("loginFails_after-email-requested");
 
         // wait for the confirmation email
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            greenMail.waitForIncomingEmail(1);
-        });
+        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
         final var receivedMessage = greenMail.getReceivedMessages()[0];
         assertThat(receivedMessage.getSubject())
                 .isEqualTo("[Your Instance Name] Please confirm your email address");

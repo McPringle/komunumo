@@ -54,7 +54,7 @@ public final class ConfirmationDialog extends Dialog {
 
         setHeaderTitle(getTranslation("ui.components.ConfirmationDialog.title"));
         final var closeDialogButton = new Button(new Icon("lumo", "cross"),
-                __ -> close());
+                _ -> close());
         closeDialogButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         closeDialogButton.addClassName("close-dialog-button");
         getHeader().add(closeDialogButton);
@@ -79,7 +79,7 @@ public final class ConfirmationDialog extends Dialog {
         getFooter().add(emailButton);
 
         final var cancelButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.cancel"),
-                __ -> close());
+                _ -> close());
         cancelButton.addThemeVariants(LUMO_TERTIARY);
         cancelButton.addClassName("cancel-button");
         getFooter().add(cancelButton);
@@ -88,12 +88,12 @@ public final class ConfirmationDialog extends Dialog {
         binder.forField(emailField)
                 .asRequired("")
                 .withValidator(new EmailValidator(getTranslation("ui.components.ConfirmationDialog.email.error")))
-                .bind(dummy -> null, (dummy, value) -> { });
+                .bind(_ -> null, (_, _) -> { });
         binder.setBean(new DummyBean());
-        binder.addStatusChangeListener(evt -> emailButton.setEnabled(binder.isValid()));
+        binder.addStatusChangeListener(_ -> emailButton.setEnabled(binder.isValid()));
         binder.validate();
 
-        emailButton.addClickListener(evt -> {
+        emailButton.addClickListener(_ -> {
             final var email = emailField.getValue();
             confirmationService.sendConfirmationMail(email, confirmationRequest);
 
@@ -105,7 +105,7 @@ public final class ConfirmationDialog extends Dialog {
             final var closeButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.close"));
             closeButton.addThemeVariants(LUMO_PRIMARY);
             closeButton.addClassName("close-button");
-            closeButton.addClickListener(__ -> close());
+            closeButton.addClickListener(_ -> close());
             getFooter().add(closeButton);
         });
 

@@ -22,16 +22,12 @@ import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.demo.DemoDataCreator;
 import app.komunumo.data.service.ServiceProvider;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public final class StartupHandler {
-
-    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(StartupHandler.class);
 
     private final @NotNull AppConfig appConfig;
     private final @NotNull ServiceProvider serviceProvider;

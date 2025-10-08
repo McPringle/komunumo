@@ -129,7 +129,7 @@ final class SvgHelper {
             final var child = children.item(i);
             final var writer = new StringWriter();
             transformer.transform(new DOMSource(child), new StreamResult(writer));
-            svgContent.append(writer.toString());
+            svgContent.append(writer);
         }
 
         return svgContent.toString();
@@ -161,7 +161,7 @@ final class SvgHelper {
         final Transformer transformer = tf.newTransformer();
 
         // Never resolve URIs in XSLT (extra safety even though we use no stylesheets)
-        transformer.setURIResolver((href, base) -> null);
+        transformer.setURIResolver((_, _) -> null);
 
         return transformer;
     }
@@ -217,7 +217,7 @@ final class SvgHelper {
      */
     @VisibleForTesting
     static @NotNull EntityResolver noOpEntityResolver() {
-        return (publicId, systemId) -> new InputSource(Reader.of(""));
+        return (_, _) -> new InputSource(Reader.of(""));
     }
 
     /**
@@ -237,6 +237,7 @@ final class SvgHelper {
         final var dimension = docElement.getAttribute(dimensionType);
 
         // If width/height is not provided, fall back to the viewBox values
+        //noinspection ConstantValue (dimension can be null)
         if (dimension == null || dimension.isBlank()) {
             return getDimensionFromViewBox(docElement, dimensionType);
         }
@@ -255,6 +256,7 @@ final class SvgHelper {
     private double getDimensionFromViewBox(final @NotNull Element docElement,
                                            final @NotNull String dimensionType) {
         final var viewBox = docElement.getAttribute("viewBox");
+        //noinspection ConstantValue (viewbox can be null)
         if (viewBox == null || viewBox.isBlank()) {
             throw new IllegalArgumentException("No viewBox or dimensions found in SVG.");
         }
