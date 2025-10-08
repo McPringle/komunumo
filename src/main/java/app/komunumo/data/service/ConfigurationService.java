@@ -18,6 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.ConfigurationSetting;
+import app.komunumo.security.RequireAdmin;
 import app.komunumo.util.LocaleUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -167,6 +168,7 @@ public class ConfigurationService {
      * @param value the value to store, converted via {@code toString()}
      * @param <T> the value type
      */
+    @RequireAdmin
     public <T> void setConfiguration(final @NotNull ConfigurationSetting setting,
                                      final @NotNull T value) {
         setConfiguration(setting, null, value);
@@ -182,6 +184,7 @@ public class ConfigurationService {
      * @param value the value to store, converted via {@code toString()}
      * @param <T> the value type
      */
+    @RequireAdmin
     public <T> void setConfiguration(final @NotNull ConfigurationSetting setting,
                                  final @Nullable Locale locale,
                                  final @NotNull T value) {
@@ -213,6 +216,7 @@ public class ConfigurationService {
      *
      * @param setting the configuration setting to delete
      */
+    @RequireAdmin
     public void deleteConfiguration(final @NotNull ConfigurationSetting setting) {
         deleteConfiguration(setting, null);
     }
@@ -225,6 +229,7 @@ public class ConfigurationService {
      * @param setting the configuration setting to delete
      * @param locale the locale of the value to delete, {@code null} for language-independent
      */
+    @RequireAdmin
     public void deleteConfiguration(final @NotNull ConfigurationSetting setting,
                                     final @Nullable Locale locale) {
         final var languageCode = LocaleUtil.getLanguageCode(locale);
@@ -243,6 +248,7 @@ public class ConfigurationService {
      *
      * <p>Only administrators are allowed to perform full deletion.</p>
      */
+    @RequireAdmin
     public void deleteAllConfigurations() {
         dsl.delete(CONFIG).execute();
         clearCache();

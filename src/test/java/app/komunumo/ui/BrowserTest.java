@@ -22,6 +22,7 @@ import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.security.SystemAuthenticator;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
@@ -116,7 +117,9 @@ public abstract class BrowserTest {
 
         final var instanceUrl = "http://localhost:%d".formatted(PORT);
         final var configurationService = getBean(ConfigurationService.class);
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl);
+        final var systemAuthenticator = getBean(SystemAuthenticator.class);
+        systemAuthenticator.runAsAdmin(
+                () -> configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl));
     }
 
     @AfterAll

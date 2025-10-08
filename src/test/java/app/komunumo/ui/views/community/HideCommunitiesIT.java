@@ -18,6 +18,7 @@
 package app.komunumo.ui.views.community;
 
 import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.security.SystemAuthenticator;
 import app.komunumo.ui.IntegrationTest;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.views.WebsiteLayout;
@@ -39,10 +40,14 @@ class HideCommunitiesIT extends IntegrationTest {
     @Autowired
     private ConfigurationService configurationService;
 
+    @Autowired
+    private SystemAuthenticator systemAuthenticator;
+
     @Test
     void checkCommunityLinkNotVisible() throws FolderException {
         try {
-            configurationService.setConfiguration(INSTANCE_HIDE_COMMUNITIES, true);
+            systemAuthenticator.runAsAdmin(
+                    () -> configurationService.setConfiguration(INSTANCE_HIDE_COMMUNITIES, true));
 
             // simulate a full browser-reload by re-initializing the UI to apply the configuration change
             tearDown();
@@ -60,7 +65,8 @@ class HideCommunitiesIT extends IntegrationTest {
             final var routerLinks = findComponents(navigationBar, RouterLink.class);
             assertContainsExactlyOneRouterLinkOf(routerLinks, new Anchor("events", "Events"));
         } finally {
-            configurationService.setConfiguration(INSTANCE_HIDE_COMMUNITIES, false);
+            systemAuthenticator.runAsAdmin(
+                    () -> configurationService.setConfiguration(INSTANCE_HIDE_COMMUNITIES, false));
         }
     }
 

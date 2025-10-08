@@ -18,6 +18,7 @@
 package app.komunumo.ui.views;
 
 import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.security.SystemAuthenticator;
 import app.komunumo.ui.BrowserTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,8 +36,10 @@ class WebsiteLayoutCustomStylesIT extends BrowserTest {
     @SuppressWarnings("java:S2699")
     void testCustomStyles(final @NotNull String customStylesUrl) {
         final var configurationService = getBean(ConfigurationService.class);
+        final var systemAuthenticator = getBean(SystemAuthenticator.class);
         try {
-            configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, customStylesUrl);
+            systemAuthenticator.runAsAdmin(
+                    () -> configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, customStylesUrl));
 
             final var page = getPage();
             page.navigate("http://localhost:8081/");
@@ -47,7 +50,8 @@ class WebsiteLayoutCustomStylesIT extends BrowserTest {
                     """);
             captureScreenshot("home-with-custom-styles");
         } finally {
-            configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, "");
+            systemAuthenticator.runAsAdmin(
+                    () -> configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, ""));
         }
     }
 
