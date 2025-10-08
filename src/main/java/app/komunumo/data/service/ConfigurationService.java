@@ -137,6 +137,25 @@ public class ConfigurationService {
         }
     }
 
+    /**
+     * <p>Returns the configuration value for the given setting and locale without applying any
+     * fallback logic.</p>
+     *
+     * <p>This method retrieves only the exact language-specific or neutral value (depending on the
+     * provided locale). If no matching entry exists in the database, the setting’s default value
+     * is returned.</p>
+     *
+     * @param setting the configuration setting to retrieve
+     * @param locale the locale for the requested value, or {@code null} for the language-independent value
+     * @return the stored configuration value, or the setting’s default value if not present
+     */
+    @RequireAdmin
+    public @NotNull String getConfigurationWithoutFallback(final @NotNull ConfigurationSetting setting,
+                                                           final @Nullable Locale locale) {
+        final var languageCode = LocaleUtil.getLanguageCode(locale);
+        return getFromCacheOrDb(setting, languageCode)
+                .orElse(setting.defaultValue());
+    }
 
     /**
      * <p>Resolves a configuration value from the cache or loads it from the database.</p>

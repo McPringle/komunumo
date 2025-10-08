@@ -68,7 +68,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         final var localizedLabel = locale != null ? label + " (" + locale.getDisplayLanguage(locale) + ")" : label;
         final var className = "setting-" + configurationSetting.setting().replace('.', '-');
         final var localizedClassName = locale != null ? className + "-" + LocaleUtil.getLanguageCode(locale) : className;
-        final var actualValue = configurationService.getConfiguration(configurationSetting, locale);
+        final var actualValue = configurationService.getConfigurationWithoutFallback(configurationSetting, locale);
         final var isDefaultValue = defaultValue.equals(actualValue);
 
         final var textField = new TextField();
