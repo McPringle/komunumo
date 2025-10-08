@@ -133,7 +133,7 @@ public final class ConfigurationService {
         cache.asMap().keySet().removeIf(cacheKey -> cacheKey.setting().equals(setting));
     }
 
-    public void deleteAllSettings() {
+    public void deleteAllConfigurations() {
         dsl.delete(CONFIG).execute();
         clearCache();
     }

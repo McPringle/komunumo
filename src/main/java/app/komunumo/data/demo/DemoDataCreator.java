@@ -90,7 +90,7 @@ public final class DemoDataCreator {
         final var globalPageService = serviceProvider.globalPageService();
 
         LOGGER.info("Deleting existing data...");
-        configurationService.deleteAllSettings();
+        configurationService.deleteAllConfigurations();
         participationService.getParticipations().forEach(participationService::deleteParticipation);
         eventService.getEvents().forEach(eventService::deleteEvent);
         communityService.getCommunities().forEach(communityService::deleteCommunity);
