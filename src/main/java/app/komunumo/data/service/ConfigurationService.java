@@ -118,8 +118,8 @@ public class ConfigurationService {
     public @NotNull <T> T getConfiguration(final @NotNull ConfigurationSetting setting,
                                            final @Nullable Locale locale,
                                            final @NotNull Class<T> type) {
+        checkLocale(setting, locale);
         final var languageCode = LocaleUtil.getLanguageCode(locale);
-
         final var value = locale == null
                 ? getFromCacheOrDb(setting, "")
                         .orElse(setting.defaultValue())
@@ -152,6 +152,7 @@ public class ConfigurationService {
     @RequireAdmin
     public @NotNull String getConfigurationWithoutFallback(final @NotNull ConfigurationSetting setting,
                                                            final @Nullable Locale locale) {
+        checkLocale(setting, locale);
         final var languageCode = LocaleUtil.getLanguageCode(locale);
         return getFromCacheOrDb(setting, languageCode)
                 .orElse(setting.defaultValue());
@@ -205,8 +206,9 @@ public class ConfigurationService {
      */
     @RequireAdmin
     public <T> void setConfiguration(final @NotNull ConfigurationSetting setting,
-                                 final @Nullable Locale locale,
-                                 final @NotNull T value) {
+                                     final @Nullable Locale locale,
+                                     final @NotNull T value) {
+        checkLocale(setting, locale);
         final var dbValue = value.toString();
         final var languageCode = LocaleUtil.getLanguageCode(locale);
 
@@ -251,6 +253,7 @@ public class ConfigurationService {
     @RequireAdmin
     public void deleteConfiguration(final @NotNull ConfigurationSetting setting,
                                     final @Nullable Locale locale) {
+        checkLocale(setting, locale);
         final var languageCode = LocaleUtil.getLanguageCode(locale);
 
         dsl.deleteFrom(CONFIG)
@@ -271,6 +274,30 @@ public class ConfigurationService {
     public void deleteAllConfigurations() {
         dsl.delete(CONFIG).execute();
         clearCache();
+    }
+
+    /**
+     * <p>Validates the combination of configuration setting and locale for consistency.</p>
+     *
+     * <p>This method ensures that a locale is provided only for language-dependent settings
+     * and that no locale is given for language-independent ones. Violations result in an
+     * {@link IllegalArgumentException} being thrown with a descriptive message.</p>
+     *
+     * @param setting the configuration setting to validate
+     * @param locale the locale to check, or {@code null} if no locale is specified
+     * @throws IllegalArgumentException if the locale does not match the setting’s language dependency
+     */
+    private void checkLocale(final @NotNull ConfigurationSetting setting,
+                             final @Nullable Locale locale) {
+        if (setting.isLanguageDependent() && locale == null) {
+            throw new IllegalArgumentException(
+                    "Setting '%s' is language-dependent; you need to specify a locale!"
+                            .formatted(setting.setting()));
+        } else if (!setting.isLanguageDependent() && locale != null) {
+            throw new IllegalArgumentException(
+                    "Setting '%s' is not language-dependent; do not specify a locale!"
+                            .formatted(setting.setting()));
+        }
     }
 
     /**

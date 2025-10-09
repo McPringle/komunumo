@@ -26,8 +26,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Locale;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
@@ -50,62 +48,27 @@ class AbstractViewTest {
     }
 
     @Test
-    void shouldUseGermanLocaleForPageTitle() {
-        final var locale = Locale.GERMAN;
-        final var ui = mock(UI.class);
-        when(ui.getLocale()).thenReturn(locale);
-        UI.setCurrent(ui);
-
-        when(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME, locale))
-                .thenReturn("Komunumo DE");
+    void shouldUseInstanceNameForPageTitle() {
+        when(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME))
+                .thenReturn("Komunumo Test");
 
         final var view = new TestView(configurationService);
-        assertThat(view.getPageTitle()).isEqualTo("Test View – Komunumo DE");
-    }
-
-    @Test
-    void shouldUseFrenchLocaleForPageTitle() {
-        final var locale = Locale.FRENCH;
-        final var ui = mock(UI.class);
-        when(ui.getLocale()).thenReturn(locale);
-        UI.setCurrent(ui);
-
-        when(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME, locale))
-                .thenReturn("Komunumo FR");
-
-        final var view = new TestView(configurationService);
-        assertThat(view.getPageTitle()).isEqualTo("Test View – Komunumo FR");
-    }
-
-    @Test
-    void shouldUseEnglishLocaleForPageTitle() {
-        final var locale = Locale.ENGLISH;
-        final var ui = mock(UI.class);
-        when(ui.getLocale()).thenReturn(locale);
-        UI.setCurrent(ui);
-
-        when(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME, locale))
-                .thenReturn("Komunumo EN");
-
-        final var view = new TestView(configurationService);
-        assertThat(view.getPageTitle()).isEqualTo("Test View – Komunumo EN");
+        assertThat(view.getPageTitle()).isEqualTo("Test View – Komunumo Test");
     }
 
     @Test
     void updatePageTitleSuccess() {
-        final var locale = Locale.ENGLISH;
         final var page = mock(Page.class);
         final var ui = new TestUI(page);
-        ui.setLocale(locale);
         UI.setCurrent(ui);
 
-        when(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME, locale))
-                .thenReturn("Komunumo EN");
+        when(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_NAME))
+                .thenReturn("Komunumo Test");
 
         final var view = new TestView(configurationService);
         ui.add(view);
         view.updatePageTitle();
-        verify(page).setTitle("Test View – Komunumo EN");
+        verify(page).setTitle("Test View – Komunumo Test");
     }
 
     @Test

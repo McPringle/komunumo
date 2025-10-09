@@ -70,8 +70,8 @@ public final class MailService {
                             final @NotNull MailFormat format,
                             final @Nullable Map<String, String> variables,
                             final @NotNull String... emailAddresses) {
-        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
-        final var instanceUrl = configurationService.getConfiguration(INSTANCE_URL, locale);
+        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME);
+        final var instanceUrl = configurationService.getConfiguration(INSTANCE_URL);
         final HashMap<String, String> allVariables = new HashMap<>();
         if (variables != null) {
             allVariables.putAll(variables);

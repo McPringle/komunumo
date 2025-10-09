@@ -64,7 +64,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
     private void addPageHeader(final @NotNull ServiceProvider serviceProvider) {
         final var locale = UI.getCurrent().getLocale();
         final var configurationService = serviceProvider.configurationService();
-        final var instanceTitle = configurationService.getConfiguration(INSTANCE_NAME, locale);
+        final var instanceTitle = configurationService.getConfiguration(INSTANCE_NAME);
         final var instanceSlogan = configurationService.getConfiguration(INSTANCE_SLOGAN, locale);
         add(new PageHeader(instanceTitle, instanceSlogan));
     }

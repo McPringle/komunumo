@@ -61,8 +61,7 @@ public final class NavigationBar extends HorizontalLayout {
         menuBar.addClassName("menu-bar");
         menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.events"), EventGridView.class));
 
-        final var locale = ui.getLocale();
-        if (!serviceProvider.configurationService().getConfiguration(INSTANCE_HIDE_COMMUNITIES, locale, Boolean.class)) {
+        if (!serviceProvider.configurationService().getConfiguration(INSTANCE_HIDE_COMMUNITIES, Boolean.class)) {
             menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.communities"), CommunityGridView.class));
         }
         serviceProvider.globalPageService()
@@ -92,10 +91,10 @@ public final class NavigationBar extends HorizontalLayout {
         );
 
         // dark theme toggle
-        avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.toggleDarkMode"), e -> ThemeUtil.toggleDarkMode());
+        avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.toggleDarkMode"), _ -> ThemeUtil.toggleDarkMode());
 
         // logout as last entry in the menu
-        final var logoutItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.logout"), e ->
+        final var logoutItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.logout"), _ ->
                 ui.navigate(LogoutView.class)
         );
 

@@ -47,6 +47,30 @@ class ConfigurationServiceIT extends IntegrationTest {
     }
 
     @Test
+    void getConfiguration_languageDependentWithNullLocale_throwsIllegalArgumentException() {
+        // Language-dependent setting requires a non-null locale
+        assertThatThrownBy(() ->
+                configurationService.getConfiguration(
+                        ConfigurationSetting.INSTANCE_SLOGAN, null, String.class
+                )
+        )
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Setting 'instance.slogan' is language-dependent; you need to specify a locale!");
+    }
+
+    @Test
+    void getConfiguration_languageIndependentWithLocale_throwsIllegalArgumentException() {
+        // Language-independent setting must not receive a locale
+        assertThatThrownBy(() ->
+                configurationService.getConfiguration(
+                        ConfigurationSetting.INSTANCE_NAME, Locale.ENGLISH, String.class
+                )
+        )
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Setting 'instance.name' is not language-dependent; do not specify a locale!");
+    }
+
+    @Test
     void shouldReturnDefaultValueIfNoValueExists() {
         final var value = configurationService.getConfiguration(INSTANCE_NAME);
         assertThat(value).isEqualTo("Your Instance Name");

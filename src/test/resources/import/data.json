@@ -6,13 +6,21 @@
     },
     {
       "setting": "instance.name",
-      "language": "en",
       "value": "Komunumo Test"
     },
     {
       "setting": "instance.slogan",
       "language": "en",
       "value": "This is a local test instance of Komunumo."
+    },
+    {
+      "setting": "instance.slogan",
+      "value": "Should be ignored because instance slogan is language dependent but the language is missing."
+    },
+    {
+      "setting": "instance.custom.styles",
+      "language": "de",
+      "value": "Should be ignored because custom styles are language independent but a language is given."
     }
   ],
   "communities": [

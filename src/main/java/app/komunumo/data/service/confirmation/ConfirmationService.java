@@ -77,7 +77,7 @@ public final class ConfirmationService {
         confirmationCache.put(confirmationId, confirmationData);
 
         final var locale = confirmationRequest.locale();
-        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
+        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME);
         final var confirmationLink = generateConfirmationLink(confirmationData);
         final var confirmationTimeout = getConfirmationTimeoutText(locale);
         final var actionMessage = confirmationRequest.actionMessage();
@@ -91,8 +91,7 @@ public final class ConfirmationService {
     }
 
     private String generateConfirmationLink(final @NotNull ConfirmationData confirmationData) {
-        final var locale = confirmationData.confirmationRequest().locale();
-        final var instanceUrl = configurationService.getConfiguration(INSTANCE_URL, locale);
+        final var instanceUrl = configurationService.getConfiguration(INSTANCE_URL);
         return UriComponentsBuilder
                 .fromUriString(instanceUrl)
                 .path(CONFIRMATION_PATH)

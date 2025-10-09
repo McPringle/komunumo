@@ -77,9 +77,19 @@ public final class DemoDataImporter {
                 final var jsonObject = (JSONObject) object;
                 final var setting = ConfigurationSetting.fromString(jsonObject.getString("setting"));
                 final var language = jsonObject.optString("language", null);
+
+                if (setting.isLanguageDependent() && language == null) {
+                    LOGGER.warn("Skipping setting '{}' because it is language-dependent but no language was provided.",
+                            setting.setting());
+                    return;
+                } else if (!setting.isLanguageDependent() && language != null) {
+                    LOGGER.warn("Skipping setting '{}' because it is not language-dependent but a language was provided.",
+                            setting.setting());
+                    return;
+                }
+
                 final var locale = language == null ? null : Locale.forLanguageTag(language);
                 final var value = jsonObject.getString("value");
-
                 configurationService.setConfiguration(setting, locale, value);
             });
             configurationService.clearCache();

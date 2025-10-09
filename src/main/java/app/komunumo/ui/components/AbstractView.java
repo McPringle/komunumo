@@ -18,7 +18,6 @@
 package app.komunumo.ui.components;
 
 import app.komunumo.data.service.ConfigurationService;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HasDynamicTitle;
 import org.jetbrains.annotations.NotNull;
@@ -62,8 +61,7 @@ public abstract class AbstractView extends VerticalLayout implements HasDynamicT
      */
     @Override
     public @NotNull String getPageTitle() {
-        final var locale = UI.getCurrent().getLocale();
-        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME, locale);
+        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME);
         return getViewTitle() + " – " + instanceName;
     }
 
