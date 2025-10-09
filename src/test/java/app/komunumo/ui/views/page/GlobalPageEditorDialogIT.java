@@ -115,12 +115,13 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
             assertThat(markdown).isNotNull();
             assertThat(markdown.getContent()).startsWith("## Legal Notice");
 
-            // verify that a context menu is attached to the page content
+            // verify that a context menu is attached to the markdown content
             final var pageContent = _get(HtmlContainer.class,
                     spec -> spec.withClasses("global-page-content"));
+            final var markdownContent = _get(pageContent, Markdown.class);
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            assertThat(contextMenu.getTarget()).isSameAs(pageContent);
+            assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             logout();
         } finally {
@@ -145,12 +146,13 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
                     spec -> spec.withClasses("global-page-view"));
             assertThat(_get(view, Markdown.class).getContent()).startsWith("## Legal Notice");
 
-            // verify that a context menu is attached to the page content
+            // verify that a context menu is attached to the markdown content
             final var pageContent = _get(HtmlContainer.class,
                     spec -> spec.withClasses("global-page-content"));
+            final var markdownContent = _get(pageContent, Markdown.class);
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            assertThat(contextMenu.getTarget()).isSameAs(pageContent);
+            assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             // click the "Edit page content" menu item to open the editor dialog
             final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
@@ -217,12 +219,13 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
                     spec -> spec.withClasses("global-page-view"));
             assertThat(_get(view, Markdown.class).getContent()).startsWith("## Legal Notice");
 
-            // verify that a context menu is attached to the page content
+            // verify that a context menu is attached to the markdown content
             final var pageContent = _get(HtmlContainer.class,
                     spec -> spec.withClasses("global-page-content"));
+            final var markdownContent = _get(pageContent, Markdown.class);
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            assertThat(contextMenu.getTarget()).isSameAs(pageContent);
+            assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             // click the "Edit page content" menu item to open the editor dialog
             final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
@@ -287,12 +290,13 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
                     spec -> spec.withClasses("global-page-view"));
             assertThat(_get(view, Markdown.class).getContent()).startsWith("## Legal Notice");
 
-            // verify that a context menu is attached to the page content
+            // verify that a context menu is attached to the markdown content
             final var pageContent = _get(HtmlContainer.class,
                     spec -> spec.withClasses("global-page-content"));
+            final var markdownContent = _get(pageContent, Markdown.class);
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            assertThat(contextMenu.getTarget()).isSameAs(pageContent);
+            assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             // click the "Edit page content" menu item to open the editor dialog
             final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
@@ -652,12 +656,13 @@ class GlobalPageEditorDialogIT extends IntegrationTest {
                     spec -> spec.withClasses("global-page-view"));
             assertThat(_get(view, Markdown.class).getContent()).startsWith("## Legal Notice");
 
-            // verify that a context menu is attached to the page content
+            // verify that a context menu is attached to the markdown content
             final var pageContent = _get(HtmlContainer.class,
                     spec -> spec.withClasses("global-page-content"));
+            final var markdownContent = _get(pageContent, Markdown.class);
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            assertThat(contextMenu.getTarget()).isSameAs(pageContent);
+            assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             // click the "Edit page content" menu item to open the editor dialog
             final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
