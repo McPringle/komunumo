@@ -79,15 +79,15 @@ public final class NavigationBar extends HorizontalLayout {
         avatarMenu.setOpenOnClick(true);
 
         // login as first entry in the menu
-        final var loginItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), e ->
+        final var loginItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), _ ->
                 serviceProvider.loginService().startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
-        final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), e ->
+        final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), _ ->
                 serviceProvider.accountService().startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
         // admin menu
-        final var configItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), e ->
+        final var configItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
                 ui.navigate(ConfigurationEditorView.class)
         );
 
