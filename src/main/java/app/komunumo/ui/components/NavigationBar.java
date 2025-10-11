@@ -40,6 +40,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
 
 public final class NavigationBar extends HorizontalLayout {
@@ -58,7 +59,7 @@ public final class NavigationBar extends HorizontalLayout {
         menuContainer.add(getNavigationBar(ui, configurationService, globalPageService));
         addToStart(menuContainer);
 
-        addToEnd(getAvatar(ui, loginService, accountService, authenticationSignal));
+        addToEnd(getAvatar(ui, configurationService, loginService, accountService, authenticationSignal));
     }
 
     private Component getNavigationBar(final @NotNull UI ui,
@@ -78,6 +79,7 @@ public final class NavigationBar extends HorizontalLayout {
     }
 
     private Component getAvatar(final @NotNull UI ui,
+                                final @NotNull ConfigurationService configurationService,
                                 final @NotNull LoginService loginService,
                                 final @NotNull AccountService accountService,
                                 final @NotNull AuthenticationSignal authenticationSignal) {
@@ -89,6 +91,8 @@ public final class NavigationBar extends HorizontalLayout {
         final var loginItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), _ ->
                 loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
+
+        final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
         final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), _ ->
                 accountService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
@@ -110,7 +114,7 @@ public final class NavigationBar extends HorizontalLayout {
         ComponentEffect.effect(this, () -> {
             final var isLoggedIn = authenticationSignal.isAuthenticated();
             loginItem.setVisible(!isLoggedIn);
-            registerItem.setVisible(!isLoggedIn);
+            registerItem.setVisible(registrationAllowed && !isLoggedIn);
             logoutItem.setVisible(isLoggedIn);
 
             final var isAdmin = authenticationSignal.isAdmin();

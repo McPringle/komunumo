@@ -52,7 +52,12 @@ public enum ConfigurationSetting {
     /**
      * <p>Whether to hide the community list on the home page.</p>
      */
-    INSTANCE_HIDE_COMMUNITIES("instance.hideCommunities", false, "false"),;
+    INSTANCE_HIDE_COMMUNITIES("instance.hideCommunities", false, "false"),
+
+    /**
+     * <p>Whether to allow account registration or not.</p>
+     */
+    INSTANCE_REGISTRATION_ALLOWED("instance.registrationAllowed", false, "true"),;
 
     private final String setting;
     private final boolean languageDependent;

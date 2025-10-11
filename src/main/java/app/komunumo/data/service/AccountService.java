@@ -37,24 +37,29 @@ import org.springframework.stereotype.Service;
 import java.util.Locale;
 import java.util.Map;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
+
 @Service
 public final class AccountService {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
     private static final @NotNull String CONTEXT_REGISTRATION_LOCATION = "location";
 
+    private final @NotNull ConfigurationService configurationService;
     private final @NotNull UserService userService;
     private final @NotNull LoginService loginService;
     private final @NotNull MailService mailService;
     private final @NotNull ConfirmationService confirmationService;
     private final @NotNull TranslationProvider translationProvider;
 
-    public AccountService(final @NotNull UserService userService,
+    public AccountService(final @NotNull ConfigurationService configurationService,
+                          final @NotNull UserService userService,
                           final @NotNull LoginService loginService,
                           final @NotNull MailService mailService,
                           final @NotNull ConfirmationService confirmationService,
                           final @NotNull TranslationProvider translationProvider) {
         super();
+        this.configurationService = configurationService;
         this.userService = userService;
         this.loginService = loginService;
         this.mailService = mailService;
@@ -65,6 +70,11 @@ public final class AccountService {
 
     public void startRegistrationProcess(final @NotNull Locale locale,
                                          final @NotNull String location) {
+        if (!configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)) {
+            LOGGER.warn("Registration attempt while registration is disabled.");
+            return;
+        }
+
         final var actionMessage = translationProvider.getTranslation("data.service.AccountService.registrationText", locale);
         final ConfirmationHandler actionHandler = this::passwordlessRegistrationHandler;
         final var actionContext = ConfirmationContext.of(CONTEXT_REGISTRATION_LOCATION, location);

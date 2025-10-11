@@ -20,18 +20,23 @@ package app.komunumo.ui.views.login;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
+import app.komunumo.data.service.AccountService;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.UserService;
+import app.komunumo.security.SystemAuthenticator;
 import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
+import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -192,5 +197,62 @@ public class AccountRegistrationFlowIT extends BrowserTest {
         assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).count()).isZero();
 
         logout();
+    }
+
+    @Test
+    void registrationDisabled() {
+        final var configurationService = getBean(ConfigurationService.class);
+        final var systemAuthenticator = getBean(SystemAuthenticator.class);
+
+        try (var logCaptor = LogCaptor.forClass(AccountService.class)) {
+
+            // start with registration allowed
+            systemAuthenticator.runAsAdmin(
+                    () -> configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "true"));
+            assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isTrue();
+
+            // navigate to home page
+            final var page = getPage();
+            page.navigate("http://localhost:8081/");
+            page.waitForSelector(INSTANCE_NAME_SELECTOR);
+
+            // open avatar menu
+            page.click(AVATAR_SELECTOR);
+            page.waitForSelector(REGISTER_MENU_ITEM_SELECTOR);
+            captureScreenshot("profile-menu-with-register-item");
+
+            // check for registration menu item
+            assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).isVisible()).isTrue();
+
+            // disable registration
+            systemAuthenticator.runAsAdmin(
+                    () -> configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "false"));
+            assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isFalse();
+
+            // click on register menu item
+            page.click(REGISTER_MENU_ITEM_SELECTOR);
+
+            // check log for registration disabled message
+            await().atMost(2, SECONDS).untilAsserted(
+                    () -> assertThat(logCaptor.getWarnLogs())
+                            .contains("Registration attempt while registration is disabled."));
+
+            // reload page
+            page.reload();
+            page.waitForSelector(INSTANCE_NAME_SELECTOR);
+
+            // open avatar menu
+            page.click(AVATAR_SELECTOR);
+            page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+            captureScreenshot("profile-menu-without-register-item");
+
+            // check for registration menu item
+            assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).isVisible()).isFalse();
+        } finally {
+            // ensure registration is enabled at the end of the test
+            systemAuthenticator.runAsAdmin(
+                    () -> configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "true"));
+            assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isTrue();
+        }
     }
 }
