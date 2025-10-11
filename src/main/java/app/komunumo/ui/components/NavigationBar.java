@@ -17,7 +17,10 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.AccountService;
+import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.data.service.LoginService;
 import app.komunumo.ui.signals.AuthenticationSignal;
 import app.komunumo.ui.views.admin.config.ConfigurationEditorView;
 import app.komunumo.ui.views.community.CommunityGridView;
@@ -41,7 +44,10 @@ import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITI
 
 public final class NavigationBar extends HorizontalLayout {
 
-    public NavigationBar(final @NotNull ServiceProvider serviceProvider,
+    public NavigationBar(final @NotNull ConfigurationService configurationService,
+                         final @NotNull GlobalPageService globalPageService,
+                         final @NotNull LoginService loginService,
+                         final @NotNull AccountService accountService,
                          final @NotNull AuthenticationSignal authenticationSignal) {
         super();
         final var ui = UI.getCurrent();
@@ -49,29 +55,31 @@ public final class NavigationBar extends HorizontalLayout {
 
         final var menuContainer = new Div();
         menuContainer.addClassName("menu-container");
-        menuContainer.add(getNavigationBar(ui, serviceProvider));
+        menuContainer.add(getNavigationBar(ui, configurationService, globalPageService));
         addToStart(menuContainer);
 
-        addToEnd(getAvatar(ui, serviceProvider, authenticationSignal));
+        addToEnd(getAvatar(ui, loginService, accountService, authenticationSignal));
     }
 
     private Component getNavigationBar(final @NotNull UI ui,
-                                       final @NotNull ServiceProvider serviceProvider) {
+                                       final @NotNull ConfigurationService configurationService,
+                                       final @NotNull GlobalPageService globalPageService) {
         final var menuBar = new Nav();
         menuBar.addClassName("menu-bar");
         menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.events"), EventGridView.class));
 
-        if (!serviceProvider.configurationService().getConfiguration(INSTANCE_HIDE_COMMUNITIES, Boolean.class)) {
+        if (!configurationService.getConfiguration(INSTANCE_HIDE_COMMUNITIES, Boolean.class)) {
             menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.communities"), CommunityGridView.class));
         }
-        serviceProvider.globalPageService()
+        globalPageService
                 .getGlobalPages(ui.getLocale())
                 .forEach(page -> menuBar.add(new Anchor("/page/" + page.slot(), page.title())));
         return menuBar;
     }
 
     private Component getAvatar(final @NotNull UI ui,
-                                final @NotNull ServiceProvider serviceProvider,
+                                final @NotNull LoginService loginService,
+                                final @NotNull AccountService accountService,
                                 final @NotNull AuthenticationSignal authenticationSignal) {
         final var avatar = new Avatar();
         final var avatarMenu = new ContextMenu(avatar);
@@ -79,10 +87,10 @@ public final class NavigationBar extends HorizontalLayout {
 
         // login as first entry in the menu
         final var loginItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), _ ->
-                serviceProvider.loginService().startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+                loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
         final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), _ ->
-                serviceProvider.accountService().startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+                accountService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
         // admin menu

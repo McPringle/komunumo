@@ -17,7 +17,11 @@
  */
 package app.komunumo.ui.views;
 
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.configuration.AppConfig;
+import app.komunumo.data.service.AccountService;
+import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.data.service.LoginService;
 import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.components.PageFooter;
@@ -39,44 +43,37 @@ import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_SLOGAN;
 
 public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnterObserver {
 
-    private final @NotNull UI ui;
     private final @NotNull Main main;
 
-    public WebsiteLayout(final @NotNull ServiceProvider serviceProvider,
+    public WebsiteLayout(final @NotNull AppConfig appConfig,
+                         final @NotNull ConfigurationService configurationService,
+                         final @NotNull GlobalPageService globalPageService,
+                         final @NotNull LoginService loginService,
+                         final @NotNull AccountService accountService,
                          final @NotNull AuthenticationSignal authenticationSignal) {
         super();
         authenticationSignal.refreshFromSecurityContext();
-        ui = UI.getCurrent();
+        final var ui = UI.getCurrent();
 
-        if (serviceProvider.getAppConfig().demo().enabled()) {
+        if (appConfig.demo().enabled()) {
             add(new InfoBanner(ui.getTranslation("ui.views.WebsiteLayout.demoMode")));
         }
 
-        addPageHeader(serviceProvider);
-        addNavigationBar(serviceProvider, authenticationSignal);
+        addPageHeader(configurationService);
+        add(new NavigationBar(configurationService, globalPageService, loginService, accountService, authenticationSignal));
 
         main = new Main();
         add(main);
 
-        addFooter(serviceProvider);
+        final var komunumoVersion = appConfig.version();
+        add(new PageFooter(ui, komunumoVersion));
     }
 
-    private void addPageHeader(final @NotNull ServiceProvider serviceProvider) {
+    private void addPageHeader(final @NotNull ConfigurationService configurationService) {
         final var locale = UI.getCurrent().getLocale();
-        final var configurationService = serviceProvider.configurationService();
         final var instanceTitle = configurationService.getConfiguration(INSTANCE_NAME);
         final var instanceSlogan = configurationService.getConfiguration(INSTANCE_SLOGAN, locale);
         add(new PageHeader(instanceTitle, instanceSlogan));
-    }
-
-    private void addNavigationBar(final @NotNull ServiceProvider serviceProvider,
-                                  final @NotNull AuthenticationSignal authenticationSignal) {
-        add(new NavigationBar(serviceProvider, authenticationSignal));
-    }
-
-    private void addFooter(final @NotNull ServiceProvider serviceProvider) {
-        final var komunumoVersion = serviceProvider.getAppConfig().version();
-        add(new PageFooter(ui, komunumoVersion));
     }
 
     @Override
