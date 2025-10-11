@@ -198,14 +198,25 @@ Make sure the following tools are installed:
 
 ### Start Required Services
 
-*Komunumo* needs a database and a mail server to run. For local development, you can start both using a helper script:
+*Komunumo* needs a database and a mail server to run. For local development, you can start both using the provided `docker-compose.yml` file in the `dev-tools` directory:
+
+**Docker**
 
 ```bash
 cd ./dev-tools
-./runServices
+docker compose up -d && docker compose logs -f || docker compose down
 ```
 
-This script starts the following containers using Podman or Docker (whichever is available):
+**Podman**
+
+```bash
+cd ./dev-tools
+podman compose up -d && podman compose logs -f || podman compose down
+```
+
+The commands shown above will start the services in detached mode and then show the logs. If you stop the log view (e.g. using `CTRL`+`C`), all services will be stopped as well.
+
+The following services will be available:
 
 - MariaDB on Port 3306 with persistent data in `mariadb-data`.  
   The database user will be `komunumo` with the password `komunumo`. The database name is also `komunumo`.
@@ -214,7 +225,7 @@ This script starts the following containers using Podman or Docker (whichever is
 
 **Important:** This setup is for development only and not suitable for production use.
 
-#### Adminer Login Information
+**Adminer Login Information**
 
 | Field    | Value           |
 |----------|-----------------|
