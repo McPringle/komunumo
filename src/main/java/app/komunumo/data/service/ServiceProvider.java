@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @SuppressWarnings("java:S6206")
+@Deprecated(since = "1.0.0-nightly.251011", forRemoval = true)
 public final class ServiceProvider {
 
     private final @NotNull AppConfig appConfig;
