@@ -20,8 +20,8 @@ package app.komunumo.ui.views.community;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.CommunityWithImageDto;
 import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
-import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import app.komunumo.ui.views.events.EventGrid;
@@ -59,10 +59,12 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
 
     private @NotNull String pageTitle = "";
 
-    public CommunityDetailView(final @NotNull ServiceProvider serviceProvider) {
-        super(serviceProvider.configurationService());
-        this.communityService = serviceProvider.communityService();
-        this.eventService = serviceProvider.eventService();
+    public CommunityDetailView(final @NotNull ConfigurationService configurationService,
+                               final @NotNull CommunityService communityService,
+                               final @NotNull EventService eventService) {
+        super(configurationService);
+        this.communityService = communityService;
+        this.eventService = eventService;
         addClassName("community-detail-view");
         add(pageContent);
     }
