@@ -17,7 +17,9 @@
  */
 package app.komunumo.data.demo;
 
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.ImageService;
 import app.komunumo.ui.IntegrationTest;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;
@@ -31,7 +33,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DemoDataCreatorDisabledIT extends IntegrationTest {
 
     @Autowired
-    private ServiceProvider serviceProvider;
+    private CommunityService communityService;
+
+    @Autowired
+    private EventService eventService;
+
+    @Autowired
+    private ImageService imageService;
 
     @Autowired
     private DemoDataCreator demoDataCreator;
@@ -48,11 +56,11 @@ class DemoDataCreatorDisabledIT extends IntegrationTest {
     }
 
     private void assertDemoDataCount() {
-        Assertions.assertThat(serviceProvider.communityService().getCommunityCount())
+        Assertions.assertThat(communityService.getCommunityCount())
                 .isZero();
-        Assertions.assertThat(serviceProvider.eventService().getEventCount())
+        Assertions.assertThat(eventService.getEventCount())
                 .isZero();
-        Assertions.assertThat(serviceProvider.imageService().getImageCount())
+        Assertions.assertThat(imageService.getImageCount())
                 .isZero();
     }
 
