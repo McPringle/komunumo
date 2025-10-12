@@ -17,7 +17,8 @@
  */
 package app.komunumo.ui.views.community;
 
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.UI;
@@ -29,10 +30,11 @@ import org.jetbrains.annotations.NotNull;
 @AnonymousAllowed
 public final class CommunityGridView extends AbstractView {
 
-    public CommunityGridView(final @NotNull ServiceProvider serviceProvider) {
-        super(serviceProvider.configurationService());
+    public CommunityGridView(final @NotNull ConfigurationService configurationService,
+                             final @NotNull CommunityService communityService) {
+        super(configurationService);
         setId("community-view");
-        final var communities = serviceProvider.communityService().getCommunitiesWithImage();
+        final var communities = communityService.getCommunitiesWithImage();
         add(new CommunityGrid(communities));
     }
 
