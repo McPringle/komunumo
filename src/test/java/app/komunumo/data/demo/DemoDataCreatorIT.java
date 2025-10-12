@@ -19,7 +19,10 @@ package app.komunumo.data.demo;
 
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.data.service.ImageService;
 import app.komunumo.ui.IntegrationTest;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;
@@ -30,7 +33,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 class DemoDataCreatorIT extends IntegrationTest {
 
     @Autowired
-    private ServiceProvider serviceProvider;
+    private CommunityService communityService;
+
+    @Autowired
+    private EventService eventService;
+
+    @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private GlobalPageService globalPageService;
 
     @Autowired
     private @NotNull DemoDataCreator demoDataCreator;
@@ -43,13 +55,13 @@ class DemoDataCreatorIT extends IntegrationTest {
     }
 
     private void assertDemoDataCount() {
-        Assertions.assertThat(serviceProvider.communityService().getCommunityCount())
+        Assertions.assertThat(communityService.getCommunityCount())
                 .isEqualTo(6);
-        Assertions.assertThat(serviceProvider.eventService().getEventCount())
+        Assertions.assertThat(eventService.getEventCount())
                 .isEqualTo(6);
-        Assertions.assertThat(serviceProvider.imageService().getImageCount())
+        Assertions.assertThat(imageService.getImageCount())
                 .isEqualTo(10);
-        Assertions.assertThat(serviceProvider.globalPageService().getGlobalPageCount())
+        Assertions.assertThat(globalPageService.getGlobalPageCount())
                 .isEqualTo(2);
     }
 
