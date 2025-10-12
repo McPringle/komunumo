@@ -17,7 +17,7 @@
  */
 package app.komunumo.servlets.images;
 
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.configuration.AppConfig;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;
@@ -58,8 +58,8 @@ final class PlaceholderImageGenerator {
             .maximumSize(100)
             .build();
 
-    PlaceholderImageGenerator(final @NotNull ServiceProvider serviceProvider) {
-        final var instanceLogo = loadInstanceLogo(serviceProvider.getAppConfig().files().basedir());
+    PlaceholderImageGenerator(final @NotNull AppConfig appConfig) {
+        final var instanceLogo = loadInstanceLogo(appConfig.files().basedir());
 
         this.templateApplier = new SvgHelper(instanceLogo);
         final var placeholderImageRaw = getResourceAsString(PLACEHOLDER_IMAGE_TEMPLATE_FILE, FALLBACK_PLACEHOLDER_IMAGE_TEMPLATE);
@@ -101,7 +101,7 @@ final class PlaceholderImageGenerator {
      */
     String getPlaceholderImage(final int imageWidth, final int imageHeight) {
         final var cacheKey = new CacheKey(imageWidth, imageHeight);
-        return imageCache.get(cacheKey, key -> generatePlaceholderImage(imageWidth, imageHeight));
+        return imageCache.get(cacheKey, _ -> generatePlaceholderImage(imageWidth, imageHeight));
     }
 
     @SuppressWarnings("ExtractMethodRecommender")
@@ -135,8 +135,8 @@ final class PlaceholderImageGenerator {
                 "logoPositionX", String.valueOf(logoPositionX),
                 "logoPositionY", String.valueOf(logoPositionY),
                 "logoScalingFactor", String.valueOf(logoScalingFactor));
-        final var applyableImageTemplate = replaceVariables(placeholderImageTemplate, variables);
-        return templateApplier.applyTemplate(applyableImageTemplate);
+        final var applicableImageTemplate = replaceVariables(placeholderImageTemplate, variables);
+        return templateApplier.applyTemplate(applicableImageTemplate);
     }
 
     private record CacheKey(int imageWidth, int imageHeight) { }

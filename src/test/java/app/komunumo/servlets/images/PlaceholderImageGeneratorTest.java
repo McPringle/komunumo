@@ -23,8 +23,6 @@ import app.komunumo.configuration.DemoConfig;
 import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.InstanceConfig;
 import app.komunumo.configuration.MailConfig;
-import app.komunumo.data.service.ImageService;
-import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.util.ResourceUtil;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
@@ -40,9 +38,7 @@ import static java.lang.Boolean.TRUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 
 class PlaceholderImageGeneratorTest {
 
@@ -52,30 +48,22 @@ class PlaceholderImageGeneratorTest {
               <circle cx="50" cy="50" r="40" fill="red" />
             </svg>""";
 
-    private ServiceProvider getServiceProviderMock() {
+    private AppConfig getAppConfigMock() {
         final var userHome = System.getProperty("user.home");
         final var basedir = Path.of(userHome, ".komunumo", "test");
-
-        final var serviceProvider = mock(ServiceProvider.class);
-        final var imageService = mock(ImageService.class);
 
         final var demoConfig = new DemoConfig(false, "");
         final var filesConfig = new FilesConfig(basedir);
         final var mailConfig = new MailConfig("noreply@foo.bar", "support@foo.bar");
         final var instanceConfig = new InstanceConfig("admin@foo.bar");
-        final var appConfig = new AppConfig("0.0.0", demoConfig, filesConfig, instanceConfig, mailConfig);
 
-
-        when(serviceProvider.imageService()).thenReturn(imageService);
-        when(serviceProvider.getAppConfig()).thenReturn(appConfig);
-
-        return serviceProvider;
+        return new AppConfig("0.0.0", demoConfig, filesConfig, instanceConfig, mailConfig);
     }
 
     @Test
     void generateHorizontalPlaceholderImage() {
-        final var serviceProvider = getServiceProviderMock();
-        final var generator = new PlaceholderImageGenerator(serviceProvider);
+        final var appConfig = getAppConfigMock();
+        final var generator = new PlaceholderImageGenerator(appConfig);
         final var image = generator.getPlaceholderImage(200, 100);
         assertThat(image)
                 .isNotNull()
@@ -85,8 +73,8 @@ class PlaceholderImageGeneratorTest {
 
     @Test
     void generateVerticalPlaceholderImage() {
-        final var serviceProvider = getServiceProviderMock();
-        final var generator = new PlaceholderImageGenerator(serviceProvider);
+        final var appConfig = getAppConfigMock();
+        final var generator = new PlaceholderImageGenerator(appConfig);
         final var image = generator.getPlaceholderImage(100, 200);
         assertThat(image)
                 .isNotNull()
@@ -96,8 +84,8 @@ class PlaceholderImageGeneratorTest {
 
     @Test
     void useCustomLogoWhenAvailable() {
-        final var serviceProvider = getServiceProviderMock();
-        final var customLogoPath = serviceProvider.getAppConfig().files().basedir()
+        final var appConfig = getAppConfigMock();
+        final var customLogoPath = appConfig.files().basedir()
                 .resolve(Path.of("custom", "images", "logo.svg"));
 
         try (MockedStatic<Files> mocked = mockStatic(Files.class, CALLS_REAL_METHODS);
@@ -107,7 +95,7 @@ class PlaceholderImageGeneratorTest {
             mocked.when(() -> Files.readString(customLogoPath))
                     .thenReturn(TEST_SVG);
 
-            final var generator = new PlaceholderImageGenerator(serviceProvider);
+            final var generator = new PlaceholderImageGenerator(appConfig);
             final var image = generator.getPlaceholderImage(200, 100);
 
             assertThat(logCaptor.getInfoLogs())
@@ -124,8 +112,8 @@ class PlaceholderImageGeneratorTest {
 
     @Test
     void exceptionWhenReadingCustomLogo() {
-        final var serviceProvider = getServiceProviderMock();
-        final var customLogoPath = serviceProvider.getAppConfig().files().basedir()
+        final var appConfig = getAppConfigMock();
+        final var customLogoPath = appConfig.files().basedir()
                 .resolve(Path.of("custom", "images", "logo.svg"));
 
         try (MockedStatic<Files> mocked = mockStatic(Files.class, CALLS_REAL_METHODS);
@@ -135,7 +123,7 @@ class PlaceholderImageGeneratorTest {
             mocked.when(() -> Files.readString(customLogoPath))
                     .thenThrow(new IOException("boom"));
 
-            new PlaceholderImageGenerator(serviceProvider);
+            new PlaceholderImageGenerator(appConfig);
 
             final var expectedMessage = "Failed to read custom logo from '" + customLogoPath + "', fallback to default logo.";
             assertThat(logCaptor.getWarnLogs()).contains(expectedMessage);
@@ -144,7 +132,7 @@ class PlaceholderImageGeneratorTest {
 
     @Test
     void exceptionWhenReadingDefaultLogo() {
-        final var serviceProvider = getServiceProviderMock();
+        final var appConfig = getAppConfigMock();
         final var inputStream = new InputStream() {
             @Override
             public int read() throws IOException {
@@ -158,7 +146,7 @@ class PlaceholderImageGeneratorTest {
             mocked.when(() -> ResourceUtil.openResourceStream("/META-INF/resources/images/komunumo.svg"))
                     .thenReturn(inputStream);
 
-            assertThatThrownBy(() -> new PlaceholderImageGenerator(serviceProvider))
+            assertThatThrownBy(() -> new PlaceholderImageGenerator(appConfig))
                     .isInstanceOf(KomunumoException.class)
                     .hasMessageStartingWith("Failed to initialize template parser:");
             assertThat(logCaptor.getInfoLogs()).contains("No custom logo found, using default logo.");

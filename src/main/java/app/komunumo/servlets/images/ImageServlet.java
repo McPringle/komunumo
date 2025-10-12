@@ -55,7 +55,7 @@ public final class ImageServlet extends HttpServlet {
     public ImageServlet(final @NotNull ServiceProvider serviceProvider) {
         super();
         this.imageService = serviceProvider.imageService();
-        this.placeholderImageGenerator = new PlaceholderImageGenerator(serviceProvider);
+        this.placeholderImageGenerator = new PlaceholderImageGenerator(serviceProvider.getAppConfig());
     }
 
     @Override
