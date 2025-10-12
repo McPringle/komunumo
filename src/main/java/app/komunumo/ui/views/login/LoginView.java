@@ -17,7 +17,8 @@
  */
 package app.komunumo.ui.views.login;
 
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.data.service.LoginService;
 import app.komunumo.security.SecurityConfig;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
@@ -34,11 +35,12 @@ import org.jetbrains.annotations.Nullable;
 @Route(value = SecurityConfig.LOGIN_URL, layout = WebsiteLayout.class)
 public final class LoginView extends AbstractView implements BeforeEnterObserver {
 
-    private final @NotNull ServiceProvider serviceProvider;
+    private final @NotNull LoginService loginService;
 
-    public LoginView(final @NotNull ServiceProvider serviceProvider) {
-        super(serviceProvider.configurationService());
-        this.serviceProvider = serviceProvider;
+    public LoginView(final @NotNull ConfigurationService configurationService,
+                     final @NotNull LoginService loginService) {
+        super(configurationService);
+        this.loginService = loginService;
     }
 
     @Override
@@ -49,6 +51,6 @@ public final class LoginView extends AbstractView implements BeforeEnterObserver
     @Override
     public void beforeEnter(final @Nullable BeforeEnterEvent beforeEnterEvent) {
         final var ui = UI.getCurrent();
-        serviceProvider.loginService().startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui));
+        loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui));
     }
 }
