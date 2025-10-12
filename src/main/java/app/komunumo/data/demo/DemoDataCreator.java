@@ -17,6 +17,7 @@
  */
 package app.komunumo.data.demo;
 
+import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.EventDto;
@@ -25,10 +26,11 @@ import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.ParticipationService;
 import app.komunumo.security.SystemAuthenticator;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -57,16 +59,34 @@ public final class DemoDataCreator {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(DemoDataCreator.class);
 
     private final @NotNull SystemAuthenticator systemAuthenticator;
-    private final @NotNull ServiceProvider serviceProvider;
+    private final @NotNull ConfigurationService configurationService;
+    private final @NotNull ImageService imageService;
+    private final @NotNull CommunityService communityService;
+    private final @NotNull EventService eventService;
+    private final @NotNull ParticipationService participationService;
+    private final @NotNull GlobalPageService globalPageService;
+
     private final boolean enabled;
     private final @NotNull String demoDataUrl;
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // constructor injection
     public DemoDataCreator(final @NotNull SystemAuthenticator systemAuthenticator,
-                           final @NotNull ServiceProvider serviceProvider) {
+                           final @NotNull AppConfig appConfig,
+                           final @NotNull ConfigurationService configurationService,
+                           final @NotNull ImageService imageService,
+                           final @NotNull CommunityService communityService,
+                           final @NotNull EventService eventService,
+                           final @NotNull ParticipationService participationService,
+                           final @NotNull GlobalPageService globalPageService) {
         this.systemAuthenticator = systemAuthenticator;
-        this.serviceProvider = serviceProvider;
+        this.configurationService = configurationService;
+        this.imageService = imageService;
+        this.communityService = communityService;
+        this.eventService = eventService;
+        this.participationService = participationService;
+        this.globalPageService = globalPageService;
 
-        final var demoConfig = serviceProvider.getAppConfig().demo();
+        final var demoConfig = appConfig.demo();
         this.enabled = demoConfig.enabled();
         this.demoDataUrl = demoConfig.json();
     }
@@ -82,13 +102,6 @@ public final class DemoDataCreator {
             return;
         }
 
-        final var configurationService = serviceProvider.configurationService();
-        final var imageService = serviceProvider.imageService();
-        final var communityService = serviceProvider.communityService();
-        final var eventService = serviceProvider.eventService();
-        final var participationService = serviceProvider.participationService();
-        final var globalPageService = serviceProvider.globalPageService();
-
         LOGGER.info("Deleting existing data...");
         configurationService.deleteAllConfigurations();
         participationService.getParticipations().forEach(participationService::deleteParticipation);
@@ -100,11 +113,11 @@ public final class DemoDataCreator {
 
         LOGGER.info("Creating demo data...");
         if (demoDataUrl.isBlank()) {
-            final var communityImages = createDemoImages(imageService, "community");
-            final var communities = createDemoCommunities(communityService, communityImages);
-            final var eventImages = createDemoImages(imageService, "event");
-            createDemoEvents(eventService, eventImages, communities);
-            createGlobalPages(globalPageService);
+            final var communityImages = createDemoImages("community");
+            final var communities = createDemoCommunities(communityImages);
+            final var eventImages = createDemoImages("event");
+            createDemoEvents(eventImages, communities);
+            createGlobalPages();
         } else {
             final var demoDataImporter = new DemoDataImporter(demoDataUrl);
             demoDataImporter.importSettings(configurationService);
@@ -120,7 +133,7 @@ public final class DemoDataCreator {
         LOGGER.info("Orphaned image files cleaned up.");
     }
 
-    private List<ImageDto> createDemoImages(final @NotNull ImageService imageService, final @NotNull String filenamePrefix) {
+    private List<ImageDto> createDemoImages(final @NotNull String filenamePrefix) {
         final List<ImageDto> images = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
             final var filename = "%s-%d.webp".formatted(filenamePrefix, i);
@@ -131,8 +144,7 @@ public final class DemoDataCreator {
         return images;
     }
 
-    private List<CommunityDto> createDemoCommunities(final @NotNull CommunityService communityService,
-                                       final @NotNull List<ImageDto> images) {
+    private List<CommunityDto> createDemoCommunities(final @NotNull List<ImageDto> images) {
         for (int i = 1; i <= 6; i++) {
             final var imageId = i <= 5 ? images.get(i - 1).id() : null; // demo community 6+ has no image
             communityService.storeCommunity(new CommunityDto(
@@ -142,8 +154,7 @@ public final class DemoDataCreator {
         return communityService.getCommunities();
     }
 
-    private void createDemoEvents(final @NotNull EventService eventService,
-                                  final @NotNull List<ImageDto> images,
+    private void createDemoEvents(final @NotNull List<ImageDto> images,
                                   final @NotNull List<CommunityDto> communities) {
         for (int i = 1; i <= 6; i++) {
             final var communityId = communities.get(i - 1).id();
@@ -190,7 +201,7 @@ public final class DemoDataCreator {
         }
     }
 
-    private void createGlobalPages(final @NotNull GlobalPageService globalPageService) {
+    private void createGlobalPages() {
         globalPageService.storeGlobalPage(new GlobalPageDto("imprint", Locale.ENGLISH, null, null,
                 "Legal Notice", "## Legal Notice\n\nThis is a demo for testing purposes **only**."));
         globalPageService.storeGlobalPage(new GlobalPageDto("imprint", Locale.GERMAN, null, null,
