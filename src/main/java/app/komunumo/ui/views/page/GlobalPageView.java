@@ -18,8 +18,8 @@
 package app.komunumo.ui.views.page;
 
 import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.GlobalPageService;
-import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import app.komunumo.util.SecurityUtil;
@@ -51,9 +51,10 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
     private @NotNull String pageTitle = "";
     private @Nullable ContextMenu contextMenu;
 
-    public GlobalPageView(final @NotNull ServiceProvider serviceProvider) {
-        super(serviceProvider.configurationService());
-        this.globalPageService = serviceProvider.globalPageService();
+    public GlobalPageView(final @NotNull ConfigurationService configurationService,
+                          final @NotNull GlobalPageService globalPageService) {
+        super(configurationService);
+        this.globalPageService = globalPageService;
         addClassName("global-page-view");
         pageContent.setClassName("global-page-content");
         add(pageContent);
