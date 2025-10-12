@@ -17,7 +17,8 @@
  */
 package app.komunumo.ui.views.events;
 
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.data.service.EventService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.UI;
@@ -29,10 +30,11 @@ import org.jetbrains.annotations.NotNull;
 @AnonymousAllowed
 public final class EventGridView extends AbstractView {
 
-    public EventGridView(final @NotNull ServiceProvider serviceProvider) {
-        super(serviceProvider.configurationService());
+    public EventGridView(final @NotNull ConfigurationService configurationService,
+                         final @NotNull EventService eventService) {
+        super(configurationService);
         setId("events-view");
-        final var events = serviceProvider.eventService().getUpcomingEventsWithImage();
+        final var events = eventService.getUpcomingEventsWithImage();
         add(new EventGrid(events));
     }
 
