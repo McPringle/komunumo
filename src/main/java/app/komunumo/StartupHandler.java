@@ -20,7 +20,8 @@ package app.komunumo;
 import app.komunumo.admin.AdminBootstrapper;
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.demo.DemoDataCreator;
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -30,14 +31,17 @@ import org.springframework.stereotype.Component;
 public final class StartupHandler {
 
     private final @NotNull AppConfig appConfig;
-    private final @NotNull ServiceProvider serviceProvider;
+    private final @NotNull ConfigurationService configurationService;
+    private final @NotNull UserService userService;
     private final @NotNull DemoDataCreator demoDataCreator;
 
     public StartupHandler(final @NotNull AppConfig appConfig,
-                          final @NotNull ServiceProvider serviceProvider,
+                          final @NotNull ConfigurationService configurationService,
+                          final @NotNull UserService userService,
                           final @NotNull DemoDataCreator demoDataCreator) {
         this.appConfig = appConfig;
-        this.serviceProvider = serviceProvider;
+        this.configurationService = configurationService;
+        this.userService = userService;
         this.demoDataCreator = demoDataCreator;
     }
 
@@ -53,11 +57,11 @@ public final class StartupHandler {
     }
 
     private void clearCachedConfiguration() {
-        serviceProvider.configurationService().clearCache();
+        configurationService.clearCache();
     }
 
     private void createInitialAdmin() {
-        final var adminBootstrapper = new AdminBootstrapper(appConfig, serviceProvider.userService());
+        final var adminBootstrapper = new AdminBootstrapper(appConfig, userService);
         adminBootstrapper.createInitialAdminIfMissing();
     }
 
