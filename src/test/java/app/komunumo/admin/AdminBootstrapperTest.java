@@ -23,8 +23,6 @@ import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.InstanceConfig;
 import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.service.MailService;
-import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -43,13 +41,13 @@ class AdminBootstrapperTest {
     @Test
     @SuppressWarnings("DataFlowIssue")
     void shouldCreateAdminIfNoneExistsAndEmailIsSet() {
-        final var serviceProvider = mockServiceProvider(0);
+        final var userService = mockUserService(0);
         final var appConfig = createAppConfig("admin@example.eu");
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, serviceProvider);
+        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
         bootstrapper.createInitialAdminIfMissing();
 
-        verify(serviceProvider.userService()).storeUser(argThat(user ->
+        verify(userService).storeUser(argThat(user ->
                 user.email().equals("admin@example.eu") &&
                         user.role() == UserRole.ADMIN &&
                         user.profile().equals("@admin")
@@ -58,35 +56,30 @@ class AdminBootstrapperTest {
 
     @Test
     void shouldSkipCreationIfAdminAlreadyExists() {
-        final var serviceProvider = mockServiceProvider(1);
+        final var userService = mockUserService(1);
         final var appConfig = createAppConfig("admin@example.eu");
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, serviceProvider);
+        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
         bootstrapper.createInitialAdminIfMissing();
 
-        verify(serviceProvider.userService(), never()).storeUser(any());
+        verify(userService, never()).storeUser(any());
     }
 
     @Test
     void shouldSkipCreationIfNoEmailSet() {
-        final var serviceProvider = mockServiceProvider(0);
+        final var userService = mockUserService(0);
         final var appConfig = createAppConfig("");
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, serviceProvider);
+        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
         bootstrapper.createInitialAdminIfMissing();
 
-        verify(serviceProvider.userService(), never()).storeUser(any());
+        verify(userService, never()).storeUser(any());
     }
 
-    private ServiceProvider mockServiceProvider(final int adminCount) {
+    private UserService mockUserService(final int adminCount) {
         final var userService = mock(UserService.class);
         when(userService.getAdminCount()).thenReturn(adminCount);
-        final var mailService = mock(MailService.class);
-        when(mailService.sendMail(any(), any(), any(), any(), any())).thenReturn(true);
-        final var serviceProvider = mock(ServiceProvider.class);
-        when(serviceProvider.userService()).thenReturn(userService);
-        when(serviceProvider.mailService()).thenReturn(mailService);
-        return serviceProvider;
+        return userService;
     }
 
     private AppConfig createAppConfig(final @NotNull String email) {

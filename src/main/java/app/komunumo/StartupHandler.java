@@ -57,7 +57,7 @@ public final class StartupHandler {
     }
 
     private void createInitialAdmin() {
-        final var adminBootstrapper = new AdminBootstrapper(appConfig, serviceProvider);
+        final var adminBootstrapper = new AdminBootstrapper(appConfig, serviceProvider.userService());
         adminBootstrapper.createInitialAdminIfMissing();
     }
 

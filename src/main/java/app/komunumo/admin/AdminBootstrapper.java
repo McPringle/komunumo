@@ -21,7 +21,6 @@ import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -37,9 +36,9 @@ public final class AdminBootstrapper {
     private final @NotNull UserService userService;
 
     public AdminBootstrapper(final @NotNull AppConfig appConfig,
-                             final @NotNull ServiceProvider serviceProvider) {
+                             final @NotNull UserService userService) {
         this.adminEmail = appConfig.instance().admin().trim().toLowerCase(Locale.getDefault());
-        this.userService = serviceProvider.userService();
+        this.userService = userService;
     }
 
     public void createInitialAdminIfMissing() {
