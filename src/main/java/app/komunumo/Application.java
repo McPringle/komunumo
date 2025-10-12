@@ -19,7 +19,7 @@ package app.komunumo;
 
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.ServiceProvider;
+import app.komunumo.data.service.ImageService;
 import app.komunumo.servlets.images.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
@@ -97,14 +97,16 @@ public class Application extends SpringBootServletInitializer implements AppShel
      * <p>This servlet is responsible for streaming stored image files from the file system
      * and serves images with appropriate cache headers.</p>
      *
-     * @param serviceProvider the service provider used to provide the Komunumo services
+     * @param appConfig the application configuration used to access instance settings
+     * @param imageService the image service used to retrieve image data
      * @return a servlet registration bean that maps {@code /images/*} to {@link ImageServlet}
      */
     @Bean
     public @NotNull ServletRegistrationBean<@NotNull HttpServlet> imageServlet(
-            final @NotNull ServiceProvider serviceProvider) {
+            final @NotNull AppConfig appConfig,
+            final @NotNull ImageService imageService) {
         return new ServletRegistrationBean<>(
-                new ImageServlet(serviceProvider),
+                new ImageServlet(appConfig, imageService),
                 "/images/*"
         );
     }

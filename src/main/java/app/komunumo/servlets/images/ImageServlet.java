@@ -17,10 +17,10 @@
  */
 package app.komunumo.servlets.images;
 
+import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ImageService;
-import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.util.ImageUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,10 +52,11 @@ public final class ImageServlet extends HttpServlet {
 
     private final transient @NotNull ImageService imageService;
 
-    public ImageServlet(final @NotNull ServiceProvider serviceProvider) {
+    public ImageServlet(final @NotNull AppConfig appConfig,
+                        final @NotNull ImageService imageService) {
         super();
-        this.imageService = serviceProvider.imageService();
-        this.placeholderImageGenerator = new PlaceholderImageGenerator(serviceProvider.getAppConfig());
+        this.imageService = imageService;
+        this.placeholderImageGenerator = new PlaceholderImageGenerator(appConfig);
     }
 
     @Override

@@ -25,7 +25,6 @@ import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ImageService;
-import app.komunumo.data.service.ServiceProvider;
 import app.komunumo.util.ImageUtil;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,24 +60,16 @@ import static org.mockito.Mockito.when;
 
 class ImageServletTest {
 
-    private ServiceProvider getServiceProviderMock() {
+    private AppConfig getAppConfigMock() {
         final var userHome = System.getProperty("user.home");
         final var basedir = Path.of(userHome, ".komunumo", "test");
-
-        final var serviceProvider = mock(ServiceProvider.class);
-        final var imageService = mock(ImageService.class);
 
         final var demoConfig = new DemoConfig(false, "");
         final var filesConfig = new FilesConfig(basedir);
         final var mailConfig = new MailConfig("noreply@foo.bar", "support@foo.bar");
         final var instanceConfig = new InstanceConfig("admin@foo.bar");
-        final var appConfig = new AppConfig("0.0.0", demoConfig, filesConfig, instanceConfig, mailConfig);
 
-
-        when(serviceProvider.imageService()).thenReturn(imageService);
-        when(serviceProvider.getAppConfig()).thenReturn(appConfig);
-
-        return serviceProvider;
+        return new AppConfig("0.0.0", demoConfig, filesConfig, instanceConfig, mailConfig);
     }
 
     @ParameterizedTest
@@ -94,12 +85,12 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var serviceProvider = getServiceProviderMock();
-        final var imageService = serviceProvider.imageService();
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
 
         when(request.getPathInfo()).thenReturn(pathInfo);
 
-        final var servlet = new ImageServlet(serviceProvider);
+        final var servlet = new ImageServlet(appConfig, imageService);
 
         // Act
         servlet.doGet(request, response);
@@ -114,8 +105,8 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var serviceProvider = getServiceProviderMock();
-        final var imageService = serviceProvider.imageService();
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
 
         final var pathInfo = "/images/afc3478d-2c92-41b5-b89f-2a9111d79c73.jpg";
         final var imageId = UUID.fromString("afc3478d-2c92-41b5-b89f-2a9111d79c73");
@@ -123,7 +114,7 @@ class ImageServletTest {
         when(request.getPathInfo()).thenReturn(pathInfo);
         when(imageService.getImage(imageId)).thenReturn(Optional.empty());
 
-        final var servlet = new ImageServlet(serviceProvider);
+        final var servlet = new ImageServlet(appConfig, imageService);
 
         // Act
         servlet.doGet(request, response);
@@ -138,8 +129,8 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var serviceProvider = getServiceProviderMock();
-        final var imageService = serviceProvider.imageService();
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
 
         final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
         final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
@@ -148,7 +139,7 @@ class ImageServletTest {
         when(request.getPathInfo()).thenReturn(pathInfo);
         when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
 
-        final var servlet = new ImageServlet(serviceProvider);
+        final var servlet = new ImageServlet(appConfig, imageService);
 
         // Mock static method: ImageUtil.loadImage(image) → Optional.empty()
         try (MockedStatic<ImageUtil> mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
@@ -169,8 +160,8 @@ class ImageServletTest {
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var serviceProvider = getServiceProviderMock();
-        final var imageService = serviceProvider.imageService();
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
 
         when(request.getPathInfo()).thenReturn("/images/" + imageId + ".jpg");
         when(imageService.getImage(imageId)).thenReturn(Optional.of(image));
@@ -185,7 +176,7 @@ class ImageServletTest {
                 });
 
 
-        final var servlet = new ImageServlet(serviceProvider);
+        final var servlet = new ImageServlet(appConfig, imageService);
 
         try (var mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
             mockedStatic.when(() -> ImageUtil.loadImage(image)).thenReturn(brokenOptional);
@@ -207,8 +198,8 @@ class ImageServletTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var outputStream = mock(ServletOutputStream.class);
-        final var serviceProvider = getServiceProviderMock();
-        final var imageService = serviceProvider.imageService();
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
 
         when(request.getPathInfo()).thenReturn("/images/" + imageId + ".jpg");
         when(response.getOutputStream()).thenReturn(outputStream);
@@ -217,7 +208,7 @@ class ImageServletTest {
         // working stream that successfully calls `.transferTo(...)`
         final var inputStream = spy(new ByteArrayInputStream("demo".getBytes()));
 
-        final var servlet = new ImageServlet(serviceProvider);
+        final var servlet = new ImageServlet(appConfig, imageService);
 
         try (var mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
             mockedStatic.when(() -> ImageUtil.loadImage(image)).thenReturn(Optional.of(inputStream));
@@ -239,8 +230,9 @@ class ImageServletTest {
     @Test
     void setsNotFoundStatus_whenRedirectTo404PageFails() throws IOException {
         // Arrange
-        final var serviceProvider = getServiceProviderMock();
-        final var servlet = new ImageServlet(serviceProvider);
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
+        final var servlet = new ImageServlet(appConfig, imageService);
 
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
@@ -267,8 +259,8 @@ class ImageServletTest {
         // Arrange
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
-        final var serviceProvider = getServiceProviderMock();
-        final var imageService = serviceProvider.imageService();
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
 
         final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
         final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
@@ -280,7 +272,7 @@ class ImageServletTest {
         doThrow(new IOException("Redirect failed"))
                 .when(response).sendRedirect("/error/500");
 
-        final var servlet = new ImageServlet(serviceProvider);
+        final var servlet = new ImageServlet(appConfig, imageService);
 
         // Mock static method: ImageUtil.loadImage(image) → Optional.empty()
         try (MockedStatic<ImageUtil> mockedStatic = mockStatic(ImageUtil.class, CALLS_REAL_METHODS)) {
@@ -296,8 +288,8 @@ class ImageServletTest {
     @Test
     void redirectsTo500Page_whenPrintWriterThrowsIOException() throws IOException {
         // Arrange
-        final var serviceProvider = getServiceProviderMock();
-        final var imageService = serviceProvider.imageService();
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var printWriter = mock(PrintWriter.class);
@@ -308,7 +300,7 @@ class ImageServletTest {
                 .when(printWriter).write(anyString());
 
         // Act
-        final var servlet = new ImageServlet(serviceProvider);
+        final var servlet = new ImageServlet(appConfig, imageService);
         servlet.doGet(request, response);
 
         // Assert
@@ -322,13 +314,14 @@ class ImageServletTest {
         final var request = mock(HttpServletRequest.class);
         final var response = mock(HttpServletResponse.class);
         final var stringWriter = new StringWriter();
-        final var serviceProvider = getServiceProviderMock();
+        final var appConfig = getAppConfigMock();
+        final var imageService = mock(ImageService.class);
 
         when(request.getPathInfo()).thenReturn("/placeholder-100x200.svg");
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
         // Act
-        final var servlet = new ImageServlet(serviceProvider);
+        final var servlet = new ImageServlet(appConfig, imageService);
         servlet.doGet(request, response);
 
         // Assert
