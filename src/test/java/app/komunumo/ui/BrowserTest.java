@@ -222,7 +222,7 @@ public abstract class BrowserTest {
      */
     protected void login(final @NotNull UserDto user) {
         // navigate to login page
-        page.navigate("http://localhost:8081/login");
+        page.navigate("http://localhost:%d/login".formatted(getPort()));
         page.waitForURL("**/login");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
 
