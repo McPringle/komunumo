@@ -45,7 +45,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -116,13 +115,10 @@ public abstract class KaribuTest extends IntegrationTest {
         }
     }
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     @BeforeEach
     public void setup() throws FolderException {
         final Function0<UI> uiFactory = UI::new;
-        final var servlet = new MockSpringServlet(routes, applicationContext, uiFactory);
+        final var servlet = new MockSpringServlet(routes, getApplicationContext(), uiFactory);
         MockVaadin.setup(uiFactory, servlet);
         UI.getCurrent().setLocale(Locale.ENGLISH);
         greenMail.purgeEmailFromAllMailboxes();
@@ -219,7 +215,7 @@ public abstract class KaribuTest extends IntegrationTest {
         // make ViewAccessChecker work
         final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();
         request.setUserPrincipalInt(authentication);
-        request.setUserInRole((principal, role) -> roles.contains(UserRole.valueOf(role)));
+        request.setUserInRole((_, role) -> roles.contains(UserRole.valueOf(role)));
     }
 
     /**
@@ -229,7 +225,7 @@ public abstract class KaribuTest extends IntegrationTest {
         if (VaadinServletRequest.getCurrent() != null) {
             final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();
             request.setUserPrincipalInt(null);
-            request.setUserInRole((principal, role) -> false);
+            request.setUserInRole((_, _) -> false);
         }
         loginService.logout();
     }
