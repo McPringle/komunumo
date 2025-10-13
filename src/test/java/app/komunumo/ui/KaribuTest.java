@@ -68,9 +68,9 @@ import java.util.stream.Stream;
  */
 @SpringBootTest
 @DirtiesContext
-public abstract class IntegrationTest {
+public abstract class KaribuTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KaribuTest.class);
 
     @RegisterExtension
     protected static final @NotNull GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)

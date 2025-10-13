@@ -18,7 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.ConfigurationSetting;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-class ConfigurationServiceIT extends IntegrationTest {
+class ConfigurationServiceIT extends KaribuTest {
 
     @Autowired
     private DSLContext dsl;

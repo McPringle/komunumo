@@ -19,7 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.UserRole;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GlobalPageServiceIT extends IntegrationTest {
+class GlobalPageServiceIT extends KaribuTest {
 
     @Autowired
     private @NotNull GlobalPageService globalPageService;

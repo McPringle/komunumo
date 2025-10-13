@@ -20,7 +20,7 @@ package app.komunumo.ui.views.page;
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.GlobalPageService;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.PersistentNotification;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.HtmlContainer;
@@ -45,7 +45,7 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static com.vaadin.flow.component.ComponentUtil.fireEvent;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GlobalPageEditorDialogIT extends IntegrationTest {
+class GlobalPageEditorDialogIT extends KaribuTest {
 
     @Autowired
     private GlobalPageService globalPageService;

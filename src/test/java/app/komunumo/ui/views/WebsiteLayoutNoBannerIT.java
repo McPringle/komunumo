@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.views;
 
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.views.home.HomeView;
 import com.vaadin.flow.component.UI;
@@ -30,7 +30,7 @@ import static app.komunumo.util.TestUtil.findComponent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(properties = "komunumo.demo.enabled=false")
-class WebsiteLayoutNoBannerIT extends IntegrationTest {
+class WebsiteLayoutNoBannerIT extends KaribuTest {
 
     private @NotNull WebsiteLayout websiteLayout;
 

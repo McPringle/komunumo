@@ -19,7 +19,7 @@ package app.komunumo.ui.views.community;
 
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.security.SystemAuthenticator;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.icegreen.greenmail.store.FolderException;
@@ -35,7 +35,7 @@ import static app.komunumo.util.TestUtil.findComponent;
 import static app.komunumo.util.TestUtil.findComponents;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HideCommunitiesIT extends IntegrationTest {
+class HideCommunitiesIT extends KaribuTest {
 
     @Autowired
     private ConfigurationService configurationService;

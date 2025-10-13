@@ -18,14 +18,14 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.CommunityDto;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CommunityServiceIT extends IntegrationTest {
+class CommunityServiceIT extends KaribuTest {
 
     @Autowired
     private @NotNull CommunityService communityService;

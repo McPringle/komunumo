@@ -22,7 +22,7 @@ import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.confirmation.ConfirmationContext;
 import app.komunumo.data.service.confirmation.ConfirmationStatus;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import java.util.Locale;
 import static app.komunumo.data.service.ParticipationService.CONTEXT_KEY_EVENT;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ParticipationServiceIT extends IntegrationTest {
+class ParticipationServiceIT extends KaribuTest {
 
     @Autowired
     private @NotNull ParticipationService participationService;

@@ -20,7 +20,7 @@ package app.komunumo.data.demo;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.ImageService;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(properties = "komunumo.demo.enabled=false")
-class DemoDataCreatorDisabledIT extends IntegrationTest {
+class DemoDataCreatorDisabledIT extends KaribuTest {
 
     @Autowired
     private CommunityService communityService;

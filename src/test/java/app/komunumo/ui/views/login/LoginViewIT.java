@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.views.login;
 
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.ConfirmationDialog;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
@@ -28,7 +28,7 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LoginViewIT extends IntegrationTest {
+class LoginViewIT extends KaribuTest {
 
     @Test
     void loginDialogShouldOpenAutomatically() {

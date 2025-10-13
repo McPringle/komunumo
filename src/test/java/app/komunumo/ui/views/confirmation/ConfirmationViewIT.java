@@ -20,7 +20,7 @@ package app.komunumo.ui.views.confirmation;
 import app.komunumo.data.service.confirmation.ConfirmationResponse;
 import app.komunumo.data.service.confirmation.ConfirmationService;
 import app.komunumo.data.service.confirmation.ConfirmationStatus;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.PersistentNotification;
 import app.komunumo.ui.views.events.EventGridView;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
@@ -49,7 +49,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-class ConfirmationViewIT extends IntegrationTest {
+class ConfirmationViewIT extends KaribuTest {
 
     @MockitoBean
     private ConfirmationService confirmationService;

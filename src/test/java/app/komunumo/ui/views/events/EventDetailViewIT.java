@@ -18,7 +18,7 @@
 package app.komunumo.ui.views.events;
 
 import app.komunumo.data.service.EventService;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.util.DateTimeUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
@@ -34,7 +34,7 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EventDetailViewIT extends IntegrationTest {
+class EventDetailViewIT extends KaribuTest {
 
     @Autowired
     private EventService eventService;
