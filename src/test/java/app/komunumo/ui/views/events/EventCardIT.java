@@ -21,13 +21,13 @@ import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.EventWithImageDto;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EventCardIT extends IntegrationTest {
+class EventCardIT extends KaribuTest {
 
     @Test
     @Tag("technical") // TODO just for coverage: remove after a page was added to display draft events without date/time

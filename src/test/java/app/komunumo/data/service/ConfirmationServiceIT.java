@@ -24,7 +24,7 @@ import app.komunumo.data.service.confirmation.ConfirmationRequest;
 import app.komunumo.data.service.confirmation.ConfirmationResponse;
 import app.komunumo.data.service.confirmation.ConfirmationService;
 import app.komunumo.data.service.confirmation.ConfirmationStatus;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import jakarta.mail.MessagingException;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-class ConfirmationServiceIT extends IntegrationTest {
+class ConfirmationServiceIT extends KaribuTest {
 
     private static final @NotNull Pattern EXTRACT_ID_PATTERN =
             Pattern.compile("http://localhost(?::\\d+)?/confirm\\?id=([0-9a-fA-F\\-]{36})(?:&.*)?");

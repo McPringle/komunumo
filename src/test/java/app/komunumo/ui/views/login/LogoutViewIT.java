@@ -18,7 +18,7 @@
 package app.komunumo.ui.views.login;
 
 import app.komunumo.data.dto.UserRole;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.util.SecurityUtil;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LogoutViewIT extends IntegrationTest {
+class LogoutViewIT extends KaribuTest {
 
     @Test
     void logoutView() {

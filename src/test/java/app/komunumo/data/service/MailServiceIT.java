@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Locale;
@@ -33,7 +33,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-class MailServiceIT extends IntegrationTest {
+class MailServiceIT extends KaribuTest {
 
     @Autowired
     private @NotNull MailService mailService;

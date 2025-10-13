@@ -23,14 +23,14 @@ import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class DemoDataCreatorIT extends IntegrationTest {
+class DemoDataCreatorIT extends KaribuTest {
 
     @Autowired
     private CommunityService communityService;

@@ -19,7 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
-class ImageServiceIT extends IntegrationTest {
+class ImageServiceIT extends KaribuTest {
 
     @Autowired
     private @NotNull ImageService imageService;

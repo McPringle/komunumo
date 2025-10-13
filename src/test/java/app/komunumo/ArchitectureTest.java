@@ -18,7 +18,7 @@
 package app.komunumo;
 
 import app.komunumo.ui.BrowserTest;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
@@ -187,9 +187,9 @@ class ArchitectureTest {
     }
 
     @Test
-    void onlyIntegrationTestShouldUseSpringBootTest() {
+    void onlyKaribuTestShouldUseSpringBootTest() {
         ArchRule rule = noClasses()
-                .that().doNotHaveSimpleName("IntegrationTest")
+                .that().doNotHaveSimpleName("KaribuTest")
                 .should().beAnnotatedWith(SpringBootTest.class);
 
         rule.check(onlyTests);
@@ -199,7 +199,7 @@ class ArchitectureTest {
     void integrationTestsShouldHaveSuffixIT() {
         ArchRule rule = classes()
                 .that()
-                    .areAssignableTo(IntegrationTest.class)
+                    .areAssignableTo(KaribuTest.class)
                     .or().areAssignableTo(BrowserTest.class)
                 .and().doNotHaveModifier(ABSTRACT)
                 .should().haveSimpleNameEndingWith("IT");

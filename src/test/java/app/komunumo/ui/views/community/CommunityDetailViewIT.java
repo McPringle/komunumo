@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.views.community;
 
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.views.events.EventCard;
 import app.komunumo.ui.views.events.EventGrid;
 import com.vaadin.flow.component.UI;
@@ -33,7 +33,7 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CommunityDetailViewIT extends IntegrationTest {
+class CommunityDetailViewIT extends KaribuTest {
 
     @Test
     void communityWithImage() {

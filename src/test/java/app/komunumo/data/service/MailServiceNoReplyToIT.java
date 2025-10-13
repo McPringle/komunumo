@@ -19,7 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import static org.awaitility.Awaitility.await;
 @TestPropertySource(properties = {
         "komunumo.mail.replyTo="
 })
-class MailServiceNoReplyToIT extends IntegrationTest {
+class MailServiceNoReplyToIT extends KaribuTest {
 
     @Autowired
     private @NotNull MailService mailService;

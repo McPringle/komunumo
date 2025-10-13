@@ -20,7 +20,7 @@ package app.komunumo.data.generator;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.ImageService;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -42,7 +42,7 @@ import static app.komunumo.data.db.tables.Image.IMAGE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class UniqueIdGeneratorIT extends IntegrationTest {
+class UniqueIdGeneratorIT extends KaribuTest {
 
     @Autowired
     private @NotNull DSLContext dsl;

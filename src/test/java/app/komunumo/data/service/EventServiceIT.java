@@ -21,7 +21,7 @@ import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.EventWithImageDto;
-import app.komunumo.ui.IntegrationTest;
+import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EventServiceIT extends IntegrationTest {
+class EventServiceIT extends KaribuTest {
 
     @Autowired
     private @NotNull EventService eventService;
