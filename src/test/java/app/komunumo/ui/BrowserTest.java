@@ -17,7 +17,6 @@
  */
 package app.komunumo.ui;
 
-import app.komunumo.Application;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
@@ -42,21 +41,15 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -64,8 +57,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.awaitility.Awaitility.await;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class BrowserTest {
+public abstract class BrowserTest extends IntegrationTest {
 
     protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
     protected static final String AVATAR_SELECTOR = "vaadin-avatar";
@@ -75,11 +67,9 @@ public abstract class BrowserTest {
     private static final Path SCREENSHOT_DIR = Path.of("target/playwright-screenshots");
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmssSSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(BrowserTest.class);
-    private static final int PORT = 8081;
 
-    private ConfigurableApplicationContext context;
-    private Playwright playwright;
-    private Browser browser;
+    private static Playwright playwright;
+    private static Browser browser;
     private Page page;
 
     private Path screenshotDir;
@@ -91,47 +81,33 @@ public abstract class BrowserTest {
                     .withUser("komunumo", "s3cr3t"))
             .withPerMethodLifecycle(false);
 
-    protected String[] getProperties() {
-        return new String[] { };
-    }
-
     @BeforeAll
-    void startAppAndBrowser() {
-        final var properties = getProperties();
-        final String[] args = Stream.concat(
-                Stream.of(
-                        "--server.port=" + PORT,
-                        "--spring.profiles.active=test"
-                ),
-                Arrays.stream(properties)
-        ).toArray(String[]::new);
-
-        context = SpringApplication.run(Application.class, args);
+    static void startBrowser() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+    }
 
+    @AfterAll
+    static void stopBrowser() {
+        browser.close();
+        playwright.close();
+    }
+
+    @BeforeEach
+    void openPage() throws FolderException {
         screenshotDir = SCREENSHOT_DIR.resolve(getClass().getName()).resolve(browser.browserType().name());
         screenshotOptions = new Page.ScreenshotOptions()
                 .setType(ScreenshotType.PNG)
                 .setFullPage(true);
 
-        final var instanceUrl = "http://localhost:%d".formatted(PORT);
+        final var instanceUrl = "http://localhost:%d".formatted(getPort());
         final var configurationService = getBean(ConfigurationService.class);
         final var systemAuthenticator = getBean(SystemAuthenticator.class);
         systemAuthenticator.runAsAdmin(
                 () -> configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl));
-    }
 
-    @AfterAll
-    void stopAppAndBrowser() {
-        browser.close();
-        playwright.close();
-        SpringApplication.exit(context);
-    }
-
-    @BeforeEach
-    void openPage() throws FolderException {
         greenMail.purgeEmailFromAllMailboxes();
+
         final var pageOptions = new Browser.NewPageOptions()
                 .setViewportSize(1920, 1080);
         page = browser.newPage(pageOptions);
@@ -140,18 +116,6 @@ public abstract class BrowserTest {
     @AfterEach
     void closePage() {
         page.close();
-    }
-
-    /**
-     * <p>Returns the HTTP port on which the Spring Boot application is currently running.</p>
-     *
-     * </p>This is useful for constructing URLs in integration tests that perform real HTTP requests
-     * against the running application (e.g. API endpoint tests).</p>
-     *
-     * @return the configured server port, e.g. {@code 8081}
-     */
-    protected int getPort() {
-        return PORT;
     }
 
     /**
@@ -165,13 +129,6 @@ public abstract class BrowserTest {
      */
     protected Page getPage() {
         return page;
-    }
-
-    /**
-     * @see ConfigurableApplicationContext#getBean(Class)
-     */
-    protected <T> T getBean(final @NotNull Class<T> clazz) throws BeansException {
-        return context.getBean(clazz);
     }
 
     /**

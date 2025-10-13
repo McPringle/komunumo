@@ -66,9 +66,7 @@ import java.util.stream.Stream;
  * The easiest way to use this class in our tests is having our test class to extend
  * this class.
  */
-@SpringBootTest
-@DirtiesContext
-public abstract class KaribuTest {
+public abstract class KaribuTest extends IntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KaribuTest.class);
 
@@ -218,7 +216,9 @@ public abstract class KaribuTest {
 
         // create the authentication token
         final var authentication = new PreAuthenticatedAuthenticationToken(userPrincipal, null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        final var context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
 
         // make ViewAccessChecker work
         final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();

@@ -31,7 +31,7 @@ class EventGridViewIT extends BrowserTest {
     void checkUpcomingEvents() {
         final var page = getPage();
 
-        page.navigate("http://localhost:8081/events/");
+        page.navigate("http://localhost:%d/events".formatted(getPort()));
         page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("upcoming-events-view");
         assertThat(page.title()).isEqualTo("Events – Your Instance Name");
@@ -98,7 +98,7 @@ class EventGridViewIT extends BrowserTest {
 
         final var page = getPage();
 
-        page.navigate("http://localhost:8081/events");
+        page.navigate("http://localhost:%d/events".formatted(getPort()));
         page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("event-grid-view");
 

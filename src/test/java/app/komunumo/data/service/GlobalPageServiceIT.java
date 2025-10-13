@@ -19,6 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.security.SystemAuthenticator;
 import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class GlobalPageServiceIT extends KaribuTest {
 
     @Autowired
     private @NotNull GlobalPageService globalPageService;
+
+    @Autowired
+    private @NotNull SystemAuthenticator systemAuthenticator;
 
     @Test
     void getImprintPageInEnglishSuccess() {
@@ -129,8 +133,11 @@ class GlobalPageServiceIT extends KaribuTest {
             assertThat(contactPage.slot()).isEqualTo("contact");
             assertThat(contactPage.language()).isEqualTo(Locale.ENGLISH);
         } finally {
-            final var returnValue = globalPageService.deleteGlobalPage(contactPage);
-            assertThat(returnValue).isTrue();
+            final var pageToDelete = contactPage;
+            systemAuthenticator.runAsAdmin(() -> {
+                final var returnValue = globalPageService.deleteGlobalPage(pageToDelete);
+                assertThat(returnValue).isTrue();
+            });
             SecurityContextHolder.clearContext();
         }
     }
@@ -190,8 +197,11 @@ class GlobalPageServiceIT extends KaribuTest {
 
         } finally {
             assertThat(testee).isNotNull();
-            assertThat(globalPageService.deleteGlobalPage(testee)).isTrue();
-            assertThat(globalPageService.deleteGlobalPage(testee)).isFalse();
+            final var pageToDelete = testee;
+            systemAuthenticator.runAsAdmin(() -> {
+                assertThat(globalPageService.deleteGlobalPage(pageToDelete)).isTrue();
+                assertThat(globalPageService.deleteGlobalPage(pageToDelete)).isFalse();
+            });
             SecurityContextHolder.clearContext();
         }
     }
@@ -239,7 +249,9 @@ class GlobalPageServiceIT extends KaribuTest {
             assertThat(testPageAfterUpdate.title()).isEqualTo(titleUpdated);
             assertThat(testPageAfterUpdate.markdown()).isEqualTo(markdownUpdated);
         } finally {
-            globalPageService.deleteGlobalPage(testPage);
+            systemAuthenticator.runAsAdmin(() -> {
+                globalPageService.deleteGlobalPage(testPage);
+            });
             SecurityContextHolder.clearContext();
         }
     }

@@ -45,14 +45,14 @@ import static org.awaitility.Awaitility.await;
 public class AccountRegistrationFlowIT extends BrowserTest {
 
     private static final String REGISTER_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Register')";
+    private static final String NEW_USER_EMAIL = "new@example.com";
 
-    private final String newUserEmail = "new@example.com";
-    private UserDto anonymousUser;
-    private UserDto remoteUser;
-    private UserDto localUser;
+    private static UserDto anonymousUser;
+    private static UserDto remoteUser;
+    private static UserDto localUser;
 
     @BeforeAll
-    void createTestUsers() {
+    static void createTestUsers() {
         final var userService = getBean(UserService.class);
         anonymousUser = userService.storeUser(new UserDto(null, null, null,
                 null, "anonymous@example.com", "", "",
@@ -66,17 +66,17 @@ public class AccountRegistrationFlowIT extends BrowserTest {
     }
 
     @AfterAll
-    void removeTestUsers() {
+    static void removeTestUsers() {
         final var userService = getBean(UserService.class);
         userService.deleteUser(localUser);
         userService.deleteUser(remoteUser);
         userService.deleteUser(anonymousUser);
-        userService.getUserByEmail(newUserEmail).ifPresent(userService::deleteUser);
+        userService.getUserByEmail(NEW_USER_EMAIL).ifPresent(userService::deleteUser);
     }
 
     @Test
     void newUserCanRegister() throws MessagingException, FolderException {
-        testRegistrationFlow(newUserEmail);
+        testRegistrationFlow(NEW_USER_EMAIL);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class AccountRegistrationFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to home page
-        page.navigate("http://localhost:8081/");
+        page.navigate("http://localhost:%d/".formatted(getPort()));
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
 
         // open avatar menu
@@ -185,7 +185,7 @@ public class AccountRegistrationFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to home page
-        page.navigate("http://localhost:8081/");
+        page.navigate("http://localhost:%d/".formatted(getPort()));
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
 
         // open avatar menu
@@ -213,7 +213,7 @@ public class AccountRegistrationFlowIT extends BrowserTest {
 
             // navigate to home page
             final var page = getPage();
-            page.navigate("http://localhost:8081/");
+            page.navigate("http://localhost:%d/".formatted(getPort()));
             page.waitForSelector(INSTANCE_NAME_SELECTOR);
 
             // open avatar menu

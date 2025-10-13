@@ -52,7 +52,7 @@ class EventRegistrationFlowIT extends BrowserTest {
 
         // navigate to events page
         final var page = getPage();
-        page.navigate("http://localhost:8081/events/" + testEvent.id());
+        page.navigate("http://localhost:%d/events/%s".formatted(getPort(), testEvent.id()));
         page.waitForURL("**/events/" + testEvent.id());
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("events-page");
@@ -127,7 +127,7 @@ class EventRegistrationFlowIT extends BrowserTest {
 
         // navigate to events page
         final var page = getPage();
-        page.navigate("http://localhost:8081/events/" + testEvent.id());
+        page.navigate("http://localhost:%d/events/%s".formatted(getPort(), testEvent.id()));
         page.waitForURL("**/events/" + testEvent.id());
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("events-page");

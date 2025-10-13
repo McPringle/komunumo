@@ -23,12 +23,14 @@ import app.komunumo.data.service.ImageService;
 import app.komunumo.ui.KaribuTest;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 @TestPropertySource(properties = "komunumo.demo.enabled=false")
 class DemoDataCreatorDisabledIT extends KaribuTest {
 

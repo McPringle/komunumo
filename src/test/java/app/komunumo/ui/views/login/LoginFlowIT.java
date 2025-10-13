@@ -17,17 +17,12 @@
  */
 package app.komunumo.ui.views.login;
 
-import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.UserService;
 import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.extractLinkFromText;
@@ -37,28 +32,13 @@ import static org.awaitility.Awaitility.await;
 
 class LoginFlowIT extends BrowserTest {
 
-    private UserDto testUser;
-
-    @BeforeAll
-    void createTestUser() {
-        final var userService = getBean(UserService.class);
-        testUser = userService.storeUser(new UserDto(null, null, null,
-                "@loginLogoutFlow", "success@example.com", "Test User", "", null,
-                UserRole.USER, UserType.LOCAL));
-    }
-
-    @AfterAll
-    void removeTestUser() {
-        getBean(UserService.class).deleteUser(testUser);
-    }
-
     @Test
     @SuppressWarnings({"java:S2925", "java:S2699"})
     void loginAndLogoutWorks() {
-        login(testUser);
+        login(getTestUser(UserRole.USER));
 
         final var page = getPage();
-        page.navigate("http://localhost:8081/events");
+        page.navigate("http://localhost:%s/events".formatted(getPort()));
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("loginWorks_event-page");
@@ -72,7 +52,7 @@ class LoginFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to events page
-        page.navigate("http://localhost:8081/events");
+        page.navigate("http://localhost:%s/events".formatted(getPort()));
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("loginFails_before-login");
@@ -132,7 +112,7 @@ class LoginFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to events page
-        page.navigate("http://localhost:8081/events");
+        page.navigate("http://localhost:%s/events".formatted(getPort()));
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("loginDialogOpenAndClose_before-login");
@@ -163,7 +143,7 @@ class LoginFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to events page
-        page.navigate("http://localhost:8081/events");
+        page.navigate("http://localhost:%s/events".formatted(getPort()));
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("loginDialogCancel_before-login");

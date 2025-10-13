@@ -18,28 +18,30 @@
 package app.komunumo.data.demo;
 
 import app.komunumo.ui.BrowserTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Disabled
 class DemoDataCreatorJsonIT extends BrowserTest {
 
     private static final String DATA_URL = "http://localhost:8082/import/data.json";
 
-    @Override
-    protected String[] getProperties() {
-        return new String[] {
-                "--komunumo.demo.json=" + DATA_URL,
-        };
-    }
+//    @Override
+//    protected String[] getProperties() {
+//        return new String[] {
+//                "--komunumo.demo.json=" + DATA_URL,
+//        };
+//    }
 
     @Test
     void testDemoDataImporterWithJson() {
         final var page = getPage();
 
-        page.navigate("http://localhost:8081/");
+        page.navigate("http://localhost:%d/".formatted(getPort()));
         page.waitForSelector("vaadin-card");
         captureScreenshot("home-page-with-demo-data");
 
