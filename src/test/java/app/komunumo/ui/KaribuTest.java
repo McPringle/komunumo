@@ -45,13 +45,11 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -66,9 +64,7 @@ import java.util.stream.Stream;
  * The easiest way to use this class in our tests is having our test class to extend
  * this class.
  */
-@SpringBootTest
-@DirtiesContext
-public abstract class KaribuTest {
+public abstract class KaribuTest extends IntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KaribuTest.class);
 

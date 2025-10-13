@@ -187,9 +187,9 @@ class ArchitectureTest {
     }
 
     @Test
-    void onlyKaribuTestShouldUseSpringBootTest() {
+    void onlyIntegrationTestShouldUseSpringBootTest() {
         ArchRule rule = noClasses()
-                .that().doNotHaveSimpleName("KaribuTest")
+                .that().doNotHaveSimpleName("IntegrationTest")
                 .should().beAnnotatedWith(SpringBootTest.class);
 
         rule.check(onlyTests);
