@@ -46,6 +46,18 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class IntegrationTest {
 
     /**
+     * <p>Injected service responsible for managing application configuration settings within the test environment.</p>
+     *
+     * <p>This service allows reading, updating, and clearing configuration values. It is used in integration tests to
+     * dynamically adjust system settings such as the instance URL and to reset cached configuration data between
+     * tests.</p>
+     *
+     * @see ConfigurationService
+     */
+    @Autowired
+    private ConfigurationService configurationService;
+
+    /**
      * <p>Injected component that provides functionality to execute actions with elevated administrative privileges
      * during tests.</p>
      *
@@ -93,9 +105,6 @@ public abstract class IntegrationTest {
      * <p>The shared {@link ApplicationContext} instance used by all integration tests extending this class.</p>
      */
     private static ApplicationContext applicationContext;
-
-    @Autowired
-    private ConfigurationService configurationService;
 
     /**
      * <p>Injects the current {@link ApplicationContext} into this base test class.</p>
@@ -150,6 +159,14 @@ public abstract class IntegrationTest {
         return port;
     }
 
+    /**
+     * <p>Returns the base URL of the running test instance.</p>
+     *
+     * <p>The returned value typically points to the local test server and includes the dynamically assigned port. It
+     * can be used by integration tests to construct absolute URLs for HTTP requests against the running instance.</p>
+     *
+     * @return the base URL of the current test instance
+     */
     protected String getInstanceUrl() {
         return instanceUrl;
     }
