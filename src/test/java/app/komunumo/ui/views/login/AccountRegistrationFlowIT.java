@@ -17,8 +17,6 @@
  */
 package app.komunumo.ui.views.login;
 
-import app.komunumo.data.dto.UserDto;
-import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.AccountService;
 import app.komunumo.data.service.ConfigurationService;
@@ -32,8 +30,7 @@ import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
@@ -45,48 +42,29 @@ import static org.awaitility.Awaitility.await;
 public class AccountRegistrationFlowIT extends BrowserTest {
 
     private static final String REGISTER_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Register')";
+    private static final String NEW_USER_EMAIL = "new@example.com";
 
-    private final String newUserEmail = "new@example.com";
-    private UserDto anonymousUser;
-    private UserDto remoteUser;
-    private UserDto localUser;
-
-    @BeforeAll
-    void createTestUsers() {
-        final var userService = getBean(UserService.class);
-        anonymousUser = userService.storeUser(new UserDto(null, null, null,
-                null, "anonymous@example.com", "", "",
-                null, UserRole.USER, UserType.ANONYMOUS));
-        remoteUser = userService.storeUser(new UserDto(null, null, null,
-                "@RemoteUser", "remote@example.com", "Remote User", "",
-                null, UserRole.USER, UserType.REMOTE));
-        localUser = userService.storeUser(new UserDto(null, null, null,
-                "@LocalUser", "local@example.com", "Local User", "",
-                null, UserRole.USER, UserType.LOCAL));
-    }
-
-    @AfterAll
+    @AfterEach
     void removeTestUsers() {
         final var userService = getBean(UserService.class);
-        userService.deleteUser(localUser);
-        userService.deleteUser(remoteUser);
-        userService.deleteUser(anonymousUser);
-        userService.getUserByEmail(newUserEmail).ifPresent(userService::deleteUser);
+        userService.getUserByEmail(NEW_USER_EMAIL).ifPresent(userService::deleteUser);
     }
 
     @Test
     void newUserCanRegister() throws MessagingException, FolderException {
-        testRegistrationFlow(newUserEmail);
+        testRegistrationFlow(NEW_USER_EMAIL);
     }
 
     @Test
     void anonymousUserCanUpgrade() throws MessagingException, FolderException {
+        final var anonymousUser = getTestUser(UserType.ANONYMOUS);
         assertThat(anonymousUser.email()).isNotNull();
         testRegistrationFlow(anonymousUser.email());
     }
 
     @Test
     void remoteUserCanUpgrade() throws MessagingException, FolderException {
+        final var remoteUser = getTestUser(UserType.REMOTE);
         assertThat(remoteUser.email()).isNotNull();
         testRegistrationFlow(remoteUser.email());
     }
@@ -181,6 +159,7 @@ public class AccountRegistrationFlowIT extends BrowserTest {
 
     @Test
     void existingLocalUserIsAlreadyRegistered() {
+        final var localUser = getTestUser(UserType.LOCAL);
         login(localUser);
 
         final var page = getPage();

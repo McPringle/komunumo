@@ -20,7 +20,9 @@ package app.komunumo.ui;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.data.service.UserService;
 import app.komunumo.security.SystemAuthenticator;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Browser;
@@ -153,17 +155,41 @@ public abstract class BrowserTest extends IntegrationTest {
      * test migrations. This method provides a convenient way for integration
      * tests to access those users without duplicating IDs.</p>
      *
-     * @param role the {@link UserRole} to select (USER or ADMIN)
+     * @param role the {@link UserRole} to select
      * @return the {@link UserDto} for the requested role
      * @throws IllegalStateException if the user could not be found in the database
      */
     protected @NotNull UserDto getTestUser(final @NotNull UserRole role) {
-        final var userService = getBean(app.komunumo.data.service.UserService.class);
+        final var userService = getBean(UserService.class);
         return switch (role) {
-            case USER -> userService.getUserById(TestConstants.USER_ID_TEST)
+            case USER -> userService.getUserById(TestConstants.USER_ID_LOCAL)
                     .orElseThrow(() -> new IllegalStateException("Test USER not found in database"));
             case ADMIN -> userService.getUserById(TestConstants.USER_ID_ADMIN)
                     .orElseThrow(() -> new IllegalStateException("Test ADMIN not found in database"));
+        };
+    }
+
+    /**
+     * Returns the predefined test user for the given type.
+     *
+     * <p>The UUIDs of the test users are fixed in {@link TestConstants} and
+     * the corresponding records are inserted into the database by Flyway
+     * test migrations. This method provides a convenient way for integration
+     * tests to access those users without duplicating IDs.</p>
+     *
+     * @param type the {@link UserType} to select
+     * @return the {@link UserDto} for the requested type
+     * @throws IllegalStateException if the user could not be found in the database
+     */
+    protected @NotNull UserDto getTestUser(final @NotNull UserType type) {
+        final var userService = getBean(UserService.class);
+        return switch (type) {
+            case LOCAL -> userService.getUserById(TestConstants.USER_ID_LOCAL)
+                    .orElseThrow(() -> new IllegalStateException("LOCAL user not found in database"));
+            case REMOTE -> userService.getUserById(TestConstants.USER_ID_REMOTE)
+                    .orElseThrow(() -> new IllegalStateException("REMOTE user not found in database"));
+            case ANONYMOUS -> userService.getUserById(TestConstants.USER_ID_ANONYMOUS)
+                    .orElseThrow(() -> new IllegalStateException("ANONYMOUS user not found in database"));
         };
     }
 

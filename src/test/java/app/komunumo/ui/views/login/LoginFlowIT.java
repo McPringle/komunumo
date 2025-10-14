@@ -17,17 +17,12 @@
  */
 package app.komunumo.ui.views.login;
 
-import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.UserService;
 import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.extractLinkFromText;
@@ -37,24 +32,10 @@ import static org.awaitility.Awaitility.await;
 
 class LoginFlowIT extends BrowserTest {
 
-    private UserDto testUser;
-
-    @BeforeAll
-    void createTestUser() {
-        final var userService = getBean(UserService.class);
-        testUser = userService.storeUser(new UserDto(null, null, null,
-                "@loginLogoutFlow", "success@example.com", "Test User", "", null,
-                UserRole.USER, UserType.LOCAL));
-    }
-
-    @AfterAll
-    void removeTestUser() {
-        getBean(UserService.class).deleteUser(testUser);
-    }
-
     @Test
     @SuppressWarnings({"java:S2925", "java:S2699"})
     void loginAndLogoutWorks() {
+        final var testUser = getTestUser(UserRole.USER);
         login(testUser);
 
         final var page = getPage();

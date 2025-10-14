@@ -174,7 +174,7 @@ public abstract class KaribuTest extends IntegrationTest {
      */
     protected @NotNull UserDto getTestUser(final @NotNull UserRole role) {
         return switch (role) {
-            case USER -> userService.getUserById(TestConstants.USER_ID_TEST)
+            case USER -> userService.getUserById(TestConstants.USER_ID_LOCAL)
                     .orElseThrow(() -> new IllegalStateException("Test USER not found in database"));
             case ADMIN -> userService.getUserById(TestConstants.USER_ID_ADMIN)
                     .orElseThrow(() -> new IllegalStateException("Test ADMIN not found in database"));
