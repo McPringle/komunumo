@@ -19,27 +19,20 @@ package app.komunumo.data.demo;
 
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@TestPropertySource(properties = "komunumo.demo.json=http://localhost:8082/import/data.json")
 class DemoDataCreatorJsonIT extends BrowserTest {
-
-    private static final String DATA_URL = "http://localhost:8082/import/data.json";
-
-    @Override
-    protected String[] getProperties() {
-        return new String[] {
-                "--komunumo.demo.json=" + DATA_URL,
-        };
-    }
 
     @Test
     void testDemoDataImporterWithJson() {
         final var page = getPage();
 
-        page.navigate("http://localhost:8081/");
+        page.navigate(getInstanceUrl());
         page.waitForSelector("vaadin-card");
         captureScreenshot("home-page-with-demo-data");
 

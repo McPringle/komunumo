@@ -41,6 +41,8 @@ class EventRegistrationFlowIT extends BrowserTest {
 
     @Test
     void testRegistrationFlowSuccess_withAnonymousUser() throws MessagingException {
+        final var greenMail = getGreenMail();
+
         // prepare a test event
         final var eventService = getBean(EventService.class);
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
@@ -52,7 +54,7 @@ class EventRegistrationFlowIT extends BrowserTest {
 
         // navigate to events page
         final var page = getPage();
-        page.navigate("http://localhost:8081/events/" + testEvent.id());
+        page.navigate(getInstanceUrl() + "events/" + testEvent.id());
         page.waitForURL("**/events/" + testEvent.id());
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("events-page");
@@ -106,6 +108,8 @@ class EventRegistrationFlowIT extends BrowserTest {
 
     @Test
     void testRegistrationFlowSuccess_withLocalUser() throws MessagingException, FolderException {
+        final var greenMail = getGreenMail();
+
         // prepare a test event
         final var eventService = getBean(EventService.class);
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
@@ -127,7 +131,7 @@ class EventRegistrationFlowIT extends BrowserTest {
 
         // navigate to events page
         final var page = getPage();
-        page.navigate("http://localhost:8081/events/" + testEvent.id());
+        page.navigate(getInstanceUrl() + "events/" + testEvent.id());
         page.waitForURL("**/events/" + testEvent.id());
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("events-page");

@@ -42,7 +42,7 @@ class WebsiteLayoutCustomStylesIT extends BrowserTest {
                     () -> configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, customStylesUrl));
 
             final var page = getPage();
-            page.navigate("http://localhost:8081/");
+            page.navigate(getInstanceUrl());
             page.waitForFunction("""
                     () => getComputedStyle(document.body, '::after')
                         .getPropertyValue('content')

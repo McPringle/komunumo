@@ -35,7 +35,7 @@ class ConfigurationEditorViewIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to events page
-        page.navigate("http://localhost:8081/events");
+        page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("anonymousVisitor_eventPageAfterLoad");
@@ -50,7 +50,7 @@ class ConfigurationEditorViewIT extends BrowserTest {
         assertThat(configItem.isVisible()).isFalse();
 
         // try to navigate directly to configuration editor will start the authentication process
-        page.navigate("http://localhost:8081/admin/config");
+        page.navigate(getInstanceUrl() + "admin/config");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("anonymousVisitor_afterManualNavigation");
         assertThat(page.locator("h2:visible").allInnerTexts()).contains("Confirm your email address");
@@ -63,7 +63,7 @@ class ConfigurationEditorViewIT extends BrowserTest {
 
         try {
             // navigate to events page
-            page.navigate("http://localhost:8081/events");
+            page.navigate(getInstanceUrl() + "events");
             page.waitForURL("**/events");
             page.waitForSelector(INSTANCE_NAME_SELECTOR);
             captureScreenshot("userRole_eventPageAfterLoad");
@@ -78,7 +78,7 @@ class ConfigurationEditorViewIT extends BrowserTest {
             assertThat(configItem.isVisible()).isFalse();
 
             // try to navigate directly to configuration editor will show an error message
-            page.navigate("http://localhost:8081/admin/config");
+            page.navigate(getInstanceUrl() + "admin/config");
             page.waitForURL("**/admin/config");
             page.waitForSelector(INSTANCE_NAME_SELECTOR);
             captureScreenshot("userRole_manualNavigation");
@@ -95,7 +95,7 @@ class ConfigurationEditorViewIT extends BrowserTest {
 
         try {
             // navigate to events page
-            page.navigate("http://localhost:8081/events");
+            page.navigate(getInstanceUrl() + "events");
             page.waitForURL("**/events");
             page.waitForSelector(INSTANCE_NAME_SELECTOR);
             captureScreenshot("adminRole_eventPageAfterLoad");
@@ -128,7 +128,7 @@ class ConfigurationEditorViewIT extends BrowserTest {
 
         try {
             // navigate to configuration editor
-            page.navigate("http://localhost:8081/admin/config");
+            page.navigate(getInstanceUrl() + "admin/config");
             page.waitForURL("**/admin/config");
             page.waitForSelector(CONFIGURATION_EDITOR_SELECTOR);
             captureScreenshot("flow_configurationEditor_afterLoad");

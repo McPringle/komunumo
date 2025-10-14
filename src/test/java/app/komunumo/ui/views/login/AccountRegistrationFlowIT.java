@@ -92,11 +92,12 @@ public class AccountRegistrationFlowIT extends BrowserTest {
     }
 
     private void testRegistrationFlow(final @NotNull String email) throws MessagingException, FolderException {
+        final var greenMail = getGreenMail();
         greenMail.purgeEmailFromAllMailboxes();
-        final var page = getPage();
 
         // navigate to home page
-        page.navigate("http://localhost:8081/");
+        final var page = getPage();
+        page.navigate(getInstanceUrl());
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
 
         // open avatar menu
@@ -185,7 +186,7 @@ public class AccountRegistrationFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to home page
-        page.navigate("http://localhost:8081/");
+        page.navigate(getInstanceUrl());
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
 
         // open avatar menu
@@ -213,7 +214,7 @@ public class AccountRegistrationFlowIT extends BrowserTest {
 
             // navigate to home page
             final var page = getPage();
-            page.navigate("http://localhost:8081/");
+            page.navigate(getInstanceUrl());
             page.waitForSelector(INSTANCE_NAME_SELECTOR);
 
             // open avatar menu

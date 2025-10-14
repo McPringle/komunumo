@@ -28,7 +28,7 @@ class CommunityGridViewIT extends BrowserTest {
     void showCommunities() {
         final var page = getPage();
 
-        page.navigate("http://localhost:8081/communities");
+        page.navigate(getInstanceUrl() + "communities");
         page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("community-grid-view");
         assertThat(page.title()).isEqualTo("Communities – Your Instance Name");
@@ -83,7 +83,7 @@ class CommunityGridViewIT extends BrowserTest {
     void clickOnCommunityCard() {
         final var page = getPage();
 
-        page.navigate("http://localhost:8081/communities");
+        page.navigate(getInstanceUrl() + "communities");
         page.waitForSelector("h1:has-text('Your Instance Name')");
         captureScreenshot("community-grid-view");
 

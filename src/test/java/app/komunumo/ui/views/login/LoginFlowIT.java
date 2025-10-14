@@ -58,7 +58,7 @@ class LoginFlowIT extends BrowserTest {
         login(testUser);
 
         final var page = getPage();
-        page.navigate("http://localhost:8081/events");
+        page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("loginWorks_event-page");
@@ -72,7 +72,7 @@ class LoginFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to events page
-        page.navigate("http://localhost:8081/events");
+        page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("loginFails_before-login");
@@ -105,6 +105,7 @@ class LoginFlowIT extends BrowserTest {
         captureScreenshot("loginFails_after-email-requested");
 
         // wait for the confirmation email
+        final var greenMail = getGreenMail();
         await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
         final var receivedMessage = greenMail.getReceivedMessages()[0];
         assertThat(receivedMessage.getSubject())
@@ -132,7 +133,7 @@ class LoginFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to events page
-        page.navigate("http://localhost:8081/events");
+        page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("loginDialogOpenAndClose_before-login");
@@ -163,7 +164,7 @@ class LoginFlowIT extends BrowserTest {
         final var page = getPage();
 
         // navigate to events page
-        page.navigate("http://localhost:8081/events");
+        page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("loginDialogCancel_before-login");

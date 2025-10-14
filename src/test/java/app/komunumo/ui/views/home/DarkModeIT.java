@@ -34,7 +34,7 @@ class DarkModeIT extends BrowserTest {
     @SuppressWarnings("java:S2925") // suppress warning about Thread.sleep, as this is a test for UI interaction
     void toggleDarkMode() throws InterruptedException {
         final var page = getPage();
-        page.navigate("http://localhost:8081/");
+        page.navigate(getInstanceUrl());
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
         captureScreenshot("page-before-toggle");
 
