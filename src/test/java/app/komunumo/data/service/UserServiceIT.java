@@ -135,7 +135,7 @@ class UserServiceIT extends KaribuTest {
     @Test
     @SuppressWarnings("java:S5961")
     void createReadDeleteAnonymousUser() {
-        final var email = "anonymous@example.com";
+        final var email = "anonymous-%d@example.com".formatted(System.currentTimeMillis());
         assertThat(userService.getUserByEmail(email)).isEmpty();
 
         // create a new user
