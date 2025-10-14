@@ -18,73 +18,68 @@
 package app.komunumo.security;
 
 import app.komunumo.ui.views.login.LoginView;
-import com.vaadin.flow.spring.security.VaadinWebSecurity;
+import com.vaadin.flow.spring.security.VaadinAwareSecurityContextHolderStrategyConfiguration;
+import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
 
 /**
  * <p>Security configuration for the Komunumo application.</p>
  *
- * <p>This class extends {@link VaadinWebSecurity} to integrate Spring Security
- * with Vaadin and define application-specific security rules.</p>
+ * <p>This configuration uses {@link VaadinSecurityConfigurer} to integrate Spring Security
+ * with Vaadin and to define application-specific security rules following the modern,
+ * component-based Spring Security approach.</p>
  */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig extends VaadinWebSecurity {
+@Import(VaadinAwareSecurityContextHolderStrategyConfiguration.class)
+public class SecurityConfig {
 
     /**
-     * The URL of the login page (relative to the application root).
+     * <p>The URL of the login page (relative to the application root).</p>
      */
     public static final @NotNull String LOGIN_URL = "login";
 
     /**
-     * The URL to redirect to after a successful logout.
+     * <p>The URL to redirect to after a successful logout.</p>
      */
     public static final @NotNull String LOGOUT_SUCCESS_URL = "/";
 
     /**
-     * <p>Configures HTTP security for the application.</p>
+     * <p>Defines the Spring Security filter chain for the application.</p>
      *
-     * <p>This method sets up default security rules and specifies
-     * the custom login view to use.</p>
+     * <p>This bean applies Vaadin's {@link VaadinSecurityConfigurer} and configures
+     * application-specific authorization rules for public endpoints. All remaining
+     * requests are secured by Vaadin's view-based access control annotations.</p>
      *
      * @param http the {@link HttpSecurity} to modify
+     * @return the built {@link SecurityFilterChain}
      * @throws Exception if an error occurs while configuring security
      */
-    @Override
-    protected void configure(final @NotNull HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.requestMatchers("/**").permitAll());
-        super.configure(http);
-        setLoginView(http, LoginView.class, LOGOUT_SUCCESS_URL);
-    }
-
-    /**
-     * <p>Configures Spring Security to ignore specific request paths entirely,
-     * bypassing the security filter chain. This is typically used for serving
-     * static resources or custom servlets that do not require authentication.</p>
-     *
-     * <p>Spring Security does not recommend ignoring request matchers.
-     * However, using authorizeHttpRequests(...).permitAll() before Vaadin's
-     * setLoginView() causes startup exceptions due to the ordering of matchers.</p>
-     *
-     * <p>This customizer is a workaround to avoid conflicts with VaadinWebSecurity.</p>
-     *
-     * @return a {@link WebSecurityCustomizer} that excludes specified paths from security
-     */
     @Bean
-    @Override
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring()
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+        // Allow selected public endpoints first; do NOT call anyRequest() here
+        http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/.well-known/**",
                         "/actuator/health",
-                        "/images/**");
-    }
+                        "/images/**"
+                ).permitAll()
+        );
 
+        // Apply Vaadin security defaults and set the login view and logout success URL
+        http.with(VaadinSecurityConfigurer.vaadin(), configurer ->
+                configurer.loginView(LoginView.class, LOGOUT_SUCCESS_URL)
+        );
+
+        // Build and return the filter chain
+        return http.build();
+    }
 }
