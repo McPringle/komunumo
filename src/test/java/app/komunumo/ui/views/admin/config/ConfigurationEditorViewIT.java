@@ -51,9 +51,8 @@ class ConfigurationEditorViewIT extends BrowserTest {
 
         // try to navigate directly to configuration editor will start the authentication process
         page.navigate("http://localhost:8081/admin/config");
-        page.waitForURL("**/admin/config");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("anonymousVisitor_manualNavigation");
+        captureScreenshot("anonymousVisitor_afterManualNavigation");
         assertThat(page.locator("h2:visible").allInnerTexts()).contains("Confirm your email address");
     }
 
