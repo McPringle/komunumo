@@ -196,13 +196,23 @@ class ArchitectureTest {
     }
 
     @Test
-    void integrationTestsShouldHaveSuffixIT() {
+    void karibuTestsShouldHaveSuffixIT() {
         ArchRule rule = classes()
                 .that()
                     .areAssignableTo(KaribuTest.class)
-                    .or().areAssignableTo(BrowserTest.class)
                 .and().doNotHaveModifier(ABSTRACT)
-                .should().haveSimpleNameEndingWith("IT");
+                .should().haveSimpleNameEndingWith("KT");
+
+        rule.check(onlyTests);
+    }
+
+    @Test
+    void browserTestsShouldHaveSuffixIT() {
+        ArchRule rule = classes()
+                .that()
+                    .areAssignableTo(BrowserTest.class)
+                .and().doNotHaveModifier(ABSTRACT)
+                .should().haveSimpleNameEndingWith("BT");
 
         rule.check(onlyTests);
     }

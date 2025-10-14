@@ -454,6 +454,10 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <includes>
+                        <include>**/*KT.java</include>
+                        <include>**/*BT.java</include>
+                    </includes>
                     <trimStackTrace>false</trimStackTrace>
                     <enableAssertions>true</enableAssertions>
                 </configuration>
