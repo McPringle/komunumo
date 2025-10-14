@@ -74,8 +74,6 @@ public abstract class BrowserTest extends IntegrationTest {
     private Path screenshotDir;
     private Page.ScreenshotOptions screenshotOptions;
 
-    private String instanceUrl = "";
-
     @BeforeAll
     static void startAppAndBrowser() {
         playwright = Playwright.create();
@@ -95,12 +93,6 @@ public abstract class BrowserTest extends IntegrationTest {
                 .setType(ScreenshotType.PNG)
                 .setFullPage(true);
 
-        instanceUrl = "http://localhost:%d/".formatted(getPort());
-        final var configurationService = getBean(ConfigurationService.class);
-        final var systemAuthenticator = getBean(SystemAuthenticator.class);
-        systemAuthenticator.runAsAdmin(
-                () -> configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl));
-
         final var pageOptions = new Browser.NewPageOptions()
                 .setViewportSize(1920, 1080);
         page = browser.newPage(pageOptions);
@@ -109,10 +101,6 @@ public abstract class BrowserTest extends IntegrationTest {
     @AfterEach
     void closePage() {
         page.close();
-    }
-
-    protected String getInstanceUrl() {
-        return instanceUrl;
     }
 
     /**

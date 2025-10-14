@@ -17,6 +17,9 @@
  */
 package app.komunumo.ui;
 
+import app.komunumo.data.dto.ConfigurationSetting;
+import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.security.SystemAuthenticator;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
@@ -43,6 +46,18 @@ import org.springframework.test.context.ActiveProfiles;
 public abstract class IntegrationTest {
 
     /**
+     * <p>Injected component that provides functionality to execute actions with elevated administrative privileges
+     * during tests.</p>
+     *
+     * <p>This authenticator is primarily used to modify restricted configuration settings or perform operations
+     * that require admin-level access within the test environment.</p>
+     *
+     * @see SystemAuthenticator
+     */
+    @Autowired
+    private SystemAuthenticator systemAuthenticator;
+
+    /**
      * <p>Static instance of {@link GreenMailExtension} used to provide an in-memory SMTP server
      * for integration testing.</p>
      *
@@ -67,9 +82,20 @@ public abstract class IntegrationTest {
     private int port;
 
     /**
+     * <p>Holds the base URL of the running test instance, typically pointing to the local test server.</p>
+     *
+     * <p>This value is initialized before each test with the dynamically assigned port to ensure that
+     * components depending on the instance URL can correctly resolve local endpoints.</p>
+     */
+    private String instanceUrl = "";
+
+    /**
      * <p>The shared {@link ApplicationContext} instance used by all integration tests extending this class.</p>
      */
     private static ApplicationContext applicationContext;
+
+    @Autowired
+    private ConfigurationService configurationService;
 
     /**
      * <p>Injects the current {@link ApplicationContext} into this base test class.</p>
@@ -124,6 +150,10 @@ public abstract class IntegrationTest {
         return port;
     }
 
+    protected String getInstanceUrl() {
+        return instanceUrl;
+    }
+
     /**
      * <p>Returns the shared {@link GreenMailExtension} instance used for email testing.</p>
      *
@@ -147,6 +177,22 @@ public abstract class IntegrationTest {
     @BeforeEach
     public void purgeEmailFromAllMailboxes() throws FolderException {
         greenMail.purgeEmailFromAllMailboxes();
+    }
+
+    /**
+     * <p>Initializes the instance URL before each test based on the dynamically assigned server port.</p>
+     *
+     * <p>This method constructs the base URL using the current test server port and updates the corresponding
+     * configuration setting within an administrative security context. It ensures that all components referencing
+     * the instance URL operate with the correct local test address.</p>
+     *
+     * @see ConfigurationSetting#INSTANCE_URL
+     * @see #getPort()
+     */
+    @BeforeEach
+    void setInstanceUrl() {
+        instanceUrl = "http://localhost:%d/".formatted(getPort());
+        systemAuthenticator.runAsAdmin(() -> configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl));
     }
 
 }
