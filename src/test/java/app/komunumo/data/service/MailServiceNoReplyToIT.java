@@ -46,7 +46,7 @@ class MailServiceNoReplyToIT extends KaribuTest {
                 null, "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = greenMail.getReceivedMessages()[0];
+            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
             assertThat(receivedMessage.getFrom()[0])
                     .hasToString("sender@localhost");
             assertThat(receivedMessage.getReplyTo()[0])

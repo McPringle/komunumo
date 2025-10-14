@@ -76,7 +76,7 @@ class MailServiceIT extends KaribuTest {
                 null, "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = greenMail.getReceivedMessages()[0];
+            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
             assertThat(receivedMessage.getContentType())
                     .isEqualTo("text/plain; charset=UTF-8");
             assertThat(receivedMessage.getFrom()[0])
@@ -101,7 +101,7 @@ class MailServiceIT extends KaribuTest {
                 Map.of(), "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = greenMail.getReceivedMessages()[0];
+            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
             assertThat(receivedMessage.getContentType())
                     .isEqualTo("text/plain; charset=UTF-8");
             assertThat(receivedMessage.getFrom()[0])
@@ -126,7 +126,7 @@ class MailServiceIT extends KaribuTest {
                 Map.of("password", "sEcReT"), "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = greenMail.getReceivedMessages()[0];
+            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
             assertThat(receivedMessage.getContentType())
                     .isEqualTo("text/plain; charset=UTF-8");
             assertThat(receivedMessage.getFrom()[0])
@@ -151,7 +151,7 @@ class MailServiceIT extends KaribuTest {
                 Map.of("password", "sEcReT"), "test@komunumo.app");
         assertThat(result).isTrue();
         await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = greenMail.getReceivedMessages()[0];
+            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
             assertThat(receivedMessage.getContentType())
                     .isEqualTo("text/html;charset=UTF-8");
             assertThat(receivedMessage.getFrom()[0])

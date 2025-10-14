@@ -27,10 +27,6 @@ import com.github.mvysny.fakeservlet.FakeRequest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
 import com.github.mvysny.kaributesting.v10.spring.MockSpringServlet;
-import com.icegreen.greenmail.configuration.GreenMailConfiguration;
-import com.icegreen.greenmail.junit5.GreenMailExtension;
-import com.icegreen.greenmail.store.FolderException;
-import com.icegreen.greenmail.util.ServerSetupTest;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.RouterLayout;
@@ -41,7 +37,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,12 +61,6 @@ import java.util.stream.Stream;
 public abstract class KaribuTest extends IntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KaribuTest.class);
-
-    @RegisterExtension
-    protected static final @NotNull GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
-            .withConfiguration(GreenMailConfiguration.aConfig()
-                    .withUser("komunumo", "s3cr3t"))
-            .withPerMethodLifecycle(false);
 
     private static Routes routes;
     private static Path baseDataDir;
@@ -116,19 +105,18 @@ public abstract class KaribuTest extends IntegrationTest {
     }
 
     @BeforeEach
-    public void setup() throws FolderException {
+    public void setupMockVaadin() {
         final Function0<UI> uiFactory = UI::new;
         final var servlet = new MockSpringServlet(routes, getApplicationContext(), uiFactory);
         MockVaadin.setup(uiFactory, servlet);
         UI.getCurrent().setLocale(Locale.ENGLISH);
-        greenMail.purgeEmailFromAllMailboxes();
     }
 
     /**
      * @see org.junit.jupiter.api.AfterEach
      */
     @AfterEach
-    public void tearDown() {
+    public void tearDownMockVaadin() {
         MockVaadin.tearDown();
     }
 

@@ -70,10 +70,10 @@ class ConfirmationServiceIT extends KaribuTest {
         final var confirmationRequest = new ConfirmationRequest(actionMessage, actionHandler, actionContext, locale);
         confirmationService.sendConfirmationMail(email, confirmationRequest);
 
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
+        await().atMost(2, SECONDS).untilAsserted(() -> getGreenMail().waitForIncomingEmail(1));
         confirmationHandlerCounter.set(0);
 
-        final var receivedMessage = greenMail.getReceivedMessages()[0];
+        final var receivedMessage = getGreenMail().getReceivedMessages()[0];
         assertThat(receivedMessage.getAllRecipients()[0])
                 .hasToString("test@example.com");
 

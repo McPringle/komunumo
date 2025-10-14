@@ -50,8 +50,8 @@ class HideCommunitiesIT extends KaribuTest {
                     () -> configurationService.setConfiguration(INSTANCE_HIDE_COMMUNITIES, true));
 
             // simulate a full browser-reload by re-initializing the UI to apply the configuration change
-            tearDown();
-            setup();
+            tearDownMockVaadin();
+            setupMockVaadin();
 
             final var uiParent = UI.getCurrent()
                     .getCurrentView()

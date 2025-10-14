@@ -17,7 +17,13 @@
  */
 package app.komunumo.ui;
 
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.store.FolderException;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +43,21 @@ import org.springframework.test.context.ActiveProfiles;
 @DirtiesContext
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
+
+    /**
+     * <p>Static instance of {@link GreenMailExtension} used to provide an in-memory SMTP server
+     * for integration testing.</p>
+     *
+     * <p>This shared mail server allows tests to send and verify emails without requiring any
+     * external SMTP infrastructure. It is configured with a single user account
+     * (<code>komunumo</code>/<code>s3cr3t</code>) and persists across test methods to improve
+     * performance.</p>
+     */
+    @RegisterExtension
+    private static final @NotNull GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP)
+            .withConfiguration(GreenMailConfiguration.aConfig()
+                    .withUser("komunumo", "s3cr3t"))
+            .withPerMethodLifecycle(false);
 
     /**
      * <p>The HTTP port on which the Spring Boot application under test is running.</p>
@@ -103,6 +124,31 @@ public abstract class IntegrationTest {
      */
     protected int getPort() {
         return port;
+    }
+
+    /**
+     * <p>Returns the shared {@link GreenMailExtension} instance used for email testing.</p>
+     *
+     * <p>This method gives subclasses access to the in-memory SMTP server so that they can verify
+     * sent messages, inspect inboxes, or reset the mail state between tests.</p>
+     *
+     * @return the global {@link GreenMailExtension} instance used by all integration tests
+     */
+    protected GreenMailExtension getGreenMail() {
+        return greenMail;
+    }
+
+    /**
+     * <p>Removes all emails from every mailbox in the shared {@link GreenMailExtension} instance.</p>
+     *
+     * <p>This method is automatically executed before each test to ensure a clean mail environment.
+     * It prevents leftover messages from previous test runs from affecting subsequent tests.</p>
+     *
+     * @throws FolderException if a mailbox cannot be purged successfully
+     */
+    @BeforeEach
+    public void purgeEmailFromAllMailboxes() throws FolderException {
+        greenMail.purgeEmailFromAllMailboxes();
     }
 
 }
