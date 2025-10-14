@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -65,6 +66,11 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+        // Always create a session
+        http.sessionManagement(configurer -> configurer
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+        );
+
         // Allow selected public endpoints first; do NOT call anyRequest() here
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(
