@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui;
 
+import app.komunumo.data.demo.DemoDataCreator;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.security.SystemAuthenticator;
@@ -24,6 +25,7 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import org.flywaydb.core.Flyway;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -68,6 +70,28 @@ public abstract class IntegrationTest {
      */
     @Autowired
     private SystemAuthenticator systemAuthenticator;
+
+    /**
+     * <p>Injected Flyway instance used to manage the test database schema during integration tests.</p>
+     *
+     * <p>The instance is configured through the test Spring context. Ensure that Flyway clean is enabled in the
+     * test profile and that the database user has sufficient DDL privileges.</p>
+     *
+     * @see Flyway
+     */
+    @Autowired
+    private Flyway flyway;
+
+    /**
+     * <p>Injected helper component responsible for creating and resetting demo data used by certain integration tests.</p>
+     *
+     * <p>This component is typically invoked after Flyway has cleaned and migrated the schema to reinsert baseline
+     * data required by demo-dependent tests.</p>
+     *
+     * @see DemoDataCreator
+     */
+    @Autowired
+    private DemoDataCreator demoDataCreator;
 
     /**
      * <p>Static instance of {@link GreenMailExtension} used to provide an in-memory SMTP server
@@ -184,32 +208,34 @@ public abstract class IntegrationTest {
     }
 
     /**
-     * <p>Removes all emails from every mailbox in the shared {@link GreenMailExtension} instance.</p>
+     * <p>Prepares the integration test environment before each test execution.</p>
      *
-     * <p>This method is automatically executed before each test to ensure a clean mail environment.
-     * It prevents leftover messages from previous test runs from affecting subsequent tests.</p>
+     * <p>This method ensures a consistent and isolated test setup by purging all emails, resetting the database schema
+     * via Flyway, recreating demo data, and configuring the instance URL based on the dynamically assigned test port.</p>
      *
-     * @throws FolderException if a mailbox cannot be purged successfully
-     */
-    @BeforeEach
-    public void purgeEmailFromAllMailboxes() throws FolderException {
-        greenMail.purgeEmailFromAllMailboxes();
-    }
-
-    /**
-     * <p>Initializes the instance URL before each test based on the dynamically assigned server port.</p>
+     * <p>The configuration is updated within an administrative context to apply changes immediately and clear any
+     * cached configuration values. This guarantees that every test starts from a known, reproducible state.</p>
      *
-     * <p>This method constructs the base URL using the current test server port and updates the corresponding
-     * configuration setting within an administrative security context. It ensures that all components referencing
-     * the instance URL operate with the correct local test address.</p>
+     * @throws FolderException if an error occurs while purging emails from the mailboxes
      *
+     * @see Flyway
+     * @see DemoDataCreator
+     * @see SystemAuthenticator
      * @see ConfigurationSetting#INSTANCE_URL
-     * @see #getPort()
      */
     @BeforeEach
-    void setInstanceUrl() {
+    void prepareIntegrationTest() throws FolderException {
+        greenMail.purgeEmailFromAllMailboxes();
+
+        flyway.clean();
+        flyway.migrate();
+        demoDataCreator.resetDemoData();
+
         instanceUrl = "http://localhost:%d/".formatted(getPort());
-        systemAuthenticator.runAsAdmin(() -> configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl));
+        systemAuthenticator.runAsAdmin(() -> {
+            configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl);
+            configurationService.clearCache();
+        });
     }
 
 }
