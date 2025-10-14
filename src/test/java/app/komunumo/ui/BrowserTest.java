@@ -39,7 +39,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.awaitility.Awaitility.await;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class BrowserTest extends IntegrationTest {
 
     protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
@@ -67,8 +65,8 @@ public abstract class BrowserTest extends IntegrationTest {
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmssSSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(BrowserTest.class);
 
-    private Playwright playwright;
-    private Browser browser;
+    private static Playwright playwright;
+    private static Browser browser;
     private Page page;
 
     private Path screenshotDir;
@@ -77,10 +75,19 @@ public abstract class BrowserTest extends IntegrationTest {
     private String instanceUrl = "";
 
     @BeforeAll
-    void startAppAndBrowser() {
+    static void startAppAndBrowser() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+    }
 
+    @AfterAll
+    static void stopAppAndBrowser() {
+        browser.close();
+        playwright.close();
+    }
+
+    @BeforeEach
+    void openPage() {
         screenshotDir = SCREENSHOT_DIR.resolve(getClass().getName()).resolve(browser.browserType().name());
         screenshotOptions = new Page.ScreenshotOptions()
                 .setType(ScreenshotType.PNG)
@@ -91,16 +98,7 @@ public abstract class BrowserTest extends IntegrationTest {
         final var systemAuthenticator = getBean(SystemAuthenticator.class);
         systemAuthenticator.runAsAdmin(
                 () -> configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl));
-    }
 
-    @AfterAll
-    void stopAppAndBrowser() {
-        browser.close();
-        playwright.close();
-    }
-
-    @BeforeEach
-    void openPage() {
         final var pageOptions = new Browser.NewPageOptions()
                 .setViewportSize(1920, 1080);
         page = browser.newPage(pageOptions);
