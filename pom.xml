@@ -444,6 +444,35 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+
+                    <excludes>
+                        <exclude>**/*KT.java</exclude>
+                        <exclude>**/*BT.java</exclude>
+                    </excludes>
+
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+
+                    <properties>
+                        <configurationParameters>
+                            junit.jupiter.execution.parallel.enabled = false
+                            junit.jupiter.execution.parallel.mode.default = same_thread
+                            junit.jupiter.execution.parallel.mode.classes.default = same_thread
+                        </configurationParameters>
+                    </properties>
+
+                    <trimStackTrace>false</trimStackTrace>
+                    <enableAssertions>true</enableAssertions>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
@@ -458,8 +487,14 @@
                         <include>**/*KT.java</include>
                         <include>**/*BT.java</include>
                     </includes>
+
+                    <excludes>
+                        <exclude>**/*Test.java</exclude>
+                    </excludes>
+
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
+
                     <properties>
                         <configurationParameters>
                             junit.jupiter.execution.parallel.enabled = false
@@ -467,6 +502,7 @@
                             junit.jupiter.execution.parallel.mode.classes.default = same_thread
                         </configurationParameters>
                     </properties>
+
                     <trimStackTrace>false</trimStackTrace>
                     <enableAssertions>true</enableAssertions>
                 </configuration>
