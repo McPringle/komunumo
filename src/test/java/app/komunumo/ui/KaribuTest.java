@@ -44,7 +44,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -59,7 +58,6 @@ import java.util.stream.Stream;
  * The easiest way to use this class in our tests is having our test class to extend
  * this class.
  */
-@DirtiesContext
 public abstract class KaribuTest extends IntegrationTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KaribuTest.class);
