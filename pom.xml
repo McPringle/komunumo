@@ -443,6 +443,41 @@
             </plugin>
 
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <!-- Install the actual browsers (pick the ones you need) -->
+                    <execution>
+                        <id>playwright-install-browsers</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <!-- Use the 'exec' goal to fork a new JVM so System.exit() won't kill Maven -->
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/java</executable>
+                            <!-- Use test classpath so test-scoped deps are visible -->
+                            <classpathScope>test</classpathScope>
+                            <includeProjectDependencies>true</includeProjectDependencies>
+                            <longClasspath>true</longClasspath>
+                            <arguments>
+                                <argument>-cp</argument>
+                                <classpath/>
+                                <argument>com.microsoft.playwright.CLI</argument>
+                                <argument>install</argument>
+                                <!-- Options: chromium | firefox | webkit | (omit to install all) -->
+                                <argument>chromium</argument>
+                            </arguments>
+                            <environmentVariables>
+                                <PLAYWRIGHT_BROWSERS_PATH>${user.home}/.cache/ms-playwright</PLAYWRIGHT_BROWSERS_PATH>
+                            </environmentVariables>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
@@ -505,6 +540,14 @@
 
                     <trimStackTrace>false</trimStackTrace>
                     <enableAssertions>true</enableAssertions>
+
+                    <!-- Redirect noisy STDOUT/ERR to files to protect the IPC channel -->
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <!-- Ensure no browser auto-download happens inside forked JVMs -->
+                    <environmentVariables>
+                        <PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>1</PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>
+                        <PLAYWRIGHT_BROWSERS_PATH>${user.home}/.cache/ms-playwright</PLAYWRIGHT_BROWSERS_PATH>
+                    </environmentVariables>
                 </configuration>
             </plugin>
 
