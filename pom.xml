@@ -824,6 +824,59 @@
 
     <profiles>
         <profile>
+            <id>playwright-linux-deps</id>
+            <!-- Activate only on Linux (Ubuntu runners included).
+                 macOS is also "unix", so use <name>Linux</name> to avoid matching macOS. -->
+            <activation>
+                <!-- Run only on Linux… -->
+                <os>
+                    <name>Linux</name>
+                </os>
+                <!-- …and only when running on CI (GitHub Actions sets CI=true) -->
+                <property>
+                    <name>env.CI</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.6.1</version>
+                        <executions>
+                            <!-- Linux only: install native system dependencies -->
+                            <execution>
+                                <id>playwright-install-deps</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <!-- Use the 'exec' goal to fork a new JVM so System.exit() won't kill Maven -->
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${java.home}/bin/java</executable>
+                                    <!-- Use test classpath so test-scoped deps are visible -->
+                                    <classpathScope>test</classpathScope>
+                                    <includeProjectDependencies>true</includeProjectDependencies>
+                                    <longClasspath>true</longClasspath>
+                                    <arguments>
+                                        <argument>-cp</argument>
+                                        <classpath/>
+                                        <argument>com.microsoft.playwright.CLI</argument>
+                                        <argument>install-deps</argument>
+                                    </arguments>
+                                    <environmentVariables>
+                                        <PLAYWRIGHT_BROWSERS_PATH>${user.home}/.cache/ms-playwright</PLAYWRIGHT_BROWSERS_PATH>
+                                    </environmentVariables>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
             <!-- Production mode is activated using -Pproduction -->
             <id>production</id>
             <dependencies>
