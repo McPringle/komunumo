@@ -20,7 +20,6 @@ package app.komunumo.ui;
 import app.komunumo.data.demo.DemoDataCreator;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.security.SystemAuthenticator;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
@@ -58,18 +57,6 @@ public abstract class IntegrationTest {
      */
     @Autowired
     private ConfigurationService configurationService;
-
-    /**
-     * <p>Injected component that provides functionality to execute actions with elevated administrative privileges
-     * during tests.</p>
-     *
-     * <p>This authenticator is primarily used to modify restricted configuration settings or perform operations
-     * that require admin-level access within the test environment.</p>
-     *
-     * @see SystemAuthenticator
-     */
-    @Autowired
-    private SystemAuthenticator systemAuthenticator;
 
     /**
      * <p>Injected Flyway instance used to manage the test database schema during integration tests.</p>
@@ -220,7 +207,6 @@ public abstract class IntegrationTest {
      *
      * @see Flyway
      * @see DemoDataCreator
-     * @see SystemAuthenticator
      * @see ConfigurationSetting#INSTANCE_URL
      */
     @BeforeEach
@@ -232,10 +218,8 @@ public abstract class IntegrationTest {
         demoDataCreator.resetDemoData();
 
         instanceUrl = "http://localhost:%d/".formatted(getPort());
-        systemAuthenticator.runAsAdmin(() -> {
-            configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl);
-            configurationService.clearCache();
-        });
+        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl);
+        configurationService.clearCache();
     }
 
 }

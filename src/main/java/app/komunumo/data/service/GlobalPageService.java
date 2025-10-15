@@ -19,7 +19,6 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.db.tables.records.GlobalPageRecord;
 import app.komunumo.data.dto.GlobalPageDto;
-import app.komunumo.security.RequireAdmin;
 import app.komunumo.util.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -66,12 +65,9 @@ public class GlobalPageService {
      * {@code updated} timestamp is set to the current UTC time. Otherwise, a new record is inserted
      * with both {@code created} and {@code updated} set to the current UTC time.</p>
      *
-     * <p><strong>Security:</strong> Requires the authenticated user to have the {@code ADMIN} role.</p>
-     *
      * @param globalPage The global page DTO to persist; must not be {@code null}.
      * @return The persisted global page as a DTO.
      */
-    @RequireAdmin
     public GlobalPageDto storeGlobalPage(final @NotNull GlobalPageDto globalPage) {
         final var slot = globalPage.slot();
         final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());
@@ -175,14 +171,12 @@ public class GlobalPageService {
      * <p>The {@code updated} timestamp is set to the current UTC time. Returns {@code true} if exactly
      * one record was modified; otherwise {@code false}.</p>
      *
-     * <p><strong>Security:</strong> Requires the authenticated user to have the {@code ADMIN} role.</p>
      *
      * @param globalPage The page whose slot and language identify the record to update; must not be {@code null}.
      * @param title The new title to set; must not be {@code null}.
      * @param markdown The new markdown content to set; must not be {@code null}.
      * @return {@code true} if exactly one row was updated; otherwise {@code false}.
      */
-    @RequireAdmin
     public boolean updateGlobalPage(final @NotNull GlobalPageDto globalPage,
                                     final @NotNull String title,
                                     final @NotNull String markdown) {
@@ -202,12 +196,10 @@ public class GlobalPageService {
      *
      * <p>Returns {@code true} if exactly one record was removed; otherwise {@code false}.</p>
      *
-     * <p><strong>Security:</strong> Requires the authenticated user to have the {@code ADMIN} role.</p>
      *
      * @param globalPage The page whose slot and language identify the record(s) to delete; must not be {@code null}.
      * @return {@code true} if exactly one row was deleted; otherwise {@code false}.
      */
-    @RequireAdmin
     public boolean deleteGlobalPage(final @NotNull GlobalPageDto globalPage) {
         final var slot = globalPage.slot();
         final var languageCode = LocaleUtil.getLanguageCode(globalPage.language());

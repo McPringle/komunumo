@@ -21,7 +21,6 @@ import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.AccountService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.UserService;
-import app.komunumo.security.SystemAuthenticator;
 import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -182,13 +181,11 @@ public class AccountRegistrationFlowBT extends BrowserTest {
     @Test
     void registrationDisabled() {
         final var configurationService = getBean(ConfigurationService.class);
-        final var systemAuthenticator = getBean(SystemAuthenticator.class);
 
         try (var logCaptor = LogCaptor.forClass(AccountService.class)) {
 
             // start with registration allowed
-            systemAuthenticator.runAsAdmin(
-                    () -> configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "true"));
+            configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "true");
             assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isTrue();
 
             // navigate to home page
@@ -205,8 +202,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
             assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).isVisible()).isTrue();
 
             // disable registration
-            systemAuthenticator.runAsAdmin(
-                    () -> configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "false"));
+            configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "false");
             assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isFalse();
 
             // click on register menu item
@@ -230,8 +226,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
             assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).isVisible()).isFalse();
         } finally {
             // ensure registration is enabled at the end of the test
-            systemAuthenticator.runAsAdmin(
-                    () -> configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "true"));
+            configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "true");
             assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isTrue();
         }
     }

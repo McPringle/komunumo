@@ -31,7 +31,6 @@ import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.data.service.ParticipationService;
-import app.komunumo.security.SystemAuthenticator;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +57,6 @@ public final class DemoDataCreator {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(DemoDataCreator.class);
 
-    private final @NotNull SystemAuthenticator systemAuthenticator;
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull ImageService imageService;
     private final @NotNull CommunityService communityService;
@@ -70,15 +68,13 @@ public final class DemoDataCreator {
     private final @NotNull String demoDataUrl;
 
     @SuppressWarnings("checkstyle:ParameterNumber") // constructor injection
-    public DemoDataCreator(final @NotNull SystemAuthenticator systemAuthenticator,
-                           final @NotNull AppConfig appConfig,
+    public DemoDataCreator(final @NotNull AppConfig appConfig,
                            final @NotNull ConfigurationService configurationService,
                            final @NotNull ImageService imageService,
                            final @NotNull CommunityService communityService,
                            final @NotNull EventService eventService,
                            final @NotNull ParticipationService participationService,
                            final @NotNull GlobalPageService globalPageService) {
-        this.systemAuthenticator = systemAuthenticator;
         this.configurationService = configurationService;
         this.imageService = imageService;
         this.communityService = communityService;
@@ -93,10 +89,6 @@ public final class DemoDataCreator {
 
     @Scheduled(cron = "0 0 * * * *")
     public void resetDemoData() {
-        systemAuthenticator.runAsAdmin(this::resetDemoDataAsAdmin);
-    }
-
-    private void resetDemoDataAsAdmin() {
         if (!enabled) {
             LOGGER.info("Demo data plugin is disabled, skipping demo data reset.");
             return;
