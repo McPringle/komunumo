@@ -511,44 +511,84 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>integration-test-karibu</id>
+
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
+
+                        <configuration>
+                            <includes>
+                                <include>**/*KT.java</include>
+                            </includes>
+
+                            <excludes>
+                                <exclude>**/*Test.java</exclude>
+                                <include>**/*BT.java</include>
+                            </excludes>
+
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+
+                            <properties>
+                                <configurationParameters>
+                                    junit.jupiter.execution.parallel.enabled = false
+                                    junit.jupiter.execution.parallel.mode.default = same_thread
+                                    junit.jupiter.execution.parallel.mode.classes.default = same_thread
+                                </configurationParameters>
+                            </properties>
+
+                            <trimStackTrace>false</trimStackTrace>
+                            <enableAssertions>true</enableAssertions>
+
+                            <!-- Redirect noisy STDOUT/ERR to files to protect the IPC channel -->
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>integration-test-playwright</id>
+
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+
+                        <configuration>
+                            <includes>
+                                <include>**/*BT.java</include>
+                            </includes>
+
+                            <excludes>
+                                <exclude>**/*Test.java</exclude>
+                                <include>**/*KT.java</include>
+                            </excludes>
+
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+
+                            <properties>
+                                <configurationParameters>
+                                    junit.jupiter.execution.parallel.enabled = false
+                                    junit.jupiter.execution.parallel.mode.default = same_thread
+                                    junit.jupiter.execution.parallel.mode.classes.default = same_thread
+                                </configurationParameters>
+                            </properties>
+
+                            <trimStackTrace>false</trimStackTrace>
+                            <enableAssertions>true</enableAssertions>
+
+                            <!-- Redirect noisy STDOUT/ERR to files to protect the IPC channel -->
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <!-- Ensure no browser auto-download happens inside forked JVMs -->
+                            <environmentVariables>
+                                <PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>1</PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>
+                                <PLAYWRIGHT_BROWSERS_PATH>${user.home}/.cache/ms-playwright</PLAYWRIGHT_BROWSERS_PATH>
+                            </environmentVariables>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <includes>
-                        <include>**/*KT.java</include>
-                        <include>**/*BT.java</include>
-                    </includes>
-
-                    <excludes>
-                        <exclude>**/*Test.java</exclude>
-                    </excludes>
-
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
-
-                    <properties>
-                        <configurationParameters>
-                            junit.jupiter.execution.parallel.enabled = false
-                            junit.jupiter.execution.parallel.mode.default = same_thread
-                            junit.jupiter.execution.parallel.mode.classes.default = same_thread
-                        </configurationParameters>
-                    </properties>
-
-                    <trimStackTrace>false</trimStackTrace>
-                    <enableAssertions>true</enableAssertions>
-
-                    <!-- Redirect noisy STDOUT/ERR to files to protect the IPC channel -->
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <!-- Ensure no browser auto-download happens inside forked JVMs -->
-                    <environmentVariables>
-                        <PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>1</PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>
-                        <PLAYWRIGHT_BROWSERS_PATH>${user.home}/.cache/ms-playwright</PLAYWRIGHT_BROWSERS_PATH>
-                    </environmentVariables>
-                </configuration>
             </plugin>
 
             <plugin>
