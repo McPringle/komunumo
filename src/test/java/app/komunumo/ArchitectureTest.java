@@ -196,7 +196,7 @@ class ArchitectureTest {
     }
 
     @Test
-    void karibuTestsShouldHaveSuffixIT() {
+    void karibuTestsShouldHaveSuffixKT() {
         ArchRule rule = classes()
                 .that()
                     .areAssignableTo(KaribuTest.class)
@@ -207,7 +207,7 @@ class ArchitectureTest {
     }
 
     @Test
-    void browserTestsShouldHaveSuffixIT() {
+    void browserTestsShouldHaveSuffixBT() {
         ArchRule rule = classes()
                 .that()
                     .areAssignableTo(BrowserTest.class)
