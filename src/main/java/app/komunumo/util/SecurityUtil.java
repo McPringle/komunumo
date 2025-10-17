@@ -18,6 +18,7 @@
 package app.komunumo.util;
 
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.security.UserPrincipal;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -86,11 +87,40 @@ public final class SecurityUtil {
     }
 
     /**
+     * <p>Checks if the current user is of the provided type.</p>
+     *
+     * <p>The method checks if the authenticated user principal is of the type that is provided to the method.</p>
+     *
+     * @param type the type to check the user principal against (e.g., {@link UserType#LOCAL})
+     * @return {@code true} if the current user is of the type, else return {@code false}
+     */
+    public static boolean isUserType(final @NotNull UserType type) {
+        final var auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null && auth.isAuthenticated()
+                && auth.getPrincipal() instanceof UserPrincipal userPrincipal) {
+
+            return type.equals(userPrincipal.getType());
+        }
+
+        return false;
+    }
+
+    /**
      * <p>Convenience method to check whether the current user has the {@link UserRole#ADMIN} role.</p>
      *
      * @return {@code true} if the current user is an administrator, {@code false} otherwise
      */
     public static boolean isAdmin() {
         return hasRole(UserRole.ADMIN);
+    }
+
+    /**
+     * <p>Method to check if the current user has the {@link UserRole#USER} and is of type {@link UserType#LOCAL}.</p>
+     *
+     * @return {@code true} if the current user is a local user, else return {@code false}
+     */
+    public static boolean isLocalUser() {
+        return hasRole(UserRole.USER) && isUserType(UserType.LOCAL);
     }
 }

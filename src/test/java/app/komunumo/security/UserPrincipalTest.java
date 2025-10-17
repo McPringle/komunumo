@@ -55,6 +55,7 @@ class UserPrincipalTest {
         assertThat(principal.getEmail().equals(email));
         assertThat(principal.getName().equals(name));
         assertThat(principal.getAuthorities()).isEqualTo(authorities);
+        assertThat(principal.getType()).isEqualTo(type);
         assertThat(principal.getPassword()).isNull();
         assertThat(principal.getUsername().equals(email));
         assertThat(principal.isAccountNonExpired()).isTrue();

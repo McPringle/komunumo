@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static app.komunumo.data.db.Tables.MEMBER;
 import static app.komunumo.data.db.tables.Community.COMMUNITY;
 import static app.komunumo.data.db.tables.Image.IMAGE;
 
@@ -95,7 +96,16 @@ public final class CommunityService extends StorageService {
         ).orElse(0);
     }
 
+    public boolean isCommunityExistWithProfile(final @NotNull String profile) {
+        return dsl.fetchCount(COMMUNITY, COMMUNITY.PROFILE.eq(profile)) > 0;
+    }
+
     public boolean deleteCommunity(final @NotNull CommunityDto community) {
+        // Clean-up members that are associated with the Community
+        dsl.delete(MEMBER)
+                .where(MEMBER.COMMUNITY_ID.eq(community.id()))
+                .execute();
+
         return dsl.delete(COMMUNITY)
                 .where(COMMUNITY.ID.eq(community.id()))
                 .execute() > 0;

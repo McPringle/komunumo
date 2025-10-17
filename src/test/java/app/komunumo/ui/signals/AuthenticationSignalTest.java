@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.signals;
 
+import app.komunumo.data.dto.UserDto;
 import app.komunumo.security.UserPrincipal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,26 +73,47 @@ class AuthenticationSignalTest {
 
     @Test
     void setAuthenticated_trueAndAdmin_resultsInAuthenticated_andAdmin() {
-        signal.setAuthenticated(true, true);
+        signal.setAuthenticated(true, true, false);
 
         assertThat(signal.isAuthenticated()).isTrue();
         assertThat(signal.isAdmin()).isTrue();
+        assertThat(signal.isLocalUser()).isFalse();
     }
 
     @Test
     void setAuthenticated_trueAndNotAdmin_resultsInAuthenticated_andNotAdmin() {
-        signal.setAuthenticated(true, false);
+        signal.setAuthenticated(true, false, true);
 
         assertThat(signal.isAuthenticated()).isTrue();
         assertThat(signal.isAdmin()).isFalse();
+        assertThat(signal.isLocalUser()).isTrue();
     }
 
     @Test
     void setAuthenticated_falseAndAdmin_resultsInNotAuthenticated_andNotAdmin() {
-        signal.setAuthenticated(false, true);
+        signal.setAuthenticated(false, true, false);
 
         assertThat(signal.isAuthenticated()).isFalse();
         assertThat(signal.isAdmin()).isFalse();
+        assertThat(signal.isLocalUser()).isFalse();
+    }
+
+    @Test
+    void setAuthenticated_trueAndLocalUser_resultsInAuthenticated_andLocalUser() {
+        signal.setAuthenticated(true, false, false);
+
+        assertThat(signal.isAuthenticated()).isTrue();
+        assertThat(signal.isAdmin()).isFalse();
+        assertThat(signal.isLocalUser()).isFalse();
+    }
+
+    @Test
+    void setAuthenticated_falseAndLocalUser_resultsInNotAuthenticated_andLocalUser() {
+        signal.setAuthenticated(false, false, true);
+
+        assertThat(signal.isAuthenticated()).isFalse();
+        assertThat(signal.isAdmin()).isFalse();
+        assertThat(signal.isLocalUser()).isFalse();
     }
 
     @Test

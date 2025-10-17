@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,19 +15,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.data.dto;
 
-@import "fonts/space-grotesk.css";
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@import "components/confirmation-dialog.css";
-@import "components/info-banner.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
-@import "components/navigation-bar.css";
-@import "components/page-footer.css";
-@import "components/page-header.css";
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
-@import "views/confirmation-view.css";
-@import "views/global-page-view.css";
-
-@import "views/admin/configuration-editor-view.css";
-@import "views/community/community-view.css";
+/**
+ * @author smzoha
+ * @since 19/10/25
+ **/
+public record MemberDto(
+        @NotNull UUID userId,
+        @NotNull UUID communityId,
+        @NotNull String role,
+        @Nullable ZonedDateTime since
+) {
+}
