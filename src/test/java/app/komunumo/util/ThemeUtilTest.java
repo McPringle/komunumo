@@ -29,6 +29,7 @@ import org.mockito.Mockito;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.eq;
@@ -89,9 +90,9 @@ class ThemeUtilTest {
     @Test
     void testInitializeDarkModeActivates() {
         try (MockedStatic<LocalStorageUtil> mockedLocalStorage = mockStatic(LocalStorageUtil.class)) {
-            mockedLocalStorage.when(() -> LocalStorageUtil.getBoolean(eq("dark-mode"), any())
+            mockedLocalStorage.when(() -> LocalStorageUtil.getBoolean(eq("dark-mode"), anyBoolean(), any())
             ).thenAnswer(invocation -> {
-                final var callback = invocation.<Consumer<Boolean>>getArgument(1);
+                final var callback = invocation.<Consumer<Boolean>>getArgument(2);
                 callback.accept(true);
                 return null;
             });
@@ -108,9 +109,9 @@ class ThemeUtilTest {
     void testInitializeDarkModeDoesNothingIfAlreadyActive() {
         try (MockedStatic<LocalStorageUtil> mockedLocalStorage = mockStatic(LocalStorageUtil.class)) {
             mockedLocalStorage.when(() ->
-                    LocalStorageUtil.getBoolean(eq("dark-mode"), any())
+                    LocalStorageUtil.getBoolean(eq("dark-mode"), anyBoolean(), any())
             ).thenAnswer(invocation -> {
-                var callback = invocation.<Consumer<Boolean>>getArgument(1);
+                var callback = invocation.<Consumer<Boolean>>getArgument(2);
                 callback.accept(true);
                 return null;
             });

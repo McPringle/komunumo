@@ -26,7 +26,7 @@ public final class ThemeUtil {
 
     @SuppressWarnings("java:S5411") // Boolean value is never null
     public static void initializeDarkMode() {
-        LocalStorageUtil.getBoolean(DARK_MODE, isDarkModeEnabled -> {
+        LocalStorageUtil.getBoolean(DARK_MODE, false, isDarkModeEnabled -> {
             if (isDarkModeEnabled && !isDarkModeActive()) {
                 toggleDarkMode();
             }

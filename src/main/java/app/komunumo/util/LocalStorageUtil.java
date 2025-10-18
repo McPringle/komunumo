@@ -42,19 +42,26 @@ public final class LocalStorageUtil {
     /**
      * <p>Retrieves a value from the browser's LocalStorage asynchronously.</p>
      *
-     * <p>If no value is stored under the given key, {@code null} will
-     * be passed to the callback instead. The retrieval is asynchronous
-     * because it requires communication with the client-side browser.</p>
+     * <p>If no value is stored under the given key, the specified {@code defaultValue}
+     * will be passed to the callback instead. The retrieval is asynchronous because
+     * it requires communication with the client-side browser.</p>
      *
      * @param key          the storage key; must not be {@code null}
-     * @param callback     a callback that receives the stored value;
-     *                     must not be {@code null}
+     * @param defaultValue the value to pass to the callback if the specified key is not found in LocalStorage;
+     *                     may be {@code null}
+     * @param callback     a callback that receives the stored value or {@code defaultValue}
+     *                     if not found; must not be {@code null}
      */
     public static void getString(final @NotNull String key,
+                                 final @Nullable String defaultValue,
                                  final @NotNull SerializableConsumer<@Nullable String> callback) {
-        UI.getCurrent().getPage()
-                .executeJs("return localStorage.getItem($0);", key)
-                .then(String.class, callback);
+        try {
+            UI.getCurrent().getPage()
+                    .executeJs("return localStorage.getItem($0);", key)
+                    .then(String.class, value -> callback.accept(value != null ? value : defaultValue));
+        } catch (Exception e) {
+            callback.accept(defaultValue);
+        }
     }
 
     /**
@@ -75,17 +82,19 @@ public final class LocalStorageUtil {
      * <p>Retrieves a boolean value from the browser's LocalStorage asynchronously.</p>
      *
      * <p>This is a convenience method that delegates to
-     * {@link #getString(String, SerializableConsumer)} and converts
-     * the stored String value to a boolean. If no value is found,
-     * {@code false} is returned.</p>
+     * {@link #getString(String, String, SerializableConsumer)} and converts
+     * the stored String value to a boolean. If no value is found, the specified
+     * {@code defaultValue} is returned.</p>
      *
      * @param key          the storage key; must not be {@code null}
-     * @param callback     a callback that receives the stored boolean value or
-     *                     {@code false} if not found; must not be {@code null}
+     * @param defaultValue the value to pass to the callback if the specified key is not found in LocalStorage
+     * @param callback     a callback that receives the stored boolean value or {@code defaultValue}
+     *                     if not found; must not be {@code null}
      */
     public static void getBoolean(final @NotNull String key,
+                                  final boolean defaultValue,
                                   final @NotNull SerializableConsumer<@NotNull Boolean> callback) {
-        getString(key, value -> callback.accept(Boolean.parseBoolean(value)));
+        getString(key, Boolean.toString(defaultValue), value -> callback.accept(Boolean.parseBoolean(value)));
     }
 
     /**
