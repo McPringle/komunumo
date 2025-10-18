@@ -33,9 +33,7 @@ import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.ScreenshotType;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,8 +63,8 @@ public abstract class BrowserTest extends IntegrationTest {
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmssSSS");
     private static final Logger LOGGER = LoggerFactory.getLogger(BrowserTest.class);
 
-    private static Playwright playwright;
-    private static Browser browser;
+    private Playwright playwright;
+    private Browser browser;
 
     private BrowserContext browserContext;
     private Page page;
@@ -77,20 +75,11 @@ public abstract class BrowserTest extends IntegrationTest {
     @Autowired
     private @NotNull UserService userService;
 
-    @BeforeAll
-    static void startAppAndBrowser() {
+    @BeforeEach
+    void startNewBrowser() {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-    }
 
-    @AfterAll
-    static void stopAppAndBrowser() {
-        browser.close();
-        playwright.close();
-    }
-
-    @BeforeEach
-    void openPage() {
         screenshotDir = SCREENSHOT_DIR.resolve(getClass().getName()).resolve(browser.browserType().name());
         screenshotOptions = new Page.ScreenshotOptions()
                 .setType(ScreenshotType.PNG)
@@ -104,13 +93,15 @@ public abstract class BrowserTest extends IntegrationTest {
     }
 
     @AfterEach
-    void closePage() {
+    void stopBrowser() {
         if (page != null) {
             page.close();
         }
         if (browserContext != null) {
             browserContext.close();
         }
+        browser.close();
+        playwright.close();
     }
 
     /**
