@@ -533,6 +533,9 @@
 
                     <trimStackTrace>false</trimStackTrace>
                     <enableAssertions>true</enableAssertions>
+
+                    <!-- Redirect STDOUT/ERR to files to protect the IPC channel -->
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
 
@@ -572,7 +575,7 @@
                             <trimStackTrace>false</trimStackTrace>
                             <enableAssertions>true</enableAssertions>
 
-                            <!-- Redirect noisy STDOUT/ERR to files to protect the IPC channel -->
+                            <!-- Redirect STDOUT/ERR to files to protect the IPC channel -->
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </execution>
@@ -609,8 +612,9 @@
                             <trimStackTrace>false</trimStackTrace>
                             <enableAssertions>true</enableAssertions>
 
-                            <!-- Redirect noisy STDOUT/ERR to files to protect the IPC channel -->
+                            <!-- Redirect STDOUT/ERR to files to protect the IPC channel -->
                             <redirectTestOutputToFile>true</redirectTestOutputToFile>
+
                             <!-- Ensure no browser auto-download happens inside forked JVMs -->
                             <environmentVariables>
                                 <PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>1</PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD>
@@ -672,6 +676,19 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
+                    <execution>
+                        <id>cleanup-test-log</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- Delete old test logs -->
+                                <delete file="${project.build.directory}/test.log" quiet="true"/>
+                            </target>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>cleanup-jacoco-it</id>
                         <phase>pre-integration-test</phase>
