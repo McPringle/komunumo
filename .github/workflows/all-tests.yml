@@ -32,6 +32,17 @@ jobs:
         if-no-files-found: ignore
         retention-days: 7
         compression-level: 9
+    - name: Upload test reports
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports-${{ github.run_id }}
+        path: |
+          **/target/surefire-reports/**
+          **/target/failsafe-reports/**
+        if-no-files-found: ignore
+        retention-days: 7
+        compression-level: 9
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       env:
