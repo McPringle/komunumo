@@ -459,7 +459,6 @@
                             <executable>${java.home}/bin/java</executable>
                             <!-- Use test classpath so test-scoped deps are visible -->
                             <classpathScope>test</classpathScope>
-                            <includeProjectDependencies>true</includeProjectDependencies>
                             <longClasspath>true</longClasspath>
                             <arguments>
                                 <argument>-cp</argument>
@@ -964,7 +963,6 @@
                                     <executable>${java.home}/bin/java</executable>
                                     <!-- Use test classpath so test-scoped deps are visible -->
                                     <classpathScope>test</classpathScope>
-                                    <includeProjectDependencies>true</includeProjectDependencies>
                                     <longClasspath>true</longClasspath>
                                     <arguments>
                                         <argument>-cp</argument>
