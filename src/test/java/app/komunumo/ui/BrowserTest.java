@@ -99,6 +99,7 @@ public abstract class BrowserTest extends IntegrationTest {
         Browser.NewContextOptions ctxOptions = new Browser.NewContextOptions()
                 .setViewportSize(1920, 1080);
         browserContext = browser.newContext(ctxOptions);
+        browserContext.clearCookies();
         page = browserContext.newPage();
     }
 
