@@ -40,6 +40,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -66,10 +67,13 @@ public abstract class KaribuTest extends IntegrationTest {
     private static Path baseDataDir;
 
     @Autowired
-    private LoginService loginService;
+    private @NotNull ApplicationContext applicationContext;
 
     @Autowired
-    private UserService userService;
+    private @NotNull LoginService loginService;
+
+    @Autowired
+    private @NotNull UserService userService;
 
     @BeforeAll
     public static void discoverRoutes() {
@@ -107,7 +111,7 @@ public abstract class KaribuTest extends IntegrationTest {
     @BeforeEach
     public void setupMockVaadin() {
         final Function0<UI> uiFactory = UI::new;
-        final var servlet = new MockSpringServlet(routes, getApplicationContext(), uiFactory);
+        final var servlet = new MockSpringServlet(routes, applicationContext, uiFactory);
         MockVaadin.setup(uiFactory, servlet);
         UI.getCurrent().setLocale(Locale.ENGLISH);
     }

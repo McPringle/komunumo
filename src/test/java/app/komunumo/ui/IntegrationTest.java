@@ -31,7 +31,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -109,36 +108,6 @@ public abstract class IntegrationTest {
      * components depending on the instance URL can correctly resolve local endpoints.</p>
      */
     private String instanceUrl = "";
-
-    /**
-     * <p>The shared {@link ApplicationContext} instance used by all integration tests extending this class.</p>
-     */
-    private static ApplicationContext applicationContext;
-
-    /**
-     * <p>Injects the current {@link ApplicationContext} into this base test class.</p>
-     *
-     * <p>This method is automatically invoked by Spring’s dependency injection mechanism. It assigns the provided
-     * context to a static variable, making it accessible to subclasses and static helper methods.</p>
-     *
-     * @param applicationContext the active Spring {@link ApplicationContext}, never {@code null}
-     */
-    @Autowired
-    public void setContext(final @NotNull ApplicationContext applicationContext) {
-        IntegrationTest.applicationContext = applicationContext;
-    }
-
-    /**
-     * <p>Returns the {@link ApplicationContext} of the running Spring Boot test environment.</p>
-     *
-     * <p>This method is useful when subclasses need to retrieve beans or configuration properties from the
-     * application context during test execution.</p>
-     *
-     * @return the active {@link ApplicationContext} instance
-     */
-    protected ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
 
     /**
      * <p>Returns the HTTP port on which the Spring Boot application is currently running.</p>
