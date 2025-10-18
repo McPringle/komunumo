@@ -57,24 +57,26 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
     @Test
     void newUserCanRegister() throws MessagingException, FolderException {
-        testRegistrationFlow(NEW_USER_EMAIL);
+        testRegistrationFlow("newUserCanRegister", NEW_USER_EMAIL);
     }
 
     @Test
     void anonymousUserCanUpgrade() throws MessagingException, FolderException {
         final var anonymousUser = getTestUser(UserType.ANONYMOUS);
         assertThat(anonymousUser.email()).isNotNull();
-        testRegistrationFlow(anonymousUser.email());
+        testRegistrationFlow("anonymousUserCanUpgrade", anonymousUser.email());
     }
 
     @Test
     void remoteUserCanUpgrade() throws MessagingException, FolderException {
         final var remoteUser = getTestUser(UserType.REMOTE);
         assertThat(remoteUser.email()).isNotNull();
-        testRegistrationFlow(remoteUser.email());
+        testRegistrationFlow("remoteUserCanUpgrade", remoteUser.email());
     }
 
-    private void testRegistrationFlow(final @NotNull String email) throws MessagingException, FolderException {
+    private void testRegistrationFlow(final @NotNull String screenshotPrefix,
+                                      final @NotNull String email)
+            throws MessagingException, FolderException {
         final var greenMail = getGreenMail();
         greenMail.purgeEmailFromAllMailboxes();
 
@@ -86,7 +88,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         // open avatar menu
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(CONTEXT_MENU_SELECTOR);
-        captureScreenshot("profile-menu-with-register-item");
+        captureScreenshot(screenshotPrefix + "_profile-menu-with-register-item");
 
         // click on register menu item
         page.click(REGISTER_MENU_ITEM_SELECTOR);
@@ -96,19 +98,19 @@ public class AccountRegistrationFlowBT extends BrowserTest {
                 .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
         overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
-        captureScreenshot("register-dialog-empty");
+        captureScreenshot(screenshotPrefix + "_register-dialog-empty");
 
         // fill in email address
         final var emailInput = page.locator("vaadin-email-field").locator("input");
         emailInput.fill(email);
-        captureScreenshot("register-dialog-filled");
+        captureScreenshot(screenshotPrefix + "_register-dialog-filled");
 
         // click on the request email button
         page.locator("vaadin-button.email-button").click();
         final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
         closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         closeButton.click();
-        captureScreenshot("after-email-requested");
+        captureScreenshot(screenshotPrefix + "_after-email-requested");
 
         // wait for the confirmation email
         await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
@@ -125,7 +127,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
         page.waitForSelector(INSTANCE_NAME_SELECTOR);
-        captureScreenshot("confirmation-page");
+        captureScreenshot(screenshotPrefix + "_confirmation-page");
 
         // check for success message
         final var message = page.locator("vaadin-notification-card").first();
@@ -150,7 +152,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         // open avatar menu
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(CONTEXT_MENU_SELECTOR);
-        captureScreenshot("profile-menu-without-register-item");
+        captureScreenshot(screenshotPrefix + "_profile-menu-without-register-item");
 
         // register menu item should not be visible
         assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).count()).isZero();
@@ -175,7 +177,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         // open avatar menu
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(CONTEXT_MENU_SELECTOR);
-        captureScreenshot("profile-menu-without-register-item");
+        captureScreenshot("existingLocalUserIsAlreadyRegistered_profile-menu-without-register-item");
 
         // register menu item should not be visible
         assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).count()).isZero();
@@ -198,7 +200,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
             // open avatar menu
             page.click(AVATAR_SELECTOR);
             page.waitForSelector(CONTEXT_MENU_SELECTOR);
-            captureScreenshot("profile-menu-with-register-item");
+            captureScreenshot("registrationDisabled_profile-menu-before-disabled");
 
             // check for registration menu item
             assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).isVisible()).isTrue();
@@ -222,7 +224,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
             // open avatar menu
             page.click(AVATAR_SELECTOR);
             page.waitForSelector(CONTEXT_MENU_SELECTOR);
-            captureScreenshot("profile-menu-without-register-item");
+            captureScreenshot("registrationDisabled_profile-menu-after-disabled");
 
             // check for registration menu item
             assertThat(page.locator(REGISTER_MENU_ITEM_SELECTOR).isVisible()).isFalse();
