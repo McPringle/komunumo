@@ -96,8 +96,6 @@ public final class NavigationBar extends HorizontalLayout {
                 loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
-        final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
-        LOGGER.warn("=== Registration allowed: {} ===", registrationAllowed);
         final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), _ ->
                 accountService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
@@ -117,7 +115,11 @@ public final class NavigationBar extends HorizontalLayout {
 
         // update menu items based on authentication state
         ComponentEffect.effect(this, () -> {
+            final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
+            LOGGER.warn("=== Registration allowed: {} ===", registrationAllowed);
             final var isLoggedIn = authenticationSignal.isAuthenticated();
+            LOGGER.warn("=== User is logged in: {} ===", isLoggedIn);
+
             loginItem.setVisible(!isLoggedIn);
             registerItem.setVisible(registrationAllowed && !isLoggedIn);
             logoutItem.setVisible(isLoggedIn);
