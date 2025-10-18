@@ -189,8 +189,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
     void registrationDisabled() {
         try (var logCaptor = LogCaptor.forClass(AccountService.class)) {
 
-            // start with registration allowed
-            configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "true");
+            // new registrations are allowed by default
             assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isTrue();
 
             // navigate to home page
