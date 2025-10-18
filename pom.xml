@@ -533,9 +533,6 @@
 
                     <trimStackTrace>false</trimStackTrace>
                     <enableAssertions>true</enableAssertions>
-
-                    <!-- Redirect STDOUT/ERR to files to protect the IPC channel -->
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                 </configuration>
             </plugin>
 
@@ -574,9 +571,6 @@
 
                             <trimStackTrace>false</trimStackTrace>
                             <enableAssertions>true</enableAssertions>
-
-                            <!-- Redirect STDOUT/ERR to files to protect the IPC channel -->
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
                         </configuration>
                     </execution>
 
@@ -611,9 +605,6 @@
 
                             <trimStackTrace>false</trimStackTrace>
                             <enableAssertions>true</enableAssertions>
-
-                            <!-- Redirect STDOUT/ERR to files to protect the IPC channel -->
-                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
 
                             <!-- Ensure no browser auto-download happens inside forked JVMs -->
                             <environmentVariables>
