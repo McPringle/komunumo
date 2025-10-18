@@ -22,10 +22,14 @@ import app.komunumo.ui.BrowserTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
 
 class WebsiteLayoutCustomStylesBT extends BrowserTest {
+
+    @Autowired
+    private @NotNull ConfigurationService configurationService;
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -34,7 +38,6 @@ class WebsiteLayoutCustomStylesBT extends BrowserTest {
     })
     @SuppressWarnings("java:S2699")
     void testCustomStyles(final @NotNull String customStylesUrl) {
-        final var configurationService = getBean(ConfigurationService.class);
         try {
             configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, customStylesUrl);
 

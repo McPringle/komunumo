@@ -31,6 +31,7 @@ import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
@@ -43,9 +44,14 @@ public class AccountRegistrationFlowBT extends BrowserTest {
     private static final String REGISTER_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Register')";
     private static final String NEW_USER_EMAIL = "new@example.com";
 
+    @Autowired
+    private @NotNull ConfigurationService configurationService;
+
+    @Autowired
+    private @NotNull UserService userService;
+
     @AfterEach
     void removeTestUsers() {
-        final var userService = getBean(UserService.class);
         userService.getUserByEmail(NEW_USER_EMAIL).ifPresent(userService::deleteUser);
     }
 
@@ -128,7 +134,6 @@ public class AccountRegistrationFlowBT extends BrowserTest {
                 "Your local account has been successfully created, and you are now logged in with your new account.");
 
         // user should now be local
-        final var userService = getBean(UserService.class);
         final var localUser = userService.getUserByEmail(email);
         assertThat(localUser).isPresent();
         assertThat(localUser.orElseThrow().type()).isEqualTo(UserType.LOCAL);
@@ -180,8 +185,6 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
     @Test
     void registrationDisabled() {
-        final var configurationService = getBean(ConfigurationService.class);
-
         try (var logCaptor = LogCaptor.forClass(AccountService.class)) {
 
             // start with registration allowed

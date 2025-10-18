@@ -19,13 +19,18 @@ package app.komunumo.ui.views.events;
 
 import app.komunumo.data.service.EventService;
 import app.komunumo.ui.BrowserTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EventGridViewBT extends BrowserTest {
+
+    @Autowired
+    private @NotNull EventService eventService;
 
     @Test
     void checkUpcomingEvents() {
@@ -88,7 +93,6 @@ class EventGridViewBT extends BrowserTest {
 
     @Test
     void clickOnEventCard() {
-        final var eventService = getBean(EventService.class);
         final var testEvent = eventService.getUpcomingEventsWithImage()
                 .stream()
                 .filter(eventWithImage -> eventWithImage.event().title().equals("Demo Event 3"))

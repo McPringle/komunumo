@@ -39,6 +39,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -72,6 +73,9 @@ public abstract class BrowserTest extends IntegrationTest {
 
     private Path screenshotDir;
     private Page.ScreenshotOptions screenshotOptions;
+
+    @Autowired
+    private @NotNull UserService userService;
 
     @BeforeAll
     static void startAppAndBrowser() {
@@ -153,7 +157,6 @@ public abstract class BrowserTest extends IntegrationTest {
      * @throws IllegalStateException if the user could not be found in the database
      */
     protected @NotNull UserDto getTestUser(final @NotNull UserRole role) {
-        final var userService = getBean(UserService.class);
         return switch (role) {
             case USER -> userService.getUserById(TestConstants.USER_ID_LOCAL)
                     .orElseThrow(() -> new IllegalStateException("Test USER not found in database"));
@@ -175,7 +178,6 @@ public abstract class BrowserTest extends IntegrationTest {
      * @throws IllegalStateException if the user could not be found in the database
      */
     protected @NotNull UserDto getTestUser(final @NotNull UserType type) {
-        final var userService = getBean(UserService.class);
         return switch (type) {
             case LOCAL -> userService.getUserById(TestConstants.USER_ID_LOCAL)
                     .orElseThrow(() -> new IllegalStateException("LOCAL user not found in database"));

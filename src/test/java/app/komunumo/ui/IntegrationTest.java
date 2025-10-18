@@ -28,12 +28,10 @@ import org.flywaydb.core.Flyway;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -140,22 +138,6 @@ public abstract class IntegrationTest {
      */
     protected ApplicationContext getApplicationContext() {
         return applicationContext;
-    }
-
-    /**
-     * <p>Retrieves a Spring-managed bean of the specified type from the current {@link ApplicationContext}.</p>
-     *
-     * <p>This convenience method delegates to {@link ConfigurableApplicationContext#getBean(Class)} and provides
-     * an easy way to access Spring beans in static test utilities or setup code.</p>
-     *
-     * @param <T> the type of bean to retrieve
-     * @param clazz the class object representing the bean type, never {@code null}
-     * @return the bean instance of the specified type
-     * @throws BeansException if the bean could not be found or created
-     * @see ConfigurableApplicationContext#getBean(Class)
-     */
-    protected static <T> T getBean(final @NotNull Class<T> clazz) throws BeansException {
-        return applicationContext.getBean(clazz);
     }
 
     /**

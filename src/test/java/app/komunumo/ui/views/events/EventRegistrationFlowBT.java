@@ -21,13 +21,16 @@ import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.UserService;
 import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
@@ -39,12 +42,17 @@ class EventRegistrationFlowBT extends BrowserTest {
 
     private static final String REGISTRATION_BUTTON_SELECTOR = "vaadin-button:has-text('Register')";
 
+    @Autowired
+    private @NotNull EventService eventService;
+
+    @Autowired
+    private @NotNull UserService userService;
+
     @Test
     void testRegistrationFlowSuccess_withAnonymousUser() throws MessagingException {
         final var greenMail = getGreenMail();
 
         // prepare a test event
-        final var eventService = getBean(EventService.class);
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
                 .stream()
                 .filter(eventWithImage -> eventWithImage.image() != null)
@@ -111,7 +119,6 @@ class EventRegistrationFlowBT extends BrowserTest {
         final var greenMail = getGreenMail();
 
         // prepare a test event
-        final var eventService = getBean(EventService.class);
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
                 .stream()
                 .filter(eventWithImage -> eventWithImage.image() != null)
@@ -120,7 +127,6 @@ class EventRegistrationFlowBT extends BrowserTest {
         final var testEvent = testEventWithImage.event();
 
         // prepare a test user
-        final var userService = getBean(app.komunumo.data.service.UserService.class);
         final var testUser = userService.storeUser(new UserDto(null, null, null,
                 "@test@example.com", "test@example.com", "Test User", "This is a test user.", null,
                 UserRole.USER, UserType.LOCAL));
