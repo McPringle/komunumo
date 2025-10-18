@@ -44,7 +44,7 @@ class DarkModeBT extends BrowserTest {
           """).toString();
 
         page.click(AVATAR_SELECTOR);
-        page.waitForSelector(DARK_MODE_MENU_ITEM_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("profile-menu");
 
         page.click(DARK_MODE_MENU_ITEM_SELECTOR);

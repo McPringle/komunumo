@@ -79,7 +79,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
-        page.waitForSelector(REGISTER_MENU_ITEM_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("profile-menu-with-register-item");
 
         // click on register menu item
@@ -144,7 +144,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("profile-menu-without-register-item");
 
         // register menu item should not be visible
@@ -169,7 +169,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("profile-menu-without-register-item");
 
         // register menu item should not be visible
@@ -195,7 +195,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
             // open avatar menu
             page.click(AVATAR_SELECTOR);
-            page.waitForSelector(REGISTER_MENU_ITEM_SELECTOR);
+            page.waitForSelector(CONTEXT_MENU_SELECTOR);
             captureScreenshot("profile-menu-with-register-item");
 
             // check for registration menu item
@@ -219,7 +219,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
             // open avatar menu
             page.click(AVATAR_SELECTOR);
-            page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+            page.waitForSelector(CONTEXT_MENU_SELECTOR);
             captureScreenshot("profile-menu-without-register-item");
 
             // check for registration menu item

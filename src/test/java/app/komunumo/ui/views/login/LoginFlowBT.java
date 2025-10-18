@@ -60,7 +60,7 @@ class LoginFlowBT extends BrowserTest {
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("loginFails_profile-menu-before-login");
 
         // click on login menu item
@@ -121,7 +121,7 @@ class LoginFlowBT extends BrowserTest {
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("loginDialogOpenAndClose_profile-menu-before-login");
 
         // click on login menu item
@@ -152,7 +152,7 @@ class LoginFlowBT extends BrowserTest {
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("loginDialogCancel_profile-menu-before-login");
 
         // click on login menu item

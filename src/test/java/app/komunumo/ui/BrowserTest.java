@@ -56,6 +56,7 @@ public abstract class BrowserTest extends IntegrationTest {
 
     protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
     protected static final String AVATAR_SELECTOR = "vaadin-avatar";
+    protected static final String CONTEXT_MENU_SELECTOR = "vaadin-context-menu-list-box[role='menu']";
     protected static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
     protected static final String LOGOUT_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Logout')";
 
@@ -243,7 +244,7 @@ public abstract class BrowserTest extends IntegrationTest {
     protected void logout() {
         if (page.locator(LOGOUT_MENU_ITEM_SELECTOR).count() == 0) {
             page.click(AVATAR_SELECTOR);
-            page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+            page.waitForSelector(CONTEXT_MENU_SELECTOR);
         }
         captureScreenshot("logout_profile-menu");
 

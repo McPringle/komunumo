@@ -42,7 +42,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
-        page.waitForSelector(LOGIN_MENU_ITEM_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("anonymousVisitor_avatarMenuOpened");
 
         // check that there is no configuration editor menu item
@@ -70,7 +70,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
 
             // open avatar menu
             page.click(AVATAR_SELECTOR);
-            page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+            page.waitForSelector(CONTEXT_MENU_SELECTOR);
             captureScreenshot("userRole_avatarMenuOpened");
 
             // check that there is no configuration editor menu item
@@ -102,7 +102,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
 
             // open avatar menu
             page.click(AVATAR_SELECTOR);
-            page.waitForSelector(LOGOUT_MENU_ITEM_SELECTOR);
+            page.waitForSelector(CONTEXT_MENU_SELECTOR);
             captureScreenshot("adminRole_avatarMenuOpened");
 
             // check that there is a configuration editor menu item
