@@ -39,11 +39,15 @@ import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
 
 public final class NavigationBar extends HorizontalLayout {
+
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(NavigationBar.class);
 
     public NavigationBar(final @NotNull ConfigurationService configurationService,
                          final @NotNull GlobalPageService globalPageService,
@@ -93,6 +97,7 @@ public final class NavigationBar extends HorizontalLayout {
         );
 
         final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
+        LOGGER.warn("=== Registration allowed: {} ===", registrationAllowed);
         final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), _ ->
                 accountService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );

@@ -32,7 +32,6 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
@@ -185,7 +184,6 @@ public class AccountRegistrationFlowBT extends BrowserTest {
     }
 
     @Test
-    @DirtiesContext
     void registrationDisabled() {
         try (var logCaptor = LogCaptor.forClass(AccountService.class)) {
 
