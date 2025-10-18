@@ -90,6 +90,8 @@ public abstract class BrowserTest extends IntegrationTest {
         browserContext = browser.newContext(ctxOptions);
         browserContext.clearCookies();
         page = browserContext.newPage();
+
+        assert browserContext.cookies(getInstanceUrl()).isEmpty() : "Context unexpectedly has cookies";
     }
 
     @AfterEach
