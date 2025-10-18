@@ -23,6 +23,7 @@ import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.UserService;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Browser;
+import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
@@ -64,6 +65,8 @@ public abstract class BrowserTest extends IntegrationTest {
 
     private static Playwright playwright;
     private static Browser browser;
+
+    private BrowserContext browserContext;
     private Page page;
 
     private Path screenshotDir;
@@ -88,14 +91,20 @@ public abstract class BrowserTest extends IntegrationTest {
                 .setType(ScreenshotType.PNG)
                 .setFullPage(true);
 
-        final var pageOptions = new Browser.NewPageOptions()
+        Browser.NewContextOptions ctxOptions = new Browser.NewContextOptions()
                 .setViewportSize(1920, 1080);
-        page = browser.newPage(pageOptions);
+        browserContext = browser.newContext(ctxOptions);
+        page = browserContext.newPage();
     }
 
     @AfterEach
     void closePage() {
-        page.close();
+        if (page != null) {
+            page.close();
+        }
+        if (browserContext != null) {
+            browserContext.close();
+        }
     }
 
     /**
