@@ -618,6 +618,30 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.5.4</version>
+
+                <configuration>
+                    <reportsDirectories>
+                        <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                        <reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>
+                    </reportsDirectories>
+                    <outputName>test-report</outputName>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>generate-html-test-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-only</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.6.0</version>
                 <dependencies>
