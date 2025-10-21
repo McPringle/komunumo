@@ -63,7 +63,7 @@ Please join our developer community using our [Matrix chat](#matrix-chat) to get
 
 ### Commit Messages
 
-Please follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for all commit messages. This structured format helps automate changelogs, release processes, and code reviews.
+Please follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for all commit messages and pull request titles. This structured format helps automate changelogs, release processes, and code reviews.
 
 For *Komunumo*, we love to add the issue number to the end of the commit message. This helps to track the changes in the code and the issue tracker. When the commit closes an issue, the `closes`, `fixes`, or `resolves` keyword can be used. This will automatically close the issue when the commit is merged into the main branch.
 
@@ -167,6 +167,33 @@ Please make sure that each pull request is focused on a single issue or change. 
 
 > [!NOTE]  
 > GitHub only allows one pull request per branch. To open multiple pull requests, you need to create a separate branch for each change.
+
+### Before Submitting a Pull Request
+
+Please make sure your contribution meets all the following requirements:
+
+- Checkstyle and PMD report no violations.
+- The Modernizer Maven Plugin passes without issues.
+- All automated tests are green.
+- Test coverage is 100% (we practice Test-Driven Development).
+- License headers are present in all source files (missing headers can be added using: `./mvnw license:format`).
+- The branch is up to date with the main branch (please rebase if necessary before opening a Pull Request).
+- The Pull Request title follows the [Conventional Commit](#commit-messages) style and references the related issue number (e.g. `feat: add event export closes #123`).
+
+> [!TIP]
+> All checks above are executed by:
+> ```bash
+> ./mvnw verify
+> ```
+> Run this locally and ensure it completes successfully before opening a Pull Request.  
+> The CI pipeline will run the same checks and block PRs that fail.
+
+**Commit & signature policy**
+
+- Every commit must include a `Signed-off-by` line ([Developer Certificate of Origin](DCO.md)).
+- Every commit must be cryptographically signed with GPG, SSH, or S/MIME.
+- GitHub verifies these signatures during Pull Requests; unverified commits may be rejected.
+- For detailed setup and usage instructions, see [Signing commits – GitHub Docs](https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits).
 
 ## Quickstart for Local Development
 
