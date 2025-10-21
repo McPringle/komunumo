@@ -476,7 +476,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.6.2</version>
                 <executions>
                     <!-- Install the actual browsers (pick the ones you need) -->
                     <execution>
@@ -988,7 +988,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.6.1</version>
+                        <version>3.6.2</version>
                         <executions>
                             <!-- Linux only: install native system dependencies -->
                             <execution>
