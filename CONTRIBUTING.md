@@ -385,12 +385,7 @@ Primary keys don't have a name and therefore no prefix!
 
 ### Starting a Local MariaDB Instance
 
-To start a local MariaDB instance using [Docker](https://www.docker.com/) or [Podman](https://podman.io/), you can use the provided scripts:
-
-- `runMariaDB` (for Linux, BSD, and macOS)
-- `runMariaDB` (for Windows)
-
-These scripts will automatically detect whether `podman` or `docker` is available and use the appropriate tool. If neither is installed, an error message will be shown. The database is started using `compose` and will run in the foreground showing the logs. The container will be removed when MariaDB is stopped (e.g. using the `CTRL`+`C` shortcut).  All data will be persisted in the directory `.mariadb/data`. These scripts are meant for local development purposes only! Don't use them in production!
+To start a local MariaDB instance using [Docker](https://www.docker.com/) or [Podman](https://podman.io/), you can use the provided `docker-compose.yml` file in the `dev-tools` directory. Please see section [Start Required Services](#start-required-services) for detailed instructions.
 
 ## Build
 
