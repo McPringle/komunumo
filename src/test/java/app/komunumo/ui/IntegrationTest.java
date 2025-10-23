@@ -38,8 +38,14 @@ import org.springframework.test.context.ActiveProfiles;
  *
  * <p>It simplifies writing end-to-end or API-level integration tests by managing the
  * Spring Boot lifecycle and environment configuration.</p>
+ *
+ * <p>This class configures a random web environment port to avoid conflicts and excludes
+ * the task scheduling autoconfiguration to prevent background tasks from interfering
+ * with test execution.</p>
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration")
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
 
