@@ -18,6 +18,7 @@
 package app.komunumo.security;
 
 import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,7 @@ public final class UserPrincipal implements UserDetails {
     private final @NotNull UUID userId;
     private final @NotNull String email;
     private final @NotNull String name;
+    private final @NotNull UserType type;
     private final @NotNull Collection<? extends GrantedAuthority> authorities;
 
     public UserPrincipal(final @NotNull UserDto user, final @NotNull List<@NotNull GrantedAuthority> authorities) {
@@ -41,6 +43,7 @@ public final class UserPrincipal implements UserDetails {
         this.userId = user.id();
         this.email = user.email();
         this.name = user.name();
+        this.type = user.type();
         this.authorities = authorities;
     }
 
@@ -54,6 +57,10 @@ public final class UserPrincipal implements UserDetails {
 
     public @NotNull String getName() {
         return name;
+    }
+
+    public @NotNull UserType getType() {
+        return type;
     }
 
     @Override

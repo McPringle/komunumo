@@ -94,4 +94,15 @@ class CommunityServiceKT extends KaribuTest {
         assertThat(communityService.deleteCommunity(community)).isFalse();
     }
 
+    @Test
+    void profileNameIsAvailable() {
+        assertThat(communityService.isProfileNameAvailable("non-existing-profile-name")).isTrue();
+    }
+
+    @Test
+    void profileNameIsNotAvailable() {
+        final var existingProfileName = communityService.getCommunities().getFirst().profile();
+        assertThat(communityService.isProfileNameAvailable(existingProfileName)).isFalse();
+    }
+
 }

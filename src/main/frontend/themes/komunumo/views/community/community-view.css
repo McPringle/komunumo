@@ -15,19 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+.community-add-view vaadin-vertical-layout {
+    padding: 0;
+}
 
-@import "fonts/space-grotesk.css";
-
-@import "components/confirmation-dialog.css";
-@import "components/info-banner.css";
-@import "components/komunumo-card.css";
-@import "components/komunumo-grid.css";
-@import "components/navigation-bar.css";
-@import "components/page-footer.css";
-@import "components/page-header.css";
-
-@import "views/confirmation-view.css";
-@import "views/global-page-view.css";
-
-@import "views/admin/configuration-editor-view.css";
-@import "views/community/community-view.css";
+.community-add-view .community-add-component {
+    border-top: 1px solid #ccc;
+}

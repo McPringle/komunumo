@@ -39,6 +39,7 @@ public class AuthenticationSignal {
 
     private final @NotNull ValueSignal<Boolean> authenticated = new ValueSignal<>(false);
     private final @NotNull ValueSignal<Boolean> admin = new ValueSignal<>(false);
+    private final @NotNull ValueSignal<Boolean> localUser = new ValueSignal<>(false);
 
     /**
      * <p>Refreshes the signal from the current Spring Security context.</p>
@@ -49,7 +50,9 @@ public class AuthenticationSignal {
     public void refreshFromSecurityContext() {
         final var isAuthenticated = SecurityUtil.isLoggedIn();
         final var isAdmin = SecurityUtil.isAdmin();
-        setAuthenticated(isAuthenticated, isAdmin);
+        final var isLocalUser = SecurityUtil.isLocalUser();
+
+        setAuthenticated(isAuthenticated, isAdmin, isLocalUser);
     }
 
     /**
@@ -58,7 +61,7 @@ public class AuthenticationSignal {
      * @param isAuthenticated true if authenticated, false otherwise
      */
     public void setAuthenticated(final boolean isAuthenticated) {
-        setAuthenticated(isAuthenticated, false);
+        setAuthenticated(isAuthenticated, false, false);
     }
 
     /**
@@ -66,10 +69,12 @@ public class AuthenticationSignal {
      *
      * @param isAuthenticated true if authenticated, false otherwise
      * @param isAdmin true if the authenticated user has ADMIN privileges
+     * @param isLocalUser true if the authenticated user has USER privileges and is of type LOCAL
      */
-    public void setAuthenticated(final boolean isAuthenticated, final boolean isAdmin) {
+    public void setAuthenticated(final boolean isAuthenticated, final boolean isAdmin, final boolean isLocalUser) {
         authenticated.value(isAuthenticated);
         admin.value(isAuthenticated && isAdmin);
+        localUser.value(isAuthenticated && isLocalUser);
     }
 
     /**
@@ -89,6 +94,15 @@ public class AuthenticationSignal {
      */
     public boolean isAdmin() {
         return isAuthenticated() && Boolean.TRUE.equals(admin.value());
+    }
+
+    /**
+     * <p>Returns whether the current user has USER privileges and is of type LOCAL.</p>
+     *
+     * @return true if authenticated and USER and of type LOCAL, false otherwise
+     */
+    public boolean isLocalUser() {
+        return isAuthenticated() && Boolean.TRUE.equals(localUser.value());
     }
 
 }

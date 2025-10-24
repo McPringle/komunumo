@@ -23,6 +23,7 @@ import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.ui.signals.AuthenticationSignal;
 import app.komunumo.ui.views.admin.config.ConfigurationEditorView;
+import app.komunumo.ui.views.community.CommunityAddView;
 import app.komunumo.ui.views.community.CommunityGridView;
 import app.komunumo.ui.views.events.EventGridView;
 import app.komunumo.ui.views.login.LogoutView;
@@ -100,6 +101,10 @@ public final class NavigationBar extends HorizontalLayout {
                 accountService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
+        // add community item
+        final var addCommunityItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.addCommunity"),
+                _ -> ui.navigate(CommunityAddView.class));
+
         // admin menu
         final var configItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
                 ui.navigate(ConfigurationEditorView.class)
@@ -126,6 +131,9 @@ public final class NavigationBar extends HorizontalLayout {
 
             final var isAdmin = authenticationSignal.isAdmin();
             configItem.setVisible(isAdmin);
+
+            final var isLocalUser = authenticationSignal.isLocalUser();
+            addCommunityItem.setVisible(isLocalUser);
         });
 
         return avatar;

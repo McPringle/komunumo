@@ -18,8 +18,11 @@
 package app.komunumo.util;
 
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.security.UserPrincipal;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
@@ -44,6 +47,16 @@ public final class SecurityUtil {
     }
 
     /**
+     * <p>Returns the current {@link Authentication} object if the user is authenticated.</p>
+     *
+     * @return an {@link Authentication} object or {@code null} if the user is not authenticated
+     */
+    private static @Nullable Authentication getAuthentication() {
+        final var authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated() ? authentication : null;
+    }
+
+    /**
      * <p>Returns the current {@link UserPrincipal} if the user is authenticated.</p>
      *
      * <p>Anonymous users and non-{@code UserPrincipal} principals yield an empty Optional.</p>
@@ -51,9 +64,12 @@ public final class SecurityUtil {
      * @return an {@link Optional} containing the current {@link UserPrincipal} if available
      */
     public static @NotNull Optional<UserPrincipal> getUserPrincipal() {
-        final var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof UserPrincipal) {
-            return Optional.of((UserPrincipal) auth.getPrincipal());
+        final var authentication = getAuthentication();
+        if (authentication != null) {
+            final var principal = authentication.getPrincipal();
+            if (principal instanceof UserPrincipal) {
+                return Optional.of((UserPrincipal) principal);
+            }
         }
         return Optional.empty();
     }
@@ -77,12 +93,27 @@ public final class SecurityUtil {
      * @return {@code true} if the current user has the role, {@code false} otherwise
      */
     public static boolean hasRole(final @NotNull UserRole role) {
-        final var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.isAuthenticated()) {
+        final var authentication = getAuthentication();
+        if (authentication != null) {
             final var roleName = "ROLE_" + role.name();
-            return auth.getAuthorities().stream().anyMatch(a -> roleName.equals(a.getAuthority()));
+            return authentication.getAuthorities().stream()
+                    .anyMatch(authority -> roleName.equals(authority.getAuthority()));
         }
         return false;
+    }
+
+    /**
+     * <p>Checks if the current user is of the provided type.</p>
+     *
+     * <p>The method checks if the authenticated user principal is of the type that is provided to the method.</p>
+     *
+     * @param type the type to check the user principal against (e.g., {@link UserType#LOCAL})
+     * @return {@code true} if the current user is of the type, else return {@code false}
+     */
+    public static boolean isUserType(final @NotNull UserType type) {
+        return getUserPrincipal()
+                .filter(principal -> type.equals(principal.getType()))
+                .isPresent();
     }
 
     /**
@@ -92,5 +123,14 @@ public final class SecurityUtil {
      */
     public static boolean isAdmin() {
         return hasRole(UserRole.ADMIN);
+    }
+
+    /**
+     * <p>Method to check if the current user has the {@link UserRole#USER} and is of type {@link UserType#LOCAL}.</p>
+     *
+     * @return {@code true} if the current user is a local user, else return {@code false}
+     */
+    public static boolean isLocalUser() {
+        return hasRole(UserRole.USER) && isUserType(UserType.LOCAL);
     }
 }

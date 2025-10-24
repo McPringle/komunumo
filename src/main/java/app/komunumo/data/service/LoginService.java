@@ -19,6 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.confirmation.ConfirmationContext;
 import app.komunumo.data.service.confirmation.ConfirmationHandler;
 import app.komunumo.data.service.confirmation.ConfirmationRequest;
@@ -122,7 +123,9 @@ public final class LoginService {
         }
 
         LOGGER.info("User with email {} successfully logged in.", emailAddress);
-        authenticationSignal.setAuthenticated(true, UserRole.ADMIN.equals(user.role()));
+        authenticationSignal.setAuthenticated(true, UserRole.ADMIN.equals(user.role()),
+                UserType.LOCAL.equals(user.type()));
+
         return true;
     }
 
