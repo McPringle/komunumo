@@ -96,12 +96,7 @@ public class CommunityAddComponent extends VerticalLayout {
 
             if (userPrincipalOptional.isEmpty()) {
                 showNotification("ui.views.page.GlobalPageEditorDialog.permissionError", NotificationVariant.LUMO_ERROR);
-                UI.getCurrent().navigate(CommunityGridView.class);
-
-                return;
-            }
-
-            if (binder.validate().isOk()) {
+            } else if (binder.validate().isOk()) {
                 var communityDto = new CommunityDto(null, profileField.getValue(), null, null,
                         nameField.getValue(), descriptionField.getValue(), null);
 
