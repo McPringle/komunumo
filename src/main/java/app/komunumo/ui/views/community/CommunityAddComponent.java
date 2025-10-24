@@ -89,11 +89,11 @@ public class CommunityAddComponent extends VerticalLayout {
                 .asRequired(getTranslation("ui.views.community.AddCommunity.validation.name.required"))
                 .bind(CommunityDto::name, null);
 
-        Button saveButton = new Button(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.save"), _ -> {
+        Button createButton = new Button(getTranslation("ui.views.community.AddCommunity.createButton"), _ -> {
             var userPrincipalOptional = SecurityUtil.getUserPrincipal();
 
             if (userPrincipalOptional.isEmpty()) {
-                showNotification("ui.views.page.GlobalPageEditorDialog.permissionError", NotificationVariant.LUMO_ERROR);
+                showNotification("ui.views.community.AddCommunity.permissionError", NotificationVariant.LUMO_ERROR);
             } else if (binder.validate().isOk()) {
                 var communityDto = new CommunityDto(null, profileField.getValue(), null, null,
                         nameField.getValue(), descriptionField.getValue(), null);
@@ -115,9 +115,9 @@ public class CommunityAddComponent extends VerticalLayout {
             }
         });
 
-        saveButton.setClassName("save-button");
+        createButton.setClassName("create-button");
 
-        final var container = new VerticalLayout(profileField, nameField, descriptionField, saveButton);
+        final var container = new VerticalLayout(profileField, nameField, descriptionField, createButton);
         container.addClassName("community-add-component");
 
         return container;

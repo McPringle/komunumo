@@ -59,37 +59,37 @@ public class CommunityAddViewKT extends KaribuTest {
         var descriptionField = _get(TextArea.class, spec -> spec.withClasses("description-field"));
         assertThat(descriptionField).isNotNull();
 
-        var saveButton = _get(Button.class, spec -> spec.withClasses("save-button"));
-        assertThat(saveButton).isNotNull();
+        var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
+        assertThat(createButton).isNotNull();
     }
 
     @Test
-    void testSave_invalidSubmission() {
+    void testCreate_invalidSubmission() {
         login(getTestUser(UserRole.USER));
         UI.getCurrent().navigate("communities/add");
 
         CommunityAddComponent component = _get(CommunityAddComponent.class);
-        var saveButton = _get(Button.class, spec -> spec.withClasses("save-button"));
-        saveButton.click();
+        var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
+        createButton.click();
 
         assertThat(component.getBinder().isValid()).isFalse();
     }
 
     @Test
-    void testSave_successfulSubmission() {
+    void testCreate_successfulSubmission() {
         login(getTestUser(UserRole.USER));
         UI.getCurrent().navigate("communities/add");
 
         CommunityAddComponent component = _get(CommunityAddComponent.class);
         var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
-        var saveButton = _get(Button.class, spec -> spec.withClasses("save-button"));
+        var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
         profile.setValue("Test Profile");
         name.setValue("Test Name");
         assertThat(component.getBinder().isValid()).isTrue();
 
-        saveButton.click();
+        createButton.click();
 
         assertThat(UI.getCurrent().getActiveViewLocation().getPath()).isEqualTo("communities");
     }
@@ -102,7 +102,7 @@ public class CommunityAddViewKT extends KaribuTest {
         CommunityAddComponent component = _get(CommunityAddComponent.class);
         var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
-        var saveButton = _get(Button.class, spec -> spec.withClasses("save-button"));
+        var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
         profile.setValue("Test Profile");
         name.setValue("Test Name");
@@ -110,13 +110,13 @@ public class CommunityAddViewKT extends KaribuTest {
 
         logout(); // simulate session timeout by logging out
 
-        saveButton.click();
+        createButton.click();
 
         final var notification = _get(Notification.class);
         assertThat(notification.isOpened()).isTrue();
 
         final var notificationDiv = _get(notification, Div.class);
-        assertThat(notificationDiv.getText()).startsWith("You do not have permission to edit the content of this page.");
+        assertThat(notificationDiv.getText()).startsWith("You do not have permission to create a new community.");
     }
 
 }
