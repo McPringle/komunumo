@@ -31,10 +31,6 @@ import org.junit.jupiter.api.Test;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * @author smzoha
- * @since 20/10/25
- **/
 public class CommunityAddViewKT extends KaribuTest {
 
     @Test

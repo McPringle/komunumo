@@ -28,10 +28,6 @@ import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * @author smzoha
- * @since 20/10/25
- **/
 public class MemberServiceKT extends KaribuTest {
 
     @Autowired

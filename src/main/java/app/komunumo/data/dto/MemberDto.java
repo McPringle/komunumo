@@ -23,10 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-/**
- * @author smzoha
- * @since 19/10/25
- **/
 public record MemberDto(
         @NotNull UUID userId,
         @NotNull UUID communityId,

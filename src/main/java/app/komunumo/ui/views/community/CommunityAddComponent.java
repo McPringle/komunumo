@@ -39,10 +39,6 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Objects;
 
-/**
- * @author smzoha
- * @since 19/10/25
- **/
 public class CommunityAddComponent extends VerticalLayout {
 
     private final @NotNull CommunityService communityService;

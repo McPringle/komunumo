@@ -29,10 +29,6 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author smzoha
- * @since 17/10/25
- **/
 @RolesAllowed("USER")
 @Route(value = "/communities/add", layout = WebsiteLayout.class)
 public class CommunityAddView extends AbstractView implements AfterNavigationObserver {

@@ -29,10 +29,6 @@ import java.util.UUID;
 
 import static app.komunumo.data.db.Tables.MEMBER;
 
-/**
- * @author smzoha
- * @since 19/10/25
- **/
 @Service
 public final class MemberService {
 
