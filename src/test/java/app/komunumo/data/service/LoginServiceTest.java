@@ -24,6 +24,7 @@ import app.komunumo.data.service.confirmation.ConfirmationService;
 import app.komunumo.security.UserPrincipal;
 import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.signals.AuthenticationSignal;
+import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.server.VaadinService;
@@ -32,6 +33,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -206,16 +208,10 @@ class LoginServiceTest {
 
     @Test
     void getLoggedInUser_returnsUser_whenPrincipalIsUserPrincipal_andUserExists() {
-        try {
+        try (MockedStatic<SecurityUtil> securityUtil = mockStatic(SecurityUtil.class)) {
             final var userId = UUID.randomUUID();
             final var principal = mock(UserPrincipal.class);
             when(principal.getUserId()).thenReturn(userId);
-
-            final var auth = mock(Authentication.class);
-            when(auth.getPrincipal()).thenReturn(principal);
-            final var ctx = mock(SecurityContext.class);
-            when(ctx.getAuthentication()).thenReturn(auth);
-            SecurityContextHolder.setContext(ctx);
 
             final var userService = mock(UserService.class);
             final var loginService = createLoginServiceWithMocks(userService);
@@ -223,6 +219,9 @@ class LoginServiceTest {
             final var user = new UserDto(userId, null, null, null, null, "", "",
                     null, UserRole.USER, UserType.LOCAL);
             when(userService.getUserById(userId)).thenReturn(Optional.of(user));
+
+            securityUtil.when(SecurityUtil::getUserPrincipal)
+                    .thenReturn(Optional.of(principal));
 
             final var result = loginService.getLoggedInUser();
 
@@ -236,21 +235,18 @@ class LoginServiceTest {
 
     @Test
     void getLoggedInUser_returnsEmpty_whenPrincipalIsUserPrincipal_butUserNotFound() {
-        try {
+        try (MockedStatic<SecurityUtil> securityUtil = mockStatic(SecurityUtil.class)) {
             final var userId = UUID.randomUUID();
             final var principal = mock(UserPrincipal.class);
             when(principal.getUserId()).thenReturn(userId);
-
-            final var auth = mock(Authentication.class);
-            when(auth.getPrincipal()).thenReturn(principal);
-            final var ctx = mock(SecurityContext.class);
-            when(ctx.getAuthentication()).thenReturn(auth);
-            SecurityContextHolder.setContext(ctx);
 
             final var userService = mock(UserService.class);
             final var loginService = createLoginServiceWithMocks(userService);
 
             when(userService.getUserById(userId)).thenReturn(Optional.empty());
+
+            securityUtil.when(SecurityUtil::getUserPrincipal)
+                    .thenReturn(Optional.of(principal));
 
             final var result = loginService.getLoggedInUser();
 

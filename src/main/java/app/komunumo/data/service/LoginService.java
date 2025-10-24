@@ -30,6 +30,7 @@ import app.komunumo.security.SecurityConfig;
 import app.komunumo.security.UserPrincipal;
 import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.signals.AuthenticationSignal;
+import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
@@ -130,29 +131,8 @@ public final class LoginService {
     }
 
     public @NotNull Optional<UserDto> getLoggedInUser() {
-        final var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            return Optional.empty();
-        }
-
-        if (auth.getPrincipal() instanceof UserPrincipal principal) {
-            return userService.getUserById(principal.getUserId());
-        }
-
-        return Optional.empty();
-    }
-
-    public static @NotNull Optional<String> getLoggedInUserEmail() {
-        final var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            return Optional.empty();
-        }
-
-        if (auth.getPrincipal() instanceof UserPrincipal principal) {
-            return Optional.of(principal.getEmail());
-        }
-
-        return Optional.empty();
+        return SecurityUtil.getUserPrincipal()
+                .flatMap(principal -> userService.getUserById(principal.getUserId()));
     }
 
     public boolean isUserLoggedIn() {

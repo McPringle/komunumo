@@ -17,9 +17,9 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.confirmation.ConfirmationRequest;
 import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -109,7 +109,7 @@ public final class ConfirmationDialog extends Dialog {
             getFooter().add(closeButton);
         });
 
-        LoginService.getLoggedInUserEmail().ifPresent(emailField::setValue);
+        SecurityUtil.getUserPrincipal().ifPresent(principal -> emailField.setValue(principal.getEmail()));
 
         addOpenedChangeListener(evt -> {
             if (evt.isOpened()) {
