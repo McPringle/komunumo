@@ -55,9 +55,14 @@ public enum ConfigurationSetting {
     INSTANCE_HIDE_COMMUNITIES("instance.hideCommunities", false, "false"),
 
     /**
+     * <p>Whether to allow local users to create communities or not.</p>
+     */
+    INSTANCE_ADD_COMMUNITY_ALLOWED("instance.addCommunityAllowed", false, "true"),
+
+    /**
      * <p>Whether to allow account registration or not.</p>
      */
-    INSTANCE_REGISTRATION_ALLOWED("instance.registrationAllowed", false, "true"),;
+    INSTANCE_REGISTRATION_ALLOWED("instance.registrationAllowed", false, "true");
 
     private final String setting;
     private final boolean languageDependent;
