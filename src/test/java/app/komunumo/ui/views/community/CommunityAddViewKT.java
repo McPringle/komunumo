@@ -21,6 +21,8 @@ import app.komunumo.data.dto.UserRole;
 import app.komunumo.ui.KaribuTest;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -95,4 +97,30 @@ public class CommunityAddViewKT extends KaribuTest {
 
         assertThat(UI.getCurrent().getActiveViewLocation().getPath()).isEqualTo("communities");
     }
+
+    @Test
+    void sessionTimeout() {
+        login(getTestUser(UserRole.USER));
+        UI.getCurrent().navigate("communities/add");
+
+        CommunityAddComponent component = _get(CommunityAddComponent.class);
+        var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
+        var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
+        var saveButton = _get(Button.class, spec -> spec.withClasses("save-button"));
+
+        profile.setValue("Test Profile");
+        name.setValue("Test Name");
+        assertThat(component.getBinder().isValid()).isTrue();
+
+        logout(); // simulate session timeout by logging out
+
+        saveButton.click();
+
+        final var notification = _get(Notification.class);
+        assertThat(notification.isOpened()).isTrue();
+
+        final var notificationDiv = _get(notification, Div.class);
+        assertThat(notificationDiv.getText()).startsWith("You do not have permission to edit the content of this page.");
+    }
+
 }
