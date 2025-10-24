@@ -83,7 +83,7 @@ public class CommunityAddComponent extends VerticalLayout {
 
         binder.forField(profileField)
                 .asRequired(getTranslation("ui.views.community.AddCommunity.validation.profile.required"))
-                .withValidator(profile -> !communityService.isCommunityExistWithProfile(profile),
+                .withValidator(communityService::isProfileNameAvailable,
                         getTranslation("ui.views.community.AddCommunity.validation.profile.exists"))
                 .bind(CommunityDto::profile, null);
 

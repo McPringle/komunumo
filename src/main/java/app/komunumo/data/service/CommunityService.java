@@ -96,8 +96,8 @@ public final class CommunityService extends StorageService {
         ).orElse(0);
     }
 
-    public boolean isCommunityExistWithProfile(final @NotNull String profile) {
-        return dsl.fetchCount(COMMUNITY, COMMUNITY.PROFILE.eq(profile)) > 0;
+    public boolean isProfileNameAvailable(final @NotNull String profile) {
+        return dsl.fetchCount(COMMUNITY, COMMUNITY.PROFILE.eq(profile)) == 0;
     }
 
     public boolean deleteCommunity(final @NotNull CommunityDto community) {
