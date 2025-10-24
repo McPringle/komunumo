@@ -96,7 +96,7 @@ public final class DemoDataCreator {
 
         LOGGER.info("Deleting existing data...");
         configurationService.deleteAllConfigurations();
-        participationService.getParticipations().forEach(participationService::deleteParticipation);
+        participationService.getAllParticipations().forEach(participationService::deleteParticipation);
         eventService.getEvents().forEach(eventService::deleteEvent);
         communityService.getCommunities().forEach(communityService::deleteCommunity);
         imageService.getImages().forEach(imageService::deleteImage);

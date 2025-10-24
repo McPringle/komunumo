@@ -46,7 +46,7 @@ class ParticipationServiceKT extends KaribuTest {
 
     @Test
     void joinEventExistingUser() {
-        assertThat(participationService.getParticipations()).isEmpty();
+        assertThat(participationService.getAllParticipations()).isEmpty();
 
         final var email = "test@komunumo.app";
         assertThat(userService.getUserByEmail(email)).isEmpty();
@@ -64,7 +64,7 @@ class ParticipationServiceKT extends KaribuTest {
         final var confirmationResponse = participationService.registerForEvent(email, context, locale);
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
-        final var participations = participationService.getParticipations();
+        final var participations = participationService.getAllParticipations();
         assertThat(participations).hasSize(1);
 
         final var participation = participations.getFirst();
@@ -77,7 +77,7 @@ class ParticipationServiceKT extends KaribuTest {
 
         assertThat(participationService.deleteParticipation(participation)).isTrue();
         assertThat(participationService.deleteParticipation(participation)).isFalse();
-        assertThat(participationService.getParticipations()).isEmpty();
+        assertThat(participationService.getAllParticipations()).isEmpty();
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();
@@ -85,7 +85,7 @@ class ParticipationServiceKT extends KaribuTest {
 
     @Test
     void joinEventAnonymousUser() {
-        assertThat(participationService.getParticipations()).isEmpty();
+        assertThat(participationService.getAllParticipations()).isEmpty();
 
         final var email = "test@komunumo.app";
         assertThat(userService.getUserByEmail(email)).isEmpty();
@@ -102,7 +102,7 @@ class ParticipationServiceKT extends KaribuTest {
         final var confirmationResponse2 = participationService.registerForEvent(email, context, locale);
         assertThat(confirmationResponse2.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
-        final var participations = participationService.getParticipations();
+        final var participations = participationService.getAllParticipations();
         assertThat(participations).hasSize(1);
 
         final var user = userService.getUserByEmail(email).orElseThrow();
@@ -118,7 +118,7 @@ class ParticipationServiceKT extends KaribuTest {
 
         assertThat(participationService.deleteParticipation(participation)).isTrue();
         assertThat(participationService.deleteParticipation(participation)).isFalse();
-        assertThat(participationService.getParticipations()).isEmpty();
+        assertThat(participationService.getAllParticipations()).isEmpty();
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();

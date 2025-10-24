@@ -125,7 +125,7 @@ public final class ParticipationService {
         participationRecord.store();
     }
 
-    public @NotNull List<@NotNull ParticipationDto> getParticipations() {
+    public @NotNull List<@NotNull ParticipationDto> getAllParticipations() {
         return dsl.selectFrom(PARTICIPATION)
                 .fetchInto(ParticipationDto.class);
     }
