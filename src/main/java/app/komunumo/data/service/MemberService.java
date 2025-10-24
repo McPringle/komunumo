@@ -17,7 +17,6 @@
  */
 package app.komunumo.data.service;
 
-import app.komunumo.data.db.tables.records.MemberRecord;
 import app.komunumo.data.dto.MemberDto;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
@@ -25,6 +24,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.UUID;
 
 import static app.komunumo.data.db.Tables.MEMBER;
 
@@ -33,7 +34,7 @@ import static app.komunumo.data.db.Tables.MEMBER;
  * @since 19/10/25
  **/
 @Service
-public class MemberService {
+public final class MemberService {
 
     private final @NotNull DSLContext dsl;
 
@@ -48,32 +49,28 @@ public class MemberService {
      * @return the persisted Member information in DTO form
      */
     public @NotNull MemberDto storeMember(final @NotNull MemberDto memberDto) {
-        MemberRecord memberRecord = dsl.fetchOptional(MEMBER,
+        final var memberRecord = dsl.fetchOptional(MEMBER,
                         MEMBER.USER_ID.eq(memberDto.userId())
                                 .and(MEMBER.COMMUNITY_ID.eq(memberDto.communityId())))
                 .orElse(dsl.newRecord(MEMBER));
-
-        updateMemberRecord(memberDto, memberRecord);
-        memberRecord.store();
-
-        return memberRecord.into(MemberDto.class);
-    }
-
-    /**
-     * <p>The values held within the MemberDto is used to update the MemberRecord object obtained from the DSL Context.</p>
-     *
-     * @param memberDto    DTO object that is received from the component/view
-     * @param memberRecord Record obtained from the DSL
-     */
-    private void updateMemberRecord(final @NotNull MemberDto memberDto, final @NotNull MemberRecord memberRecord) {
-        final var now = ZonedDateTime.now(ZoneOffset.UTC);
 
         memberRecord.setUserId(memberDto.userId());
         memberRecord.setCommunityId(memberDto.communityId());
         memberRecord.setRole(memberDto.role());
 
-        if (memberDto.since() == null) {
-            memberRecord.setSince(now);
+        if (memberRecord.getSince() == null) {
+            memberRecord.setSince(ZonedDateTime.now(ZoneOffset.UTC));
         }
+
+        memberRecord.store();
+
+        return memberRecord.into(MemberDto.class);
     }
+
+    public @NotNull List<@NotNull MemberDto> getMembersByCommunityId(final @NotNull UUID communityId) {
+        return dsl.selectFrom(MEMBER)
+                .where(MEMBER.COMMUNITY_ID.eq(communityId))
+                .fetchInto(MemberDto.class);
+    }
+
 }

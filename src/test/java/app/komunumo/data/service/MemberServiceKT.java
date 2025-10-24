@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.UUID;
+import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,20 +41,23 @@ public class MemberServiceKT extends KaribuTest {
     private @NotNull CommunityService communityService;
 
     @Test
-    void testStoreMember() {
-        var communityList = communityService.getCommunities();
-        var community = communityList.getFirst();
+    @SuppressWarnings("DuplicateExpressions")
+    void testStoreAndUpdateMember() {
+        final var communityList = communityService.getCommunities();
+        final var community = communityList.getFirst();
 
-        var user = getTestUser(UserRole.USER);
-        var role = "OWNER";
+        final var user = getTestUser(UserRole.USER);
+        final var role = "OWNER";
 
         assertThat(user.id()).isNotNull();
         assertThat(community.id()).isNotNull();
+        assertThat(memberService.getMembersByCommunityId(community.id())).isEmpty();
 
-        MemberDto memberDto = new MemberDto(user.id(), community.id(), role, null);
-        memberDto = memberService.storeMember(memberDto);
+        var member = new MemberDto(user.id(), community.id(), role, null);
+        member = memberService.storeMember(member);
 
-        assertThat(memberDto).isNotNull().satisfies(testMemberDto -> {
+        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(1);
+        assertThat(member).isNotNull().satisfies(testMemberDto -> {
             assertThat(testMemberDto.userId()).isNotNull();
             assertThat(testMemberDto.userId()).isEqualTo(user.id());
 
@@ -66,6 +69,30 @@ public class MemberServiceKT extends KaribuTest {
             assertThat(testMemberDto.role()).isEqualTo(role);
 
             assertThat(testMemberDto.since()).isNotNull();
+            assertThat(testMemberDto.since()).isBeforeOrEqualTo(ZonedDateTime.now());
         });
+
+        member = memberService.getMembersByCommunityId(community.id()).getFirst();
+        final var since = member.since();
+
+        member = new MemberDto(user.id(), community.id(), role, null);
+        member = memberService.storeMember(member);
+
+        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(1);
+        assertThat(member).isNotNull().satisfies(testMemberDto -> {
+            assertThat(testMemberDto.userId()).isNotNull();
+            assertThat(testMemberDto.userId()).isEqualTo(user.id());
+
+            assertThat(testMemberDto.communityId()).isNotNull();
+            assertThat(testMemberDto.communityId()).isEqualTo(community.id());
+
+            assertThat(testMemberDto.role()).isNotNull();
+            assertThat(testMemberDto.role()).isNotBlank();
+            assertThat(testMemberDto.role()).isEqualTo(role);
+
+            assertThat(testMemberDto.since()).isNotNull();
+            assertThat(testMemberDto.since()).isEqualTo(since);
+        });
+
     }
 }
