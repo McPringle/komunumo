@@ -25,6 +25,9 @@ Special thanks for all these wonderful people who had helped this project so far
       <td align="center" valign="top" width="14.28%"><a href="https://andresalmiray.com/"><img src="https://avatars.githubusercontent.com/u/13969?v=4?s=100" width="100px;" alt="Andres Almiray"/><br /><sub><b>Andres Almiray</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=aalmiray" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/KOWSIK-M"><img src="https://avatars.githubusercontent.com/u/144872529?v=4?s=100" width="100px;" alt="KOWSIK MEDAM"/><br /><sub><b>KOWSIK MEDAM</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=KOWSIK-M" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/smzoha"><img src="https://avatars.githubusercontent.com/u/8037665?v=4?s=100" width="100px;" alt="Shamah M Zoha"/><br /><sub><b>Shamah M Zoha</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=smzoha" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
