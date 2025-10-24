@@ -30,6 +30,7 @@ import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.LoadState;
+import com.microsoft.playwright.options.ReducedMotion;
 import com.microsoft.playwright.options.ScreenshotType;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import org.jetbrains.annotations.NotNull;
@@ -80,8 +81,10 @@ public abstract class BrowserTest extends IntegrationTest {
 
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
         Browser.NewContextOptions ctxOptions = new Browser.NewContextOptions()
+                .setReducedMotion(ReducedMotion.REDUCE)
                 .setViewportSize(1920, 1080);
         browserContext = browser.newContext(ctxOptions);
+        disableAnimationsGlobally();
         browserContext.clearCookies();
         page = browserContext.newPage();
         assert browserContext.cookies(getInstanceUrl()).isEmpty() : "Context unexpectedly has cookies";
@@ -90,6 +93,33 @@ public abstract class BrowserTest extends IntegrationTest {
         screenshotOptions = new Page.ScreenshotOptions()
                 .setType(ScreenshotType.PNG)
                 .setFullPage(true);
+    }
+
+    protected void disableAnimationsGlobally() {
+        browserContext.addInitScript("""
+            (() => {
+                if (document.querySelector('[data-test-disable-animations]')) {
+                    return;
+                }
+                const css = `
+                    *,:before,:after {
+                        transition: none !important;
+                        animation: none !important;
+                        scroll-behavior: auto !important;
+                    }
+                    html {
+                        scroll-behavior: auto !important;
+                    }
+                    ::view-transition {
+                        display: none !important;
+                    }
+                `;
+                const style = document.createElement('style');
+                style.setAttribute('data-test-disable-animations','true');
+                style.textContent = css;
+                document.documentElement.appendChild(style);
+            })();
+        """);
     }
 
     @AfterEach
