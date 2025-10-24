@@ -25,6 +25,7 @@ import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -133,7 +134,7 @@ public class CommunityAddComponent extends VerticalLayout {
      * @param notificationVariant the notification variant that will define the theme of the notification
      */
     private void showNotification(final @NotNull String messageKey, final @NotNull NotificationVariant notificationVariant) {
-        final var notification = new Notification(getTranslation(messageKey));
+        final var notification = new Notification(new Div(getTranslation(messageKey)));
         notification.addThemeVariants(notificationVariant);
         notification.setDuration(10_000);
         notification.open();
