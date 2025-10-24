@@ -44,6 +44,12 @@ public class CommunityAddViewBT extends BrowserTest {
         // assert that "Create Community" menu item is not visible
         final var menuItem = page.locator(CREATE_COMMUNITY_MENU_ITEM_SELECTOR);
         assertThat(menuItem.isVisible()).isFalse();
+
+        // navigate manually to community creation page should redirect to login page
+        page.navigate(getInstanceUrl() + "communities/add");
+        page.waitForURL("**/login");
+        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        captureScreenshot("anonymousUserRedirected");
     }
 
     @Test
