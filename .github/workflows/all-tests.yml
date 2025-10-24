@@ -32,6 +32,7 @@ jobs:
           target/failsafe-reports/**
           target/playwright-screenshots/**
           target/reports/**
+          target/site/**
           target/test.log
         if-no-files-found: ignore
         retention-days: 7
