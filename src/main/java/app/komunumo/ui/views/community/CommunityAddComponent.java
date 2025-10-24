@@ -19,6 +19,7 @@ package app.komunumo.ui.views.community;
 
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.MemberDto;
+import app.komunumo.data.dto.MemberRole;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.util.SecurityUtil;
@@ -101,7 +102,7 @@ public class CommunityAddComponent extends VerticalLayout {
 
                 var userPrincipal = userPrincipalOptional.orElseThrow(NotFoundException::new);
                 var memberDto = new MemberDto(userPrincipal.getUserId(),
-                        Objects.requireNonNull(communityDto.id()), "OWNER", null);
+                        Objects.requireNonNull(communityDto.id()), MemberRole.OWNER, null);
 
                 memberService.storeMember(memberDto);
 

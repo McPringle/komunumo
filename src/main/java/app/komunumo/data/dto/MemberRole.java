@@ -17,16 +17,9 @@
  */
 package app.komunumo.data.dto;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+public enum MemberRole {
+    OWNER,
+    ORGANIZER,
+    MEMBER
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
-
-public record MemberDto(
-        @NotNull UUID userId,
-        @NotNull UUID communityId,
-        @NotNull MemberRole role,
-        @Nullable ZonedDateTime since
-) {
 }

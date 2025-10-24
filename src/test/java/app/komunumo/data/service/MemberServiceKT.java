@@ -18,6 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.MemberDto;
+import app.komunumo.data.dto.MemberRole;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,7 @@ public class MemberServiceKT extends KaribuTest {
         final var community = communityList.getFirst();
 
         final var user = getTestUser(UserRole.USER);
-        final var role = "OWNER";
+        final var role = MemberRole.OWNER;
 
         assertThat(user.id()).isNotNull();
         assertThat(community.id()).isNotNull();
@@ -61,7 +62,6 @@ public class MemberServiceKT extends KaribuTest {
             assertThat(testMemberDto.communityId()).isEqualTo(community.id());
 
             assertThat(testMemberDto.role()).isNotNull();
-            assertThat(testMemberDto.role()).isNotBlank();
             assertThat(testMemberDto.role()).isEqualTo(role);
 
             assertThat(testMemberDto.since()).isNotNull();
@@ -83,7 +83,6 @@ public class MemberServiceKT extends KaribuTest {
             assertThat(testMemberDto.communityId()).isEqualTo(community.id());
 
             assertThat(testMemberDto.role()).isNotNull();
-            assertThat(testMemberDto.role()).isNotBlank();
             assertThat(testMemberDto.role()).isEqualTo(role);
 
             assertThat(testMemberDto.since()).isNotNull();

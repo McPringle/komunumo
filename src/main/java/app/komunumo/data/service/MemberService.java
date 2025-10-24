@@ -52,7 +52,7 @@ public final class MemberService {
 
         memberRecord.setUserId(memberDto.userId());
         memberRecord.setCommunityId(memberDto.communityId());
-        memberRecord.setRole(memberDto.role());
+        memberRecord.setRole(memberDto.role().name());
 
         if (memberRecord.getSince() == null) {
             memberRecord.setSince(ZonedDateTime.now(ZoneOffset.UTC));

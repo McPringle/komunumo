@@ -75,6 +75,7 @@ CREATE TABLE member (
     community_id VARCHAR(36) NOT NULL,
     role VARCHAR(255) NOT NULL,
     since TIMESTAMP NOT NULL,
+    CHECK (role IN ('OWNER', 'ORGANIZER', 'MEMBER')),
     PRIMARY KEY (user_id, community_id),
     CONSTRAINT fk_member_user
         FOREIGN KEY (user_id)
