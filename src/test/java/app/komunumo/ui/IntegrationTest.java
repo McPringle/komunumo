@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui;
 
-import app.komunumo.data.demo.DemoDataCreator;
+import app.komunumo.data.demo.DemoMode;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
@@ -78,10 +78,10 @@ public abstract class IntegrationTest {
      * <p>This component is typically invoked after Flyway has cleaned and migrated the schema to reinsert baseline
      * data required by demo-dependent tests.</p>
      *
-     * @see DemoDataCreator
+     * @see DemoMode
      */
     @Autowired
-    private DemoDataCreator demoDataCreator;
+    private DemoMode demoMode;
 
     /**
      * <p>Static instance of {@link GreenMailExtension} used to provide an in-memory SMTP server
@@ -163,7 +163,7 @@ public abstract class IntegrationTest {
      * @throws FolderException if an error occurs while purging emails from the mailboxes
      *
      * @see Flyway
-     * @see DemoDataCreator
+     * @see DemoMode
      * @see ConfigurationSetting#INSTANCE_URL
      */
     @BeforeEach
@@ -172,7 +172,7 @@ public abstract class IntegrationTest {
 
         flyway.clean();
         flyway.migrate();
-        demoDataCreator.resetDemoData();
+        demoMode.resetDemoData();
 
         instanceUrl = "http://localhost:%d/".formatted(getPort());
         configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl);

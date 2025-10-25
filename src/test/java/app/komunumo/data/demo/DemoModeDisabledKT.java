@@ -30,7 +30,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(properties = "komunumo.demo.enabled=false")
-class DemoDataCreatorDisabledKT extends KaribuTest {
+class DemoModeDisabledKT extends KaribuTest {
 
     @Autowired
     private CommunityService communityService;
@@ -42,13 +42,13 @@ class DemoDataCreatorDisabledKT extends KaribuTest {
     private ImageService imageService;
 
     @Autowired
-    private DemoDataCreator demoDataCreator;
+    private DemoMode demoMode;
 
     @Test
     void resetDemoDataWhenDisabled() {
         assertDemoDataCount();
-        try (var logCaptor = LogCaptor.forClass(DemoDataCreator.class)) {
-            demoDataCreator.resetDemoData();
+        try (var logCaptor = LogCaptor.forClass(DemoMode.class)) {
+            demoMode.resetDemoData();
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                 "Demo data plugin is disabled, skipping demo data reset.");
         }

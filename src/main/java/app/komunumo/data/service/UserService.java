@@ -64,6 +64,15 @@ public final class UserService extends StorageService {
         ).orElse(0);
     }
 
+    public int getUserCount() {
+        return Optional.ofNullable(
+                dsl.selectCount()
+                        .from(USER)
+                        .where(USER.ROLE.eq("user"))
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
+
     public @NotNull Optional<UserDto> getUserById(final @NotNull UUID id) {
         return dsl.selectFrom(USER)
                 .where(USER.ID.eq(id))

@@ -26,7 +26,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(properties = "komunumo.demo.json=http://localhost:8082/import/data.json")
-class DemoDataCreatorJsonBT extends BrowserTest {
+class DemoModeJsonBT extends BrowserTest {
 
     @Test
     void testDemoDataImporterWithJson() {
