@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.demo;
+package app.komunumo.data.importer;
 
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ConfigurationSetting;
@@ -48,21 +48,21 @@ import java.util.Locale;
 import java.util.UUID;
 
 @SuppressWarnings("java:S1192") // Suppressing "String literals should not be duplicated" because of different contexts
-public final class DemoDataImporter {
+public final class JSONImporter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DemoDataImporter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSONImporter.class);
 
-    private final @NotNull JSONObject demoData;
+    private final @NotNull JSONObject jsonData;
 
-    public DemoDataImporter(final @NotNull String demoDataUrl) {
-        this.demoData = downloadJsonObject(demoDataUrl);
+    public JSONImporter(final @NotNull String jsonDataUrl) {
+        this.jsonData = downloadJsonObject(jsonDataUrl);
     }
 
-    private @NotNull JSONObject downloadJsonObject(final @NotNull String demoDataUrl) {
+    private @NotNull JSONObject downloadJsonObject(final @NotNull String jsonDataUrl) {
         try {
-            final String json = DownloadUtil.getString(demoDataUrl);
+            final String json = DownloadUtil.getString(jsonDataUrl);
             final JSONObject jsonObject = new JSONObject(json);
-            LOGGER.info("Successfully loaded {} settings, {} user, {} communities, {} events, {} images, and {} global pages",
+            LOGGER.info("Successfully loaded {} settings, {} users, {} communities, {} events, {} images, and {} global pages",
                     jsonObject.getJSONArray("settings").length(),
                     jsonObject.getJSONArray("users").length(),
                     jsonObject.getJSONArray("communities").length(),
@@ -71,14 +71,14 @@ public final class DemoDataImporter {
                     jsonObject.getJSONArray("globalPages").length());
             return jsonObject;
         } catch (IOException | URISyntaxException e) {
-            LOGGER.warn("Failed to download demo data: {}", e.getMessage());
+            LOGGER.warn("Failed to download JSON data: {}", e.getMessage());
         }
         return new JSONObject();
     }
 
     public void importSettings(final @NotNull ConfigurationService configurationService) {
-        if (demoData.has("settings")) {
-            demoData.getJSONArray("settings").forEach(object -> {
+        if (jsonData.has("settings")) {
+            jsonData.getJSONArray("settings").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var setting = ConfigurationSetting.fromString(jsonObject.getString("setting"));
                 final var language = jsonObject.optString("language", null);
@@ -99,13 +99,13 @@ public final class DemoDataImporter {
             });
             configurationService.clearCache();
         } else {
-            LOGGER.warn("No settings found in demo data.");
+            LOGGER.warn("No settings found in JSON data.");
         }
     }
 
     public void importUsers(final @NotNull UserService userService) {
-        if (demoData.has("users")) {
-            demoData.getJSONArray("users").forEach(object -> {
+        if (jsonData.has("users")) {
+            jsonData.getJSONArray("users").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var userId = UUID.fromString(jsonObject.getString("userId"));
                 final var profile = jsonObject.getString("profile").trim();
@@ -122,13 +122,13 @@ public final class DemoDataImporter {
                 userService.storeUser(user);
             });
         } else {
-            LOGGER.warn("No users found in demo data.");
+            LOGGER.warn("No users found in JSON data.");
         }
     }
 
     public void importImages(final @NotNull ImageService imageService) {
-        if (demoData.has("images")) {
-            demoData.getJSONArray("images").forEach(object -> {
+        if (jsonData.has("images")) {
+            jsonData.getJSONArray("images").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var imageId = UUID.fromString(jsonObject.getString("imageId"));
                 final var contentType = ContentType.fromContentType(jsonObject.getString("contentType"));
@@ -147,13 +147,13 @@ public final class DemoDataImporter {
                 }
             });
         } else {
-            LOGGER.warn("No images found in demo data.");
+            LOGGER.warn("No images found in JSON data.");
         }
     }
 
     public void importCommunities(final @NotNull CommunityService communityService) {
-        if (demoData.has("communities")) {
-            demoData.getJSONArray("communities").forEach(object -> {
+        if (jsonData.has("communities")) {
+            jsonData.getJSONArray("communities").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var communityId = UUID.fromString(jsonObject.getString("communityId"));
                 final var profile = jsonObject.getString("profile").trim();
@@ -167,13 +167,13 @@ public final class DemoDataImporter {
                 communityService.storeCommunity(community);
             });
         } else {
-            LOGGER.warn("No communities found in demo data.");
+            LOGGER.warn("No communities found in JSON data.");
         }
     }
 
     public void importEvents(final @NotNull EventService eventService) {
-        if (demoData.has("events")) {
-            demoData.getJSONArray("events").forEach(object -> {
+        if (jsonData.has("events")) {
+            jsonData.getJSONArray("events").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var eventId = UUID.fromString(jsonObject.getString("eventId"));
                 final var communityId = UUID.fromString(jsonObject.getString("communityId"));
@@ -192,13 +192,13 @@ public final class DemoDataImporter {
                 eventService.storeEvent(event);
             });
         } else {
-            LOGGER.warn("No events found in demo data.");
+            LOGGER.warn("No events found in JSON data.");
         }
     }
 
     public void importGlobalPages(final @NotNull GlobalPageService globalPageService) {
-        if (demoData.has("globalPages")) {
-            demoData.getJSONArray("globalPages").forEach(object -> {
+        if (jsonData.has("globalPages")) {
+            jsonData.getJSONArray("globalPages").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var slot = jsonObject.getString("slot").trim();
                 final var locale = Locale.forLanguageTag(jsonObject.getString("language"));
@@ -209,7 +209,7 @@ public final class DemoDataImporter {
                 globalPageService.storeGlobalPage(globalPage);
             });
         } else {
-            LOGGER.warn("No global pages found in demo data.");
+            LOGGER.warn("No global pages found in JSON data.");
         }
     }
 }
