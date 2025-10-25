@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_ADD_COMMUNITY_ALLOWED;
 
 public final class NavigationBar extends HorizontalLayout {
 
@@ -132,11 +133,11 @@ public final class NavigationBar extends HorizontalLayout {
             final var isAdmin = authenticationSignal.isAdmin();
             configItem.setVisible(isAdmin);
 
+            final var addCommunityAllowed = configurationService.getConfiguration(INSTANCE_ADD_COMMUNITY_ALLOWED, Boolean.class);
             final var isLocalUser = authenticationSignal.isLocalUser();
-            addCommunityItem.setVisible(isLocalUser);
+            addCommunityItem.setVisible(addCommunityAllowed && isLocalUser);
         });
 
         return avatar;
     }
-
 }
