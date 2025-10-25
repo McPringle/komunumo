@@ -23,6 +23,18 @@
       "value": "Should be ignored because custom styles are language independent but a language is given."
     }
   ],
+  "users": [
+    {
+      "userId": "0c9c0c44-423c-4e32-913e-df85dcedb909",
+      "profile": "@demo1",
+      "email": "demo1@komunumo.app",
+      "name": "Demo User 1",
+      "bio": "I am a test user for the Komunumo application.",
+      "imageId": "",
+      "role": "USER",
+      "type": "LOCAL"
+    }
+  ],
   "communities": [
     {
       "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",

@@ -25,11 +25,15 @@ import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.ImageDto;
+import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.UserService;
 import app.komunumo.util.DownloadUtil;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -58,8 +62,9 @@ public final class DemoDataImporter {
         try {
             final String json = DownloadUtil.getString(demoDataUrl);
             final JSONObject jsonObject = new JSONObject(json);
-            LOGGER.info("Successfully loaded {} settings, {} communities, {} events, {} images, and {} global pages",
+            LOGGER.info("Successfully loaded {} settings, {} user, {} communities, {} events, {} images, and {} global pages",
                     jsonObject.getJSONArray("settings").length(),
+                    jsonObject.getJSONArray("users").length(),
                     jsonObject.getJSONArray("communities").length(),
                     jsonObject.getJSONArray("events").length(),
                     jsonObject.getJSONArray("images").length(),
@@ -95,6 +100,29 @@ public final class DemoDataImporter {
             configurationService.clearCache();
         } else {
             LOGGER.warn("No settings found in demo data.");
+        }
+    }
+
+    public void importUsers(final @NotNull UserService userService) {
+        if (demoData.has("users")) {
+            demoData.getJSONArray("users").forEach(object -> {
+                final var jsonObject = (JSONObject) object;
+                final var userId = UUID.fromString(jsonObject.getString("userId"));
+                final var profile = jsonObject.getString("profile").trim();
+                final var email = jsonObject.getString("email").trim();
+                final var name = jsonObject.getString("name").trim();
+                final var bio = jsonObject.getString("bio").trim();
+                final var imageId = jsonObject.getString("imageId");
+                final var imageUUID = imageId.isBlank() ? null : UUID.fromString(imageId);
+                final var role = UserRole.valueOf(jsonObject.getString("role").trim());
+                final var type = UserType.valueOf(jsonObject.getString("type").trim());
+
+                final var user = new UserDto(userId, null, null, profile, email, name, bio,
+                        imageUUID, role, type);
+                userService.storeUser(user);
+            });
+        } else {
+            LOGGER.warn("No users found in demo data.");
         }
     }
 

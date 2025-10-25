@@ -23,6 +23,7 @@ import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.UserService;
 import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
@@ -71,6 +72,17 @@ class DemoDataImporterTest {
     }
 
     @Test
+    void testUsersNotFound() {
+        final var jsonUrl = "http://localhost:8082/import/non-existing.json";
+        final var expectedMessage = "No users found in demo data.";
+        try (var logCaptor = LogCaptor.forClass(DemoDataImporter.class)) {
+            final var importer = new DemoDataImporter(jsonUrl);
+            importer.importUsers(mock(UserService.class));
+            assertThat(logCaptor.getWarnLogs()).contains(expectedMessage);
+        }
+    }
+
+    @Test
     void testCommunitiesNotFound() {
         final var jsonUrl = "http://localhost:8082/import/non-existing.json";
         final var expectedMessage = "No communities found in demo data.";
@@ -106,7 +118,7 @@ class DemoDataImporterTest {
     @Test
     void testImporterWithRealJson() {
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 1 user, 2 communities, 2 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(DemoDataImporter.class)) {
             new DemoDataImporter(jsonUrl);
             assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
@@ -117,7 +129,7 @@ class DemoDataImporterTest {
     void testImportSettings() {
         final var configurationService = mock(ConfigurationService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 1 user, 2 communities, 2 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(DemoDataImporter.class)) {
             final var importer = new DemoDataImporter(jsonUrl);
             importer.importSettings(configurationService);
@@ -131,7 +143,7 @@ class DemoDataImporterTest {
     void testImportImages() {
         final var imageService = mock(ImageService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedInfoMessage = "Successfully loaded 5 settings, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedInfoMessage = "Successfully loaded 5 settings, 1 user, 2 communities, 2 events, 3 images, and 2 global pages";
         final var expectedErrorMessage = "Failed to import image: Simulated failure";
         try (var logCaptor = LogCaptor.forClass(DemoDataImporter.class);
              var mockedImageUtil = mockStatic(ImageUtil.class)) {
@@ -156,10 +168,24 @@ class DemoDataImporterTest {
     }
 
     @Test
+    void testImportUsers() {
+        final var userService = mock(UserService.class);
+        final var jsonUrl = "http://localhost:8082/import/data.json";
+        final var expectedMessage = "Successfully loaded 5 settings, 1 user, 2 communities, 2 events, 3 images, and 2 global pages";
+        try (var logCaptor = LogCaptor.forClass(DemoDataImporter.class)) {
+            final var importer = new DemoDataImporter(jsonUrl);
+            importer.importUsers(userService);
+
+            assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
+            verify(userService, times(1)).storeUser(any());
+        }
+    }
+
+    @Test
     void testImportCommunities() {
         final var communityService = mock(CommunityService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 1 user, 2 communities, 2 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(DemoDataImporter.class)) {
             final var importer = new DemoDataImporter(jsonUrl);
             importer.importCommunities(communityService);
@@ -173,7 +199,7 @@ class DemoDataImporterTest {
     void testImportEvents() {
         final var eventService = mock(EventService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 1 user, 2 communities, 2 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(DemoDataImporter.class)) {
             final var importer = new DemoDataImporter(jsonUrl);
             importer.importEvents(eventService);
@@ -187,7 +213,7 @@ class DemoDataImporterTest {
     void testImportGlobalPages() {
         final var globalPageService = mock(GlobalPageService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 1 user, 2 communities, 2 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(DemoDataImporter.class)) {
             final var importer = new DemoDataImporter(jsonUrl);
             importer.importGlobalPages(globalPageService);

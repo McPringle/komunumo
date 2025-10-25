@@ -31,6 +31,7 @@ import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.data.service.ParticipationService;
+import app.komunumo.data.service.UserService;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,6 +59,7 @@ public final class DemoDataCreator {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(DemoDataCreator.class);
 
     private final @NotNull ConfigurationService configurationService;
+    private final @NotNull UserService userService;
     private final @NotNull ImageService imageService;
     private final @NotNull CommunityService communityService;
     private final @NotNull EventService eventService;
@@ -70,12 +72,14 @@ public final class DemoDataCreator {
     @SuppressWarnings("checkstyle:ParameterNumber") // constructor injection
     public DemoDataCreator(final @NotNull AppConfig appConfig,
                            final @NotNull ConfigurationService configurationService,
+                           final @NotNull UserService userService,
                            final @NotNull ImageService imageService,
                            final @NotNull CommunityService communityService,
                            final @NotNull EventService eventService,
                            final @NotNull ParticipationService participationService,
                            final @NotNull GlobalPageService globalPageService) {
         this.configurationService = configurationService;
+        this.userService = userService;
         this.imageService = imageService;
         this.communityService = communityService;
         this.eventService = eventService;
@@ -99,6 +103,7 @@ public final class DemoDataCreator {
         participationService.getAllParticipations().forEach(participationService::deleteParticipation);
         eventService.getEvents().forEach(eventService::deleteEvent);
         communityService.getCommunities().forEach(communityService::deleteCommunity);
+        userService.getAllUsers().forEach(userService::deleteUser);
         imageService.getImages().forEach(imageService::deleteImage);
         globalPageService.getAllGlobalPages().forEach(globalPageService::deleteGlobalPage);
         LOGGER.info("Existing data deleted.");
@@ -113,6 +118,7 @@ public final class DemoDataCreator {
         } else {
             final var demoDataImporter = new DemoDataImporter(demoDataUrl);
             demoDataImporter.importSettings(configurationService);
+            demoDataImporter.importUsers(userService);
             demoDataImporter.importImages(imageService);
             demoDataImporter.importCommunities(communityService);
             demoDataImporter.importEvents(eventService);
