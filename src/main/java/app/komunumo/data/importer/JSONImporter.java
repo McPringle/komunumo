@@ -63,18 +63,27 @@ public final class JSONImporter {
         try {
             final String json = DownloadUtil.getString(jsonDataUrl);
             final JSONObject jsonObject = new JSONObject(json);
+
             LOGGER.info("Successfully loaded {} settings, {} users, {} communities, {} events, {} images, and {} global pages",
-                    jsonObject.getJSONArray("settings").length(),
-                    jsonObject.getJSONArray("users").length(),
-                    jsonObject.getJSONArray("communities").length(),
-                    jsonObject.getJSONArray("events").length(),
-                    jsonObject.getJSONArray("images").length(),
-                    jsonObject.getJSONArray("globalPages").length());
+                    countArrayItems(jsonObject, "settings"),
+                    countArrayItems(jsonObject, "users"),
+                    countArrayItems(jsonObject, "communities"),
+                    countArrayItems(jsonObject, "events"),
+                    countArrayItems(jsonObject, "images"),
+                    countArrayItems(jsonObject, "globalPages"));
             return jsonObject;
         } catch (IOException | URISyntaxException e) {
             LOGGER.warn("Failed to download JSON data: {}", e.getMessage());
         }
         return new JSONObject();
+    }
+
+    private static int countArrayItems(final @NotNull JSONObject jsonData,
+                                       final @NotNull String arrayName) {
+        if (jsonData.has(arrayName)) {
+            return jsonData.getJSONArray(arrayName).length();
+        }
+        return 0;
     }
 
     public void importSettings(final @NotNull ConfigurationService configurationService) {
