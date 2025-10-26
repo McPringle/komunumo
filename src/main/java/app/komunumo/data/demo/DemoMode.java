@@ -78,6 +78,11 @@ public final class DemoMode {
             return;
         }
 
+        if (jsonDataUrl.isBlank()) {
+            LOGGER.warn("Disabling demo mode plugin automatically, because no JSON data URL is configured.");
+            return;
+        }
+
         LOGGER.info("Deleting existing data...");
         configurationService.deleteAllConfigurations();
         participationService.getAllParticipations().forEach(participationService::deleteParticipation);
@@ -88,19 +93,15 @@ public final class DemoMode {
         globalPageService.getAllGlobalPages().forEach(globalPageService::deleteGlobalPage);
         LOGGER.info("Existing data deleted.");
 
-        if (jsonDataUrl.isBlank()) {
-            LOGGER.info("Skipping demo data import because no JSON data URL is configured.");
-        } else {
-            LOGGER.info("Importing demo data...");
-            final var demoDataImporter = new JSONImporter(jsonDataUrl);
-            demoDataImporter.importSettings(configurationService);
-            demoDataImporter.importUsers(userService);
-            demoDataImporter.importImages(imageService);
-            demoDataImporter.importCommunities(communityService);
-            demoDataImporter.importEvents(eventService);
-            demoDataImporter.importGlobalPages(globalPageService);
-            LOGGER.info("Demo data imported.");
-        }
+        LOGGER.info("Importing demo data...");
+        final var demoDataImporter = new JSONImporter(jsonDataUrl);
+        demoDataImporter.importSettings(configurationService);
+        demoDataImporter.importUsers(userService);
+        demoDataImporter.importImages(imageService);
+        demoDataImporter.importCommunities(communityService);
+        demoDataImporter.importEvents(eventService);
+        demoDataImporter.importGlobalPages(globalPageService);
+        LOGGER.info("Demo data imported.");
 
         LOGGER.info("Cleaning up orphaned image files...");
         ImageUtil.cleanupOrphanedImageFiles(imageService);
