@@ -37,6 +37,7 @@ import app.komunumo.data.service.UserService;
 import app.komunumo.util.DownloadUtil;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,13 +113,12 @@ public final class JSONImporter {
                 final var email = jsonObject.getString("email").trim();
                 final var name = jsonObject.getString("name").trim();
                 final var bio = jsonObject.getString("bio").trim();
-                final var imageId = jsonObject.getString("imageId");
-                final var imageUUID = imageId.isBlank() ? null : UUID.fromString(imageId);
+                final var imageId = parseUUID(jsonObject.optString("imageId"));
                 final var role = UserRole.valueOf(jsonObject.getString("role").trim());
                 final var type = UserType.valueOf(jsonObject.getString("type").trim());
 
-                final var user = new UserDto(userId, null, null, profile, email, name, bio,
-                        imageUUID, role, type);
+                final var user = new UserDto(userId, null, null, profile, email, name, bio, imageId,
+                        role, type);
                 userService.storeUser(user);
             });
         } else {
@@ -159,11 +159,10 @@ public final class JSONImporter {
                 final var profile = jsonObject.getString("profile").trim();
                 final var name = jsonObject.getString("name").trim();
                 final var description = jsonObject.getString("description").trim();
-                final var imageId = jsonObject.getString("imageId");
-                final var imageUUID = imageId.isBlank() ? null : UUID.fromString(imageId);
+                final var imageId = parseUUID(jsonObject.optString("imageId"));
 
                 final var community = new CommunityDto(communityId, profile, null, null,
-                        name, description, imageUUID);
+                        name, description, imageId);
                 communityService.storeCommunity(community);
             });
         } else {
@@ -180,17 +179,14 @@ public final class JSONImporter {
                 final var title = jsonObject.getString("title").trim();
                 final var description = jsonObject.getString("description").trim();
                 final var location = jsonObject.getString("location").trim();
-                final var beginString = jsonObject.getString("begin");
-                final var begin = beginString == null || beginString.isBlank() ? null : ZonedDateTime.parse(beginString);
-                final var endString = jsonObject.getString("end");
-                final var end = endString == null || endString.isBlank() ? null : ZonedDateTime.parse(endString);
-                final var imageId = jsonObject.getString("imageId");
-                final var imageUUID = imageId.isBlank() ? null : UUID.fromString(imageId);
+                final var begin = parseDateTime(jsonObject.optString("begin", ""));
+                final var end = parseDateTime(jsonObject.optString("end", ""));
+                final var imageId = parseUUID(jsonObject.optString("imageId", ""));
                 final var visibility = EventVisibility.valueOf(jsonObject.getString("visibility"));
                 final var status = EventStatus.valueOf(jsonObject.getString("status"));
 
                 final var event = new EventDto(eventId, communityId, null, null,
-                        title, description, location, begin, end, imageUUID, visibility, status);
+                        title, description, location, begin, end, imageId, visibility, status);
                 eventService.storeEvent(event);
             });
         } else {
@@ -214,4 +210,13 @@ public final class JSONImporter {
             LOGGER.warn("No global pages found in JSON data.");
         }
     }
+
+    private @Nullable UUID parseUUID(final @NotNull String uuidString) {
+        return uuidString.isBlank() ? null : UUID.fromString(uuidString);
+    }
+
+    private @Nullable ZonedDateTime parseDateTime(final @NotNull String dateTime) {
+        return dateTime.isBlank() ? null : ZonedDateTime.parse(dateTime);
+    }
+
 }
