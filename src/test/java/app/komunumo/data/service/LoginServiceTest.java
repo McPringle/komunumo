@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -253,6 +254,56 @@ class LoginServiceTest {
             assertThat(result).isEmpty();
             verify(userService).getUserById(userId);
             verifyNoMoreInteractions(userService);
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void loginAsLocalUser_addsRoleUserLocal() {
+        try {
+            final var userId = UUID.randomUUID();
+            final var email = "local@example.com";
+            final var user = new UserDto(
+                    userId, null, null, "@local@example.com", email,
+                    "Local User", "", null, UserRole.USER, UserType.LOCAL);
+
+            final var userService = mock(UserService.class);
+            when(userService.getUserById(userId)).thenReturn(Optional.of(user));
+            when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
+
+            final var loginService = createLoginServiceWithMocks(userService);
+
+            assertThat(loginService.login(email)).isTrue();
+
+            final var authentication = SecurityContextHolder.getContext().getAuthentication();
+            assertThat(authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority))
+                    .containsExactlyInAnyOrder("ROLE_USER", "ROLE_USER_LOCAL");
+        } finally {
+            SecurityContextHolder.clearContext();
+        }
+    }
+
+    @Test
+    void loginAsLocalAdmin_addsRoleUserLocal() {
+        try {
+            final var userId = UUID.randomUUID();
+            final var email = "local@example.com";
+            final var user = new UserDto(
+                    userId, null, null, "@local@example.com", email,
+                    "Local Admin", "", null, UserRole.ADMIN, UserType.LOCAL);
+
+            final var userService = mock(UserService.class);
+            when(userService.getUserById(userId)).thenReturn(Optional.of(user));
+            when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
+
+            final var loginService = createLoginServiceWithMocks(userService);
+
+            assertThat(loginService.login(email)).isTrue();
+
+            final var authentication = SecurityContextHolder.getContext().getAuthentication();
+            assertThat(authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority))
+                    .containsExactlyInAnyOrder("ROLE_ADMIN", "ROLE_USER", "ROLE_USER_LOCAL");
         } finally {
             SecurityContextHolder.clearContext();
         }

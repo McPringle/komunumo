@@ -192,9 +192,9 @@ public abstract class KaribuTest extends IntegrationTest {
      * @param user the user to log in
      */
     protected void login(final @NotNull UserDto user) {
-        final var roles = List.of(user.role());
-        final var authorities = roles.stream()
-                .map(role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role.name()))
+        final var roleNames = List.of(user.role().getRole(), "ROLE_USER_" + user.type().name());
+        final var authorities = roleNames.stream()
+                .map(roleName -> (GrantedAuthority) new SimpleGrantedAuthority(roleName))
                 .toList();
 
         // create a Spring Security user (UserDetails)
@@ -207,7 +207,7 @@ public abstract class KaribuTest extends IntegrationTest {
         // make ViewAccessChecker work
         final var request = (FakeRequest) VaadinServletRequest.getCurrent().getRequest();
         request.setUserPrincipalInt(authentication);
-        request.setUserInRole((_, role) -> roles.contains(UserRole.valueOf(role)));
+        request.setUserInRole((_, role) -> roleNames.contains("ROLE_" + role));
     }
 
     /**

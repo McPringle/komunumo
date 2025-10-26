@@ -98,6 +98,8 @@ public final class LoginService {
         if (user.role().equals(UserRole.ADMIN)) {
             roles.add(new SimpleGrantedAuthority(UserRole.ADMIN.getRole()));
         }
+        roles.add(new SimpleGrantedAuthority("ROLE_USER_" + user.type().name()));
+
         final var authorities = Collections.unmodifiableList(roles);
         final var principal = new UserPrincipal(user, authorities);
 

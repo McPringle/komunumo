@@ -95,7 +95,7 @@ public final class SecurityUtil {
     public static boolean hasRole(final @NotNull UserRole role) {
         final var authentication = getAuthentication();
         if (authentication != null) {
-            final var roleName = "ROLE_" + role.name();
+            final var roleName = role.getRole();
             return authentication.getAuthorities().stream()
                     .anyMatch(authority -> roleName.equals(authority.getAuthority()));
         }
