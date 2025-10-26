@@ -22,6 +22,8 @@ import app.komunumo.ui.KaribuTest;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -85,13 +87,18 @@ public class CreateCommunityViewKT extends KaribuTest {
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
-        profile.setValue("Test Profile");
-        name.setValue("Test Name");
+        profile.setValue("@testCommunity");
+        name.setValue("Test Community");
         assertThat(component.getBinder().isValid()).isTrue();
 
         createButton.click();
 
-        assertThat(UI.getCurrent().getActiveViewLocation().getPath()).isEqualTo("communities");
+        assertThat(UI.getCurrent().getActiveViewLocation().getPath())
+                .isEqualTo("communities/@testCommunity");
+        assertThat(_get(H2.class, spec -> spec.withClasses("community-name")).getText())
+                .isEqualTo("Test Community");
+        assertThat(_get(Paragraph.class, spec -> spec.withClasses("community-profile")).getText())
+                .isEqualTo("@testCommunity");
     }
 
     @Test

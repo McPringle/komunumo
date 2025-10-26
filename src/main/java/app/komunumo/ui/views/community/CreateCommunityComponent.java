@@ -109,7 +109,7 @@ public class CreateCommunityComponent extends VerticalLayout {
 
                 showNotification("ui.views.community.CreateCommunityView.notification.success", NotificationVariant.LUMO_SUCCESS);
 
-                UI.getCurrent().navigate(CommunityGridView.class);
+                UI.getCurrent().navigate("communities/%s".formatted(communityDto.profile()));
 
             } else {
                 showNotification("ui.views.community.CreateCommunityView.notification.error", NotificationVariant.LUMO_ERROR);
