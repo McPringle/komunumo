@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CommunityAddViewBT extends BrowserTest {
+public class CreateCommunityViewBT extends BrowserTest {
 
     private static final String CREATE_COMMUNITY_MENU_ITEM_SELECTOR =
             "vaadin-context-menu-item[role='menuitem']:has-text('Create Community')";
@@ -46,7 +46,7 @@ public class CommunityAddViewBT extends BrowserTest {
         assertThat(menuItem.isVisible()).isFalse();
 
         // navigate manually to community creation page should redirect to login page
-        page.navigate(getInstanceUrl() + "communities/add");
+        page.navigate(getInstanceUrl() + "communities/new");
         page.waitForURL("**/login");
         page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("anonymousUserRedirected");
@@ -74,7 +74,7 @@ public class CommunityAddViewBT extends BrowserTest {
 
         // click on "Create Community" menu item
         menuItem.click();
-        page.waitForURL("**/communities/add");
+        page.waitForURL("**/communities/new");
         page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("createCommunityMenuNavigationWorks");
     }

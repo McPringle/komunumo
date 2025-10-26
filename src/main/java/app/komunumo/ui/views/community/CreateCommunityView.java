@@ -28,16 +28,16 @@ import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 
 @RolesAllowed("USER")
-@Route(value = "/communities/add", layout = WebsiteLayout.class)
-public class CommunityAddView extends AbstractView {
+@Route(value = "/communities/new", layout = WebsiteLayout.class)
+public class CreateCommunityView extends AbstractView {
 
-    public CommunityAddView(final @NotNull ConfigurationService configurationService,
-                            final @NotNull CommunityService communityService,
-                            final @NotNull MemberService memberService) {
+    public CreateCommunityView(final @NotNull ConfigurationService configurationService,
+                               final @NotNull CommunityService communityService,
+                               final @NotNull MemberService memberService) {
         super(configurationService);
 
-        add(new H2(getTranslation("ui.views.community.AddCommunity.title")));
-        add(new CommunityAddComponent(communityService, memberService));
+        add(new H2(getTranslation("ui.views.community.CreateCommunityView.title")));
+        add(new CreateCommunityComponent(communityService, memberService));
     }
 
     /**
@@ -47,7 +47,7 @@ public class CommunityAddView extends AbstractView {
      */
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation("ui.views.community.AddCommunity.title");
+        return getTranslation("ui.views.community.CreateCommunityView.title");
     }
 
 }

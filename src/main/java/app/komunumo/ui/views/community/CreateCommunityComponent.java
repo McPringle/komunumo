@@ -40,14 +40,15 @@ import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Objects;
 
-public class CommunityAddComponent extends VerticalLayout {
+public class CreateCommunityComponent extends VerticalLayout {
 
     private final @NotNull CommunityService communityService;
     private final @NotNull MemberService memberService;
 
     private final Binder<CommunityDto> binder = new Binder<>(CommunityDto.class);
 
-    CommunityAddComponent(final @NotNull CommunityService communityService, final @NotNull MemberService memberService) {
+    CreateCommunityComponent(final @NotNull CommunityService communityService,
+                             final @NotNull MemberService memberService) {
         super();
         this.communityService = communityService;
         this.memberService = memberService;
@@ -60,7 +61,7 @@ public class CommunityAddComponent extends VerticalLayout {
         final var profileField = new TextField();
         profileField.setClassName("profile-field");
         profileField.setValueChangeMode(ValueChangeMode.EAGER);
-        profileField.setLabel(getTranslation("ui.views.community.AddCommunity.label.profile"));
+        profileField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.profile"));
         profileField.setMaxLength(255);
         profileField.setRequired(true);
         profileField.setWidthFull();
@@ -68,7 +69,7 @@ public class CommunityAddComponent extends VerticalLayout {
         final var nameField = new TextField();
         nameField.setClassName("name-field");
         nameField.setValueChangeMode(ValueChangeMode.EAGER);
-        nameField.setLabel(getTranslation("ui.views.community.AddCommunity.label.name"));
+        nameField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.name"));
         nameField.setRequired(true);
         nameField.setMaxLength(255);
         nameField.setWidthFull();
@@ -76,24 +77,24 @@ public class CommunityAddComponent extends VerticalLayout {
         final var descriptionField = new TextArea();
         descriptionField.setClassName("description-field");
         descriptionField.setValueChangeMode(ValueChangeMode.EAGER);
-        descriptionField.setLabel(getTranslation("ui.views.community.AddCommunity.label.description"));
+        descriptionField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.description"));
         descriptionField.setWidthFull();
 
         binder.forField(profileField)
-                .asRequired(getTranslation("ui.views.community.AddCommunity.validation.profile.required"))
+                .asRequired(getTranslation("ui.views.community.CreateCommunityView.validation.profile.required"))
                 .withValidator(communityService::isProfileNameAvailable,
-                        getTranslation("ui.views.community.AddCommunity.validation.profile.exists"))
+                        getTranslation("ui.views.community.CreateCommunityView.validation.profile.exists"))
                 .bind(CommunityDto::profile, null);
 
         binder.forField(nameField)
-                .asRequired(getTranslation("ui.views.community.AddCommunity.validation.name.required"))
+                .asRequired(getTranslation("ui.views.community.CreateCommunityView.validation.name.required"))
                 .bind(CommunityDto::name, null);
 
-        Button createButton = new Button(getTranslation("ui.views.community.AddCommunity.createButton"), _ -> {
+        Button createButton = new Button(getTranslation("ui.views.community.CreateCommunityView.createButton"), _ -> {
             var userPrincipalOptional = SecurityUtil.getUserPrincipal();
 
             if (userPrincipalOptional.isEmpty()) {
-                showNotification("ui.views.community.AddCommunity.permissionError", NotificationVariant.LUMO_ERROR);
+                showNotification("ui.views.community.CreateCommunityView.permissionError", NotificationVariant.LUMO_ERROR);
             } else if (binder.validate().isOk()) {
                 var communityDto = new CommunityDto(null, profileField.getValue(), null, null,
                         nameField.getValue(), descriptionField.getValue(), null);
@@ -106,12 +107,12 @@ public class CommunityAddComponent extends VerticalLayout {
 
                 memberService.storeMember(memberDto);
 
-                showNotification("ui.views.community.AddCommunity.notification.success", NotificationVariant.LUMO_SUCCESS);
+                showNotification("ui.views.community.CreateCommunityView.notification.success", NotificationVariant.LUMO_SUCCESS);
 
                 UI.getCurrent().navigate(CommunityGridView.class);
 
             } else {
-                showNotification("ui.views.community.AddCommunity.notification.error", NotificationVariant.LUMO_ERROR);
+                showNotification("ui.views.community.CreateCommunityView.notification.error", NotificationVariant.LUMO_ERROR);
             }
         });
 

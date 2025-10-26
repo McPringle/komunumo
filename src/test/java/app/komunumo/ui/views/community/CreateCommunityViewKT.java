@@ -31,13 +31,13 @@ import org.junit.jupiter.api.Test;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CommunityAddViewKT extends KaribuTest {
+public class CreateCommunityViewKT extends KaribuTest {
 
     @Test
     void testComponent() {
         login(getTestUser(UserRole.USER));
 
-        UI.getCurrent().navigate("communities/add");
+        UI.getCurrent().navigate(CreateCommunityView.class);
         var container = _get(VerticalLayout.class, spec -> spec.withClasses("community-add-component"));
         assertThat(container).isNotNull();
 
@@ -66,9 +66,9 @@ public class CommunityAddViewKT extends KaribuTest {
     @Test
     void testCreate_invalidSubmission() {
         login(getTestUser(UserRole.USER));
-        UI.getCurrent().navigate("communities/add");
+        UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CommunityAddComponent component = _get(CommunityAddComponent.class);
+        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
         createButton.click();
 
@@ -78,9 +78,9 @@ public class CommunityAddViewKT extends KaribuTest {
     @Test
     void testCreate_successfulSubmission() {
         login(getTestUser(UserRole.USER));
-        UI.getCurrent().navigate("communities/add");
+        UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CommunityAddComponent component = _get(CommunityAddComponent.class);
+        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
         var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
@@ -97,9 +97,9 @@ public class CommunityAddViewKT extends KaribuTest {
     @Test
     void sessionTimeout() {
         login(getTestUser(UserRole.USER));
-        UI.getCurrent().navigate("communities/add");
+        UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CommunityAddComponent component = _get(CommunityAddComponent.class);
+        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
         var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
