@@ -57,7 +57,7 @@ public enum ConfigurationSetting {
     /**
      * <p>Whether to allow local users to create communities or not.</p>
      */
-    INSTANCE_ADD_COMMUNITY_ALLOWED("instance.addCommunityAllowed", false, "true"),
+    INSTANCE_CREATE_COMMUNITY_ALLOWED("instance.createCommunityAllowed", false, "true"),
 
     /**
      * <p>Whether to allow account registration or not.</p>

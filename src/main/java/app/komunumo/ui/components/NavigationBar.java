@@ -41,7 +41,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_ADD_COMMUNITY_ALLOWED;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 
@@ -122,7 +122,7 @@ public final class NavigationBar extends HorizontalLayout {
             final var isAdmin = authenticationSignal.isAdmin();
 
             final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
-            final var createCommunityAllowed = configurationService.getConfiguration(INSTANCE_ADD_COMMUNITY_ALLOWED, Boolean.class);
+            final var createCommunityAllowed = configurationService.getConfiguration(INSTANCE_CREATE_COMMUNITY_ALLOWED, Boolean.class);
 
             loginItem.setVisible(!isLoggedIn);
             registerItem.setVisible(registrationAllowed && !isLoggedIn);

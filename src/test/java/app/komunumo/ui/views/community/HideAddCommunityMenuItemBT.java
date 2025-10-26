@@ -23,7 +23,7 @@ import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_ADD_COMMUNITY_ALLOWED;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -44,7 +44,7 @@ public class HideAddCommunityMenuItemBT extends BrowserTest {
         final var localUser = getTestUser(UserType.LOCAL);
         login(localUser);
 
-        configurationService.setConfiguration(INSTANCE_ADD_COMMUNITY_ALLOWED, false);
+        configurationService.setConfiguration(INSTANCE_CREATE_COMMUNITY_ALLOWED, false);
 
         final var page = getPage();
 
