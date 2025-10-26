@@ -18,15 +18,21 @@
 package app.komunumo.ui.views.community;
 
 import app.komunumo.data.dto.UserType;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateCommunityViewBT extends BrowserTest {
 
     private static final String CREATE_COMMUNITY_MENU_ITEM_SELECTOR =
             "vaadin-context-menu-item[role='menuitem']:has-text('Create Community')";
+
+    @Autowired
+    private ConfigurationService configurationService;
 
     @Test
     void createCommunityMenuNotVisibleForAnonymousUser() {
@@ -77,6 +83,25 @@ public class CreateCommunityViewBT extends BrowserTest {
         page.waitForURL("**/communities/new");
         page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("createCommunityMenuNavigationWorks");
+    }
+
+    @Test
+    void createCommunityMenuItemNotVisibleWhenDisabled() {
+        final var localUser = getTestUser(UserType.LOCAL);
+        login(localUser);
+
+        configurationService.setConfiguration(INSTANCE_CREATE_COMMUNITY_ALLOWED, false);
+
+        final var page = getPage();
+        page.navigate(getInstanceUrl());
+        page.waitForSelector(getInstanceNameSelector());
+
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
+        captureScreenshot("createCommunityMenuItemNotVisibleWhenDisabled");
+
+        final var menuItem = page.locator(CREATE_COMMUNITY_MENU_ITEM_SELECTOR);
+        assertThat(menuItem.isVisible()).isFalse();
     }
 
 }
