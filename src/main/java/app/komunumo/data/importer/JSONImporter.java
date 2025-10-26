@@ -180,8 +180,10 @@ public final class JSONImporter {
                 final var title = jsonObject.getString("title").trim();
                 final var description = jsonObject.getString("description").trim();
                 final var location = jsonObject.getString("location").trim();
-                final var begin = ZonedDateTime.parse(jsonObject.getString("begin"));
-                final var end = ZonedDateTime.parse(jsonObject.getString("end"));
+                final var beginString = jsonObject.getString("begin");
+                final var begin = beginString == null || beginString.isBlank() ? null : ZonedDateTime.parse(beginString);
+                final var endString = jsonObject.getString("end");
+                final var end = endString == null || endString.isBlank() ? null : ZonedDateTime.parse(endString);
                 final var imageId = jsonObject.getString("imageId");
                 final var imageUUID = imageId.isBlank() ? null : UUID.fromString(imageId);
                 final var visibility = EventVisibility.valueOf(jsonObject.getString("visibility"));

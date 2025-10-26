@@ -118,7 +118,7 @@ class JSONImporterTest {
     @Test
     void testImporterWithRealJson() {
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 6 communities, 6 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             new JSONImporter(jsonUrl);
             assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
@@ -129,7 +129,7 @@ class JSONImporterTest {
     void testImportSettings() {
         final var configurationService = mock(ConfigurationService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 6 communities, 6 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
             importer.importSettings(configurationService);
@@ -143,7 +143,7 @@ class JSONImporterTest {
     void testImportImages() {
         final var imageService = mock(ImageService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedInfoMessage = "Successfully loaded 5 settings, 4 users, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedInfoMessage = "Successfully loaded 5 settings, 4 users, 6 communities, 6 events, 3 images, and 2 global pages";
         final var expectedErrorMessage = "Failed to import image: Simulated failure";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class);
              var mockedImageUtil = mockStatic(ImageUtil.class)) {
@@ -171,7 +171,7 @@ class JSONImporterTest {
     void testImportUsers() {
         final var userService = mock(UserService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 6 communities, 6 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
             importer.importUsers(userService);
@@ -185,13 +185,13 @@ class JSONImporterTest {
     void testImportCommunities() {
         final var communityService = mock(CommunityService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 6 communities, 6 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
             importer.importCommunities(communityService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
-            verify(communityService, times(2)).storeCommunity(any());
+            verify(communityService, times(6)).storeCommunity(any());
         }
     }
 
@@ -199,13 +199,13 @@ class JSONImporterTest {
     void testImportEvents() {
         final var eventService = mock(EventService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 6 communities, 6 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
             importer.importEvents(eventService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
-            verify(eventService, times(2)).storeEvent(any());
+            verify(eventService, times(6)).storeEvent(any());
         }
     }
 
@@ -213,7 +213,7 @@ class JSONImporterTest {
     void testImportGlobalPages() {
         final var globalPageService = mock(GlobalPageService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 2 communities, 2 events, 3 images, and 2 global pages";
+        final var expectedMessage = "Successfully loaded 5 settings, 4 users, 6 communities, 6 events, 3 images, and 2 global pages";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
             importer.importGlobalPages(globalPageService);
