@@ -223,5 +223,15 @@ class JSONImporterTest {
         }
     }
 
+    @Test
+    void testNoData() {
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
+        final var expectedMessage = "Successfully loaded 0 settings, 0 users, 0 communities, 0 events, 0 images, and 0 global pages";
+        try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
+            new JSONImporter(jsonUrl);
+            assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
+        }
+    }
+
 }
 
