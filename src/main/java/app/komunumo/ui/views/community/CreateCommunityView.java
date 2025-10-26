@@ -27,7 +27,7 @@ import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 
-@RolesAllowed("USER")
+@RolesAllowed("USER_LOCAL")
 @Route(value = "/communities/new", layout = WebsiteLayout.class)
 public class CreateCommunityView extends AbstractView {
 
