@@ -18,8 +18,11 @@
 package app.komunumo.ui.views.admin.config;
 
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.BrowserTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,6 +33,9 @@ class ConfigurationEditorViewBT extends BrowserTest {
     private static final String CONFIGURATION_EDITOR_MENU_ITEM_SELECTOR =
             "vaadin-context-menu-item[role='menuitem']:has-text('Edit Configuration')";
 
+    @Autowired
+    private @NotNull ConfigurationService configurationService;
+
     @Test
     void noConfigurationEditorForAnonymousVisitors() {
         final var page = getPage();
@@ -37,7 +43,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
         // navigate to events page
         page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("anonymousVisitor_eventPageAfterLoad");
 
         // open avatar menu
@@ -51,7 +57,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
 
         // try to navigate directly to configuration editor will start the authentication process
         page.navigate(getInstanceUrl() + "admin/config");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("anonymousVisitor_afterManualNavigation");
         assertThat(page.locator("h2:visible").allInnerTexts()).contains("Confirm your email address");
     }
@@ -65,7 +71,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
             // navigate to events page
             page.navigate(getInstanceUrl() + "events");
             page.waitForURL("**/events");
-            page.waitForSelector(INSTANCE_NAME_SELECTOR);
+            page.waitForSelector(getInstanceNameSelector());
             captureScreenshot("userRole_eventPageAfterLoad");
 
             // open avatar menu
@@ -80,7 +86,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
             // try to navigate directly to configuration editor will show an error message
             page.navigate(getInstanceUrl() + "admin/config");
             page.waitForURL("**/admin/config");
-            page.waitForSelector(INSTANCE_NAME_SELECTOR);
+            page.waitForSelector(getInstanceNameSelector());
             captureScreenshot("userRole_manualNavigation");
             assertThat(page.locator("h2:visible").allInnerTexts()).contains("Page not found");
         } finally {
@@ -97,7 +103,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
             // navigate to events page
             page.navigate(getInstanceUrl() + "events");
             page.waitForURL("**/events");
-            page.waitForSelector(INSTANCE_NAME_SELECTOR);
+            page.waitForSelector(getInstanceNameSelector());
             captureScreenshot("adminRole_eventPageAfterLoad");
 
             // open avatar menu
@@ -112,7 +118,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
             // click on configuration editor menu item
             configItem.click();
             page.waitForURL("**/admin/config");
-            page.waitForSelector(INSTANCE_NAME_SELECTOR);
+            page.waitForSelector(getInstanceNameSelector());
             captureScreenshot("adminRole_configurationEditor");
             assertThat(page.locator("h2:visible").allInnerTexts()).contains("Edit Configuration");
         } finally {
@@ -123,6 +129,8 @@ class ConfigurationEditorViewBT extends BrowserTest {
     @Test
     void configurationEditorFlow() {
         login(getTestUser(UserRole.ADMIN));
+        configurationService.deleteAllConfigurations();
+
         final var instanceNameSelector = "header.page-header h1";
         final var page = getPage();
 

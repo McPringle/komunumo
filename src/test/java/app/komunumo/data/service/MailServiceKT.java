@@ -84,9 +84,9 @@ class MailServiceKT extends KaribuTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Your Instance Name] Test mail");
+                    .isEqualTo("[Komunumo Test] Test mail");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Your Instance Name.");
+                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -109,9 +109,9 @@ class MailServiceKT extends KaribuTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Your Instance Name] Test mail");
+                    .isEqualTo("[Komunumo Test] Test mail");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Your Instance Name.");
+                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -134,9 +134,9 @@ class MailServiceKT extends KaribuTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Your Instance Name] Test mail");
+                    .isEqualTo("[Komunumo Test] Test mail");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Your Instance Name.");
+                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -159,9 +159,9 @@ class MailServiceKT extends KaribuTest {
             assertThat(receivedMessage.getReplyTo()[0])
                     .hasToString("reply@localhost");
             assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Your Instance Name] Test mail");
+                    .isEqualTo("[Komunumo Test] Test mail");
             assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("<p>Hello,</p>\r\n<p>this is a test mail from Your Instance Name.</p>");
+                    .isEqualTo("<p>Hello,</p>\r\n<p>this is a test mail from Komunumo Test.</p>");
             assertThat(receivedMessage.getAllRecipients())
                     .hasSize(1);
             assertThat(receivedMessage.getAllRecipients()[0])
@@ -177,7 +177,7 @@ class MailServiceKT extends KaribuTest {
                     null, "@@@");
             assertThat(result).isFalse();
             assertThat(logCaptor.getErrorLogs()).containsExactly(
-                    "Unable to send mail with subject '[Your Instance Name] Test mail' to [@@@]: Missing local name");
+                    "Unable to send mail with subject '[Komunumo Test] Test mail' to [@@@]: Missing local name");
         }
     }
 

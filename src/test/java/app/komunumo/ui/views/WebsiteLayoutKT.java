@@ -89,11 +89,11 @@ class WebsiteLayoutKT extends KaribuTest {
 
         final var h1 = findComponent(header, H1.class);
         assertThat(h1).isNotNull();
-        assertThat(h1.getText()).isEqualTo("Your Instance Name");
+        assertThat(h1.getText()).isEqualTo("Komunumo Test");
 
         final var h2 = findComponent(header, H2.class);
         assertThat(h2).isNotNull();
-        assertThat(h2.getText()).isEqualTo("Your Instance Slogan");
+        assertThat(h2.getText()).isEqualTo("This is a local test instance of Komunumo.");
     }
 
     @Test

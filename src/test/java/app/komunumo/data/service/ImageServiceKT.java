@@ -39,37 +39,40 @@ import static org.mockito.Mockito.mockStatic;
 @ExtendWith(MockitoExtension.class)
 class ImageServiceKT extends KaribuTest {
 
+    private static final @NotNull UUID ORPHANED_IMAGE_UUID = UUID.fromString("4ca05a55-de1e-4571-a833-c9e5e4f4bfba");
+    private static final @NotNull ContentType ORPHANED_IMAGE_CONTENT_TYPE = ContentType.IMAGE_PNG;
+
     @Autowired
     private @NotNull ImageService imageService;
 
     @Test
     void happyCase() {
-        assertThat(imageService.getImageCount()).isEqualTo(10);
+        assertThat(imageService.getImageCount()).isEqualTo(2);
 
         // store new image
         var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP));
         final var imageId = image.id();
         assertThat(imageId).isNotNull();
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
-        assertThat(imageService.getImageCount()).isEqualTo(11);
+        assertThat(imageService.getImageCount()).isEqualTo(3);
 
         // read the image from the database
         image = imageService.getImage(imageId).orElseThrow();
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
-        assertThat(imageService.getImageCount()).isEqualTo(11);
+        assertThat(imageService.getImageCount()).isEqualTo(3);
 
         // update existing image
         image = imageService.storeImage(new ImageDto(image.id(), ContentType.IMAGE_SVG));
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_SVG);
-        assertThat(imageService.getImageCount()).isEqualTo(11);
+        assertThat(imageService.getImageCount()).isEqualTo(3);
 
         // read the image from the database
         image = imageService.getImage(imageId).orElseThrow();
         assertThat(image.id()).isEqualTo(imageId);
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_SVG);
-        assertThat(imageService.getImageCount()).isEqualTo(11);
+        assertThat(imageService.getImageCount()).isEqualTo(3);
 
         // read all images from the database
         final var images = imageService.getImages();
@@ -77,19 +80,22 @@ class ImageServiceKT extends KaribuTest {
 
         // find orphaned images
         final var orphanedImages = imageService.findOrphanedImages();
-        assertThat(orphanedImages).hasSize(1);
-        assertThat(orphanedImages.getFirst()).isEqualTo(image);
+        assertThat(orphanedImages).hasSize(2);
+        assertThat(orphanedImages).containsExactlyInAnyOrder(image, new ImageDto(ORPHANED_IMAGE_UUID, ORPHANED_IMAGE_CONTENT_TYPE));
 
         // delete the existing image
         assertThat(imageService.deleteImage(image)).isTrue();
         assertThat(imageService.getImage(imageId)).isEmpty();
-        assertThat(imageService.getImageCount()).isEqualTo(10);
+        assertThat(imageService.getImageCount()).isEqualTo(2);
 
         // find orphaned images again
-        assertThat(imageService.findOrphanedImages()).isEmpty();
+        assertThat(imageService.findOrphanedImages()).hasSize(1);
 
         // delete the non-existing image (was already deleted before)
         assertThat(imageService.deleteImage(image)).isFalse();
+
+        // find orphaned images again
+        assertThat(imageService.findOrphanedImages()).hasSize(1);
     }
 
     @Test
@@ -99,12 +105,7 @@ class ImageServiceKT extends KaribuTest {
 
     @Test
     void cleanupOrphanedImages() {
-        var image = imageService.storeImage(new ImageDto(null, ContentType.IMAGE_WEBP));
-        assertThat(image).isNotNull().satisfies(testee -> {
-            assertThat(testee.id()).isNotNull();
-            assertThat(testee.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
-        });
-
+        final var image = imageService.getImage(ORPHANED_IMAGE_UUID).orElseThrow();
         assertThat(imageService.findOrphanedImages()).containsExactly(image);
         imageService.cleanupOrphanedImages();
         assertThat(imageService.findOrphanedImages()).isEmpty();

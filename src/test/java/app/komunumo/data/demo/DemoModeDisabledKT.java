@@ -50,7 +50,7 @@ class DemoModeDisabledKT extends KaribuTest {
         try (var logCaptor = LogCaptor.forClass(DemoMode.class)) {
             demoMode.resetDemoData();
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                "Demo data plugin is disabled, skipping demo data reset.");
+                "Demo mode plugin is disabled, skipping demo data reset.");
         }
         assertDemoDataCount();
     }

@@ -63,45 +63,47 @@ class DemoModeKT extends KaribuTest {
 
     @Test
     void resetDemoData() {
-        assertDemoDataCountZero();
-
-        userService.storeUser(new UserDto(null, null, null,
-                "demoAdmin", "admin@example.com", "Demo Admin", "", null,
-                UserRole.ADMIN, UserType.LOCAL));
         assertThat(userService.getAdminCount()).isOne();
+        assertThat(userService.getUserCount()).isEqualTo(3);
+        assertThat(communityService.getCommunityCount()).isEqualTo(6);
+        assertThat(eventService.getEventCount()).isEqualTo(6);
+        assertThat(imageService.getImageCount()).isEqualTo(2);
+        assertThat(globalPageService.getGlobalPageCount()).isEqualTo(2);
 
         userService.storeUser(new UserDto(null, null, null,
-                "demoUser", "user@example.com", "Demo User", "", null,
+                "demoAdmin", "demo-admin@example.com", "Demo Admin", "", null,
+                UserRole.ADMIN, UserType.LOCAL));
+        assertThat(userService.getAdminCount()).isEqualTo(2);
+
+        userService.storeUser(new UserDto(null, null, null,
+                "demoUser", "demo-user@example.com", "Demo User", "", null,
                 UserRole.USER, UserType.LOCAL));
-        assertThat(userService.getUserCount()).isOne();
+        assertThat(userService.getUserCount()).isEqualTo(4);
 
         final var community = communityService.storeCommunity(new CommunityDto(null, "demoCommunity", null, null,
                 "Demo Community", "", null));
-        assertThat(communityService.getCommunityCount()).isOne();
+        assertThat(communityService.getCommunityCount()).isEqualTo(7);
 
         eventService.storeEvent(new EventDto(null, community.id(), null, null,
                 "Demo Event", "", "", null, null, null,
                 EventVisibility.PUBLIC, EventStatus.DRAFT));
-        assertThat(eventService.getEventCount()).isOne();
+        assertThat(eventService.getEventCount()).isEqualTo(7);
 
         imageService.storeImage(new ImageDto(null, ContentType.IMAGE_PNG));
-        assertThat(imageService.getImageCount()).isOne();
+        assertThat(imageService.getImageCount()).isEqualTo(3);
 
         globalPageService.storeGlobalPage(new GlobalPageDto("demo", Locale.ENGLISH, null, null,
                 "Demo Page", "**Demo Page**"));
-        assertThat(globalPageService.getGlobalPageCount()).isOne();
+        assertThat(globalPageService.getGlobalPageCount()).isEqualTo(3);
 
         demoMode.resetDemoData();
-        assertDemoDataCountZero();
-    }
 
-    private void assertDemoDataCountZero() {
-        assertThat(userService.getAdminCount()).isZero();
-        assertThat(userService.getUserCount()).isZero();
-        assertThat(communityService.getCommunityCount()).isZero();
-        assertThat(eventService.getEventCount()).isZero();
-        assertThat(imageService.getImageCount()).isZero();
-        assertThat(globalPageService.getGlobalPageCount()).isZero();
+        assertThat(userService.getAdminCount()).isOne();
+        assertThat(userService.getUserCount()).isEqualTo(3);
+        assertThat(communityService.getCommunityCount()).isEqualTo(6);
+        assertThat(eventService.getEventCount()).isEqualTo(6);
+        assertThat(imageService.getImageCount()).isEqualTo(2);
+        assertThat(globalPageService.getGlobalPageCount()).isEqualTo(2);
     }
 
 }

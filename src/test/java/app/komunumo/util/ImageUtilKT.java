@@ -78,16 +78,16 @@ class ImageUtilKT extends KaribuTest {
     void loadImage() {
         assertThat(ImageUtil.loadImage(null)).isEmpty();
 
-        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_WEBP);
+        final var imageWithoutId = new ImageDto(null, ContentType.IMAGE_PNG);
         assertThat(ImageUtil.loadImage(imageWithoutId)).isEmpty();
 
         final var randomImageId = UUID.randomUUID();
-        final var imageWithRandomId = new ImageDto(randomImageId, ContentType.IMAGE_WEBP);
+        final var imageWithRandomId = new ImageDto(randomImageId, ContentType.IMAGE_PNG);
         final var emptyStream = ImageUtil.loadImage(imageWithRandomId);
         assertThat(emptyStream).isEmpty();
 
         final var existingImageId = imageService.getImages().getFirst().id();
-        final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_WEBP);
+        final var imageWithExistingId = new ImageDto(existingImageId, ContentType.IMAGE_PNG);
         final var stream = ImageUtil.loadImage(imageWithExistingId);
         assertThat(stream).isNotEmpty();
     }

@@ -78,7 +78,7 @@ class ConfirmationServiceKT extends KaribuTest {
                 .hasToString("test@example.com");
 
         assertThat(receivedMessage.getSubject())
-                .isEqualTo("[Your Instance Name] Please confirm your email address");
+                .isEqualTo("[Komunumo Test] Please confirm your email address");
 
         final var body = getBody(receivedMessage);
         assertThat(body)

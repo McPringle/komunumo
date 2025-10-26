@@ -34,7 +34,7 @@ public class CommunityAddViewBT extends BrowserTest {
 
         // navigate to home page
         page.navigate(getInstanceUrl());
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
@@ -48,7 +48,7 @@ public class CommunityAddViewBT extends BrowserTest {
         // navigate manually to community creation page should redirect to login page
         page.navigate(getInstanceUrl() + "communities/add");
         page.waitForURL("**/login");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("anonymousUserRedirected");
     }
 
@@ -61,7 +61,7 @@ public class CommunityAddViewBT extends BrowserTest {
 
         // navigate to home page
         page.navigate(getInstanceUrl());
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
@@ -75,7 +75,7 @@ public class CommunityAddViewBT extends BrowserTest {
         // click on "Create Community" menu item
         menuItem.click();
         page.waitForURL("**/communities/add");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("createCommunityMenuNavigationWorks");
     }
 

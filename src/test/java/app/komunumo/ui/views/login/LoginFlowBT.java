@@ -41,7 +41,7 @@ class LoginFlowBT extends BrowserTest {
         final var page = getPage();
         page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("loginWorks_event-page");
 
         logout();
@@ -55,7 +55,7 @@ class LoginFlowBT extends BrowserTest {
         // navigate to events page
         page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("loginFails_before-login");
 
         // open avatar menu
@@ -90,7 +90,7 @@ class LoginFlowBT extends BrowserTest {
         await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
         final var receivedMessage = greenMail.getReceivedMessages()[0];
         assertThat(receivedMessage.getSubject())
-                .isEqualTo("[Your Instance Name] Please confirm your email address");
+                .isEqualTo("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
         final var mailBody = GreenMailUtil.getBody(receivedMessage);
@@ -100,7 +100,7 @@ class LoginFlowBT extends BrowserTest {
         // open the confirmation link
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("loginFails_confirmation-page");
 
         // check for error message
@@ -116,7 +116,7 @@ class LoginFlowBT extends BrowserTest {
         // navigate to events page
         page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("loginDialogOpenAndClose_before-login");
 
         // open avatar menu
@@ -147,7 +147,7 @@ class LoginFlowBT extends BrowserTest {
         // navigate to events page
         page.navigate(getInstanceUrl() + "events");
         page.waitForURL("**/events");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("loginDialogCancel_before-login");
 
         // open avatar menu
