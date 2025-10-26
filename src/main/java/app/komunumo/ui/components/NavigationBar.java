@@ -41,6 +41,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_ADD_COMMUNITY_ALLOWED;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 
@@ -102,7 +103,7 @@ public final class NavigationBar extends HorizontalLayout {
                 _ -> ui.navigate(CreateCommunityView.class));
 
         // admin menu
-        final var configurationEditorMenu = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
+        final var configurationEditorItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
                 ui.navigate(ConfigurationEditorView.class)
         );
 
@@ -116,19 +117,21 @@ public final class NavigationBar extends HorizontalLayout {
 
         // update menu items based on authentication state
         ComponentEffect.effect(this, () -> {
-            final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
             final var isLoggedIn = authenticationSignal.isAuthenticated();
             final var isLocalUser = authenticationSignal.isLocalUser();
             final var isAdmin = authenticationSignal.isAdmin();
 
+            final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
+            final var createCommunityAllowed = configurationService.getConfiguration(INSTANCE_ADD_COMMUNITY_ALLOWED, Boolean.class);
+
             loginItem.setVisible(!isLoggedIn);
             registerItem.setVisible(registrationAllowed && !isLoggedIn);
             logoutItem.setVisible(isLoggedIn);
-            configurationEditorMenu.setVisible(isAdmin);
-            createCommunityItem.setVisible(isLocalUser);
+
+            configurationEditorItem.setVisible(isAdmin);
+            createCommunityItem.setVisible(isLocalUser && createCommunityAllowed);
         });
 
         return avatar;
     }
-
 }

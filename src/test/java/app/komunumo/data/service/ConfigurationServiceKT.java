@@ -217,6 +217,8 @@ class ConfigurationServiceKT extends KaribuTest {
                 {ConfigurationSetting.INSTANCE_URL, String.class, "https://example.com", "https://example.com"},
                 {ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES, Boolean.class, true, true},
                 {ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES, Boolean.class, false, false},
+                {ConfigurationSetting.INSTANCE_ADD_COMMUNITY_ALLOWED, Boolean.class, true, true},
+                {ConfigurationSetting.INSTANCE_ADD_COMMUNITY_ALLOWED, Boolean.class, false, false},
         };
     }
 
