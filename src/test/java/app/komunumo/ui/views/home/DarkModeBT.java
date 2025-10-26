@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class DarkModeBT extends BrowserTest {
 
-    protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
     protected static final String AVATAR_SELECTOR = "vaadin-avatar";
     protected static final String DARK_MODE_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Toggle Dark Mode')";
     protected static final String TITLE_COLOR_DARK_MODE = "rgb(245, 249, 255)";
@@ -35,7 +34,7 @@ class DarkModeBT extends BrowserTest {
     void toggleDarkMode() throws InterruptedException {
         final var page = getPage();
         page.navigate(getInstanceUrl());
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("page-before-toggle");
 
         final var titleColorBeforeToggle = page.evaluate("""

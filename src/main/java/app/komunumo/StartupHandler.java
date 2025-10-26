@@ -19,7 +19,7 @@ package app.komunumo;
 
 import app.komunumo.admin.AdminBootstrapper;
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.demo.DemoDataCreator;
+import app.komunumo.data.demo.DemoMode;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.UserService;
 import org.jetbrains.annotations.NotNull;
@@ -33,16 +33,16 @@ public final class StartupHandler {
     private final @NotNull AppConfig appConfig;
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull UserService userService;
-    private final @NotNull DemoDataCreator demoDataCreator;
+    private final @NotNull DemoMode demoMode;
 
     public StartupHandler(final @NotNull AppConfig appConfig,
                           final @NotNull ConfigurationService configurationService,
                           final @NotNull UserService userService,
-                          final @NotNull DemoDataCreator demoDataCreator) {
+                          final @NotNull DemoMode demoMode) {
         this.appConfig = appConfig;
         this.configurationService = configurationService;
         this.userService = userService;
-        this.demoDataCreator = demoDataCreator;
+        this.demoMode = demoMode;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -53,7 +53,7 @@ public final class StartupHandler {
     }
 
     private void importRemoteData() {
-        demoDataCreator.resetDemoData();
+        demoMode.resetDemoData();
     }
 
     private void clearCachedConfiguration() {

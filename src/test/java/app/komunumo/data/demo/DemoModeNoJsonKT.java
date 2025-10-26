@@ -17,51 +17,27 @@
  */
 package app.komunumo.data.demo;
 
-import app.komunumo.data.service.CommunityService;
-import app.komunumo.data.service.EventService;
-import app.komunumo.data.service.ImageService;
 import app.komunumo.ui.KaribuTest;
 import nl.altindag.log.LogCaptor;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@TestPropertySource(properties = "komunumo.demo.enabled=false")
-class DemoDataCreatorDisabledKT extends KaribuTest {
+@TestPropertySource(properties = "komunumo.demo.json=")
+class DemoModeNoJsonKT extends KaribuTest {
 
     @Autowired
-    private CommunityService communityService;
-
-    @Autowired
-    private EventService eventService;
-
-    @Autowired
-    private ImageService imageService;
-
-    @Autowired
-    private DemoDataCreator demoDataCreator;
+    private DemoMode demoMode;
 
     @Test
     void resetDemoDataWhenDisabled() {
-        assertDemoDataCount();
-        try (var logCaptor = LogCaptor.forClass(DemoDataCreator.class)) {
-            demoDataCreator.resetDemoData();
-            assertThat(logCaptor.getInfoLogs()).containsExactly(
-                "Demo data plugin is disabled, skipping demo data reset.");
+        try (var logCaptor = LogCaptor.forClass(DemoMode.class)) {
+            demoMode.resetDemoData();
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                "Disabling demo mode plugin automatically, because no JSON data URL is configured.");
         }
-        assertDemoDataCount();
-    }
-
-    private void assertDemoDataCount() {
-        Assertions.assertThat(communityService.getCommunityCount())
-                .isZero();
-        Assertions.assertThat(eventService.getEventCount())
-                .isZero();
-        Assertions.assertThat(imageService.getImageCount())
-                .isZero();
     }
 
 }

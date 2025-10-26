@@ -23,8 +23,8 @@ import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.ui.signals.AuthenticationSignal;
 import app.komunumo.ui.views.admin.config.ConfigurationEditorView;
-import app.komunumo.ui.views.community.CommunityAddView;
 import app.komunumo.ui.views.community.CommunityGridView;
+import app.komunumo.ui.views.community.CreateCommunityView;
 import app.komunumo.ui.views.events.EventGridView;
 import app.komunumo.ui.views.login.LogoutView;
 import app.komunumo.util.LocationUtil;
@@ -40,16 +40,12 @@ import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_ADD_COMMUNITY_ALLOWED;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 
 public final class NavigationBar extends HorizontalLayout {
-
-    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(NavigationBar.class);
 
     public NavigationBar(final @NotNull ConfigurationService configurationService,
                          final @NotNull GlobalPageService globalPageService,
@@ -102,12 +98,12 @@ public final class NavigationBar extends HorizontalLayout {
                 accountService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
-        // add community item
-        final var addCommunityItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.addCommunity"),
-                _ -> ui.navigate(CommunityAddView.class));
+        // create community
+        final var createCommunityItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.createCommunity"),
+                _ -> ui.navigate(CreateCommunityView.class));
 
         // admin menu
-        final var configItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
+        final var configurationEditorItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
                 ui.navigate(ConfigurationEditorView.class)
         );
 
@@ -121,21 +117,19 @@ public final class NavigationBar extends HorizontalLayout {
 
         // update menu items based on authentication state
         ComponentEffect.effect(this, () -> {
-            final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
-            LOGGER.warn("=== Registration allowed: {} ===", registrationAllowed);
             final var isLoggedIn = authenticationSignal.isAuthenticated();
-            LOGGER.warn("=== User is logged in: {} ===", isLoggedIn);
+            final var isLocalUser = authenticationSignal.isLocalUser();
+            final var isAdmin = authenticationSignal.isAdmin();
+
+            final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
+            final var createCommunityAllowed = configurationService.getConfiguration(INSTANCE_ADD_COMMUNITY_ALLOWED, Boolean.class);
 
             loginItem.setVisible(!isLoggedIn);
             registerItem.setVisible(registrationAllowed && !isLoggedIn);
             logoutItem.setVisible(isLoggedIn);
 
-            final var isAdmin = authenticationSignal.isAdmin();
-            configItem.setVisible(isAdmin);
-
-            final var addCommunityAllowed = configurationService.getConfiguration(INSTANCE_ADD_COMMUNITY_ALLOWED, Boolean.class);
-            final var isLocalUser = authenticationSignal.isLocalUser();
-            addCommunityItem.setVisible(addCommunityAllowed && isLocalUser);
+            configurationEditorItem.setVisible(isAdmin);
+            createCommunityItem.setVisible(isLocalUser && createCommunityAllowed);
         });
 
         return avatar;

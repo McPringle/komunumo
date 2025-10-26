@@ -37,9 +37,9 @@ class EventGridViewBT extends BrowserTest {
         final var page = getPage();
 
         page.navigate(getInstanceUrl() + "events/");
-        page.waitForSelector("h1:has-text('Your Instance Name')");
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("upcoming-events-view");
-        assertThat(page.title()).isEqualTo("Events – Your Instance Name");
+        assertThat(page.title()).isEqualTo("Events – Komunumo Test");
 
         assertThat(page.locator("a[href='events']").getAttribute("highlight")).isNotNull().isBlank();
 
@@ -69,7 +69,7 @@ class EventGridViewBT extends BrowserTest {
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
                         .startsWith("/images/")
-                        .endsWith(".webp")
+                        .endsWith(".png")
                         .doesNotContain("placeholder");
 
                 final var imageAlt = image.getAttribute("alt");
@@ -103,7 +103,7 @@ class EventGridViewBT extends BrowserTest {
         final var page = getPage();
 
         page.navigate(getInstanceUrl() + "events");
-        page.waitForSelector("h1:has-text('Your Instance Name')");
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("event-grid-view");
 
         final var eventCards = page.locator("vaadin-card");

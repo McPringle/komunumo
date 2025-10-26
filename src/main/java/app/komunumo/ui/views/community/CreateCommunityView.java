@@ -23,29 +23,21 @@ import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.router.AfterNavigationEvent;
-import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 
 @RolesAllowed("USER")
-@Route(value = "/communities/add", layout = WebsiteLayout.class)
-public class CommunityAddView extends AbstractView implements AfterNavigationObserver {
+@Route(value = "/communities/new", layout = WebsiteLayout.class)
+public class CreateCommunityView extends AbstractView {
 
-    private final @NotNull ConfigurationService configurationService;
-    private final @NotNull CommunityService communityService;
-    private final @NotNull MemberService memberService;
-
-    public CommunityAddView(final @NotNull ConfigurationService configurationService,
-                            final @NotNull CommunityService communityService,
-                            final @NotNull MemberService memberService) {
-
+    public CreateCommunityView(final @NotNull ConfigurationService configurationService,
+                               final @NotNull CommunityService communityService,
+                               final @NotNull MemberService memberService) {
         super(configurationService);
 
-        this.configurationService = configurationService;
-        this.communityService = communityService;
-        this.memberService = memberService;
+        add(new H2(getTranslation("ui.views.community.CreateCommunityView.title")));
+        add(new CreateCommunityComponent(communityService, memberService));
     }
 
     /**
@@ -55,19 +47,7 @@ public class CommunityAddView extends AbstractView implements AfterNavigationObs
      */
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation("ui.views.community.AddCommunity.title");
+        return getTranslation("ui.views.community.CreateCommunityView.title");
     }
 
-    /**
-     * <p>Callback to be executed after navigation is performed.</p>
-     *
-     * @param afterNavigationEvent after navigation event with event details
-     */
-    @Override
-    public void afterNavigation(final @NotNull AfterNavigationEvent afterNavigationEvent) {
-        removeAll();
-
-        add(new H2(getTranslation("ui.views.community.AddCommunity.title")));
-        add(new CommunityAddComponent(communityService, memberService));
-    }
 }

@@ -64,7 +64,7 @@ class EventRegistrationFlowBT extends BrowserTest {
         final var page = getPage();
         page.navigate(getInstanceUrl() + "events/" + testEvent.id());
         page.waitForURL("**/events/" + testEvent.id());
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("events-page");
 
         // click on registration button
@@ -94,7 +94,7 @@ class EventRegistrationFlowBT extends BrowserTest {
         // wait for email confirmation mail
         await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
         final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject()).isEqualTo("[Your Instance Name] Please confirm your email address");
+        assertThat(receivedMessage.getSubject()).isEqualTo("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
         final var mailBody = GreenMailUtil.getBody(receivedMessage);
@@ -104,13 +104,13 @@ class EventRegistrationFlowBT extends BrowserTest {
         // open the confirmation link
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("confirmation-page");
 
         // wait for registration confirmation mail
         await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 2);
         final var successMessage = greenMail.getReceivedMessages()[1];
-        assertThat(successMessage.getSubject()).isEqualTo("[Your Instance Name] Your registration is confirmed");
+        assertThat(successMessage.getSubject()).isEqualTo("[Komunumo Test] Your registration is confirmed");
         assertThat(getBody(successMessage)).contains("You are now officially signed up for the event.");
     }
 
@@ -139,7 +139,7 @@ class EventRegistrationFlowBT extends BrowserTest {
         final var page = getPage();
         page.navigate(getInstanceUrl() + "events/" + testEvent.id());
         page.waitForURL("**/events/" + testEvent.id());
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("events-page");
 
         // click on registration button
@@ -168,7 +168,7 @@ class EventRegistrationFlowBT extends BrowserTest {
         // wait for email confirmation mail
         await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
         final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject()).isEqualTo("[Your Instance Name] Please confirm your email address");
+        assertThat(receivedMessage.getSubject()).isEqualTo("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
         final var mailBody = GreenMailUtil.getBody(receivedMessage);
@@ -178,13 +178,13 @@ class EventRegistrationFlowBT extends BrowserTest {
         // open the confirmation link
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("confirmation-page");
 
         // wait for registration confirmation mail
         await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 2);
         final var successMessage = greenMail.getReceivedMessages()[1];
-        assertThat(successMessage.getSubject()).isEqualTo("[Your Instance Name] Your registration is confirmed");
+        assertThat(successMessage.getSubject()).isEqualTo("[Komunumo Test] Your registration is confirmed");
         assertThat(getBody(successMessage)).contains("You are now officially signed up for the event.");
 
         // logout the test user

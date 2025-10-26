@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,11 +50,25 @@ public final class UserService extends StorageService {
         return userRecord.into(UserDto.class);
     }
 
+    public @NotNull List<@NotNull UserDto> getAllUsers() {
+        return dsl.selectFrom(USER)
+                .fetchInto(UserDto.class);
+    }
+
     public int getAdminCount() {
         return Optional.ofNullable(
                 dsl.selectCount()
                         .from(USER)
                         .where(USER.ROLE.eq("admin"))
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
+
+    public int getUserCount() {
+        return Optional.ofNullable(
+                dsl.selectCount()
+                        .from(USER)
+                        .where(USER.ROLE.eq("user"))
                         .fetchOne(0, Integer.class)
         ).orElse(0);
     }

@@ -17,20 +17,20 @@
  */
 package app.komunumo.data.demo;
 
-import app.komunumo.data.dto.ContentType;
-import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.EventService;
-import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
 import app.komunumo.ui.KaribuTest;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.TestPropertySource;
 
-class DemoDataCreatorKT extends KaribuTest {
+import static org.assertj.core.api.Assertions.assertThat;
+
+@TestPropertySource(properties = "komunumo.demo.enabled=false")
+class DemoModeDisabledKT extends KaribuTest {
 
     @Autowired
     private CommunityService communityService;
@@ -42,37 +42,26 @@ class DemoDataCreatorKT extends KaribuTest {
     private ImageService imageService;
 
     @Autowired
-    private GlobalPageService globalPageService;
-
-    @Autowired
-    private @NotNull DemoDataCreator demoDataCreator;
+    private DemoMode demoMode;
 
     @Test
-    void resetDemoData() {
+    void resetDemoDataWhenDisabled() {
         assertDemoDataCount();
-        demoDataCreator.resetDemoData();
+        try (var logCaptor = LogCaptor.forClass(DemoMode.class)) {
+            demoMode.resetDemoData();
+            assertThat(logCaptor.getInfoLogs()).containsExactly(
+                "Demo mode plugin is disabled, skipping demo data reset.");
+        }
         assertDemoDataCount();
     }
 
     private void assertDemoDataCount() {
         Assertions.assertThat(communityService.getCommunityCount())
-                .isEqualTo(6);
+                .isZero();
         Assertions.assertThat(eventService.getEventCount())
-                .isEqualTo(6);
+                .isZero();
         Assertions.assertThat(imageService.getImageCount())
-                .isEqualTo(10);
-        Assertions.assertThat(globalPageService.getGlobalPageCount())
-                .isEqualTo(2);
-    }
-
-    @Test
-    void storeDemoImageWithWarning() {
-        try (var logCaptor = LogCaptor.forClass(DemoDataCreator.class)) {
-            final var filename = "non-existing.gif";
-            final var image = new ImageDto(null, ContentType.IMAGE_GIF);
-            demoDataCreator.storeDemoImage(image, filename);
-            Assertions.assertThat(logCaptor.getWarnLogs()).containsExactly("Demo image not found: non-existing.gif");
-        }
+                .isZero();
     }
 
 }

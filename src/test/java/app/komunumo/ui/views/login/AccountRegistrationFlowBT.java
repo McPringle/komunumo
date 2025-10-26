@@ -83,7 +83,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         // navigate to home page
         final var page = getPage();
         page.navigate(getInstanceUrl());
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
@@ -116,7 +116,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
         final var confirmationMessage = greenMail.getReceivedMessages()[0];
         assertThat(confirmationMessage.getSubject())
-                .isEqualTo("[Your Instance Name] Please confirm your email address");
+                .isEqualTo("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
         final var confirmationMailBody = GreenMailUtil.getBody(confirmationMessage);
@@ -126,7 +126,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         // open the confirmation link
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot(screenshotPrefix + "_confirmation-page");
 
         // check for success message
@@ -144,7 +144,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(2));
         final var registrationMessage = greenMail.getReceivedMessages()[1];
         assertThat(registrationMessage.getSubject())
-                .isEqualTo("[Your Instance Name] Your new local account is ready");
+                .isEqualTo("[Komunumo Test] Your new local account is ready");
 
         // reload page and check that user is logged in
         page.reload();
@@ -172,7 +172,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
         // navigate to home page
         page.navigate(getInstanceUrl());
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
 
         // open avatar menu
         page.click(AVATAR_SELECTOR);
@@ -195,7 +195,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
             // navigate to home page
             final var page = getPage();
             page.navigate(getInstanceUrl());
-            page.waitForSelector(INSTANCE_NAME_SELECTOR);
+            page.waitForSelector(getInstanceNameSelector());
 
             // open avatar menu
             page.click(AVATAR_SELECTOR);
@@ -219,7 +219,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
             // reload page
             page.reload();
-            page.waitForSelector(INSTANCE_NAME_SELECTOR);
+            page.waitForSelector(getInstanceNameSelector());
 
             // open avatar menu
             page.click(AVATAR_SELECTOR);

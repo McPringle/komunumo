@@ -20,6 +20,7 @@ package app.komunumo.ui;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.UserService;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Browser;
@@ -46,6 +47,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +56,7 @@ import static org.awaitility.Awaitility.await;
 
 public abstract class BrowserTest extends IntegrationTest {
 
-    protected static final String INSTANCE_NAME_SELECTOR = "h1:has-text('Your Instance Name')";
+    protected static final String INSTANCE_NAME_SELECTOR_TEMPLATE = "h1:has-text('%s')";
     protected static final String AVATAR_SELECTOR = "vaadin-avatar";
     protected static final String CONTEXT_MENU_SELECTOR = "vaadin-context-menu-list-box[role='menu']";
     protected static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
@@ -71,6 +73,9 @@ public abstract class BrowserTest extends IntegrationTest {
 
     private Path screenshotDir;
     private Page.ScreenshotOptions screenshotOptions;
+
+    @Autowired
+    private @NotNull ConfigurationService configurationService;
 
     @Autowired
     private @NotNull UserService userService;
@@ -211,6 +216,16 @@ public abstract class BrowserTest extends IntegrationTest {
     }
 
     /**
+     * <p>Builds and returns the CSS selector string for the current instance name.</p>
+     *
+     * @return the CSS selector string for the current instance name
+     */
+    protected @NotNull String getInstanceNameSelector() {
+        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME);
+        return INSTANCE_NAME_SELECTOR_TEMPLATE.formatted(instanceName);
+    }
+
+    /**
      * Logs in a user for browser tests.
      *
      * @param user the user to log in
@@ -221,7 +236,7 @@ public abstract class BrowserTest extends IntegrationTest {
         // navigate to login page
         page.navigate("http://localhost:%d/login".formatted(getPort()));
         page.waitForURL("**/login");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
 
         // wait for login dialog to appear
         final var overlay = page.locator("vaadin-dialog-overlay[opened]")
@@ -248,9 +263,10 @@ public abstract class BrowserTest extends IntegrationTest {
         // wait for the confirmation email
         await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(mailCount + 1));
         final var receivedMessage = greenMail.getReceivedMessages()[0];
+        final var instanceName = configurationService.getConfiguration(INSTANCE_NAME);
         assertThatCode(() ->
                 assertThat(receivedMessage.getSubject())
-                        .isEqualTo("[Your Instance Name] Please confirm your email address")
+                        .isEqualTo("[%s] Please confirm your email address".formatted(instanceName))
         ).doesNotThrowAnyException();
 
         // extract the confirmation link
@@ -261,7 +277,7 @@ public abstract class BrowserTest extends IntegrationTest {
         // open the confirmation link
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("login_confirmation-page");
     }
 

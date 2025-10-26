@@ -29,9 +29,9 @@ class CommunityGridViewBT extends BrowserTest {
         final var page = getPage();
 
         page.navigate(getInstanceUrl() + "communities");
-        page.waitForSelector("h1:has-text('Your Instance Name')");
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("community-grid-view");
-        assertThat(page.title()).isEqualTo("Communities – Your Instance Name");
+        assertThat(page.title()).isEqualTo("Communities – Komunumo Test");
 
         assertThat(page.locator("a[href='communities']").getAttribute("highlight")).isNotNull().isBlank();
 
@@ -57,7 +57,7 @@ class CommunityGridViewBT extends BrowserTest {
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
                         .startsWith("/images/")
-                        .endsWith(".webp")
+                        .endsWith(".png")
                         .doesNotContain("placeholder");
 
                 final var imageAlt = image.getAttribute("alt");
@@ -84,7 +84,7 @@ class CommunityGridViewBT extends BrowserTest {
         final var page = getPage();
 
         page.navigate(getInstanceUrl() + "communities");
-        page.waitForSelector("h1:has-text('Your Instance Name')");
+        page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("community-grid-view");
 
         final var communityCards = page.locator("vaadin-card");

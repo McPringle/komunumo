@@ -49,7 +49,7 @@ public class HideAddCommunityMenuItemBT extends BrowserTest {
         final var page = getPage();
 
         page.navigate(getInstanceUrl());
-        page.waitForSelector(INSTANCE_NAME_SELECTOR);
+        page.waitForSelector(getInstanceNameSelector());
 
         page.click(AVATAR_SELECTOR);
         page.waitForSelector(CONTEXT_MENU_SELECTOR);

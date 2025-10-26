@@ -22,6 +22,8 @@ import app.komunumo.ui.KaribuTest;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -31,13 +33,13 @@ import org.junit.jupiter.api.Test;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CommunityAddViewKT extends KaribuTest {
+public class CreateCommunityViewKT extends KaribuTest {
 
     @Test
     void testComponent() {
         login(getTestUser(UserRole.USER));
 
-        UI.getCurrent().navigate("communities/add");
+        UI.getCurrent().navigate(CreateCommunityView.class);
         var container = _get(VerticalLayout.class, spec -> spec.withClasses("community-add-component"));
         assertThat(container).isNotNull();
 
@@ -66,9 +68,9 @@ public class CommunityAddViewKT extends KaribuTest {
     @Test
     void testCreate_invalidSubmission() {
         login(getTestUser(UserRole.USER));
-        UI.getCurrent().navigate("communities/add");
+        UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CommunityAddComponent component = _get(CommunityAddComponent.class);
+        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
         createButton.click();
 
@@ -78,28 +80,33 @@ public class CommunityAddViewKT extends KaribuTest {
     @Test
     void testCreate_successfulSubmission() {
         login(getTestUser(UserRole.USER));
-        UI.getCurrent().navigate("communities/add");
+        UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CommunityAddComponent component = _get(CommunityAddComponent.class);
+        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
         var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
-        profile.setValue("Test Profile");
-        name.setValue("Test Name");
+        profile.setValue("@testCommunity");
+        name.setValue("Test Community");
         assertThat(component.getBinder().isValid()).isTrue();
 
         createButton.click();
 
-        assertThat(UI.getCurrent().getActiveViewLocation().getPath()).isEqualTo("communities");
+        assertThat(UI.getCurrent().getActiveViewLocation().getPath())
+                .isEqualTo("communities/@testCommunity");
+        assertThat(_get(H2.class, spec -> spec.withClasses("community-name")).getText())
+                .isEqualTo("Test Community");
+        assertThat(_get(Paragraph.class, spec -> spec.withClasses("community-profile")).getText())
+                .isEqualTo("@testCommunity");
     }
 
     @Test
     void sessionTimeout() {
         login(getTestUser(UserRole.USER));
-        UI.getCurrent().navigate("communities/add");
+        UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CommunityAddComponent component = _get(CommunityAddComponent.class);
+        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
         var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));

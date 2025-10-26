@@ -23,18 +23,88 @@
       "value": "Should be ignored because custom styles are language independent but a language is given."
     }
   ],
+  "users": [
+    {
+      "userId": "11111111-1111-1111-1111-111111111111",
+      "profile": "@user@example.com",
+      "email": "user@example.com",
+      "name": "Test User",
+      "bio": "Test user for integration tests",
+      "imageId": "",
+      "role": "USER",
+      "type": "LOCAL"
+    },
+    {
+      "userId": "22222222-2222-2222-2222-222222222222",
+      "profile": "@admin@example.com",
+      "email": "admin@example.com",
+      "name": "Admin User",
+      "bio": "Admin user for integration tests",
+      "imageId": "",
+      "role": "ADMIN",
+      "type": "LOCAL"
+    },
+    {
+      "userId": "33333333-3333-3333-3333-333333333333",
+      "profile": "@remote@example.com",
+      "email": "remote@example.com",
+      "name": "Remote User",
+      "bio": "Remote user for integration tests",
+      "imageId": "",
+      "role": "USER",
+      "type": "REMOTE"
+    },
+    {
+      "userId": "44444444-4444-4444-4444-444444444444",
+      "profile": "@anonymous@example.com",
+      "email": "anonymous@example.com",
+      "name": "Anonymous User",
+      "bio": "Anonymous user for integration tests",
+      "imageId": "",
+      "role": "USER",
+      "type": "ANONYMOUS"
+    }
+  ],
   "communities": [
     {
       "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
-      "profile": "@demo1@example.com",
+      "profile": "@demoCommunity1",
       "name": "Demo Community 1",
       "description": "A description of the demo community.",
       "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795"
     },
     {
       "communityId": "5a6f6a65-0d3a-4b8b-ba3e-3506810a9dac",
-      "profile": "@demo2@example.com",
+      "profile": "@demoCommunity2",
       "name": "Demo Community 2",
+      "description": "A description of the demo community.",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795"
+    },
+    {
+      "communityId": "b7220a84-713e-4df7-8b73-69eb35434a67",
+      "profile": "@demoCommunity3",
+      "name": "Demo Community 3",
+      "description": "A description of the demo community.",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795"
+    },
+    {
+      "communityId": "96c7585c-6c10-4c6c-bba8-863fe5c9479a",
+      "profile": "@demoCommunity4",
+      "name": "Demo Community 4",
+      "description": "A description of the demo community.",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795"
+    },
+    {
+      "communityId": "ca983216-36d5-43c6-9a52-63da69e3d90a",
+      "profile": "@demoCommunity5",
+      "name": "Demo Community 5",
+      "description": "A description of the demo community.",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795"
+    },
+    {
+      "communityId": "af1a9ddf-346e-4bcf-b581-2685d4cf363e",
+      "profile": "@demoCommunity6",
+      "name": "Demo Community 6",
       "description": "A description of the demo community.",
       "imageId": ""
     }
@@ -46,9 +116,9 @@
       "title": "Demo Event 1",
       "description": "A description of the demo event.",
       "location": "Somewhere",
-      "begin": "2030-01-01T18:00:00+02:00[Europe/Zurich]",
-      "end": "2030-01-01T20:00:00+02:00[Europe/Zurich]",
-      "imageId": "4ca05a55-de1e-4571-a833-c9e5e4f4bfba",
+      "begin": "2020-01-01T18:00:00+02:00[Europe/Zurich]",
+      "end": "2020-01-01T20:00:00+02:00[Europe/Zurich]",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
       "visibility": "PUBLIC",
       "status": "PUBLISHED"
     },
@@ -58,8 +128,56 @@
       "title": "Demo Event 2",
       "description": "A description of the demo event.",
       "location": "Somewhere",
-      "begin": "2030-01-02T18:00:00+02:00[Europe/Zurich]",
-      "end": "2030-01-02T20:00:00+02:00[Europe/Zurich]",
+      "begin": "2020-01-02T18:00:00+02:00[Europe/Zurich]",
+      "end": "2020-01-02T20:00:00+02:00[Europe/Zurich]",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
+      "visibility": "PUBLIC",
+      "status": "PUBLISHED"
+    },
+    {
+      "eventId": "3609c5c1-536a-46b6-8b6b-7834d9cc9669",
+      "communityId": "b7220a84-713e-4df7-8b73-69eb35434a67",
+      "title": "Demo Event 3",
+      "description": "A description of the demo event.",
+      "location": "Somewhere",
+      "begin": "2030-01-03T18:00:00+02:00[Europe/Zurich]",
+      "end": "2030-01-03T20:00:00+02:00[Europe/Zurich]",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
+      "visibility": "PUBLIC",
+      "status": "PUBLISHED"
+    },
+    {
+      "eventId": "a7882cbd-551d-40d9-bb70-085030493a95",
+      "communityId": "96c7585c-6c10-4c6c-bba8-863fe5c9479a",
+      "title": "Demo Event 4",
+      "description": "A description of the demo event.",
+      "location": "Somewhere",
+      "begin": "",
+      "end": null,
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
+      "visibility": "PUBLIC",
+      "status": "PUBLISHED"
+    },
+    {
+      "eventId": "c46859a3-66fb-43f9-9d59-091e1fb5ab75",
+      "communityId": "ca983216-36d5-43c6-9a52-63da69e3d90a",
+      "title": "Demo Event 5",
+      "description": "A description of the demo event.",
+      "location": "Somewhere",
+      "begin": "2030-01-05T18:00:00+02:00[Europe/Zurich]",
+      "end": "2030-01-05T20:00:00+02:00[Europe/Zurich]",
+      "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
+      "visibility": "PUBLIC",
+      "status": "PUBLISHED"
+    },
+    {
+      "eventId": "b04f6258-1414-4931-bd35-d3be46bd7dc2",
+      "communityId": "af1a9ddf-346e-4bcf-b581-2685d4cf363e",
+      "title": "Demo Event 6",
+      "description": "A description of the demo event.",
+      "location": "Somewhere",
+      "begin": "2030-01-06T18:00:00+02:00[Europe/Zurich]",
+      "end": "2030-01-06T20:00:00+02:00[Europe/Zurich]",
       "imageId": "",
       "visibility": "PUBLIC",
       "status": "PUBLISHED"
