@@ -102,24 +102,21 @@ The placeholder `${user.home}` refers to the home directory of the system user r
 
 ### Demo Mode Configuration
 
-*Komunumo* can be started in demo mode, which will automatically populate the database with sample users, events, and other data. This allows you to explore the application without needing to create content manually. This is useful for testing and demonstration purposes. To enable demo mode, set the following environment variable:
+*Komunumo* can be started in demo mode, which will automatically delete any data entered at each start of the server and at the top of every hour! This ensures a consistent state for repeated testing and demonstrations. To enable demo mode, set the following environment variable:
 
 ```
 KOMUNUMO_DEMO_ENABLED=true
 ```
 
-> [!WARNING]
-> When demo mode is enabled, any data entered will be deleted at each start of the server and at the top of every hour! This ensures a consistent state for repeated testing and demonstrations.
-
 #### Providing Custom Demo Data
 
-If you prefer not to use the default demo data, you can provide your own JSON file containing demo events. The file must be publicly accessible over HTTPS and contain valid JSON in the expected format. To use your own demo data, set the following environment variable:
+If you want to provide custom demo data, you can specify a JSON file. The file must be publicly accessible over HTTPS and contain valid JSON in the expected format. To use your own demo data, set the following environment variable:
 
 ```
 KOMUNUMO_DEMO_JSON=https://example.com/events.json
 ```
 
-The structure of the JSON file must follow the expected format used by *Komunumo* for demo data. The file should contain an array of setting, community, event, image, and global page objects. Here is an example of the expected JSON structure:
+The structure of the JSON file must follow the expected format used by *Komunumo* for demo data. The file should contain an array of setting, user, community, event, image, and global page objects. Here is an example of the expected JSON structure:
 
 ```json
 {
@@ -133,6 +130,28 @@ The structure of the JSON file must follow the expected format used by *Komunumo
             "setting": "instance.slogan",
             "language": "en",
             "value": "This is a demo instance of Komunumo."
+        }
+    ],
+    "users": [
+        {
+            "userId": "025d62be-b564-4bd4-9325-f2f1d8bf2093",
+            "profile": "@user@example.com",
+            "email": "user@example.com",
+            "name": "Test User",
+            "bio": "The bio of the test user.",
+            "imageId": "24a27732-09c3-45e0-9b4c-3d6a3f2eb81b",
+            "role": "USER",
+            "type": "LOCAL"
+        },
+        {
+            "userId": "1b7cd51b-4f1b-43d1-a51c-e58043b5d7a4",
+            "profile": "@admin@example.com",
+            "email": "admin@example.com",
+            "name": "Admin User",
+            "bio": "The bio of the test admin.",
+            "imageId": "",
+            "role": "ADMIN",
+            "type": "LOCAL"
         }
     ],
     "communities": [
@@ -160,6 +179,11 @@ The structure of the JSON file must follow the expected format used by *Komunumo
     ],
     "images": [
         {
+            "imageId": "24a27732-09c3-45e0-9b4c-3d6a3f2eb81b",
+            "contentType": "image/jpeg",
+            "url": "https://example.com/images/demo-user.jpg"
+        },
+        {
             "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
             "contentType": "image/jpeg",
             "url": "https://example.com/images/demo-community.jpg"
@@ -184,8 +208,8 @@ The structure of the JSON file must follow the expected format used by *Komunumo
 - The `settings` array contains key-value pairs for instance settings, such as the instance name and slogan.
 - The `language` fields specify the language of the content.
 - The `communityId`, `eventId`, and `imageId` fields must be valid UUIDs.
-- The `begin` and `end` fields in the `events` object must be in ISO 8601 format with a timezone offset, such as `2025-08-06T18:00:00+02:00[Europe/Zurich]`. This ensures correct interpretation of event times, including proper handling of daylight saving time.
-- The `imageId` fields in the `communities` and `events` objects must refer to the IDs of the images in the `images` array. The `url` field in each image object must point to a publicly accessible image file. If the `imageId` is blank, the community or event will not have an image associated with it.
+- The `begin` and `end` fields in the `events` object must be in ISO 8601 format with a timezone offset, such as `2025-08-06T18:00:00+02:00[Europe/Zurich]`. This ensures correct interpretation of event times, including proper handling of daylight saving time. They can be empty or `null` if not applicable.
+- The `imageId` fields in the `users`, `communities`, and `events` objects must refer to the IDs of the images in the `images` array. The `url` field in each image object must point to a publicly accessible image file. If the `imageId` is blank, the community or event will not have an image associated with it.
 - The `visibility` field in the `events` object can be set to `PUBLIC` or `PRIVATE`, to define the visibility of the event.
 - The `status` field can be set to `DRAFT`, `PUBLISHED`, or `CANCELED` to reflect the current state of the event.
 
