@@ -111,6 +111,11 @@ class ConfigurationEditorViewBT extends BrowserTest {
             page.waitForSelector(CONTEXT_MENU_SELECTOR);
             captureScreenshot("adminRole_avatarMenuOpened");
 
+            // open admin menu
+            final var adminItem = page.locator(ADMIN_MENU_ITEM_SELECTOR);
+            adminItem.click();
+            captureScreenshot("adminRole_adminMenuOpened");
+
             // check that there is a configuration editor menu item
             final var configItem = page.locator(CONFIGURATION_EDITOR_MENU_ITEM_SELECTOR);
             assertThat(configItem.isVisible()).isTrue();

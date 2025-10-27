@@ -61,6 +61,7 @@ public abstract class BrowserTest extends IntegrationTest {
     protected static final String CONTEXT_MENU_SELECTOR = "vaadin-context-menu-list-box[role='menu']";
     protected static final String LOGIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Login')";
     protected static final String LOGOUT_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Logout')";
+    protected static final String ADMIN_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Administration')";
 
     private static final Path SCREENSHOT_DIR = Path.of("target/playwright-screenshots");
     private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmssSSS");

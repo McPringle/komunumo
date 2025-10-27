@@ -89,6 +89,13 @@ public final class NavigationBar extends HorizontalLayout {
         final var avatarMenu = new ContextMenu(avatar);
         avatarMenu.setOpenOnClick(true);
 
+        // admin menu
+        final var adminMenuItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.admin"));
+        final var adminMenu = adminMenuItem.getSubMenu();
+        adminMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
+                ui.navigate(ConfigurationEditorView.class)
+        );
+
         // login as first entry in the menu
         final var loginItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), _ ->
                 loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
@@ -101,11 +108,6 @@ public final class NavigationBar extends HorizontalLayout {
         // create community
         final var createCommunityItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.createCommunity"),
                 _ -> ui.navigate(CreateCommunityView.class));
-
-        // admin menu
-        final var configurationEditorItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
-                ui.navigate(ConfigurationEditorView.class)
-        );
 
         // dark theme toggle
         avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.toggleDarkMode"), _ -> ThemeUtil.toggleDarkMode());
@@ -125,10 +127,9 @@ public final class NavigationBar extends HorizontalLayout {
             final var createCommunityAllowed = configurationService.getConfiguration(INSTANCE_CREATE_COMMUNITY_ALLOWED, Boolean.class);
 
             loginItem.setVisible(!isLoggedIn);
-            registerItem.setVisible(registrationAllowed && !isLoggedIn);
             logoutItem.setVisible(isLoggedIn);
-
-            configurationEditorItem.setVisible(isAdmin);
+            registerItem.setVisible(registrationAllowed && !isLoggedIn);
+            adminMenuItem.setVisible(isAdmin);
             createCommunityItem.setVisible(isLocalUser && createCommunityAllowed);
         });
 
