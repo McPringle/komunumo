@@ -20,6 +20,7 @@
     display: flex;
     justify-content: center;
     justify-items: center;
+    padding: var(--lumo-space-s);
     background-color: var(--lumo-warning-color);
     color: var(--lumo-warning-contrast-color);
     box-shadow: var(--lumo-box-shadow-s);
