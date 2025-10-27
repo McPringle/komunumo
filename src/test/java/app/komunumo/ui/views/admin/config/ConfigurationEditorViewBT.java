@@ -51,9 +51,9 @@ class ConfigurationEditorViewBT extends BrowserTest {
         page.waitForSelector(CONTEXT_MENU_SELECTOR);
         captureScreenshot("anonymousVisitor_avatarMenuOpened");
 
-        // check that there is no configuration editor menu item
-        final var configItem = page.locator(CONFIGURATION_EDITOR_MENU_ITEM_SELECTOR);
-        assertThat(configItem.isVisible()).isFalse();
+        // check that there is no admin editor menu item
+        final var adminItem = page.locator(ADMIN_MENU_ITEM_SELECTOR);
+        assertThat(adminItem.isVisible()).isFalse();
 
         // try to navigate directly to configuration editor will start the authentication process
         page.navigate(getInstanceUrl() + "admin/config");
@@ -79,9 +79,9 @@ class ConfigurationEditorViewBT extends BrowserTest {
             page.waitForSelector(CONTEXT_MENU_SELECTOR);
             captureScreenshot("userRole_avatarMenuOpened");
 
-            // check that there is no configuration editor menu item
-            final var configItem = page.locator(CONFIGURATION_EDITOR_MENU_ITEM_SELECTOR);
-            assertThat(configItem.isVisible()).isFalse();
+            // check that there is no admin editor menu item
+            final var adminItem = page.locator(ADMIN_MENU_ITEM_SELECTOR);
+            assertThat(adminItem.isVisible()).isFalse();
 
             // try to navigate directly to configuration editor will show an error message
             page.navigate(getInstanceUrl() + "admin/config");
@@ -150,7 +150,7 @@ class ConfigurationEditorViewBT extends BrowserTest {
             assertThat(page.locator(instanceNameSelector).innerText()).isEqualTo("Your Instance Name");
 
             // instance name should be empty in the input field
-            final var instanceNameSetting = page.locator(".setting-instance-name ");
+            final var instanceNameSetting = page.locator(".setting-instance-name");
             final var instanceNameField = instanceNameSetting.locator("vaadin-text-field");
             final var instanceNameInput = instanceNameField.locator("input");
             assertThat(instanceNameInput.inputValue()).isEmpty();

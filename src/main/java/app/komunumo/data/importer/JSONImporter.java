@@ -17,6 +17,7 @@
  */
 package app.komunumo.data.importer;
 
+import app.komunumo.KomunumoException;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.dto.ContentType;
@@ -73,9 +74,9 @@ public final class JSONImporter {
                     countArrayItems(jsonObject, "globalPages"));
             return jsonObject;
         } catch (IOException | URISyntaxException e) {
-            LOGGER.warn("Failed to download JSON data: {}", e.getMessage());
+            LOGGER.warn("Failed to download JSON data from URL '{}': '{}'", jsonDataUrl, e.getMessage());
+            throw new KomunumoException("Failed to download JSON data from URL: " + jsonDataUrl, e);
         }
-        return new JSONObject();
     }
 
     private static int countArrayItems(final @NotNull JSONObject jsonData,

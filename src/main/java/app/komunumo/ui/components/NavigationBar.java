@@ -23,6 +23,7 @@ import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.ui.signals.AuthenticationSignal;
 import app.komunumo.ui.views.admin.config.ConfigurationEditorView;
+import app.komunumo.ui.views.admin.importer.ImporterView;
 import app.komunumo.ui.views.community.CommunityGridView;
 import app.komunumo.ui.views.community.CreateCommunityView;
 import app.komunumo.ui.views.events.EventGridView;
@@ -94,6 +95,9 @@ public final class NavigationBar extends HorizontalLayout {
         final var adminMenu = adminMenuItem.getSubMenu();
         adminMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
                 ui.navigate(ConfigurationEditorView.class)
+        );
+        adminMenu.addItem(ui.getTranslation("ui.components.NavigationBar.import"), _ ->
+                ui.navigate(ImporterView.class)
         );
 
         // login as first entry in the menu

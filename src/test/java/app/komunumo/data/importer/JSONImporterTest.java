@@ -17,6 +17,7 @@
  */
 package app.komunumo.data.importer;
 
+import app.komunumo.KomunumoException;
 import app.komunumo.data.dto.ImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -42,16 +44,15 @@ class JSONImporterTest {
     @Test
     void testImporterWithFileNotFound() {
         final var jsonUrl = "http://localhost:8082/import/non-existing.json";
-        final var expectedMessage = "Failed to download JSON data: " + jsonUrl;
-        try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
-            new JSONImporter(jsonUrl);
-            assertThat(logCaptor.getWarnLogs()).containsExactly(expectedMessage);
-        }
+        final var expectedMessage = "Failed to download JSON data from URL: " + jsonUrl;
+        assertThatThrownBy(() -> new JSONImporter(jsonUrl))
+                .isInstanceOf(KomunumoException.class)
+                .hasMessage(expectedMessage);
     }
 
     @Test
     void testSettingsNotFound() {
-        final var jsonUrl = "http://localhost:8082/import/non-existing.json";
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
         final var expectedMessage = "No settings found in JSON data.";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
@@ -62,7 +63,7 @@ class JSONImporterTest {
 
     @Test
     void testImagesNotFound() {
-        final var jsonUrl = "http://localhost:8082/import/non-existing.json";
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
         final var expectedMessage = "No images found in JSON data.";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
@@ -73,7 +74,7 @@ class JSONImporterTest {
 
     @Test
     void testUsersNotFound() {
-        final var jsonUrl = "http://localhost:8082/import/non-existing.json";
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
         final var expectedMessage = "No users found in JSON data.";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
@@ -84,7 +85,7 @@ class JSONImporterTest {
 
     @Test
     void testCommunitiesNotFound() {
-        final var jsonUrl = "http://localhost:8082/import/non-existing.json";
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
         final var expectedMessage = "No communities found in JSON data.";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
@@ -95,7 +96,7 @@ class JSONImporterTest {
 
     @Test
     void testEventsNotFound() {
-        final var jsonUrl = "http://localhost:8082/import/non-existing.json";
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
         final var expectedMessage = "No events found in JSON data.";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
@@ -106,7 +107,7 @@ class JSONImporterTest {
 
     @Test
     void testGlobalPagesNotFound() {
-        final var jsonUrl = "http://localhost:8082/import/non-existing.json";
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
         final var expectedMessage = "No global pages found in JSON data.";
         try (var logCaptor = LogCaptor.forClass(JSONImporter.class)) {
             final var importer = new JSONImporter(jsonUrl);
