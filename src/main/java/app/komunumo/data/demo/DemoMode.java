@@ -96,8 +96,8 @@ public final class DemoMode {
         LOGGER.info("Importing demo data...");
         final var demoDataImporter = new JSONImporter(jsonDataUrl);
         demoDataImporter.importSettings(configurationService);
-        demoDataImporter.importUsers(userService);
         demoDataImporter.importImages(imageService);
+        demoDataImporter.importUsers(userService);
         demoDataImporter.importCommunities(communityService);
         demoDataImporter.importEvents(eventService);
         demoDataImporter.importGlobalPages(globalPageService);
