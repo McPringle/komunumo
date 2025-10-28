@@ -44,6 +44,18 @@ import java.util.concurrent.CompletableFuture;
 @Route(value = "admin/import", layout = WebsiteLayout.class)
 public final class ImporterView extends AbstractView {
 
+    private final @NotNull ConfigurationService configurationService;
+    private final @NotNull ImageService imageService;
+    private final @NotNull UserService userService;
+    private final @NotNull CommunityService communityService;
+    private final @NotNull EventService eventService;
+    private final @NotNull GlobalPageService globalPageService;
+
+    private final @NotNull TextField urlField;
+    private final @NotNull Button importButton;
+    private final @NotNull H3 importStatusTitle;
+    private final @NotNull UnorderedList importStatus;
+
     public ImporterView(final @NotNull ConfigurationService configurationService,
                         final @NotNull ImageService imageService,
                         final @NotNull UserService userService,
@@ -51,17 +63,25 @@ public final class ImporterView extends AbstractView {
                         final @NotNull EventService eventService,
                         final @NotNull GlobalPageService globalPageService) {
         super(configurationService);
+
+        this.configurationService = configurationService;
+        this.imageService = imageService;
+        this.userService = userService;
+        this.communityService = communityService;
+        this.eventService = eventService;
+        this.globalPageService = globalPageService;
+
         addClassName("importer-view");
         add(new H2(getTranslation("ui.views.admin.importer.ImporterView.title")));
 
-        final var urlField = new TextField();
+        urlField = new TextField();
         urlField.setValueChangeMode(ValueChangeMode.EAGER);
         urlField.setPlaceholder(getTranslation("ui.views.admin.importer.ImporterView.urlFieldPlaceholder"));
         urlField.setWidthFull();
         urlField.addClassName("url-field");
         add(urlField);
 
-        final var importButton = new Button(getTranslation("ui.views.admin.importer.ImporterView.startImportButton"));
+        importButton = new Button(getTranslation("ui.views.admin.importer.ImporterView.startImportButton"));
         importButton.setEnabled(false);
         importButton.addClassName("start-import-button");
         add(importButton);
@@ -69,66 +89,68 @@ public final class ImporterView extends AbstractView {
         urlField.addValueChangeListener(valueChangeEvent ->
                 importButton.setEnabled(!valueChangeEvent.getValue().isBlank()));
 
-        final var importStatusTitle = new H3(getTranslation("ui.views.admin.importer.ImporterView.importStatus"));
+        importStatusTitle = new H3(getTranslation("ui.views.admin.importer.ImporterView.importStatus"));
         importStatusTitle.setVisible(false);
         add(importStatusTitle);
 
-        final var importStatus = new UnorderedList();
+        importStatus = new UnorderedList();
         importStatus.addClassName("import-status");
         add(importStatus);
 
-        importButton.addClickListener(_ -> {
-            importButton.setEnabled(false);
-            urlField.setEnabled(false);
-            importStatusTitle.setVisible(true);
-            importStatus.removeAll();
-            importStatus.add(new ListItem(getTranslation("ui.views.admin.importer.ImporterView.status.importStatus")));
+        importButton.addClickListener(_ -> processImport());
+    }
 
-            final var ui = UI.getCurrent();
-            final var jsonDataUrl = urlField.getValue();
-            CompletableFuture
-                    .runAsync(() -> {
-                        final var jsonImporter = new JSONImporter(jsonDataUrl);
+    private void processImport() {
+        importButton.setEnabled(false);
+        urlField.setEnabled(false);
+        importStatusTitle.setVisible(true);
+        importStatus.removeAll();
+        importStatus.add(new ListItem(getTranslation("ui.views.admin.importer.ImporterView.status.importStatus")));
 
-                        ui.access(() -> importStatus.add(new ListItem(
-                                getTranslation("ui.views.admin.importer.ImporterView.status.importSettings"))));
-                        jsonImporter.importSettings(configurationService);
+        final var ui = UI.getCurrent();
+        final var jsonDataUrl = urlField.getValue();
+        CompletableFuture
+                .runAsync(() -> {
+                    final var jsonImporter = new JSONImporter(jsonDataUrl);
 
-                        ui.access(() -> importStatus.add(new ListItem(
-                                getTranslation("ui.views.admin.importer.ImporterView.status.importImages"))));
-                        jsonImporter.importImages(imageService);
+                    ui.access(() -> importStatus.add(new ListItem(
+                            getTranslation("ui.views.admin.importer.ImporterView.status.importSettings"))));
+                    jsonImporter.importSettings(configurationService);
 
-                        ui.access(() -> importStatus.add(new ListItem(
-                                getTranslation("ui.views.admin.importer.ImporterView.status.importUsers"))));
-                        jsonImporter.importUsers(userService);
+                    ui.access(() -> importStatus.add(new ListItem(
+                            getTranslation("ui.views.admin.importer.ImporterView.status.importImages"))));
+                    jsonImporter.importImages(imageService);
 
-                        ui.access(() -> importStatus.add(new ListItem(
-                                getTranslation("ui.views.admin.importer.ImporterView.status.importCommunities"))));
-                        jsonImporter.importCommunities(communityService);
+                    ui.access(() -> importStatus.add(new ListItem(
+                            getTranslation("ui.views.admin.importer.ImporterView.status.importUsers"))));
+                    jsonImporter.importUsers(userService);
 
-                        ui.access(() -> importStatus.add(new ListItem(
-                                getTranslation("ui.views.admin.importer.ImporterView.status.importEvents"))));
-                        jsonImporter.importEvents(eventService);
+                    ui.access(() -> importStatus.add(new ListItem(
+                            getTranslation("ui.views.admin.importer.ImporterView.status.importCommunities"))));
+                    jsonImporter.importCommunities(communityService);
 
-                        ui.access(() -> importStatus.add(new ListItem(
-                                getTranslation("ui.views.admin.importer.ImporterView.status.importGlobalPages"))));
-                        jsonImporter.importGlobalPages(globalPageService);
-                    })
-                    .thenRunAsync(() -> ui.access(() -> {
-                        importStatus.add(new ListItem(
-                                getTranslation("ui.views.admin.importer.ImporterView.status.importFinished")));
+                    ui.access(() -> importStatus.add(new ListItem(
+                            getTranslation("ui.views.admin.importer.ImporterView.status.importEvents"))));
+                    jsonImporter.importEvents(eventService);
+
+                    ui.access(() -> importStatus.add(new ListItem(
+                            getTranslation("ui.views.admin.importer.ImporterView.status.importGlobalPages"))));
+                    jsonImporter.importGlobalPages(globalPageService);
+                })
+                .thenRunAsync(() -> ui.access(() -> {
+                    importStatus.add(new ListItem(
+                            getTranslation("ui.views.admin.importer.ImporterView.status.importFinished")));
+                    importButton.setEnabled(true);
+                    urlField.setEnabled(true);
+                }))
+                .exceptionally(exception -> {
+                    ui.access(() -> {
+                        importStatus.add(new ListItem(exception.getCause().getMessage()));
                         importButton.setEnabled(true);
                         urlField.setEnabled(true);
-                    }))
-                    .exceptionally(exception -> {
-                        ui.access(() -> {
-                            importStatus.add(new ListItem(exception.getCause().getMessage()));
-                            importButton.setEnabled(true);
-                            urlField.setEnabled(true);
-                        });
-                        return null;
                     });
-        });
+                    return null;
+                });
     }
 
     @Override
