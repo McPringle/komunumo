@@ -678,7 +678,7 @@
                 <executions>
                     <execution>
                         <id>modernizer</id>
-                        <phase>verify</phase>
+                        <phase>process-test-classes</phase>
                         <goals>
                             <goal>modernizer</goal>
                         </goals>
