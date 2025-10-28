@@ -27,3 +27,12 @@
 .confirmation-dialog .email-button {
     margin-right: auto;
 }
+
+@media (max-width: 600px) {
+    .confirmation-dialog {
+        width: 90vw;
+        height: 100vh;
+        padding: 0;
+        border: 0;
+    }
+}
