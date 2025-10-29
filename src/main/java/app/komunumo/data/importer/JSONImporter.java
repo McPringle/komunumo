@@ -40,43 +40,59 @@ import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings("java:S1192") // Suppressing "String literals should not be duplicated" because of different contexts
 public final class JSONImporter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JSONImporter.class);
-
+    private final @NotNull ImporterLog importerLog;
     private final @NotNull JSONObject jsonData;
 
-    public JSONImporter(final @NotNull String jsonDataUrl) {
-        this.jsonData = downloadJsonObject(jsonDataUrl);
-    }
-
-    private @NotNull JSONObject downloadJsonObject(final @NotNull String jsonDataUrl) {
+    public JSONImporter(final @NotNull ImporterLog importerLog,
+                        final @NotNull String jsonDataUrl) {
+        this.importerLog = importerLog;
         try {
             final String json = DownloadUtil.getString(jsonDataUrl);
             final JSONObject jsonObject = new JSONObject(json);
-
-            LOGGER.info("Successfully loaded {} settings, {} users, {} communities, {} events, {} images, and {} global pages",
-                    countArrayItems(jsonObject, "settings"),
-                    countArrayItems(jsonObject, "users"),
-                    countArrayItems(jsonObject, "communities"),
-                    countArrayItems(jsonObject, "events"),
-                    countArrayItems(jsonObject, "images"),
-                    countArrayItems(jsonObject, "globalPages"));
-            return jsonObject;
+            logJSONInfo(jsonObject);
+            jsonData = jsonObject;
         } catch (IOException | URISyntaxException e) {
-            LOGGER.warn("Failed to download JSON data from URL '{}': '{}'", jsonDataUrl, e.getMessage());
-            throw new KomunumoException("Failed to download JSON data from URL: " + jsonDataUrl, e);
+            importerLog.error("Failed to download JSON data from URL: %s".formatted(jsonDataUrl));
+            throw new KomunumoException("Failed to download JSON data from URL: %s".formatted(jsonDataUrl), e);
         }
+    }
+
+    public JSONImporter(final @NotNull ImporterLog importerLog,
+                        final @NotNull File jsonDataFile) {
+        this.importerLog = importerLog;
+        try {
+            final String json = Files.readString(jsonDataFile.toPath());
+            final JSONObject jsonObject = new JSONObject(json);
+            logJSONInfo(jsonObject);
+            jsonData = jsonObject;
+        } catch (IOException e) {
+            importerLog.error("Failed to download JSON data from URL: %s".formatted(jsonDataFile.getName()));
+            throw new KomunumoException("Failed to load JSON data from file: %s".formatted(jsonDataFile.getName()), e);
+        }
+    }
+
+    private void logJSONInfo(final @NotNull JSONObject jsonObject) {
+        importerLog.info("Identified %d settings, %d images, %d users, %d communities, %d events, and %d global pages."
+                .formatted(
+                        countArrayItems(jsonObject, "settings"),
+                        countArrayItems(jsonObject, "images"),
+                        countArrayItems(jsonObject, "users"),
+                        countArrayItems(jsonObject, "communities"),
+                        countArrayItems(jsonObject, "events"),
+                        countArrayItems(jsonObject, "globalPages")));
     }
 
     private static int countArrayItems(final @NotNull JSONObject jsonData,
@@ -89,33 +105,39 @@ public final class JSONImporter {
 
     public void importSettings(final @NotNull ConfigurationService configurationService) {
         if (jsonData.has("settings")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing settings...");
             jsonData.getJSONArray("settings").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var setting = ConfigurationSetting.fromString(jsonObject.getString("setting"));
                 final var language = jsonObject.optString("language", null);
 
                 if (setting.isLanguageDependent() && language == null) {
-                    LOGGER.warn("Skipping setting '{}' because it is language-dependent but no language was provided.",
-                            setting.setting());
+                    importerLog.warn("Skipping setting '%s' because it is language-dependent but no language was provided."
+                            .formatted(setting.setting()));
                     return;
                 } else if (!setting.isLanguageDependent() && language != null) {
-                    LOGGER.warn("Skipping setting '{}' because it is not language-dependent but a language was provided.",
-                            setting.setting());
+                    importerLog.warn("Skipping setting '%s' because it is not language-dependent but a language was provided."
+                            .formatted(setting.setting()));
                     return;
                 }
 
                 final var locale = language == null ? null : Locale.forLanguageTag(language);
                 final var value = jsonObject.getString("value");
                 configurationService.setConfiguration(setting, locale, value);
+                counter.incrementAndGet();
             });
             configurationService.clearCache();
+            importerLog.info("...finished importing %d settings.".formatted(counter.get()));
         } else {
-            LOGGER.warn("No settings found in JSON data.");
+            importerLog.warn("No settings found in JSON data.");
         }
     }
 
     public void importUsers(final @NotNull UserService userService) {
         if (jsonData.has("users")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing users...");
             jsonData.getJSONArray("users").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var userId = UUID.fromString(jsonObject.getString("userId"));
@@ -130,14 +152,18 @@ public final class JSONImporter {
                 final var user = new UserDto(userId, null, null, profile, email, name, bio, imageId,
                         role, type);
                 userService.storeUser(user);
+                counter.incrementAndGet();
             });
+            importerLog.info("...finished importing %d users.".formatted(counter.get()));
         } else {
-            LOGGER.warn("No users found in JSON data.");
+            importerLog.warn("No users found in JSON data.");
         }
     }
 
     public void importImages(final @NotNull ImageService imageService) {
         if (jsonData.has("images")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing images...");
             jsonData.getJSONArray("images").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var imageId = UUID.fromString(jsonObject.getString("imageId"));
@@ -152,17 +178,21 @@ public final class JSONImporter {
                         ImageUtil.storeImage(image, path);
                         imageService.storeImage(image);
                     } catch (final IOException e) {
-                        LOGGER.error("Failed to import image: {}", e.getMessage());
+                        importerLog.error("Failed to import image: %s".formatted(e.getMessage()));
                     }
                 }
+                counter.incrementAndGet();
             });
+            importerLog.info("...finished importing %d images.".formatted(counter.get()));
         } else {
-            LOGGER.warn("No images found in JSON data.");
+            importerLog.warn("No images found in JSON data.");
         }
     }
 
     public void importCommunities(final @NotNull CommunityService communityService) {
         if (jsonData.has("communities")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing communities...");
             jsonData.getJSONArray("communities").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var communityId = UUID.fromString(jsonObject.getString("communityId"));
@@ -174,14 +204,18 @@ public final class JSONImporter {
                 final var community = new CommunityDto(communityId, profile, null, null,
                         name, description, imageId);
                 communityService.storeCommunity(community);
+                counter.incrementAndGet();
             });
+            importerLog.info("...finished importing %d communities.".formatted(counter.get()));
         } else {
-            LOGGER.warn("No communities found in JSON data.");
+            importerLog.warn("No communities found in JSON data.");
         }
     }
 
     public void importEvents(final @NotNull EventService eventService) {
         if (jsonData.has("events")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing events...");
             jsonData.getJSONArray("events").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var eventId = UUID.fromString(jsonObject.getString("eventId"));
@@ -198,14 +232,18 @@ public final class JSONImporter {
                 final var event = new EventDto(eventId, communityId, null, null,
                         title, description, location, begin, end, imageId, visibility, status);
                 eventService.storeEvent(event);
+                counter.incrementAndGet();
             });
+            importerLog.info("...finished importing %d events.".formatted(counter.get()));
         } else {
-            LOGGER.warn("No events found in JSON data.");
+            importerLog.warn("No events found in JSON data.");
         }
     }
 
     public void importGlobalPages(final @NotNull GlobalPageService globalPageService) {
         if (jsonData.has("globalPages")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing global pages...");
             jsonData.getJSONArray("globalPages").forEach(object -> {
                 final var jsonObject = (JSONObject) object;
                 final var slot = jsonObject.getString("slot").trim();
@@ -215,9 +253,11 @@ public final class JSONImporter {
 
                 final var globalPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
                 globalPageService.storeGlobalPage(globalPage);
+                counter.incrementAndGet();
             });
+            importerLog.info("...finished importing %d global pages.".formatted(counter.get()));
         } else {
-            LOGGER.warn("No global pages found in JSON data.");
+            importerLog.warn("No global pages found in JSON data.");
         }
     }
 

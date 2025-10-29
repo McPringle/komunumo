@@ -21,6 +21,8 @@ import app.komunumo.data.dto.UserRole;
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Path;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ImporterViewBT extends BrowserTest {
@@ -29,14 +31,18 @@ class ImporterViewBT extends BrowserTest {
             "h2:has-text('Import Data')";
     private static final String IMPORTER_MENU_ITEM_SELECTOR =
             "vaadin-context-menu-item[role='menuitem']:has-text('Import Data')";
-    private static final String STATUS_TITLE_SELECTOR =
-            "h3:has-text('Import Status')";
-    private static final String STATUS_LIST_SELECTOR =
-            "ul.import-status";
+    private static final String IMPORT_LOG_TITLE_SELECTOR =
+            "h3:has-text('Import Log')";
+    private static final String IMPORT_LOG_LIST_SELECTOR =
+            "ul.import-log";
     private static final String IMPORTER_FINISHED_SELECTOR =
-            "li:has-text('Import finished')";
-    private static final String IMPORTER_FAILED_SELECTOR =
+            "li:has-text('...finished importing 2 global pages.')";
+    private static final String DOWNLOAD_FAILED_SELECTOR =
             "li:has-text('Failed to download JSON data from URL')";
+    private static final String VAADIN_UPLOAD_INPUT_SELECTOR =
+            "vaadin-upload input[type='file']";
+    private static final String IMPORT_LOG_CONTAINER_SELECTOR =
+            "#import-log-container";
 
     @Test
     void noImportForAnonymousVisitors() {
@@ -97,7 +103,7 @@ class ImporterViewBT extends BrowserTest {
     }
 
     @Test
-    void importerWorksWithAdminPermissions() throws InterruptedException {
+    void importerWorksWithURL() throws InterruptedException {
         login(getTestUser(UserRole.ADMIN));
         final var page = getPage();
 
@@ -106,17 +112,17 @@ class ImporterViewBT extends BrowserTest {
             page.navigate(getInstanceUrl() + "events");
             page.waitForURL("**/events");
             page.waitForSelector(getInstanceNameSelector());
-            captureScreenshot("importerWorks_eventPageAfterLoad");
+            captureScreenshot("importerWorksWithURL_eventPageAfterLoad");
 
             // open avatar menu
             page.click(AVATAR_SELECTOR);
             page.waitForSelector(CONTEXT_MENU_SELECTOR);
-            captureScreenshot("importerWorks_avatarMenuOpened");
+            captureScreenshot("importerWorksWithURL_avatarMenuOpened");
 
             // open admin menu
             final var adminItem = page.locator(ADMIN_MENU_ITEM_SELECTOR);
             adminItem.click();
-            captureScreenshot("importerWorks_adminMenuOpened");
+            captureScreenshot("importerWorksWithURL_adminMenuOpened");
 
             // check that there is an importer menu item
             final var importerItem = page.locator(IMPORTER_MENU_ITEM_SELECTOR);
@@ -126,7 +132,7 @@ class ImporterViewBT extends BrowserTest {
             importerItem.click();
             page.waitForURL("**/admin/import");
             page.waitForSelector(IMPORTER_SELECTOR);
-            captureScreenshot("importerWorks_importerViewLoaded");
+            captureScreenshot("importerWorksWithURL_importerViewLoaded");
 
             // URL field should be empty
             final var urlField = page.locator("vaadin-text-field.url-field");
@@ -137,12 +143,13 @@ class ImporterViewBT extends BrowserTest {
             final var startImportButton = page.locator("vaadin-button.start-import-button");
             assertThat(startImportButton.isEnabled()).isFalse();
 
-            // status infos should be hidden
-            final var statusTitle = page.locator(STATUS_TITLE_SELECTOR);
-            assertThat(statusTitle.isVisible()).isFalse();
-            final var statusList = page.locator(STATUS_LIST_SELECTOR);
-            assertThat(statusList.isVisible()).isFalse();
-            assertThat(statusList.locator("li").count()).isZero();
+            // import log container should not be visible
+            final var importLogContainer = page.locator(IMPORT_LOG_CONTAINER_SELECTOR);
+            assertThat(importLogContainer.isVisible()).isFalse();
+
+            // there should be no logs visible
+            final var logList = page.locator(IMPORT_LOG_LIST_SELECTOR);
+            assertThat(logList.locator("li").count()).isZero();
 
             // fill in URL field
             urlFieldInput.fill("http://localhost:8082/import/data.json");
@@ -153,25 +160,18 @@ class ImporterViewBT extends BrowserTest {
 
             // click start import button
             startImportButton.click();
-            Thread.sleep(100); // wait for all UI animations to finish
+            captureScreenshot("importerWorksWithURL_afterStartImportButtonClick");
 
-            // URL field and button should be disabled during import
-            assertThat(urlFieldInput.isEnabled()).isFalse();
-            assertThat(startImportButton.isEnabled()).isFalse();
+            // log container should be visible
+            assertThat(importLogContainer.isVisible()).isTrue();
 
-            // status infos should be visible
-            assertThat(statusTitle.isVisible()).isTrue();
-            assertThat(statusList.isVisible()).isTrue();
-            assertThat(statusList.locator("li").count()).isGreaterThan(0);
+            // there should be logs available
+            assertThat(logList.locator("li").count()).isGreaterThan(0);
 
             // wait for import to finish
             page.waitForSelector(IMPORTER_FINISHED_SELECTOR);
             Thread.sleep(100); // wait for all UI animations to finish
-            captureScreenshot("importerWorks_importerFinished");
-
-            // URL field and button should be enabled again after import
-            assertThat(urlFieldInput.isEnabled()).isTrue();
-            assertThat(startImportButton.isEnabled()).isTrue();
+            captureScreenshot("importerWorksWithURL_importerFinished");
 
             // empty URL field again
             urlFieldInput.fill("");
@@ -179,7 +179,6 @@ class ImporterViewBT extends BrowserTest {
 
             // start import button should be disabled again
             assertThat(startImportButton.isEnabled()).isFalse();
-
         } finally {
             logout();
         }
@@ -191,28 +190,8 @@ class ImporterViewBT extends BrowserTest {
         final var page = getPage();
 
         try {
-            // navigate to events page
-            page.navigate(getInstanceUrl() + "events");
-            page.waitForURL("**/events");
-            page.waitForSelector(getInstanceNameSelector());
-            captureScreenshot("incorrectURL_eventPageAfterLoad");
-
-            // open avatar menu
-            page.click(AVATAR_SELECTOR);
-            page.waitForSelector(CONTEXT_MENU_SELECTOR);
-            captureScreenshot("incorrectURL_avatarMenuOpened");
-
-            // open admin menu
-            final var adminItem = page.locator(ADMIN_MENU_ITEM_SELECTOR);
-            adminItem.click();
-            captureScreenshot("incorrectURL_adminMenuOpened");
-
-            // check that there is an importer menu item
-            final var importerItem = page.locator(IMPORTER_MENU_ITEM_SELECTOR);
-            assertThat(importerItem.isVisible()).isTrue();
-
-            // click on importer menu item
-            importerItem.click();
+            // navigate to importer page
+            page.navigate(getInstanceUrl() + "admin/import");
             page.waitForURL("**/admin/import");
             page.waitForSelector(IMPORTER_SELECTOR);
             captureScreenshot("incorrectURL_importerViewLoaded");
@@ -232,19 +211,59 @@ class ImporterViewBT extends BrowserTest {
             Thread.sleep(100); // wait for all UI animations to finish
 
             // wait for import to fail
-            page.waitForSelector(IMPORTER_FAILED_SELECTOR);
+            page.waitForSelector(DOWNLOAD_FAILED_SELECTOR);
             Thread.sleep(100); // wait for all UI animations to finish
             captureScreenshot("incorrectURL_importerFailed");
 
-            // check status infos
-            final var statusTitle = page.locator(STATUS_TITLE_SELECTOR);
-            assertThat(statusTitle.isVisible()).isTrue();
-            final var statusList = page.locator(STATUS_LIST_SELECTOR);
-            assertThat(statusList.isVisible()).isTrue();
-            assertThat(statusList.locator("li").count()).isGreaterThan(0);
-
+            // check logs
+            final var logTitle = page.locator(IMPORT_LOG_TITLE_SELECTOR);
+            assertThat(logTitle.isVisible()).isTrue();
+            final var logList = page.locator(IMPORT_LOG_LIST_SELECTOR);
+            assertThat(logList.isVisible()).isTrue();
+            assertThat(logList.locator("li").count()).isGreaterThan(0);
         } finally {
             logout();
         }
     }
+
+    @Test
+    void importerWorksWithUpload() throws InterruptedException {
+        login(getTestUser(UserRole.ADMIN));
+        final var page = getPage();
+
+        try {
+            // navigate to importer page
+            page.navigate(getInstanceUrl() + "admin/import");
+            page.waitForURL("**/admin/import");
+            page.waitForSelector(IMPORTER_SELECTOR);
+            captureScreenshot("importerWorksWithUpload_importerViewLoaded");
+
+            // import log container should not be visible
+            final var importLogContainer = page.locator(IMPORT_LOG_CONTAINER_SELECTOR);
+            assertThat(importLogContainer.isVisible()).isFalse();
+
+            // there should be no logs visible
+            final var logList = page.locator(IMPORT_LOG_LIST_SELECTOR);
+            assertThat(logList.locator("li").count()).isZero();
+
+            // upload a file
+            final var uploadInput = page.locator(VAADIN_UPLOAD_INPUT_SELECTOR);
+            uploadInput.setInputFiles(Path.of("src/test/resources/import/data.json"));
+            Thread.sleep(100); // wait for all UI animations to finish
+
+            // log container should be visible
+            assertThat(importLogContainer.isVisible()).isTrue();
+
+            // there should be logs available
+            assertThat(logList.locator("li").count()).isGreaterThan(0);
+
+            // wait for import to finish
+            page.waitForSelector(IMPORTER_FINISHED_SELECTOR);
+            Thread.sleep(100); // wait for all UI animations to finish
+            captureScreenshot("importerWorksWithUpload_importerFinished");
+        } finally {
+            logout();
+        }
+    }
+
 }

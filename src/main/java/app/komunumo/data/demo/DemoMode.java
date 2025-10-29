@@ -18,6 +18,7 @@
 package app.komunumo.data.demo;
 
 import app.komunumo.configuration.AppConfig;
+import app.komunumo.data.importer.ImporterLog;
 import app.komunumo.data.importer.JSONImporter;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
@@ -94,7 +95,7 @@ public final class DemoMode {
         LOGGER.info("Existing data deleted.");
 
         LOGGER.info("Importing demo data...");
-        final var demoDataImporter = new JSONImporter(jsonDataUrl);
+        final var demoDataImporter = new JSONImporter(new ImporterLog(null), jsonDataUrl);
         demoDataImporter.importSettings(configurationService);
         demoDataImporter.importImages(imageService);
         demoDataImporter.importUsers(userService);

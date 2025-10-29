@@ -17,6 +17,7 @@
  */
 package app.komunumo.ui.views.admin.importer;
 
+import app.komunumo.data.importer.ImporterLog;
 import app.komunumo.data.importer.JSONImporter;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
@@ -32,12 +33,18 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.UnorderedList;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.upload.Upload;
+import com.vaadin.flow.component.upload.UploadI18N;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.streams.UploadHandler;
+import com.vaadin.flow.server.streams.UploadMetadata;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.concurrent.CompletableFuture;
 
 @RolesAllowed("ADMIN")
@@ -51,10 +58,15 @@ public final class ImporterView extends AbstractView {
     private final @NotNull EventService eventService;
     private final @NotNull GlobalPageService globalPageService;
 
+    private final @NotNull UI ui;
     private final @NotNull TextField urlField;
     private final @NotNull Button importButton;
-    private final @NotNull H3 importStatusTitle;
-    private final @NotNull UnorderedList importStatus;
+    private final @NotNull UnorderedList importLog;
+
+    private final @NotNull VerticalLayout importFieldsContainer;
+    private final @NotNull VerticalLayout importLogContainer;
+
+    private File uploadFile = null;
 
     public ImporterView(final @NotNull ConfigurationService configurationService,
                         final @NotNull ImageService imageService,
@@ -70,85 +82,96 @@ public final class ImporterView extends AbstractView {
         this.communityService = communityService;
         this.eventService = eventService;
         this.globalPageService = globalPageService;
+        this.ui = UI.getCurrent();
 
-        addClassName("importer-view");
-        add(new H2(getTranslation("ui.views.admin.importer.ImporterView.title")));
+        final var uploadHandler = UploadHandler
+                .toTempFile(this::processUploadSuccess);
+
+        final var uploadI18N = new UploadI18N();
+        uploadI18N.setAddFiles(new UploadI18N.AddFiles().setOne(
+                getTranslation("ui.views.admin.importer.ImporterView.uploadButton")));
+        uploadI18N.setDropFiles(new UploadI18N.DropFiles().setOne(
+                getTranslation("ui.views.admin.importer.ImporterView.uploadDrop")));
+        uploadI18N.setError(new UploadI18N.Error().setIncorrectFileType(
+                getTranslation("ui.views.admin.importer.ImporterView.uploadIncorrectFileType")));
+
+        final var uploadField = new Upload(uploadHandler);
+        uploadField.setSizeFull();
+        uploadField.setMaxFiles(1);
+        uploadField.setAcceptedFileTypes("application/json", ".json");
+        uploadField.setI18n(uploadI18N);
 
         urlField = new TextField();
         urlField.setValueChangeMode(ValueChangeMode.EAGER);
         urlField.setPlaceholder(getTranslation("ui.views.admin.importer.ImporterView.urlFieldPlaceholder"));
         urlField.setWidthFull();
         urlField.addClassName("url-field");
-        add(urlField);
 
         importButton = new Button(getTranslation("ui.views.admin.importer.ImporterView.startImportButton"));
         importButton.setEnabled(false);
         importButton.addClassName("start-import-button");
-        add(importButton);
+        importButton.addClickListener(_ -> processImport());
+
+        final var importLogTitle = new H3(getTranslation("ui.views.admin.importer.ImporterView.importLogTitle"));
+        importLog = new UnorderedList();
+        importLog.addClassName("import-log");
 
         urlField.addValueChangeListener(valueChangeEvent ->
                 importButton.setEnabled(!valueChangeEvent.getValue().isBlank()));
 
-        importStatusTitle = new H3(getTranslation("ui.views.admin.importer.ImporterView.importStatus"));
-        importStatusTitle.setVisible(false);
-        add(importStatusTitle);
+        addClassName("importer-view");
+        add(new H2(getTranslation("ui.views.admin.importer.ImporterView.title")));
 
-        importStatus = new UnorderedList();
-        importStatus.addClassName("import-status");
-        add(importStatus);
+        importFieldsContainer = new VerticalLayout();
+        importFieldsContainer.setId("import-fields-container");
+        importFieldsContainer.add(uploadField);
+        importFieldsContainer.add(urlField);
+        importFieldsContainer.add(importButton);
+        add(importFieldsContainer);
 
-        importButton.addClickListener(_ -> processImport());
+        importLogContainer = new VerticalLayout();
+        importLogContainer.setId("import-log-container");
+        importLogContainer.add(importLogTitle);
+        importLogContainer.add(importLog);
+        importLogContainer.setVisible(false);
+        add(importLogContainer);
+    }
+
+    private void processUploadSuccess(final @NotNull UploadMetadata metadata, final @NotNull File file) {
+        file.deleteOnExit();
+        uploadFile = file;
+        processImport();
     }
 
     private void processImport() {
-        importButton.setEnabled(false);
-        urlField.setEnabled(false);
-        importStatusTitle.setVisible(true);
-        importStatus.removeAll();
-        importStatus.add(new ListItem(getTranslation("ui.views.admin.importer.ImporterView.status.importStatus")));
-
-        final var ui = UI.getCurrent();
-        final var jsonDataUrl = urlField.getValue();
+        importFieldsContainer.setEnabled(false);
+        importLogContainer.setVisible(true);
+        final var importerLog = new ImporterLog((message) ->
+                ui.access(() -> importLog.add(new ListItem(message))));
         CompletableFuture
                 .runAsync(() -> {
-                    final var jsonImporter = new JSONImporter(jsonDataUrl);
+                    final var jsonDataUrl = urlField.getValue();
+                    final var jsonImporter = uploadFile == null
+                            ? new JSONImporter(importerLog, jsonDataUrl)
+                            : new JSONImporter(importerLog, uploadFile);
 
-                    ui.access(() -> importStatus.add(new ListItem(
-                            getTranslation("ui.views.admin.importer.ImporterView.status.importSettings"))));
                     jsonImporter.importSettings(configurationService);
-
-                    ui.access(() -> importStatus.add(new ListItem(
-                            getTranslation("ui.views.admin.importer.ImporterView.status.importImages"))));
                     jsonImporter.importImages(imageService);
-
-                    ui.access(() -> importStatus.add(new ListItem(
-                            getTranslation("ui.views.admin.importer.ImporterView.status.importUsers"))));
                     jsonImporter.importUsers(userService);
-
-                    ui.access(() -> importStatus.add(new ListItem(
-                            getTranslation("ui.views.admin.importer.ImporterView.status.importCommunities"))));
                     jsonImporter.importCommunities(communityService);
-
-                    ui.access(() -> importStatus.add(new ListItem(
-                            getTranslation("ui.views.admin.importer.ImporterView.status.importEvents"))));
                     jsonImporter.importEvents(eventService);
-
-                    ui.access(() -> importStatus.add(new ListItem(
-                            getTranslation("ui.views.admin.importer.ImporterView.status.importGlobalPages"))));
                     jsonImporter.importGlobalPages(globalPageService);
                 })
                 .thenRunAsync(() -> ui.access(() -> {
-                    importStatus.add(new ListItem(
-                            getTranslation("ui.views.admin.importer.ImporterView.status.importFinished")));
-                    importButton.setEnabled(true);
-                    urlField.setEnabled(true);
+                    if (uploadFile != null) {
+                        //noinspection ResultOfMethodCallIgnored
+                        uploadFile.delete();
+                        uploadFile = null;
+                    }
+                    importFieldsContainer.setEnabled(true);
                 }))
-                .exceptionally(exception -> {
-                    ui.access(() -> {
-                        importStatus.add(new ListItem(exception.getCause().getMessage()));
-                        importButton.setEnabled(true);
-                        urlField.setEnabled(true);
-                    });
+                .exceptionally(_ -> {
+                    ui.access(() -> importFieldsContainer.setEnabled(true));
                     return null;
                 });
     }
