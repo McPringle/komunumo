@@ -16,12 +16,19 @@ services:
         source: ${MARIADB_DATA}
         target: /var/lib/mysql
 
-  adminer:
-    image: docker.io/adminer
-    container_name: adminer
+  phpmyadmin:
+    image: docker.io/phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
     restart: unless-stopped
     ports:
-      - "4000:8080"
+      - "4000:80"
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_USER: ${MARIADB_USER}
+      PMA_PASSWORD: ${MARIADB_PASSWORD}
+      # UPLOAD_LIMIT: 512M
+      # MEMORY_LIMIT: 512M
     depends_on:
       - mariadb
 
