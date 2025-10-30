@@ -247,12 +247,13 @@ The following services will be available:
 
 - MariaDB on Port 3306 with persistent data in `mariadb-data`.  
   The database user will be `komunumo` with the password `komunumo`. The database name is also `komunumo`.
-- Adminer (database web UI) on port [4000](http://localhost:4000/)
+- phpMyAdmin (database web UI) on port [4000](http://localhost:4000/)
 - Mailpit (SMTP server) on port 1025, web UI on port [8025](http://localhost:8025), persistent data in `mailpit-data`
 
-**Important:** This setup is for development only and not suitable for production use.
+> [!IMPORTANT]  
+> This setup is for development only and not suitable for production use.
 
-**Adminer Login Information**
+**MariaDB Login Information**
 
 | Field    | Value           |
 |----------|-----------------|
