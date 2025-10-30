@@ -29,6 +29,7 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.findComponent;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,7 +82,7 @@ class CommunityDetailViewKT extends KaribuTest {
     }
 
     @Test
-    void communityWithEventsShown() {
+    void communityWithFutureEventsShown() {
         UI.getCurrent().navigate("communities/@demoCommunity3");
 
         final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
@@ -94,6 +95,42 @@ class CommunityDetailViewKT extends KaribuTest {
 
         final var eventCard = eventCards.getFirst();
         _get(eventCard, Image.class, spec -> spec.withAttribute("alt", "Demo Event 3"));
+
+        final var eventTabs = _get(TabSheet.class);
+        assertThat(eventTabs).isNotNull();
+        eventTabs.setSelectedIndex(1);
+
+        final var tabLabel = eventTabs.getSelectedTab().getLabel();
+        assertThat(tabLabel).isEqualTo("Past Events");
+
+        final var tabContent = _get(eventTabs, Paragraph.class);
+        assertThat(tabContent.getText()).isEqualTo("No past events");
+    }
+
+    @Test
+    void communityWithPastEventsShown() {
+        UI.getCurrent().navigate("communities/@demoCommunity1");
+
+        final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
+        assertThat(h2).isNotNull();
+        assertThat(h2.getText()).isEqualTo("Demo Community 1");
+
+        final var eventTabs = _get(TabSheet.class);
+        assertThat(eventTabs).isNotNull();
+        final var tabContent = _get(eventTabs, Paragraph.class);
+        assertThat(tabContent.getText()).isEqualTo("No events are currently planned");
+
+        eventTabs.setSelectedIndex(1);
+
+        final var tabLabel = eventTabs.getSelectedTab().getLabel();
+        assertThat(tabLabel).isEqualTo("Past Events");
+
+        var eventGrid = _get(EventGrid.class);
+        var eventCards = _find(eventGrid, EventCard.class);
+        assertThat(eventCards).hasSize(1);
+
+        final var eventCard = eventCards.getFirst();
+        _get(eventCard, Image.class, spec -> spec.withAttribute("alt", "Demo Event 1"));
     }
 
     @Test
