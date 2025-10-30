@@ -186,13 +186,13 @@
   "images": [
     {
       "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
-      "contentType": "image/svg+xml",
-      "url": "https://www.quatico.com/4a5d6bfe8ffdba447213.svg"
+      "contentType": "image/png",
+      "url": "http://localhost:8082/import/test.png"
     },
     {
       "imageId": "4ca05a55-de1e-4571-a833-c9e5e4f4bfba",
-      "contentType": "image/svg+xml",
-      "url": "https://www.quatico.com/4a5d6bfe8ffdba447213.svg"
+      "contentType": "image/png",
+      "url": "http://localhost:8082/import/test.png"
     },
     {
       "imageId": "d7bd2d09-3310-4e37-ad0a-c7c4c43389ad",
