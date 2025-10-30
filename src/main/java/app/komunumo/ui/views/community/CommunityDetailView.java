@@ -123,6 +123,9 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         tabEvents.add(
                 getTranslation(locale, "ui.views.community.CommunityDetailView.upcomingEvents"),
                 getUpcomingEventsComponent(community, locale));
+        tabEvents.add(
+                getTranslation(locale, "ui.views.community.CommunityDetailView.pastEvents"),
+                getPastEventsComponent(community, locale));
         tabEvents.setWidthFull();
         pageContent.add(tabEvents);
     }
@@ -132,6 +135,15 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         final var events = eventService.getUpcomingEventsWithImage(community);
         if (events.isEmpty()) {
             return new Paragraph(getTranslation(locale, "ui.views.community.CommunityDetailView.noUpcomingEvents"));
+        }
+        return new EventGrid(events);
+    }
+
+    private Component getPastEventsComponent(final @NotNull CommunityDto community,
+                                                 final @NotNull Locale locale) {
+        final var events = eventService.getPastEventsWithImage(community);
+        if (events.isEmpty()) {
+            return new Paragraph(getTranslation(locale, "ui.views.community.CommunityDetailView.noPastEvents"));
         }
         return new EventGrid(events);
     }
