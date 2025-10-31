@@ -299,7 +299,7 @@ After starting the script, logs will be shown. To stop the services, press `Ctrl
 *Komunumo* is configured using environment variables. At minimum, the following must be set:
 
 ```env
-KOMUNUMO_INSTANCE_ADMIN=root@localhost
+KOMUNUMO_INSTANCE_ADMIN=admin@example.com
 KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone=Europe/Zurich&allowMultiQueries=true
 KOMUNUMO_DB_USER=komunumo
 KOMUNUMO_DB_PASS=komunumo
