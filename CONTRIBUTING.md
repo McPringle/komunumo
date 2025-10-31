@@ -207,6 +207,35 @@ Make sure the following tools are installed:
 - Java LTS (currently version 25) - check with `java -version`
 - Podman or Docker
 
+#### Important Podman Information
+
+If you are using Podman on Linux, you need to enable the `podman.socket` systemd service.
+This allows non-root users to run Podman commands without `sudo`.
+
+You can enable it with the following command:
+
+```bash
+systemctl --user enable --now podman.socket
+```
+
+This command starts the Podman socket for your user and ensures it automatically starts on login.
+Once enabled, you can use Podman just like Docker, without elevated privileges.
+
+To make sure that Testcontainers can connect to your Podman socket, set the following environment variables in your shell:
+
+```bash
+ export DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
+ export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/user/1000/podman/podman.sock
+ export TESTCONTAINERS_RYUK_CONTAINER_PRIVILEGED=true
+```
+
+Replace `1000` with your actual user ID if it differs.
+You can find your user ID by running:
+
+```bash
+id -u
+```
+
 ### Clone and Verify
 
 1. Fork the [Komunumo repository](https://github.com/McPringle/komunumo) on GitHub.
