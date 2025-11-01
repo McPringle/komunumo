@@ -27,6 +27,7 @@ Special thanks for all these wonderful people who had helped this project so far
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/smzoha"><img src="https://avatars.githubusercontent.com/u/8037665?v=4?s=100" width="100px;" alt="Shamah M Zoha"/><br /><sub><b>Shamah M Zoha</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=smzoha" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/LinuxSquare"><img src="https://avatars.githubusercontent.com/u/39629672?v=4?s=100" width="100px;" alt="LinuxSquare"/><br /><sub><b>LinuxSquare</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=LinuxSquare" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
