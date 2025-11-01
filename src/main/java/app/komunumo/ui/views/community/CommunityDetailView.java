@@ -119,13 +119,28 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         description.addClassName("community-description");
         pageContent.add(description);
 
+        final var upcomingEventsPlaceholder = new Div();
+        upcomingEventsPlaceholder.add(getUpcomingEventsComponent(community, locale));
+        final var pastEventsPlaceholder = new Div();
+
         final var tabEvents = new TabSheet();
         tabEvents.add(
                 getTranslation(locale, "ui.views.community.CommunityDetailView.upcomingEvents"),
-                getUpcomingEventsComponent(community, locale));
-        tabEvents.add(
+                upcomingEventsPlaceholder);
+        final var pastEventsTab = tabEvents.add(
                 getTranslation(locale, "ui.views.community.CommunityDetailView.pastEvents"),
-                getPastEventsComponent(community, locale));
+                pastEventsPlaceholder);
+
+        tabEvents.addSelectedChangeListener(changeEvent -> {
+            if (changeEvent.getSelectedTab() == pastEventsTab) {
+                pastEventsPlaceholder.removeAll();
+                pastEventsPlaceholder.add(getPastEventsComponent(community, locale));
+            } else {
+                upcomingEventsPlaceholder.removeAll();
+                upcomingEventsPlaceholder.add(getUpcomingEventsComponent(community, locale));
+            }
+        });
+
         tabEvents.setWidthFull();
         pageContent.add(tabEvents);
     }
