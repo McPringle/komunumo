@@ -29,7 +29,6 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.findComponent;
-import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -116,14 +115,10 @@ class CommunityDetailViewKT extends KaribuTest {
         assertThat(h2.getText()).isEqualTo("Demo Community 1");
 
         final var eventTabs = _get(TabSheet.class);
-        assertThat(eventTabs).isNotNull();
-        final var tabContent = _get(eventTabs, Paragraph.class);
-        assertThat(tabContent.getText()).isEqualTo("No events are currently planned");
+        assertThat(_get(eventTabs, Paragraph.class).getText()).isEqualTo("No events are currently planned");
 
         eventTabs.setSelectedIndex(1);
-
-        final var tabLabel = eventTabs.getSelectedTab().getLabel();
-        assertThat(tabLabel).isEqualTo("Past Events");
+        assertThat(eventTabs.getSelectedTab().getLabel()).isEqualTo("Past Events");
 
         var eventGrid = _get(EventGrid.class);
         var eventCards = _find(eventGrid, EventCard.class);
@@ -131,6 +126,16 @@ class CommunityDetailViewKT extends KaribuTest {
 
         final var eventCard = eventCards.getFirst();
         _get(eventCard, Image.class, spec -> spec.withAttribute("alt", "Demo Event 1"));
+    }
+
+    @Test
+    void communityEventsTabSwitchMultipleTimesForCoverage() {
+        UI.getCurrent().navigate("communities/@demoCommunity1");
+        final var eventTabs = _get(TabSheet.class);
+        for (int i = 0; i < 3; i++) {
+            eventTabs.setSelectedIndex(1);
+            eventTabs.setSelectedIndex(0);
+        }
     }
 
     @Test
