@@ -109,6 +109,10 @@ public final class EventService extends StorageService {
                 .fetch(record -> mapRecordToEventWithImage(record, communityImage));
     }
 
+    public @NotNull List<@NotNull EventWithImageDto> getPastEventsWithImage() {
+        return getPastEventsWithImage(null);
+    }
+
     public @NotNull List<@NotNull EventWithImageDto> getPastEventsWithImage(final @Nullable CommunityDto community) {
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
         var communityImage = IMAGE.as("COMMUNITY_IMAGE");
