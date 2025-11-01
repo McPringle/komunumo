@@ -109,6 +109,29 @@ public final class EventService extends StorageService {
                 .fetch(record -> mapRecordToEventWithImage(record, communityImage));
     }
 
+    public @NotNull List<@NotNull EventWithImageDto> getPastEventsWithImage() {
+        return getPastEventsWithImage(null);
+    }
+
+    public @NotNull List<@NotNull EventWithImageDto> getPastEventsWithImage(final @Nullable CommunityDto community) {
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        var communityImage = IMAGE.as("COMMUNITY_IMAGE");
+        return dsl.select()
+                .from(EVENT)
+                .leftJoin(IMAGE).on(EVENT.IMAGE_ID.eq(IMAGE.ID))
+                .leftJoin(COMMUNITY).on(EVENT.COMMUNITY_ID.eq(COMMUNITY.ID))
+                .leftJoin(communityImage).on(COMMUNITY.IMAGE_ID.eq(communityImage.ID))
+                .where(
+                        EVENT.BEGIN.isNotNull()
+                                .and(EVENT.END.isNotNull())
+                                .and(EVENT.END.lt(now))
+                                .and(EVENT.VISIBILITY.eq(EventVisibility.PUBLIC))
+                                .and(EVENT.STATUS.in(EventStatus.PUBLISHED, EventStatus.CANCELED))
+                                .and(community != null ? EVENT.COMMUNITY_ID.eq(community.id()) : noCondition()))
+                .orderBy(EVENT.BEGIN.desc())
+                .fetch(record -> mapRecordToEventWithImage(record, communityImage));
+    }
+
     private @NotNull EventWithImageDto mapRecordToEventWithImage(final @NotNull Record record,
                                                                  final @NotNull Image communityImage) {
         final ImageDto image;
