@@ -146,16 +146,52 @@ class EventServiceKT extends KaribuTest {
     }
 
     @Test
+    void getPastEventsWithImages() {
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        final var pastEvents = eventService.getPastEventsWithImage();
+        assertThat(pastEvents).hasSize(2);
+        assertThat(pastEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::title)
+                .containsExactly("Demo Event 2", "Demo Event 1");
+        assertThat(pastEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::end)
+                .allSatisfy(endDate -> assertThat(endDate).isBefore(now));
+        assertThat(pastEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::visibility)
+                .allSatisfy(visibility -> assertThat(visibility).isEqualTo(EventVisibility.PUBLIC));
+        assertThat(pastEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::status)
+                .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
+    }
+
+    @Test
     void getUpcomingEventsWithImagesFilteredByCommunityWithNull() {
         final var upcomingEvents = eventService.getUpcomingEventsWithImage(null);
         assertThat(upcomingEvents).hasSize(3);
     }
 
     @Test
+    void getPastEventsWithImagesFilteredByCommunityWithNull() {
+        final var pastEvents = eventService.getPastEventsWithImage(null);
+        assertThat(pastEvents).hasSize(2);
+    }
+
+    @Test
     void getUpcomingEventsWithImagesFilteredByCommunityWithNoEventShown() {
-        final var community = communityService.getCommunities().getFirst();
+        final var community = communityService.getCommunityWithImage("@demoCommunity1").orElseThrow().community();
         final var upcomingEvents = eventService.getUpcomingEventsWithImage(community);
         assertThat(upcomingEvents).isEmpty();
+    }
+
+    @Test
+    void getPastEventsWithImagesFilteredByCommunityWithNoEventShown() {
+        final var community = communityService.getCommunityWithImage("@demoCommunity3").orElseThrow().community();
+        final var pastEvents = eventService.getPastEventsWithImage(community);
+        assertThat(pastEvents).isEmpty();
     }
 
     @Test
@@ -177,6 +213,30 @@ class EventServiceKT extends KaribuTest {
                 .extracting(EventDto::visibility)
                 .allSatisfy(visibility -> assertThat(visibility).isEqualTo(EventVisibility.PUBLIC));
         assertThat(upcomingEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::status)
+                .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
+    }
+
+    @Test
+    void getPastEventsWithImagesFilteredByCommunityWithOneEventShown() {
+        final var now = ZonedDateTime.now(ZoneOffset.UTC);
+        final var community = communityService.getCommunities().getFirst();
+        final var pastEvents = eventService.getPastEventsWithImage(community);
+        assertThat(pastEvents).hasSize(1);
+        assertThat(pastEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::title)
+                .containsExactly("Demo Event 1");
+        assertThat(pastEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::end)
+                .allSatisfy(endDate -> assertThat(endDate).isBefore(now));
+        assertThat(pastEvents)
+                .extracting(EventWithImageDto::event)
+                .extracting(EventDto::visibility)
+                .allSatisfy(visibility -> assertThat(visibility).isEqualTo(EventVisibility.PUBLIC));
+        assertThat(pastEvents)
                 .extracting(EventWithImageDto::event)
                 .extracting(EventDto::status)
                 .allSatisfy(status -> assertThat(status).isIn(EventStatus.PUBLISHED, EventStatus.CANCELED));
