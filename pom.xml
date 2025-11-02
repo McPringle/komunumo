@@ -645,7 +645,7 @@
                 <executions>
                     <execution>
                         <id>generate-html-test-report</id>
-                        <phase>verify</phase>
+                        <phase>post-integration-test</phase>
                         <goals>
                             <goal>report-only</goal>
                         </goals>
