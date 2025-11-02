@@ -554,7 +554,7 @@
                     </execution>
 
                     <execution>
-                        <id>integration-test-karibu</id>
+                        <id>integration-tests-karibu</id>
 
                         <goals>
                             <goal>integration-test</goal>
@@ -588,7 +588,7 @@
                     </execution>
 
                     <execution>
-                        <id>integration-test-playwright</id>
+                        <id>integration-tests-playwright</id>
 
                         <goals>
                             <goal>integration-test</goal>
