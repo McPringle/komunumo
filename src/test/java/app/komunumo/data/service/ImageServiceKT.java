@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mockStatic;
 class ImageServiceKT extends KaribuTest {
 
     private static final @NotNull UUID ORPHANED_IMAGE_UUID = UUID.fromString("4ca05a55-de1e-4571-a833-c9e5e4f4bfba");
-    private static final @NotNull ContentType ORPHANED_IMAGE_CONTENT_TYPE = ContentType.IMAGE_PNG;
+    private static final @NotNull ContentType ORPHANED_IMAGE_CONTENT_TYPE = ContentType.IMAGE_SVG;
 
     @Autowired
     private @NotNull ImageService imageService;

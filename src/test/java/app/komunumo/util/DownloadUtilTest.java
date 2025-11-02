@@ -41,7 +41,8 @@ class DownloadUtilTest {
     @ValueSource(strings = {
             "http://localhost:8082/99",
             "http://localhost:8082/non-existing",
-            "http://localhost:8888/"
+            "http://localhost:8888/",
+            "data:invalid"
     })
     void shouldReturnNullForInvalidOrUnreachableUrls(final String url) {
         final var path = DownloadUtil.downloadFile(url);

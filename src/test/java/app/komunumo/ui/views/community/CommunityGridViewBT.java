@@ -57,7 +57,7 @@ class CommunityGridViewBT extends BrowserTest {
                 assertThat(imageSrc)
                         .as("expected to contain an image but was: " + imageSrc)
                         .startsWith("/images/")
-                        .endsWith(".png")
+                        .endsWith(".svg")
                         .doesNotContain("placeholder");
 
                 final var imageAlt = image.getAttribute("alt");
