@@ -26,12 +26,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Base64;
 
 public final class DownloadUtil {
 
@@ -49,6 +51,29 @@ public final class DownloadUtil {
         try {
             final var tempFile = Files.createTempFile("download-", ".tmp");
             tempFile.toFile().deleteOnExit();
+
+            if (location.startsWith("data:")) {
+                final var commaIndex = location.indexOf(',');
+                if (commaIndex < 0) {
+                    LOGGER.error("Invalid data URI: '{}'", location);
+                    Files.deleteIfExists(tempFile);
+                    return null;
+                }
+
+                final var metadata = location.substring(5, commaIndex); // skip "data:"
+                final var dataPart = location.substring(commaIndex + 1);
+                final var isBase64 = metadata.contains(";base64");
+
+                final byte[] data;
+                if (isBase64) {
+                    data = Base64.getDecoder().decode(dataPart);
+                } else {
+                    data = URLDecoder.decode(dataPart, StandardCharsets.UTF_8).getBytes(StandardCharsets.UTF_8);
+                }
+
+                Files.write(tempFile, data);
+                return tempFile;
+            }
 
             final HttpClient client = HttpClient.newHttpClient();
             final HttpRequest request = HttpRequest.newBuilder()

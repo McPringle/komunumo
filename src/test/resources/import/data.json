@@ -186,18 +186,18 @@
   "images": [
     {
       "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
-      "contentType": "image/png",
-      "url": "http://localhost:8082/import/test.png"
+      "contentType": "image/svg+xml",
+      "url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjI1IiB2aWV3Qm94PSIwIDAgNDAwIDIyNSIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJDb21tdW5pdHkgcGxhY2Vob2xkZXIiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJiZzEiIHgxPSIwIiB4Mj0iMCIgeTE9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2YzZjRmNiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNWU3ZWIiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSI0MDAiIGhlaWdodD0iMjI1IiBmaWxsPSJ1cmwoI2JnMSkiLz4KICA8cmVjdCB4PSIxMiIgeT0iMTIiIHdpZHRoPSIzNzYiIGhlaWdodD0iMjAxIiByeD0iMTYiIHJ5PSIxNiIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjY2JkNWUxIi8+CiAgPCEtLSBjb21tdW5pdHkgaWNvbjogdGhyZWUgcGVvcGxlIC0tPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIwMCwxMTApIj4KICAgIDwhLS0gY2VudGVyIGhlYWQgLS0+CiAgICA8Y2lyY2xlIGN4PSIwIiBjeT0iLTMwIiByPSIyMiIgZmlsbD0iIzI1NjNlYiIvPgogICAgPCEtLSBsZWZ0IGhlYWQgLS0+CiAgICA8Y2lyY2xlIGN4PSItNjAiIGN5PSItMTgiIHI9IjE4IiBmaWxsPSIjNjBhNWZhIi8+CiAgICA8IS0tIHJpZ2h0IGhlYWQgLS0+CiAgICA8Y2lyY2xlIGN4PSI2MCIgY3k9Ii0xOCIgcj0iMTgiIGZpbGw9IiM2MGE1ZmEiLz4KICAgIDwhLS0gc2hvdWxkZXJzIC0tPgogICAgPHBhdGggZD0iTSAtOTAsMzAgQyAtOTAsNSAtNTAsLTUgMCwtNSBDIDUwLC01IDkwLDUgOTAsMzAgTCA5MCw0NCBMIC05MCw0NCBaIiBmaWxsPSIjMWQ0ZWQ4IiBvcGFjaXR5PSIwLjkiLz4KICAgIDwhLS0gc2lkZSBzaG91bGRlcnMgLS0+CiAgICA8cGF0aCBkPSJNIC0xMTAsNDYgQyAtMTEwLDIyIC05MCwxMCAtNjAsMTAgQyAtMzAsMTAgLTEwLDIyIC0xMCw0NiBMIC0xMCw1NiBMIC0xMTAsNTYgWiIgZmlsbD0iIzNiODJmNiIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNIC0xMCw0NiBDIC0xMCwyMiAxMCwxMCA2MCwxMCBDIDkwLDEwIDExMCwyMiAxMTAsNDYgTCAxMTAsNTYgTCAgLTEwLDU2IFoiIGZpbGw9IiMzYjgyZjYiIG9wYWNpdHk9IjAuOSIvPgogIDwvZz4KICA8dGV4dCB4PSIyMDAiIHk9IjIwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiMzMzQxNTUiIGxldHRlci1zcGFjaW5nPSIwLjUiPkNvbW11bml0eTwvdGV4dD4KPC9zdmc+"
     },
     {
       "imageId": "4ca05a55-de1e-4571-a833-c9e5e4f4bfba",
-      "contentType": "image/png",
-      "url": "http://localhost:8082/import/test.png"
+      "contentType": "image/svg+xml",
+      "url": "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27100%27%20height%3D%2750%27%3E%3Crect%20width%3D%27100%27%20height%3D%2750%27%20fill%3D%27red%27/%3E%3C/svg%3E"
     },
     {
       "imageId": "d7bd2d09-3310-4e37-ad0a-c7c4c43389ad",
-      "contentType": "image/png",
-      "url": "http://localhost:8082/import/non-existing.png"
+      "contentType": "image/svg+xml",
+      "url": "http://localhost:8082/import/non-existing.svg"
     }
   ],
   "globalPages": [
