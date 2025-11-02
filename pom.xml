@@ -511,28 +511,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-
-                    <excludes>
-                        <exclude>**/*KT.java</exclude>
-                        <exclude>**/*BT.java</exclude>
-                    </excludes>
-
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
-
-                    <properties>
-                        <configurationParameters>
-                            junit.jupiter.execution.parallel.enabled = false
-                            junit.jupiter.execution.parallel.mode.default = same_thread
-                            junit.jupiter.execution.parallel.mode.classes.default = same_thread
-                        </configurationParameters>
-                    </properties>
-
-                    <trimStackTrace>false</trimStackTrace>
-                    <enableAssertions>true</enableAssertions>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
 
@@ -540,6 +519,40 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <id>unit-tests</id>
+
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+
+                        <configuration>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+
+                            <excludes>
+                                <exclude>**/*KT.java</exclude>
+                                <exclude>**/*BT.java</exclude>
+                            </excludes>
+
+                            <forkCount>1</forkCount>
+                            <reuseForks>true</reuseForks>
+
+                            <properties>
+                                <configurationParameters>
+                                    junit.jupiter.execution.parallel.enabled = false
+                                    junit.jupiter.execution.parallel.mode.default = same_thread
+                                    junit.jupiter.execution.parallel.mode.classes.default = same_thread
+                                </configurationParameters>
+                            </properties>
+
+                            <trimStackTrace>false</trimStackTrace>
+                            <enableAssertions>true</enableAssertions>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>integration-test-karibu</id>
 
@@ -748,7 +761,7 @@
                         </goals>
                         <configuration>
                             <destFile>${project.build.directory}/jacoco-it.exec</destFile>
-                            <append>true</append> <!-- There are two IT executions (Karibu + Playwright) -->
+                            <append>true</append> <!-- There are three executions (JUnit, Karibu, Playwright) -->
                         </configuration>
                     </execution>
                     <execution>
@@ -762,8 +775,7 @@
                                 <fileSet>
                                     <directory>${project.build.directory}</directory>
                                     <includes>
-                                        <include>jacoco-ut.exec</include>
-                                        <include>jacoco-it.exec</include>
+                                        <include>jacoco-*.exec</include>
                                     </includes>
                                 </fileSet>
                             </fileSets>
