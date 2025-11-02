@@ -555,7 +555,7 @@
 
                             <excludes>
                                 <exclude>**/*Test.java</exclude>
-                                <include>**/*BT.java</include>
+                                <exclude>**/*BT.java</exclude>
                             </excludes>
 
                             <forkCount>1</forkCount>
@@ -589,7 +589,7 @@
 
                             <excludes>
                                 <exclude>**/*Test.java</exclude>
-                                <include>**/*KT.java</include>
+                                <exclude>**/*KT.java</exclude>
                             </excludes>
 
                             <forkCount>1</forkCount>
