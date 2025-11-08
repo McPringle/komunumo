@@ -46,42 +46,42 @@ class ProfileFieldKT extends KaribuTest {
     void profileNameIsAvailable() {
         profileField.setValue("@available@example.com");
         final var message = _get(profileField, Paragraph.class);
-        assertThat(message.getText()).isEqualTo("✅ This profile name is available.");
+        assertThat(message.getText()).isEqualTo("This profile name is available.");
     }
 
     @Test
     void profileNameIsNotAvailable() {
         profileField.setValue("@taken@example.com");
         final var message = _get(profileField, Paragraph.class);
-        assertThat(message.getText()).isEqualTo("\uD83D\uDD34 This profile name is not available!");
+        assertThat(message.getText()).isEqualTo("This profile name is not available!");
     }
 
     @Test
     void profileNameIsTooShort() {
         profileField.setValue("@ab@example.com");
         final var message = _get(profileField, Paragraph.class);
-        assertThat(message.getText()).isEqualTo("\uD83D\uDD34 The profile name must be between 3 and 30 characters long!");
+        assertThat(message.getText()).isEqualTo("The profile name must be between 3 and 30 characters long!");
     }
 
     @Test
     void profileNameIsTooLong() {
         profileField.setValue("@abcdefghijklmnopqrstuvwxyz1234567890@example.com");
         final var message = _get(profileField, Paragraph.class);
-        assertThat(message.getText()).isEqualTo("\uD83D\uDD34 The profile name must be between 3 and 30 characters long!");
+        assertThat(message.getText()).isEqualTo("The profile name must be between 3 and 30 characters long!");
     }
 
     @Test
     void profileNameInvalidSyntax() {
         profileField.setValue("test@example.com");
         final var message = _get(profileField, Paragraph.class);
-        assertThat(message.getText()).isEqualTo("\uD83D\uDD34 The syntax of the profile name is invalid: test@example.com");
+        assertThat(message.getText()).isEqualTo("The syntax of the profile name is invalid: test@example.com");
     }
 
     @Test
     void profileNameInvalidDomain() {
         profileField.setValue("@test@foo.bar");
         final var message = _get(profileField, Paragraph.class);
-        assertThat(message.getText()).isEqualTo("\uD83D\uDD34 The domain name \"foo.bar\" is not the domain name of this instance (\"example.com\")!");
+        assertThat(message.getText()).isEqualTo("The domain name \"foo.bar\" is not the domain name of this instance (\"example.com\")!");
     }
 
     @Test

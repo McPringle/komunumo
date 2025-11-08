@@ -77,12 +77,12 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
 
     @SuppressWarnings("SameParameterValue")
     private void showSuccessMessage(final @NotNull String successMessage) {
-        message.setText("✅ %s".formatted(successMessage));
+        message.setText(successMessage);
         message.removeClassName("error");
     }
 
     private void showErrorMessage(final @NotNull String errorMessage) {
-        message.setText("\uD83D\uDD34 %s".formatted(errorMessage));
+        message.setText(errorMessage);
         message.addClassName("error");
     }
 
