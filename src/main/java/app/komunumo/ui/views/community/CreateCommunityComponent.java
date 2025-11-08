@@ -21,7 +21,9 @@ import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
 import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.MemberService;
+import app.komunumo.ui.components.ProfileField;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -42,14 +44,17 @@ import java.util.Objects;
 
 public class CreateCommunityComponent extends VerticalLayout {
 
+    private final @NotNull ConfigurationService configurationService;
     private final @NotNull CommunityService communityService;
     private final @NotNull MemberService memberService;
 
     private final Binder<CommunityDto> binder = new Binder<>(CommunityDto.class);
 
-    CreateCommunityComponent(final @NotNull CommunityService communityService,
+    CreateCommunityComponent(final @NotNull ConfigurationService configurationService,
+                             final @NotNull CommunityService communityService,
                              final @NotNull MemberService memberService) {
         super();
+        this.configurationService = configurationService;
         this.communityService = communityService;
         this.memberService = memberService;
 
@@ -58,16 +63,14 @@ public class CreateCommunityComponent extends VerticalLayout {
     }
 
     private @NotNull Component createAddCommunityComponent() {
-        final var profileField = new TextField();
-        profileField.setClassName("profile-field");
-        profileField.setValueChangeMode(ValueChangeMode.EAGER);
+        final var profileField = new ProfileField(configurationService, communityService::isProfileNameAvailable);
+        profileField.addClassName("profile-field");
         profileField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.profile"));
-        profileField.setMaxLength(255);
         profileField.setRequired(true);
         profileField.setWidthFull();
 
         final var nameField = new TextField();
-        nameField.setClassName("name-field");
+        nameField.addClassName("name-field");
         nameField.setValueChangeMode(ValueChangeMode.EAGER);
         nameField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.name"));
         nameField.setRequired(true);
@@ -75,7 +78,7 @@ public class CreateCommunityComponent extends VerticalLayout {
         nameField.setWidthFull();
 
         final var descriptionField = new TextArea();
-        descriptionField.setClassName("description-field");
+        descriptionField.addClassName("description-field");
         descriptionField.setValueChangeMode(ValueChangeMode.EAGER);
         descriptionField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.description"));
         descriptionField.setWidthFull();
@@ -116,7 +119,7 @@ public class CreateCommunityComponent extends VerticalLayout {
             }
         });
 
-        createButton.setClassName("create-button");
+        createButton.addClassName("create-button");
 
         final var container = new VerticalLayout(profileField, nameField, descriptionField, createButton);
         container.addClassName("community-add-component");

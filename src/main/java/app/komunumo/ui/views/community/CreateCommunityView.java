@@ -37,7 +37,7 @@ public class CreateCommunityView extends AbstractView {
         super(configurationService);
 
         add(new H2(getTranslation("ui.views.community.CreateCommunityView.title")));
-        add(new CreateCommunityComponent(communityService, memberService));
+        add(new CreateCommunityComponent(configurationService, communityService, memberService));
     }
 
     /**

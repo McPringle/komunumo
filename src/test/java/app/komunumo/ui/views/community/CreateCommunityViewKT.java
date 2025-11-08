@@ -19,6 +19,7 @@ package app.komunumo.ui.views.community;
 
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.ui.KaribuTest;
+import app.komunumo.ui.components.ProfileField;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -43,16 +44,7 @@ public class CreateCommunityViewKT extends KaribuTest {
         var container = _get(VerticalLayout.class, spec -> spec.withClasses("community-add-component"));
         assertThat(container).isNotNull();
 
-        assertThat(container.getChildren()
-                .filter(child -> child instanceof TextField).count()).isEqualTo(2);
-
-        assertThat(container.getChildren()
-                .filter(child -> child instanceof TextArea).count()).isEqualTo(1);
-
-        assertThat(container.getChildren()
-                .filter(child -> child instanceof Button).count()).isEqualTo(1);
-
-        var profileField = _get(TextField.class, spec -> spec.withClasses("profile-field"));
+        var profileField = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
         assertThat(profileField).isNotNull();
 
         var nameField = _get(TextField.class, spec -> spec.withClasses("name-field"));
@@ -83,7 +75,7 @@ public class CreateCommunityViewKT extends KaribuTest {
         UI.getCurrent().navigate(CreateCommunityView.class);
 
         CreateCommunityComponent component = _get(CreateCommunityComponent.class);
-        var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
+        var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
@@ -107,7 +99,7 @@ public class CreateCommunityViewKT extends KaribuTest {
         UI.getCurrent().navigate(CreateCommunityView.class);
 
         CreateCommunityComponent component = _get(CreateCommunityComponent.class);
-        var profile = _get(TextField.class, spec -> spec.withClasses("profile-field"));
+        var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
         var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
         var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
