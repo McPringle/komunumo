@@ -30,6 +30,11 @@ import org.jetbrains.annotations.Nullable;
 public enum ConfigurationSetting {
 
     /**
+     * <p>Domain name of the instance.</p>
+     */
+    INSTANCE_DOMAIN("instance.domain", false, "localhost"),
+
+    /**
      * <p>Base URL where the instance is accessible.</p>
      */
     INSTANCE_URL("instance.url", false, "http://localhost:8080"),
