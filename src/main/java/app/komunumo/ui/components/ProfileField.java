@@ -79,10 +79,12 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
     private void showSuccessMessage(final @NotNull String successMessage) {
         message.setText(successMessage);
         message.removeClassName("error");
+        message.addClassName("success");
     }
 
     private void showErrorMessage(final @NotNull String errorMessage) {
         message.setText(errorMessage);
+        message.removeClassName("success");
         message.addClassName("error");
     }
 
