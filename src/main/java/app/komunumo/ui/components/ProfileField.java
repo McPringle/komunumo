@@ -2,16 +2,18 @@ package app.komunumo.ui.components;
 
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.shared.Registration;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ProfileField extends Div {
+public final class ProfileField extends Div implements HasValue<HasValue.ValueChangeEvent<String>, String> {
 
     private static final String USERNAME_PATTERN = "[a-zA-Z0-9_]";
     private static final String DOMAIN_PATTERN = "[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
@@ -50,7 +52,7 @@ public final class ProfileField extends Div {
             final var value = textField.getValue();
             if (value.isEmpty() || value.length() > MAX_LENGTH) {
                 showErrorMessage("The profile name must be between %d and %d characters long".formatted(MIN_LENGTH, MAX_LENGTH));
-            } else if (profileNameAvailabilityChecker.isProfileNameAvailable(getValue())){
+            } else if (profileNameAvailabilityChecker.isProfileNameAvailable(getValue())) {
                 showSuccessMessage("This profile name is available");
             } else {
                 showErrorMessage("This profile name is not available");
@@ -60,6 +62,7 @@ public final class ProfileField extends Div {
         add(textField, message);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private void showSuccessMessage(final @NotNull String successMessage) {
         message.setText("✅ %s".formatted(successMessage));
         message.removeClassName("error");
@@ -102,6 +105,32 @@ public final class ProfileField extends Div {
 
     public void setLabel(final @NotNull String label) {
         textField.setLabel(label);
+    }
+
+
+    @Override
+    public Registration addValueChangeListener(final @NotNull ValueChangeListener<? super ValueChangeEvent<String>> valueChangeListener) {
+        return textField.addValueChangeListener(valueChangeListener);
+    }
+
+    @Override
+    public void setReadOnly(final boolean readOnly) {
+        textField.setReadOnly(readOnly);
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return textField.isReadOnly();
+    }
+
+    @Override
+    public void setRequiredIndicatorVisible(final boolean requiredIndicatorVisible) {
+        textField.setRequiredIndicatorVisible(requiredIndicatorVisible);
+    }
+
+    @Override
+    public boolean isRequiredIndicatorVisible() {
+        return textField.isRequiredIndicatorVisible();
     }
 
     public void setRequired(final boolean required) {
