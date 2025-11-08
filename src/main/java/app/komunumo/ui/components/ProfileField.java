@@ -1,3 +1,20 @@
+/*
+ * Komunumo - Open Source Community Manager
+ * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 package app.komunumo.ui.components;
 
 import app.komunumo.data.dto.ConfigurationSetting;
@@ -10,8 +27,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.shared.Registration;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ProfileField extends Div implements HasValue<HasValue.ValueChangeEvent<String>, String> {
 
@@ -19,9 +34,7 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
     private static final String DOMAIN_PATTERN = "[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
     private static final String PROFILE_PATTERN = "^@" + USERNAME_PATTERN + "+@" + DOMAIN_PATTERN + "$";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ProfileField.class);
-
-    private static final int MIN_LENGTH = 1;
+    private static final int MIN_LENGTH = 3;
     private static final int MAX_LENGTH = 30;
 
     private final TextField textField = new TextField();
@@ -50,12 +63,12 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
         textField.setValueChangeMode(ValueChangeMode.EAGER);
         textField.addValueChangeListener(_ -> {
             final var value = textField.getValue();
-            if (value.isEmpty() || value.length() > MAX_LENGTH) {
-                showErrorMessage("The profile name must be between %d and %d characters long".formatted(MIN_LENGTH, MAX_LENGTH));
+            if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
+                showErrorMessage(getTranslation("ui.components.ProfileField.errorLength", MIN_LENGTH, MAX_LENGTH));
             } else if (profileNameAvailabilityChecker.isProfileNameAvailable(getValue())) {
-                showSuccessMessage("This profile name is available");
+                showSuccessMessage(getTranslation("ui.components.ProfileField.usernameAvailable"));
             } else {
-                showErrorMessage("This profile name is not available");
+                showErrorMessage(getTranslation("ui.components.ProfileField.usernameNotAvailable"));
             }
         });
 
@@ -84,23 +97,21 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
         originalValue = value;
 
         if (!value.matches(PROFILE_PATTERN)) {
-            LOGGER.error("The format of the profile name is invalid: '{}'", value);
-            showErrorMessage("The format of the profile name is invalid: '%s'".formatted(value));
-            textField.setReadOnly(true);
+            showErrorMessage(getTranslation("ui.components.ProfileField.syntaxError", value));
+            setReadOnly(true);
+            return;
         }
 
         final var parts = value.split("@", 3);
         final var localPart = parts[1];
         final var domainPart = parts[2];
         if (!domainPart.equals(domainName)) {
-            LOGGER.error("The domain name '{}' is not the domain name of this instance ('{}')!", domainPart, domainName);
-            showErrorMessage("The domain name '%s' is not the domain name of this instance ('%s')!".formatted(domainPart, domainName));
+            showErrorMessage(getTranslation("ui.components.ProfileField.domainError", domainPart, domainName));
             textField.setReadOnly(true);
+            return;
         }
 
-        if (!textField.isReadOnly()) {
-            textField.setValue(localPart);
-        }
+        textField.setValue(localPart);
     }
 
     public void setLabel(final @NotNull String label) {
@@ -135,6 +146,10 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
 
     public void setRequired(final boolean required) {
         textField.setRequired(required);
+    }
+
+    public boolean isRequired() {
+        return textField.isRequired();
     }
 
     @FunctionalInterface
