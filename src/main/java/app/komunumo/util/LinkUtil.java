@@ -32,19 +32,27 @@ public final class LinkUtil {
         configurationService = newConfigurationService;
     }
 
-    private static @NotNull String addLinkPrefix(final @NotNull String link) {
-        final var prefix = configurationService != null
+    private static @NotNull String addLinkPrefix(final @NotNull String link, final boolean withDomain) {
+        final var prefix = withDomain && configurationService != null
                 ? configurationService.getConfiguration(ConfigurationSetting.INSTANCE_URL)
                 : "/";
         return prefix.concat(link);
     }
 
     public static @NotNull String getLink(final @NotNull EventDto event) {
-        return addLinkPrefix("events/" + event.id());
+        return getLink(event, false);
+    }
+
+    public static @NotNull String getLink(final @NotNull EventDto event, final boolean withDomain) {
+        return addLinkPrefix("events/" + event.id(), withDomain);
     }
 
     public static @NotNull String getLink(final @NotNull CommunityDto community) {
-        return addLinkPrefix("communities/" + community.profile());
+        return getLink(community, false);
+    }
+
+    public static @NotNull String getLink(final @NotNull CommunityDto community, final boolean withDomain) {
+        return addLinkPrefix("communities/" + community.profile(), withDomain);
     }
 
     private LinkUtil() {

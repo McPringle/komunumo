@@ -45,11 +45,10 @@ public class JoinCommunityFlowBT extends BrowserTest {
     void joinCommunityAnonymously() throws MessagingException {
         final var emailAddress = getRandomEmailAddress();
         final var demoCommunity = communityService.getCommunities().getFirst();
-        final var demoCommunityLink = LinkUtil.getLink(demoCommunity);
         final var demoCommunityNameSelector = "h2.community-name";
 
         final var page = getPage();
-        page.navigate(demoCommunityLink);
+        page.navigate(LinkUtil.getLink(demoCommunity, true));
         page.waitForURL("**/communities/" + demoCommunity.profile());
         page.waitForSelector(demoCommunityNameSelector);
         captureScreenshot("joinCommunityAnonymously_detailViewLoaded");
