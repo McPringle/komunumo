@@ -19,6 +19,7 @@ package app.komunumo.data.dto;
 
 public enum MailTemplateId {
     ACCOUNT_REGISTRATION_SUCCESS,
+    COMMUNITY_JOIN_SUCCESS,
     CONFIRMATION_PROCESS,
     EVENT_REGISTRATION_SUCCESS,
     TEST

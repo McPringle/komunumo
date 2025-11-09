@@ -22,12 +22,14 @@ import app.komunumo.data.dto.CommunityWithImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import app.komunumo.ui.views.events.EventGrid;
 import app.komunumo.util.ImageUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -55,15 +57,18 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
     private final transient @NotNull CommunityService communityService;
 
     private final @NotNull HtmlContainer pageContent = new Div();
+    private final @NotNull MemberService memberService;
     private final @NotNull EventService eventService;
 
     private @NotNull String pageTitle = "";
 
     public CommunityDetailView(final @NotNull ConfigurationService configurationService,
                                final @NotNull CommunityService communityService,
+                               final @NotNull MemberService memberService,
                                final @NotNull EventService eventService) {
         super(configurationService);
         this.communityService = communityService;
+        this.memberService = memberService;
         this.eventService = eventService;
         addClassName("community-detail-view");
         add(pageContent);
@@ -118,6 +123,11 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         final var description = new Markdown(community.description());
         description.addClassName("community-description");
         pageContent.add(description);
+
+        final var joinButton = new Button(getTranslation(locale, "ui.views.community.CommunityDetailView.joinButton"));
+        joinButton.addClickListener(_ -> memberService.joinCommunityStart(community, locale));
+        joinButton.addClassName("join-button");
+        pageContent.add(joinButton);
 
         final var upcomingEventsPlaceholder = new Div();
         upcomingEventsPlaceholder.add(getUpcomingEventsComponent(community, locale));

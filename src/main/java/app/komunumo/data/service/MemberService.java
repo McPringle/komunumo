@@ -17,14 +17,31 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.data.dto.MailFormat;
+import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.MemberDto;
+import app.komunumo.data.dto.MemberRole;
+import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.service.confirmation.ConfirmationContext;
+import app.komunumo.data.service.confirmation.ConfirmationHandler;
+import app.komunumo.data.service.confirmation.ConfirmationRequest;
+import app.komunumo.data.service.confirmation.ConfirmationResponse;
+import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.data.service.confirmation.ConfirmationStatus;
+import app.komunumo.ui.TranslationProvider;
+import app.komunumo.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.VisibleForTesting;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static app.komunumo.data.db.Tables.MEMBER;
@@ -32,10 +49,25 @@ import static app.komunumo.data.db.Tables.MEMBER;
 @Service
 public final class MemberService {
 
-    private final @NotNull DSLContext dsl;
+    @VisibleForTesting
+    static final @NotNull String CONTEXT_KEY_COMMUNITY = "community";
 
-    public MemberService(final @NotNull DSLContext dsl) {
+    private final @NotNull DSLContext dsl;
+    private final @NotNull MailService mailService;
+    private final @NotNull UserService userService;
+    private final @NotNull ConfirmationService confirmationService;
+    private final @NotNull TranslationProvider translationProvider;
+
+    public MemberService(final @NotNull DSLContext dsl,
+                         final @NotNull MailService mailService,
+                         final @NotNull UserService userService,
+                         final @NotNull ConfirmationService confirmationService,
+                         final @NotNull TranslationProvider translationProvider) {
         this.dsl = dsl;
+        this.mailService = mailService;
+        this.userService = userService;
+        this.confirmationService = confirmationService;
+        this.translationProvider = translationProvider;
     }
 
     /**
@@ -63,10 +95,58 @@ public final class MemberService {
         return memberRecord.into(MemberDto.class);
     }
 
+    public Optional<MemberDto> getMember(final @NotNull UserDto user,
+                                         final @NotNull CommunityDto community) {
+        return dsl.selectFrom(MEMBER)
+                .where(MEMBER.USER_ID.eq(user.id())
+                        .and(MEMBER.COMMUNITY_ID.eq(community.id())))
+                .fetchOptionalInto(MemberDto.class);
+    }
+
     public @NotNull List<@NotNull MemberDto> getMembersByCommunityId(final @NotNull UUID communityId) {
         return dsl.selectFrom(MEMBER)
                 .where(MEMBER.COMMUNITY_ID.eq(communityId))
                 .fetchInto(MemberDto.class);
+    }
+
+    public void joinCommunityStart(final @NotNull CommunityDto community,
+                                   final @NotNull Locale locale) {
+        final var actionMessage = translationProvider.getTranslation(
+                "data.service.MemberService.join.actionText", locale, community.name());
+        final ConfirmationHandler actionHandler = this::joinCommunityConfirm;
+        final var actionContext = ConfirmationContext.of(CONTEXT_KEY_COMMUNITY, community);
+        final var confirmationRequest = new ConfirmationRequest(
+                actionMessage,
+                actionHandler,
+                actionContext,
+                locale
+        );
+        confirmationService.startConfirmationProcess(confirmationRequest);
+    }
+
+    private @NotNull ConfirmationResponse joinCommunityConfirm(final @NotNull String email,
+                                                               final @NotNull ConfirmationContext context,
+                                                               final @NotNull Locale locale) {
+        final var community = (CommunityDto) context.get(CONTEXT_KEY_COMMUNITY);
+        final var user = userService.getUserByEmail(email)
+                .orElseGet(() -> userService.createAnonymousUserWithEmail(email));
+
+        @SuppressWarnings("DataFlowIssue") // community and user objects are from the DB and are guaranteed to have an ID
+        final var member = getMember(user, community) // try to get existing member
+                .orElseGet(() -> new MemberDto(user.id(), community.id(), MemberRole.MEMBER, null));
+        storeMember(member);
+
+        final var communityName = community.name();
+        final var communityLink = LinkUtil.getLink(community);
+
+        final Map<String, String> mailVariables = Map.of("communityName", communityName, "communityLink", communityLink);
+        mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS, locale, MailFormat.MARKDOWN,
+                mailVariables, email);
+
+        final var status = ConfirmationStatus.SUCCESS;
+        final var message = translationProvider.getTranslation("data.service.MemberService.join.successMessage",
+                locale, communityName);
+        return new ConfirmationResponse(status, message, communityLink);
     }
 
 }

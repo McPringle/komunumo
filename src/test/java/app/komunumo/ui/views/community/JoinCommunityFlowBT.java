@@ -98,7 +98,7 @@ public class JoinCommunityFlowBT extends BrowserTest {
         await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 2);
         final var successMessage = greenMail.getReceivedMessages()[1];
         assertThat(successMessage.getSubject()).isEqualTo("[Komunumo Test] You have joined a community");
-        assertThat(getBody(successMessage)).contains("You are now part of the community \"%s\".".formatted(demoCommunity.name()));
+        assertThat(getBody(successMessage)).contains("You are now a member of the community \"%s\".".formatted(demoCommunity.name()));
     }
 
 }
