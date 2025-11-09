@@ -179,4 +179,15 @@ public abstract class IntegrationTest {
         configurationService.clearCache();
     }
 
+    /**
+     * <p>Generates a random email address using the current system time in milliseconds to ensure uniqueness.</p>
+     *
+     * <p>The generated address follows the format: {@code user-<timestamp>@example.com}.</p>
+     *
+     * @return a randomly generated email address
+     */
+    protected String getRandomEmailAddress() {
+        return "user-" + System.currentTimeMillis() + "@example.com";
+    }
+
 }

@@ -43,6 +43,7 @@ public class JoinCommunityFlowBT extends BrowserTest {
 
     @Test
     void joinCommunityAnonymously() throws MessagingException {
+        final var emailAddress = getRandomEmailAddress();
         final var demoCommunity = communityService.getCommunities().getFirst();
         final var demoCommunityLink = LinkUtil.getLink(demoCommunity);
         final var demoCommunityNameSelector = "h2.community-name";
@@ -65,7 +66,7 @@ public class JoinCommunityFlowBT extends BrowserTest {
 
         // fill in email address
         final var emailInput = page.locator("vaadin-email-field").locator("input");
-        emailInput.fill("anonymous@example.com");
+        emailInput.fill(emailAddress);
         captureScreenshot("joinCommunityAnonymously_dialogFilled");
 
         // click on the request email button
