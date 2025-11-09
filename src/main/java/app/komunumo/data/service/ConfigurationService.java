@@ -18,6 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.data.dto.ConfigurationSetting;
+import app.komunumo.util.LinkUtil;
 import app.komunumo.util.LocaleUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -57,10 +58,12 @@ public class ConfigurationService {
      * @param dsl the jOOQ context used for database operations
      */
     public ConfigurationService(final @NotNull DSLContext dsl) {
+        super();
         this.dsl = dsl;
         this.cache = Caffeine.newBuilder()
                 .maximumSize(1_000)
                 .build();
+        LinkUtil.initialize(this);
     }
 
     /**

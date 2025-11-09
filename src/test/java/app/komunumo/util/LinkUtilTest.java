@@ -18,16 +18,27 @@
 package app.komunumo.util;
 
 import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
+import app.komunumo.data.service.ConfigurationService;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class LinkUtilTest {
+
+    @AfterEach
+    void resetLinkUtil() {
+        LinkUtil.initialize(null);
+    }
 
     @Test
     void getEventLink() {
@@ -45,6 +56,33 @@ class LinkUtilTest {
                 "Test Community Name", "Test Community Description", null);
         final var link = LinkUtil.getLink(community);
         assertThat(link).isEqualTo("/communities/@test");
+    }
+
+    @Test
+    void getEventLinkWithPrefix() {
+        LinkUtil.initialize(getMockedConfigurationService());
+        final var event = new EventDto(UUID.fromString("8232a4f1-3f02-4db3-bf78-18387734c81c"),
+                UUID.fromString("e315c669-95ac-4231-96b6-55fb4c30e0e2"), null, null,
+                "Test Event Title", "Test Event Description", "", null, null, null,
+                EventVisibility.PUBLIC, EventStatus.PUBLISHED);
+        final var link = LinkUtil.getLink(event);
+        assertThat(link).isEqualTo("http://localhost:8080/events/8232a4f1-3f02-4db3-bf78-18387734c81c");
+    }
+
+    @Test
+    void getCommunityLinkWithPrefix() {
+        LinkUtil.initialize(getMockedConfigurationService());
+        final var community = new CommunityDto(null, "@test", null, null,
+                "Test Community Name", "Test Community Description", null);
+        final var link = LinkUtil.getLink(community);
+        assertThat(link).isEqualTo("http://localhost:8080/communities/@test");
+    }
+
+    private @NotNull ConfigurationService getMockedConfigurationService() {
+        final var configurationService = mock(ConfigurationService.class);
+        when(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_URL))
+                .thenReturn("http://localhost:8080/");
+        return configurationService;
     }
 
 }
