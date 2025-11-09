@@ -39,7 +39,7 @@ public class MemberServiceKT extends KaribuTest {
 
     @Test
     @SuppressWarnings("DuplicateExpressions")
-    void testStoreAndUpdateMember() {
+    void testStoreUpdateDeleteMember() {
         final var communityList = communityService.getCommunities();
         final var community = communityList.getFirst();
 
@@ -89,5 +89,7 @@ public class MemberServiceKT extends KaribuTest {
             assertThat(testMemberDto.since()).isEqualTo(since);
         });
 
+        assertThat(memberService.deleteMember(member)).isTrue();
+        assertThat(memberService.deleteMember(member)).isFalse();
     }
 }

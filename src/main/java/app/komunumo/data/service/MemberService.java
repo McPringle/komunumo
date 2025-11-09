@@ -32,6 +32,7 @@ import app.komunumo.data.service.confirmation.ConfirmationStatus;
 import app.komunumo.ui.TranslationProvider;
 import app.komunumo.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
@@ -109,6 +110,18 @@ public final class MemberService {
                 .fetchInto(MemberDto.class);
     }
 
+    public @NotNull List<@NotNull MemberDto> getMembersByCommunityId(final @NotNull UUID communityId,
+                                                                     final @NotNull MemberRole role) {
+        return dsl.selectFrom(MEMBER)
+                .where(MEMBER.COMMUNITY_ID.eq(communityId)
+                        .and(MEMBER.ROLE.eq(role.name())))
+                .fetchInto(MemberDto.class);
+    }
+
+    public int getMemberCount(final @Nullable UUID communityId) {
+        return dsl.fetchCount(MEMBER, MEMBER.COMMUNITY_ID.eq(communityId));
+    }
+
     public void joinCommunityStart(final @NotNull CommunityDto community,
                                    final @NotNull Locale locale) {
         final var actionMessage = translationProvider.getTranslation(
@@ -131,7 +144,7 @@ public final class MemberService {
         final var user = userService.getUserByEmail(email)
                 .orElseGet(() -> userService.createAnonymousUserWithEmail(email));
 
-        @SuppressWarnings("DataFlowIssue") // community and user objects are from the DB and are guaranteed to have an ID
+        //noinspection DataFlowIssue // community and user objects are from the DB and are guaranteed to have an ID
         final var member = getMember(user, community) // try to get existing member
                 .orElseGet(() -> new MemberDto(user.id(), community.id(), MemberRole.MEMBER, null));
         storeMember(member);
@@ -139,14 +152,33 @@ public final class MemberService {
         final var communityName = community.name();
         final var communityLink = LinkUtil.getLink(community);
 
-        final Map<String, String> mailVariables = Map.of("communityName", communityName, "communityLink", communityLink);
-        mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS, locale, MailFormat.MARKDOWN,
+        final Map<String, String> mailVariables = Map.of(
+                "communityName", communityName,
+                "communityLink", communityLink,
+                "memberCount", Integer.toString(getMemberCount(community.id())));
+        mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS_MEMBER, locale, MailFormat.MARKDOWN,
                 mailVariables, email);
+
+        //noinspection DataFlowIssue // community object is from the DB and guaranteed to have an ID
+        getMembersByCommunityId(community.id(), MemberRole.OWNER)
+                .forEach(communityOwner -> {
+            //noinspection DataFlowIssue // community owners are always local users with email address set
+            userService.getUserById(communityOwner.userId()).ifPresent(owner ->
+                    mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS_OWNER, locale, MailFormat.MARKDOWN,
+                    mailVariables, owner.email()));
+        });
 
         final var status = ConfirmationStatus.SUCCESS;
         final var message = translationProvider.getTranslation("data.service.MemberService.join.successMessage",
                 locale, communityName);
         return new ConfirmationResponse(status, message, communityLink);
+    }
+
+    public boolean deleteMember(final @NotNull MemberDto communityOwner) {
+        return dsl.delete(MEMBER)
+                .where(MEMBER.USER_ID.eq(communityOwner.userId())
+                        .and(MEMBER.COMMUNITY_ID.eq(communityOwner.communityId())))
+                .execute() > 0;
     }
 
 }

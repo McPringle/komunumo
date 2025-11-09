@@ -17,7 +17,13 @@
  */
 package app.komunumo.ui.views.community;
 
+import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.data.dto.MemberDto;
+import app.komunumo.data.dto.MemberRole;
+import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.CommunityService;
+import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.BrowserTest;
 import app.komunumo.util.LinkUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -25,6 +31,8 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,13 +46,39 @@ public class JoinCommunityFlowBT extends BrowserTest {
 
     private static final String JOIN_BUTTON_SELECTOR = "vaadin-button:has-text('Join Community')";
 
+    private CommunityDto demoCommunity;
+    private UserDto testOwner;
+    private MemberDto communityOwner;
+
     @Autowired
     private @NotNull CommunityService communityService;
 
+    @Autowired
+    private @NotNull MemberService memberService;
+
+    @BeforeEach
+    @SuppressWarnings("DataFlowIssue")
+    void setOwner() {
+        demoCommunity = communityService.getCommunities().getFirst();
+        assertThat(demoCommunity).isNotNull();
+
+        testOwner = getTestUser(UserRole.USER);
+        assertThat(testOwner).isNotNull();
+
+        communityOwner = new MemberDto(testOwner.id(), demoCommunity.id(), MemberRole.OWNER, null);
+        assertThat(communityOwner).isNotNull();
+
+        memberService.storeMember(communityOwner);
+    }
+
+    @AfterEach
+    void removeOwner() {
+        memberService.deleteMember(communityOwner);
+    }
+
     @Test
     void joinCommunityAnonymously() throws MessagingException {
-        final var emailAddress = getRandomEmailAddress();
-        final var demoCommunity = communityService.getCommunities().getFirst();
+        final var emailAddressMember = getRandomEmailAddress();
         final var demoCommunityNameSelector = "h2.community-name";
 
         final var page = getPage();
@@ -65,7 +99,7 @@ public class JoinCommunityFlowBT extends BrowserTest {
 
         // fill in email address
         final var emailInput = page.locator("vaadin-email-field").locator("input");
-        emailInput.fill(emailAddress);
+        emailInput.fill(emailAddressMember);
         captureScreenshot("joinCommunityAnonymously_dialogFilled");
 
         // click on the request email button
@@ -94,11 +128,21 @@ public class JoinCommunityFlowBT extends BrowserTest {
         page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("joinCommunityAnonymously_confirmationPage");
 
-        // wait for join confirmation mail
-        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 2);
-        final var successMessage = greenMail.getReceivedMessages()[1];
-        assertThat(successMessage.getSubject()).isEqualTo("[Komunumo Test] You have joined a community");
-        assertThat(getBody(successMessage)).contains("You are now a member of the community \"%s\".".formatted(demoCommunity.name()));
+        // wait for join confirmation mail for the new member
+        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length >= 2);
+        final var memberMessage = greenMail.getReceivedMessages()[1];
+        assertThat(memberMessage.getAllRecipients()[0].toString()).isEqualTo(emailAddressMember);
+        assertThat(memberMessage.getSubject()).isEqualTo("[Komunumo Test] You have joined a community");
+        assertThat(getBody(memberMessage)).contains("You are now a member of the community \"%s\"."
+                .formatted(demoCommunity.name()));
+
+        // wait for join confirmation mail for the community owner
+        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 3);
+        final var ownerMessage = greenMail.getReceivedMessages()[2];
+        assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(testOwner.email());
+        assertThat(ownerMessage.getSubject()).isEqualTo("[Komunumo Test] You have a new member");
+        assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 2 members."
+                .formatted(demoCommunity.name()));
     }
 
 }
