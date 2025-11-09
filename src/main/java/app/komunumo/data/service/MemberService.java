@@ -113,7 +113,7 @@ public final class MemberService {
                                    final @NotNull Locale locale) {
         final var actionMessage = translationProvider.getTranslation(
                 "data.service.MemberService.join.actionText", locale, community.name());
-        final ConfirmationHandler actionHandler = this::joinCommunityConfirm;
+        final ConfirmationHandler actionHandler = this::joinCommunityExecute;
         final var actionContext = ConfirmationContext.of(CONTEXT_KEY_COMMUNITY, community);
         final var confirmationRequest = new ConfirmationRequest(
                 actionMessage,
@@ -124,7 +124,7 @@ public final class MemberService {
         confirmationService.startConfirmationProcess(confirmationRequest);
     }
 
-    private @NotNull ConfirmationResponse joinCommunityConfirm(final @NotNull String email,
+    private @NotNull ConfirmationResponse joinCommunityExecute(final @NotNull String email,
                                                                final @NotNull ConfirmationContext context,
                                                                final @NotNull Locale locale) {
         final var community = (CommunityDto) context.get(CONTEXT_KEY_COMMUNITY);
