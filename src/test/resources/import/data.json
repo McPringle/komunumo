@@ -109,6 +109,152 @@
       "imageId": ""
     }
   ],
+  "members": [
+    {
+      "userId": "11111111-1111-1111-1111-111111111111",
+      "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+      "role": "OWNER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "11111111-1111-1111-1111-111111111111",
+      "communityId": "5a6f6a65-0d3a-4b8b-ba3e-3506810a9dac",
+      "role": "OWNER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "11111111-1111-1111-1111-111111111111",
+      "communityId": "b7220a84-713e-4df7-8b73-69eb35434a67",
+      "role": "OWNER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "11111111-1111-1111-1111-111111111111",
+      "communityId": "96c7585c-6c10-4c6c-bba8-863fe5c9479a",
+      "role": "OWNER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "11111111-1111-1111-1111-111111111111",
+      "communityId": "ca983216-36d5-43c6-9a52-63da69e3d90a",
+      "role": "OWNER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "11111111-1111-1111-1111-111111111111",
+      "communityId": "af1a9ddf-346e-4bcf-b581-2685d4cf363e",
+      "role": "OWNER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "22222222-2222-2222-2222-222222222222",
+      "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+      "role": "ORGANIZER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "22222222-2222-2222-2222-222222222222",
+      "communityId": "5a6f6a65-0d3a-4b8b-ba3e-3506810a9dac",
+      "role": "ORGANIZER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "22222222-2222-2222-2222-222222222222",
+      "communityId": "b7220a84-713e-4df7-8b73-69eb35434a67",
+      "role": "ORGANIZER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "22222222-2222-2222-2222-222222222222",
+      "communityId": "96c7585c-6c10-4c6c-bba8-863fe5c9479a",
+      "role": "ORGANIZER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "22222222-2222-2222-2222-222222222222",
+      "communityId": "ca983216-36d5-43c6-9a52-63da69e3d90a",
+      "role": "ORGANIZER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "22222222-2222-2222-2222-222222222222",
+      "communityId": "af1a9ddf-346e-4bcf-b581-2685d4cf363e",
+      "role": "ORGANIZER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "33333333-3333-3333-3333-333333333333",
+      "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "33333333-3333-3333-3333-333333333333",
+      "communityId": "5a6f6a65-0d3a-4b8b-ba3e-3506810a9dac",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "33333333-3333-3333-3333-333333333333",
+      "communityId": "b7220a84-713e-4df7-8b73-69eb35434a67",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "33333333-3333-3333-3333-333333333333",
+      "communityId": "96c7585c-6c10-4c6c-bba8-863fe5c9479a",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "33333333-3333-3333-3333-333333333333",
+      "communityId": "ca983216-36d5-43c6-9a52-63da69e3d90a",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "33333333-3333-3333-3333-333333333333",
+      "communityId": "af1a9ddf-346e-4bcf-b581-2685d4cf363e",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "44444444-4444-4444-4444-444444444444",
+      "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "44444444-4444-4444-4444-444444444444",
+      "communityId": "5a6f6a65-0d3a-4b8b-ba3e-3506810a9dac",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "44444444-4444-4444-4444-444444444444",
+      "communityId": "b7220a84-713e-4df7-8b73-69eb35434a67",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "44444444-4444-4444-4444-444444444444",
+      "communityId": "96c7585c-6c10-4c6c-bba8-863fe5c9479a",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "44444444-4444-4444-4444-444444444444",
+      "communityId": "ca983216-36d5-43c6-9a52-63da69e3d90a",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "44444444-4444-4444-4444-444444444444",
+      "communityId": "af1a9ddf-346e-4bcf-b581-2685d4cf363e",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    }
+  ],
   "events": [
     {
       "eventId": "07fe5b04-0ea1-43b7-a63a-f4d8b8c29ed6",

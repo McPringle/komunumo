@@ -18,12 +18,10 @@
 package app.komunumo.ui.views.community;
 
 import app.komunumo.data.dto.CommunityDto;
-import app.komunumo.data.dto.MemberDto;
-import app.komunumo.data.dto.MemberRole;
 import app.komunumo.data.dto.UserDto;
-import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.MemberService;
+import app.komunumo.data.service.UserService;
 import app.komunumo.ui.BrowserTest;
 import app.komunumo.util.LinkUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -31,11 +29,11 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static app.komunumo.data.dto.MemberRole.OWNER;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -46,34 +44,26 @@ public class JoinCommunityFlowBT extends BrowserTest {
 
     private static final String JOIN_BUTTON_SELECTOR = "vaadin-button:has-text('Join Community')";
 
-    private CommunityDto demoCommunity;
-    private UserDto testOwner;
-    private MemberDto communityOwner;
-
     @Autowired
     private @NotNull CommunityService communityService;
 
     @Autowired
     private @NotNull MemberService memberService;
 
+    @Autowired
+    private @NotNull UserService userService;
+
+    private @NotNull CommunityDto demoCommunity;
+    private @NotNull UserDto demoCommunityOwner;
+
     @BeforeEach
-    @SuppressWarnings("DataFlowIssue")
-    void setOwner() {
+    void setup() {
         demoCommunity = communityService.getCommunities().getFirst();
         assertThat(demoCommunity).isNotNull();
+        assertThat(demoCommunity.id()).isNotNull();
 
-        testOwner = getTestUser(UserRole.USER);
-        assertThat(testOwner).isNotNull();
-
-        communityOwner = new MemberDto(testOwner.id(), demoCommunity.id(), MemberRole.OWNER, null);
-        assertThat(communityOwner).isNotNull();
-
-        memberService.storeMember(communityOwner);
-    }
-
-    @AfterEach
-    void removeOwner() {
-        memberService.deleteMember(communityOwner);
+        final var owner = memberService.getMembersByCommunityId(demoCommunity.id(), OWNER).getFirst();
+        demoCommunityOwner = userService.getUserById(owner.userId()).orElseThrow();
     }
 
     @Test
@@ -139,9 +129,9 @@ public class JoinCommunityFlowBT extends BrowserTest {
         // wait for join confirmation mail for the community owner
         await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 3);
         final var ownerMessage = greenMail.getReceivedMessages()[2];
-        assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(testOwner.email());
+        assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(demoCommunityOwner.email());
         assertThat(ownerMessage.getSubject()).isEqualTo("[Komunumo Test] You have a new member");
-        assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 2 members."
+        assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 5 members."
                 .formatted(demoCommunity.name()));
     }
 

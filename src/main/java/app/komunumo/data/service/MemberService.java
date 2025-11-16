@@ -96,6 +96,11 @@ public final class MemberService {
         return memberRecord.into(MemberDto.class);
     }
 
+    public @NotNull List<@NotNull MemberDto> getMembers() {
+        return dsl.selectFrom(MEMBER)
+                .fetchInto(MemberDto.class);
+    }
+
     public Optional<MemberDto> getMember(final @NotNull UserDto user,
                                          final @NotNull CommunityDto community) {
         return dsl.selectFrom(MEMBER)
@@ -115,6 +120,7 @@ public final class MemberService {
         return dsl.selectFrom(MEMBER)
                 .where(MEMBER.COMMUNITY_ID.eq(communityId)
                         .and(MEMBER.ROLE.eq(role.name())))
+                .orderBy(MEMBER.SINCE.desc())
                 .fetchInto(MemberDto.class);
     }
 

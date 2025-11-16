@@ -24,6 +24,7 @@ import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.MemberService;
 import app.komunumo.data.service.UserService;
 import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
@@ -105,6 +106,17 @@ class JSONImporterTest {
     }
 
     @Test
+    void testMembersNotFound() {
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
+        final var expectedMessage = "No members found in JSON data.";
+        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
+            final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
+            importer.importMembers(mock(MemberService.class));
+            assertThat(logCaptor.getWarnLogs()).contains(expectedMessage);
+        }
+    }
+
+    @Test
     void testEventsNotFound() {
         final var jsonUrl = "http://localhost:8082/import/no-data.json";
         final var expectedMessage = "No events found in JSON data.";
@@ -129,7 +141,7 @@ class JSONImporterTest {
     @Test
     void testImporterWithRealJson() {
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, and 2 global pages.";
+        final var expectedMessage = "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             new JSONImporter(new ImporterLog(null), jsonUrl);
             assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
@@ -145,7 +157,7 @@ class JSONImporterTest {
             importer.importSettings(configurationService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, and 2 global pages.",
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
                     "Start importing settings...",
                     "...finished importing 3 settings.");
             verify(configurationService, times(3)).setConfiguration(any(), any(), any());
@@ -172,7 +184,7 @@ class JSONImporterTest {
             importer.importImages(imageService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, and 2 global pages.",
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
                     "Start importing images...",
                     "...finished importing 3 images.");
             assertThat(logCaptor.getErrorLogs()).containsExactly(
@@ -191,7 +203,7 @@ class JSONImporterTest {
             importer.importUsers(userService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, and 2 global pages.",
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
                     "Start importing users...",
                     "...finished importing 4 users.");
             verify(userService, times(4)).storeUser(any());
@@ -207,7 +219,7 @@ class JSONImporterTest {
             importer.importCommunities(communityService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, and 2 global pages.",
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
                     "Start importing communities...",
                     "...finished importing 6 communities.");
             verify(communityService, times(6)).storeCommunity(any());
@@ -223,10 +235,26 @@ class JSONImporterTest {
             importer.importEvents(eventService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, and 2 global pages.",
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
                     "Start importing events...",
                     "...finished importing 6 events.");
             verify(eventService, times(6)).storeEvent(any());
+        }
+    }
+
+    @Test
+    void testImportMembers() {
+        final var memberService = mock(MemberService.class);
+        final var jsonUrl = "http://localhost:8082/import/data.json";
+        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
+            final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
+            importer.importMembers(memberService);
+
+            assertThat(logCaptor.getInfoLogs()).containsExactly(
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    "Start importing members...",
+                    "...finished importing 24 events.");
+            verify(memberService, times(24)).storeMember(any());
         }
     }
 
@@ -239,7 +267,7 @@ class JSONImporterTest {
             importer.importGlobalPages(globalPageService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, and 2 global pages.",
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
                     "Start importing global pages...",
                     "...finished importing 2 global pages.");
             verify(globalPageService, times(2)).storeGlobalPage(any());
@@ -249,7 +277,7 @@ class JSONImporterTest {
     @Test
     void testNoData() {
         final var jsonUrl = "http://localhost:8082/import/no-data.json";
-        final var expectedMessage = "Identified 0 settings, 0 images, 0 users, 0 communities, 0 events, and 0 global pages.";
+        final var expectedMessage = "Identified 0 settings, 0 images, 0 users, 0 communities, 0 events, 0 members, and 0 global pages.";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             new JSONImporter(new ImporterLog(null), jsonUrl);
             assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);

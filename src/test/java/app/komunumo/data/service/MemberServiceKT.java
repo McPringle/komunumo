@@ -20,6 +20,7 @@ package app.komunumo.data.service;
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -43,17 +44,17 @@ public class MemberServiceKT extends KaribuTest {
         final var communityList = communityService.getCommunities();
         final var community = communityList.getFirst();
 
-        final var user = getTestUser(UserRole.USER);
+        final var user = createRandomUser(UserRole.USER, UserType.LOCAL);
         final var role = MemberRole.OWNER;
 
         assertThat(user.id()).isNotNull();
         assertThat(community.id()).isNotNull();
-        assertThat(memberService.getMembersByCommunityId(community.id())).isEmpty();
+        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(4);
 
         var member = new MemberDto(user.id(), community.id(), role, null);
         member = memberService.storeMember(member);
 
-        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(1);
+        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(5);
         assertThat(member).isNotNull().satisfies(testMemberDto -> {
             assertThat(testMemberDto.userId()).isNotNull();
             assertThat(testMemberDto.userId()).isEqualTo(user.id());
@@ -68,13 +69,13 @@ public class MemberServiceKT extends KaribuTest {
             assertThat(testMemberDto.since()).isBeforeOrEqualTo(ZonedDateTime.now());
         });
 
-        member = memberService.getMembersByCommunityId(community.id()).getFirst();
+        member = memberService.getMembersByCommunityId(community.id()).getFirst(); // order since desc
         final var since = member.since();
 
         member = new MemberDto(user.id(), community.id(), role, null);
         member = memberService.storeMember(member);
 
-        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(1);
+        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(5);
         assertThat(member).isNotNull().satisfies(testMemberDto -> {
             assertThat(testMemberDto.userId()).isNotNull();
             assertThat(testMemberDto.userId()).isEqualTo(user.id());
@@ -91,5 +92,6 @@ public class MemberServiceKT extends KaribuTest {
 
         assertThat(memberService.deleteMember(member)).isTrue();
         assertThat(memberService.deleteMember(member)).isFalse();
+        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(4);
     }
 }

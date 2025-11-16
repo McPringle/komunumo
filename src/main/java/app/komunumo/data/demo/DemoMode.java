@@ -25,6 +25,7 @@ import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.MemberService;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.data.service.UserService;
 import app.komunumo.util.ImageUtil;
@@ -49,6 +50,7 @@ public final class DemoMode {
 
     private final boolean enabled;
     private final @NotNull String jsonDataUrl;
+    private final MemberService memberService;
 
     @SuppressWarnings("checkstyle:ParameterNumber") // constructor injection
     public DemoMode(final @NotNull AppConfig appConfig,
@@ -57,6 +59,7 @@ public final class DemoMode {
                     final @NotNull ImageService imageService,
                     final @NotNull CommunityService communityService,
                     final @NotNull EventService eventService,
+                    final @NotNull MemberService memberService,
                     final @NotNull ParticipationService participationService,
                     final @NotNull GlobalPageService globalPageService) {
         this.configurationService = configurationService;
@@ -70,6 +73,7 @@ public final class DemoMode {
         final var demoConfig = appConfig.demo();
         this.enabled = demoConfig.enabled();
         this.jsonDataUrl = demoConfig.json();
+        this.memberService = memberService;
     }
 
     @Scheduled(cron = "0 0 * * * *")
@@ -88,6 +92,7 @@ public final class DemoMode {
         configurationService.deleteAllConfigurations();
         participationService.getAllParticipations().forEach(participationService::deleteParticipation);
         eventService.getEvents().forEach(eventService::deleteEvent);
+        memberService.getMembers().forEach(memberService::deleteMember);
         communityService.getCommunities().forEach(communityService::deleteCommunity);
         userService.getAllUsers().forEach(userService::deleteUser);
         imageService.getImages().forEach(imageService::deleteImage);
@@ -100,6 +105,7 @@ public final class DemoMode {
         demoDataImporter.importImages(imageService);
         demoDataImporter.importUsers(userService);
         demoDataImporter.importCommunities(communityService);
+        demoDataImporter.importMembers(memberService);
         demoDataImporter.importEvents(eventService);
         demoDataImporter.importGlobalPages(globalPageService);
         LOGGER.info("Demo data imported.");

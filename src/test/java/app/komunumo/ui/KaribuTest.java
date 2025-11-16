@@ -20,6 +20,7 @@ package app.komunumo.ui;
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.UserService;
 import app.komunumo.security.UserPrincipal;
@@ -183,6 +184,25 @@ public abstract class KaribuTest extends IntegrationTest {
             case ADMIN -> userService.getUserById(TestConstants.USER_ID_ADMIN)
                     .orElseThrow(() -> new IllegalStateException("Test ADMIN not found in database"));
         };
+    }
+
+    /**
+     * <p>Creates and stores a new user with a randomly generated email address and the specified role and type.</p>
+     *
+     * <p>The generated email address is used both as the user's login identifier and to derive a simple display name.
+     * This method is intended for integration tests that require ad-hoc user accounts without relying on predefined
+     * test data. The created user is immediately persisted through the {@link UserService}.</p>
+     *
+     * @param role the role assigned to the newly created user
+     * @param type the user type to assign
+     * @return the persisted {@link UserDto} instance representing the created user
+     */
+    protected @NotNull UserDto createRandomUser(final @NotNull UserRole role,
+                                                final @NotNull UserType type) {
+        final var email = getRandomEmailAddress();
+        final var name = email.split("@")[0];
+        final var user = new UserDto(null, null, null, null, email, name, "", null, role, type);
+        return userService.storeUser(user);
     }
 
     /**

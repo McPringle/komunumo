@@ -24,6 +24,7 @@ import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.MemberService;
 import app.komunumo.data.service.UserService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
@@ -55,6 +56,7 @@ public final class ImporterView extends AbstractView {
     private final @NotNull ImageService imageService;
     private final @NotNull UserService userService;
     private final @NotNull CommunityService communityService;
+    private final @NotNull MemberService memberService;
     private final @NotNull EventService eventService;
     private final @NotNull GlobalPageService globalPageService;
 
@@ -72,6 +74,7 @@ public final class ImporterView extends AbstractView {
                         final @NotNull ImageService imageService,
                         final @NotNull UserService userService,
                         final @NotNull CommunityService communityService,
+                        final @NotNull MemberService memberService,
                         final @NotNull EventService eventService,
                         final @NotNull GlobalPageService globalPageService) {
         super(configurationService);
@@ -80,6 +83,7 @@ public final class ImporterView extends AbstractView {
         this.imageService = imageService;
         this.userService = userService;
         this.communityService = communityService;
+        this.memberService = memberService;
         this.eventService = eventService;
         this.globalPageService = globalPageService;
         this.ui = UI.getCurrent();
@@ -159,6 +163,7 @@ public final class ImporterView extends AbstractView {
                     jsonImporter.importImages(imageService);
                     jsonImporter.importUsers(userService);
                     jsonImporter.importCommunities(communityService);
+                    jsonImporter.importMembers(memberService);
                     jsonImporter.importEvents(eventService);
                     jsonImporter.importGlobalPages(globalPageService);
                 })

@@ -26,6 +26,8 @@ import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.data.dto.ImageDto;
+import app.komunumo.data.dto.MemberDto;
+import app.komunumo.data.dto.MemberRole;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
@@ -34,6 +36,7 @@ import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.data.service.ImageService;
+import app.komunumo.data.service.MemberService;
 import app.komunumo.data.service.UserService;
 import app.komunumo.util.DownloadUtil;
 import app.komunumo.util.ImageUtil;
@@ -85,13 +88,14 @@ public final class JSONImporter {
     }
 
     private void logJSONInfo(final @NotNull JSONObject jsonObject) {
-        importerLog.info("Identified %d settings, %d images, %d users, %d communities, %d events, and %d global pages."
+        importerLog.info("Identified %d settings, %d images, %d users, %d communities, %d events, %d members, and %d global pages."
                 .formatted(
                         countArrayItems(jsonObject, "settings"),
                         countArrayItems(jsonObject, "images"),
                         countArrayItems(jsonObject, "users"),
                         countArrayItems(jsonObject, "communities"),
                         countArrayItems(jsonObject, "events"),
+                        countArrayItems(jsonObject, "members"),
                         countArrayItems(jsonObject, "globalPages")));
     }
 
@@ -237,6 +241,27 @@ public final class JSONImporter {
             importerLog.info("...finished importing %d events.".formatted(counter.get()));
         } else {
             importerLog.warn("No events found in JSON data.");
+        }
+    }
+
+    public void importMembers(final @NotNull MemberService memberService) {
+        if (jsonData.has("members")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing members...");
+            jsonData.getJSONArray("members").forEach(object -> {
+                final var jsonObject = (JSONObject) object;
+                final var userId = UUID.fromString(jsonObject.getString("userId"));
+                final var communityId = UUID.fromString(jsonObject.getString("communityId"));
+                final var role = MemberRole.valueOf(jsonObject.getString("role"));
+                final var since = parseDateTime(jsonObject.optString("since", ""));
+
+                final var member = new MemberDto(userId, communityId, role, since);
+                memberService.storeMember(member);
+                counter.incrementAndGet();
+            });
+            importerLog.info("...finished importing %d events.".formatted(counter.get()));
+        } else {
+            importerLog.warn("No members found in JSON data.");
         }
     }
 
