@@ -128,11 +128,11 @@ public final class MemberService {
         return dsl.fetchCount(MEMBER, MEMBER.COMMUNITY_ID.eq(communityId));
     }
 
-    public void joinCommunityStart(final @NotNull CommunityDto community,
-                                   final @NotNull Locale locale) {
+    public void joinCommunityStartConfirmationProcess(final @NotNull CommunityDto community,
+                                                      final @NotNull Locale locale) {
         final var actionMessage = translationProvider.getTranslation(
                 "data.service.MemberService.join.actionText", locale, community.name());
-        final ConfirmationHandler actionHandler = this::joinCommunityExecute;
+        final ConfirmationHandler actionHandler = this::joinCommunityWithEmail;
         final var actionContext = ConfirmationContext.of(CONTEXT_KEY_COMMUNITY, community);
         final var confirmationRequest = new ConfirmationRequest(
                 actionMessage,
@@ -143,13 +143,26 @@ public final class MemberService {
         confirmationService.startConfirmationProcess(confirmationRequest);
     }
 
-    private @NotNull ConfirmationResponse joinCommunityExecute(final @NotNull String email,
-                                                               final @NotNull ConfirmationContext context,
-                                                               final @NotNull Locale locale) {
+    private @NotNull ConfirmationResponse joinCommunityWithEmail(final @NotNull String email,
+                                                                 final @NotNull ConfirmationContext context,
+                                                                 final @NotNull Locale locale) {
         final var community = (CommunityDto) context.get(CONTEXT_KEY_COMMUNITY);
         final var user = userService.getUserByEmail(email)
                 .orElseGet(() -> userService.createAnonymousUserWithEmail(email));
 
+        joinCommunityWithUser(user, community, locale);
+
+        final var communityName = community.name();
+        final var communityLink = LinkUtil.getLink(community);
+        final var status = ConfirmationStatus.SUCCESS;
+        final var message = translationProvider.getTranslation("data.service.MemberService.join.successMessage",
+                locale, communityName);
+        return new ConfirmationResponse(status, message, communityLink);
+    }
+
+    public void joinCommunityWithUser(final @NotNull UserDto user,
+                                      final @NotNull CommunityDto community,
+                                      final @NotNull Locale locale) {
         //noinspection DataFlowIssue // community and user objects are from the DB and are guaranteed to have an ID
         final var member = getMember(user, community) // try to get existing member
                 .orElseGet(() -> new MemberDto(user.id(), community.id(), MemberRole.MEMBER, null));
@@ -162,22 +175,23 @@ public final class MemberService {
                 "communityName", communityName,
                 "communityLink", communityLink,
                 "memberCount", Integer.toString(getMemberCount(community.id())));
-        mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS_MEMBER, locale, MailFormat.MARKDOWN,
-                mailVariables, email);
+        if (user.email() != null) {
+            mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS_MEMBER, locale, MailFormat.MARKDOWN,
+                    mailVariables, user.email());
+        } else {
+            // User has no email address; cannot send mail
+            // Support for remote users without email address could be added here in the future
+            throw new UnsupportedOperationException("Cannot send community join mail to user without email address.");
+        }
 
         //noinspection DataFlowIssue // community object is from the DB and guaranteed to have an ID
         getMembersByCommunityId(community.id(), MemberRole.OWNER)
                 .forEach(communityOwner -> {
-            //noinspection DataFlowIssue // community owners are always local users with email address set
-            userService.getUserById(communityOwner.userId()).ifPresent(owner ->
-                    mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS_OWNER, locale, MailFormat.MARKDOWN,
-                    mailVariables, owner.email()));
-        });
-
-        final var status = ConfirmationStatus.SUCCESS;
-        final var message = translationProvider.getTranslation("data.service.MemberService.join.successMessage",
-                locale, communityName);
-        return new ConfirmationResponse(status, message, communityLink);
+                    //noinspection DataFlowIssue // community owners are always local users with email address set
+                    userService.getUserById(communityOwner.userId()).ifPresent(owner ->
+                            mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS_OWNER, locale, MailFormat.MARKDOWN,
+                                    mailVariables, owner.email()));
+                });
     }
 
     public boolean deleteMember(final @NotNull MemberDto communityOwner) {

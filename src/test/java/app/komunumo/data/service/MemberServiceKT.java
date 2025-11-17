@@ -19,6 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
+import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
 import app.komunumo.ui.KaribuTest;
@@ -27,8 +28,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MemberServiceKT extends KaribuTest {
 
@@ -37,6 +40,8 @@ public class MemberServiceKT extends KaribuTest {
 
     @Autowired
     private @NotNull CommunityService communityService;
+    @Autowired
+    private UserService userService;
 
     @Test
     @SuppressWarnings("DuplicateExpressions")
@@ -94,4 +99,18 @@ public class MemberServiceKT extends KaribuTest {
         assertThat(memberService.deleteMember(member)).isFalse();
         assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(4);
     }
+
+    @Test
+    void joinCommunityWithUserThrowsException() {
+        final var communityList = communityService.getCommunities();
+        final var community = communityList.getFirst();
+
+        final var profile = "anon-" + System.currentTimeMillis() + "@example.com";
+        final var user = userService.storeUser(new UserDto(null, null, null, profile, null,
+                "Anonymous", "", null, UserRole.USER, UserType.REMOTE));
+
+        assertThatThrownBy(() -> memberService.joinCommunityWithUser(user, community, Locale.ENGLISH))
+                .isInstanceOf(UnsupportedOperationException.class);
+    }
+
 }
