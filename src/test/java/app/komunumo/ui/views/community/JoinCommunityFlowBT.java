@@ -36,9 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static app.komunumo.data.dto.MemberRole.OWNER;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 public class JoinCommunityFlowBT extends BrowserTest {
 
@@ -102,13 +100,10 @@ public class JoinCommunityFlowBT extends BrowserTest {
         closeButton.click();
 
         // wait for email confirmation mail
-        final var greenMail = getGreenMail();
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
-        final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject()).isEqualTo("[Komunumo Test] Please confirm your email address");
+        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
         final var confirmationLink = extractLinkFromText(mailBody);
         assertThat(confirmationLink).isNotNull();
 
@@ -119,18 +114,14 @@ public class JoinCommunityFlowBT extends BrowserTest {
         captureScreenshot("joinCommunityAnonymously_confirmationPage");
 
         // wait for join confirmation mail for the new member
-        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length >= 2);
-        final var memberMessage = greenMail.getReceivedMessages()[1];
+        final var memberMessage = getEmailBySubject("[Komunumo Test] You have joined a community");
         assertThat(memberMessage.getAllRecipients()[0].toString()).isEqualTo(emailAddressMember);
-        assertThat(memberMessage.getSubject()).isEqualTo("[Komunumo Test] You have joined a community");
         assertThat(getBody(memberMessage)).contains("You are now a member of the community \"%s\"."
                 .formatted(demoCommunity.name()));
 
         // wait for join confirmation mail for the community owner
-        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 3);
-        final var ownerMessage = greenMail.getReceivedMessages()[2];
+        final var ownerMessage = getEmailBySubject("[Komunumo Test] You have a new member");
         assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(demoCommunityOwner.email());
-        assertThat(ownerMessage.getSubject()).isEqualTo("[Komunumo Test] You have a new member");
         assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 5 members."
                 .formatted(demoCommunity.name()));
     }
