@@ -49,10 +49,7 @@ import java.time.format.DateTimeFormatter;
 
 import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.awaitility.Awaitility.await;
 
 public abstract class BrowserTest extends IntegrationTest {
 
@@ -232,8 +229,6 @@ public abstract class BrowserTest extends IntegrationTest {
      * @param user the user to log in
      */
     protected void login(final @NotNull UserDto user) {
-        final var greenMail = getGreenMail();
-
         // navigate to login page
         page.navigate("http://localhost:%d/login".formatted(getPort()));
         page.waitForURL("**/login");
@@ -252,7 +247,6 @@ public abstract class BrowserTest extends IntegrationTest {
         captureScreenshot("login_email-field-set");
 
         // click on the request email button
-        final var mailCount = greenMail.getReceivedMessages().length;
         page.locator("vaadin-button.email-button").click();
 
         // close the dialog
@@ -262,16 +256,11 @@ public abstract class BrowserTest extends IntegrationTest {
         closeButton.click();
 
         // wait for the confirmation email
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(mailCount + 1));
-        final var receivedMessage = greenMail.getReceivedMessages()[0];
         final var instanceName = configurationService.getConfiguration(INSTANCE_NAME);
-        assertThatCode(() ->
-                assertThat(receivedMessage.getSubject())
-                        .isEqualTo("[%s] Please confirm your email address".formatted(instanceName))
-        ).doesNotThrowAnyException();
+        final var confirmationMessage = getEmailBySubject("[%s] Please confirm your email address".formatted(instanceName));
 
         // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
         final var confirmationLink = extractLinkFromText(mailBody);
         assertThat(confirmationLink).isNotNull();
 

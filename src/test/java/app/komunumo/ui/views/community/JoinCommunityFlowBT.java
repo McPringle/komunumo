@@ -19,6 +19,8 @@ package app.komunumo.ui.views.community;
 
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.UserDto;
+import app.komunumo.data.dto.UserRole;
+import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.data.service.UserService;
@@ -26,6 +28,8 @@ import app.komunumo.ui.BrowserTest;
 import app.komunumo.util.LinkUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
@@ -36,9 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static app.komunumo.data.dto.MemberRole.OWNER;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 public class JoinCommunityFlowBT extends BrowserTest {
 
@@ -102,13 +104,10 @@ public class JoinCommunityFlowBT extends BrowserTest {
         closeButton.click();
 
         // wait for email confirmation mail
-        final var greenMail = getGreenMail();
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
-        final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject()).isEqualTo("[Komunumo Test] Please confirm your email address");
+        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
         final var confirmationLink = extractLinkFromText(mailBody);
         assertThat(confirmationLink).isNotNull();
 
@@ -119,18 +118,53 @@ public class JoinCommunityFlowBT extends BrowserTest {
         captureScreenshot("joinCommunityAnonymously_confirmationPage");
 
         // wait for join confirmation mail for the new member
-        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length >= 2);
-        final var memberMessage = greenMail.getReceivedMessages()[1];
+        final var memberMessage = getEmailBySubject("[Komunumo Test] You have joined a community");
         assertThat(memberMessage.getAllRecipients()[0].toString()).isEqualTo(emailAddressMember);
-        assertThat(memberMessage.getSubject()).isEqualTo("[Komunumo Test] You have joined a community");
         assertThat(getBody(memberMessage)).contains("You are now a member of the community \"%s\"."
                 .formatted(demoCommunity.name()));
 
         // wait for join confirmation mail for the community owner
-        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 3);
-        final var ownerMessage = greenMail.getReceivedMessages()[2];
+        final var ownerMessage = getEmailBySubject("[Komunumo Test] You have a new member");
         assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(demoCommunityOwner.email());
-        assertThat(ownerMessage.getSubject()).isEqualTo("[Komunumo Test] You have a new member");
+        assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 5 members."
+                .formatted(demoCommunity.name()));
+    }
+
+    @Test
+    void joinCommunityWhenLoggedIn() throws MessagingException {
+        final var localUserEmail = getRandomEmailAddress();
+        final var profile = localUserEmail.split("@")[0];
+        final var localUser = userService.storeUser(new UserDto(null, null, null,
+                profile, localUserEmail,"Join Community Test", "", null, UserRole.USER, UserType.LOCAL));
+        login(localUser);
+
+        final var demoCommunityNameSelector = "h2.community-name";
+
+        final var page = getPage();
+        page.navigate(LinkUtil.getLink(demoCommunity, true));
+        page.waitForURL("**/communities/" + demoCommunity.profile());
+        page.waitForSelector(demoCommunityNameSelector);
+        captureScreenshot("joinCommunityWhenLoggedIn_detailViewLoaded");
+
+        // click the join button
+        page.click(JOIN_BUTTON_SELECTOR);
+
+        // confirm the join dialog
+        page.getByRole(
+                AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Yes, join")
+        ).click();
+        captureScreenshot("joinCommunityWhenLoggedIn_dialogConfirmed");
+
+        // wait for join confirmation mail for the new member
+        final var memberMessage = getEmailBySubject("[Komunumo Test] You have joined a community");
+        assertThat(memberMessage.getAllRecipients()[0].toString()).isEqualTo(localUserEmail);
+        assertThat(getBody(memberMessage)).contains("You are now a member of the community \"%s\"."
+                .formatted(demoCommunity.name()));
+
+        // wait for join confirmation mail for the community owner
+        final var ownerMessage = getEmailBySubject("[Komunumo Test] You have a new member");
+        assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(demoCommunityOwner.email());
         assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 5 members."
                 .formatted(demoCommunity.name()));
     }

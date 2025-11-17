@@ -22,6 +22,7 @@ import app.komunumo.data.dto.CommunityWithImageDto;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
+import app.komunumo.data.service.LoginService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
@@ -30,6 +31,7 @@ import app.komunumo.util.ImageUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -59,17 +61,20 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
     private final @NotNull HtmlContainer pageContent = new Div();
     private final @NotNull MemberService memberService;
     private final @NotNull EventService eventService;
+    private final @NotNull LoginService loginService;
 
     private @NotNull String pageTitle = "";
 
     public CommunityDetailView(final @NotNull ConfigurationService configurationService,
                                final @NotNull CommunityService communityService,
                                final @NotNull MemberService memberService,
-                               final @NotNull EventService eventService) {
+                               final @NotNull EventService eventService,
+                               final @NotNull LoginService loginService) {
         super(configurationService);
         this.communityService = communityService;
         this.memberService = memberService;
         this.eventService = eventService;
+        this.loginService = loginService;
         addClassName("community-detail-view");
         add(pageContent);
     }
@@ -125,7 +130,24 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         pageContent.add(description);
 
         final var joinButton = new Button(getTranslation(locale, "ui.views.community.CommunityDetailView.joinButton"));
-        joinButton.addClickListener(_ -> memberService.joinCommunityStart(community, locale));
+        joinButton.addClickListener(_ -> {
+            final var loggedInUser = loginService.getLoggedInUser();
+            if (loggedInUser.isPresent()) {
+                final var confirmDialog = new ConfirmDialog();
+                confirmDialog.setHeader(community.name());
+                confirmDialog.setText("Do you want to join this community and become a member? The organizers will be "
+                        + "able to see your profile and your name, but not your email address.");
+                confirmDialog.setCancelable(true);
+                confirmDialog.setCancelText("No");
+                confirmDialog.setConfirmButton("Yes, join", _ -> {
+                    memberService.joinCommunityWithUser(loggedInUser.orElseThrow(), community, locale);
+                    showDetails(communityWithImage, locale); // update view
+                });
+                confirmDialog.open();
+            } else {
+                memberService.joinCommunityStartConfirmationProcess(community, locale);
+            }
+        });
         joinButton.addClassName("join-button");
         pageContent.add(joinButton);
 

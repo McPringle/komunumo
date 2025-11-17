@@ -24,6 +24,8 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 import org.flywaydb.core.Flyway;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +34,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 /**
  * <p>Abstract base class for integration tests that run with a full Spring Boot context.</p>
@@ -48,6 +56,13 @@ import org.springframework.test.context.ActiveProfiles;
         properties = "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration")
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
+
+    /**
+     * <p>Defines the maximum number of seconds to wait for incoming emails when using GreenMail in integration tests.
+     * This timeout is applied to Awaitility-based waits that poll for messages delivered asynchronously by the
+     * application under test.</p>
+     */
+    private static final int GREENMAIL_WAIT_TIMEOUT = 2;
 
     /**
      * <p>Injected service responsible for managing application configuration settings within the test environment.</p>
@@ -177,6 +192,39 @@ public abstract class IntegrationTest {
         instanceUrl = "http://localhost:%d/".formatted(getPort());
         configurationService.setConfiguration(ConfigurationSetting.INSTANCE_URL, instanceUrl);
         configurationService.clearCache();
+    }
+
+    /**
+     * <p>Retrieves the first email received by GreenMail whose subject matches the provided value. The method actively
+     * waits until such an email arrives or the configured timeout is reached. This is intended for integration tests
+     * where emails may be delivered asynchronously and must be awaited before assertions can be performed.</p>
+     *
+     * <p>The search is repeated during the waiting period, and the first matching message is returned immediately
+     * once detected. If no matching email arrives before the timeout expires, the method fails through Awaitility's
+     * timeout mechanism.</p>
+     *
+     * @param subject the subject line to match against incoming emails
+     * @return the first {@link Message} instance whose subject matches the provided value
+     */
+    protected @NotNull Message getEmailBySubject(final @NotNull String subject) {
+        final var found = new AtomicReference<Message>();
+
+        await().atMost(GREENMAIL_WAIT_TIMEOUT, SECONDS).until(() -> {
+            final var message = Stream.of(greenMail.getReceivedMessages())
+                    .filter(m -> {
+                        try {
+                            return subject.equals(m.getSubject());
+                        } catch (MessagingException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .findFirst()
+                    .orElse(null);
+            found.set(message);
+            return message != null;
+        });
+
+        return found.get();
     }
 
     /**

@@ -17,21 +17,20 @@
  */
 package app.komunumo.data.service;
 
-import com.icegreen.greenmail.util.GreenMailUtil;
-import nl.altindag.log.LogCaptor;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.ui.KaribuTest;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import jakarta.mail.MessagingException;
+import nl.altindag.log.LogCaptor;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Locale;
 import java.util.Map;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 class MailServiceKT extends KaribuTest {
 
@@ -70,103 +69,91 @@ class MailServiceKT extends KaribuTest {
     }
 
     @Test
-    void sendMailSuccessWithoutVariables() {
+    void sendMailSuccessWithoutVariables() throws MessagingException {
         final var result = mailService.sendMail(
                 MailTemplateId.TEST, Locale.ENGLISH, MailFormat.MARKDOWN,
                 null, "test@komunumo.app");
         assertThat(result).isTrue();
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
-            assertThat(receivedMessage.getContentType())
-                    .isEqualTo("text/plain; charset=UTF-8");
-            assertThat(receivedMessage.getFrom()[0])
-                    .hasToString("sender@localhost");
-            assertThat(receivedMessage.getReplyTo()[0])
-                    .hasToString("reply@localhost");
-            assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Komunumo Test] Test mail");
-            assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
-            assertThat(receivedMessage.getAllRecipients())
-                    .hasSize(1);
-            assertThat(receivedMessage.getAllRecipients()[0])
-                    .hasToString("test@komunumo.app");
-        });
+
+        final var receivedMessage = getEmailBySubject("[Komunumo Test] Test mail");
+        assertThat(receivedMessage.getContentType())
+                .isEqualTo("text/plain; charset=UTF-8");
+        assertThat(receivedMessage.getFrom()[0])
+                .hasToString("sender@localhost");
+        assertThat(receivedMessage.getReplyTo()[0])
+                .hasToString("reply@localhost");
+        assertThat(GreenMailUtil.getBody(receivedMessage))
+                .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
+        assertThat(receivedMessage.getAllRecipients())
+                .hasSize(1);
+        assertThat(receivedMessage.getAllRecipients()[0])
+                .hasToString("test@komunumo.app");
     }
 
     @Test
-    void sendMailSuccessWithEmptyVariables() {
+    void sendMailSuccessWithEmptyVariables() throws MessagingException {
         final var result = mailService.sendMail(
                 MailTemplateId.TEST, Locale.ENGLISH, MailFormat.MARKDOWN,
                 Map.of(), "test@komunumo.app");
         assertThat(result).isTrue();
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
-            assertThat(receivedMessage.getContentType())
-                    .isEqualTo("text/plain; charset=UTF-8");
-            assertThat(receivedMessage.getFrom()[0])
-                    .hasToString("sender@localhost");
-            assertThat(receivedMessage.getReplyTo()[0])
-                    .hasToString("reply@localhost");
-            assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Komunumo Test] Test mail");
-            assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
-            assertThat(receivedMessage.getAllRecipients())
-                    .hasSize(1);
-            assertThat(receivedMessage.getAllRecipients()[0])
-                    .hasToString("test@komunumo.app");
-        });
+
+        final var receivedMessage = getEmailBySubject("[Komunumo Test] Test mail");
+        assertThat(receivedMessage.getContentType())
+                .isEqualTo("text/plain; charset=UTF-8");
+        assertThat(receivedMessage.getFrom()[0])
+                .hasToString("sender@localhost");
+        assertThat(receivedMessage.getReplyTo()[0])
+                .hasToString("reply@localhost");
+        assertThat(GreenMailUtil.getBody(receivedMessage))
+                .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
+        assertThat(receivedMessage.getAllRecipients())
+                .hasSize(1);
+        assertThat(receivedMessage.getAllRecipients()[0])
+                .hasToString("test@komunumo.app");
     }
 
     @Test
-    void sendMailSuccessWithVariables() {
+    void sendMailSuccessWithVariables() throws MessagingException {
         final var result = mailService.sendMail(
                 MailTemplateId.TEST, Locale.ENGLISH, MailFormat.MARKDOWN,
                 Map.of("password", "sEcReT"), "test@komunumo.app");
         assertThat(result).isTrue();
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
-            assertThat(receivedMessage.getContentType())
-                    .isEqualTo("text/plain; charset=UTF-8");
-            assertThat(receivedMessage.getFrom()[0])
-                    .hasToString("sender@localhost");
-            assertThat(receivedMessage.getReplyTo()[0])
-                    .hasToString("reply@localhost");
-            assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Komunumo Test] Test mail");
-            assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
-            assertThat(receivedMessage.getAllRecipients())
-                    .hasSize(1);
-            assertThat(receivedMessage.getAllRecipients()[0])
-                    .hasToString("test@komunumo.app");
-        });
+
+        final var receivedMessage = getEmailBySubject("[Komunumo Test] Test mail");
+        assertThat(receivedMessage.getContentType())
+                .isEqualTo("text/plain; charset=UTF-8");
+        assertThat(receivedMessage.getFrom()[0])
+                .hasToString("sender@localhost");
+        assertThat(receivedMessage.getReplyTo()[0])
+                .hasToString("reply@localhost");
+        assertThat(GreenMailUtil.getBody(receivedMessage))
+                .isEqualTo("Hello,\r\n\r\nthis is a test mail from Komunumo Test.");
+        assertThat(receivedMessage.getAllRecipients())
+                .hasSize(1);
+        assertThat(receivedMessage.getAllRecipients()[0])
+                .hasToString("test@komunumo.app");
     }
 
     @Test
-    void sendMailSuccessWithVariablesAsHtml() {
+    void sendMailSuccessWithVariablesAsHtml() throws MessagingException {
         final var result = mailService.sendMail(
                 MailTemplateId.TEST, Locale.ENGLISH, MailFormat.HTML,
                 Map.of("password", "sEcReT"), "test@komunumo.app");
         assertThat(result).isTrue();
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
-            assertThat(receivedMessage.getContentType())
-                    .isEqualTo("text/html;charset=UTF-8");
-            assertThat(receivedMessage.getFrom()[0])
-                    .hasToString("sender@localhost");
-            assertThat(receivedMessage.getReplyTo()[0])
-                    .hasToString("reply@localhost");
-            assertThat(receivedMessage.getSubject())
-                    .isEqualTo("[Komunumo Test] Test mail");
-            assertThat(GreenMailUtil.getBody(receivedMessage))
-                    .isEqualTo("<p>Hello,</p>\r\n<p>this is a test mail from Komunumo Test.</p>");
-            assertThat(receivedMessage.getAllRecipients())
-                    .hasSize(1);
-            assertThat(receivedMessage.getAllRecipients()[0])
-                    .hasToString("test@komunumo.app");
-        });
+
+        final var receivedMessage = getEmailBySubject("[Komunumo Test] Test mail");
+        assertThat(receivedMessage.getContentType())
+                .isEqualTo("text/html;charset=UTF-8");
+        assertThat(receivedMessage.getFrom()[0])
+                .hasToString("sender@localhost");
+        assertThat(receivedMessage.getReplyTo()[0])
+                .hasToString("reply@localhost");
+        assertThat(GreenMailUtil.getBody(receivedMessage))
+                .isEqualTo("<p>Hello,</p>\r\n<p>this is a test mail from Komunumo Test.</p>");
+        assertThat(receivedMessage.getAllRecipients())
+                .hasSize(1);
+        assertThat(receivedMessage.getAllRecipients()[0])
+                .hasToString("test@komunumo.app");
     }
 
     @Test

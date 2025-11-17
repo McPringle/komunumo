@@ -27,16 +27,13 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
-import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 class EventRegistrationFlowBT extends BrowserTest {
 
@@ -49,9 +46,7 @@ class EventRegistrationFlowBT extends BrowserTest {
     private @NotNull UserService userService;
 
     @Test
-    void testRegistrationFlowSuccess_withAnonymousUser() throws MessagingException {
-        final var greenMail = getGreenMail();
-
+    void testRegistrationFlowSuccess_withAnonymousUser() {
         // prepare a test event
         final var testEventWithImage = eventService.getUpcomingEventsWithImage()
                 .stream()
@@ -92,12 +87,10 @@ class EventRegistrationFlowBT extends BrowserTest {
         closeButton.click();
 
         // wait for email confirmation mail
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
-        final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject()).isEqualTo("[Komunumo Test] Please confirm your email address");
+        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
         final var confirmationLink = extractLinkFromText(mailBody);
         assertThat(confirmationLink).isNotNull();
 
@@ -108,14 +101,12 @@ class EventRegistrationFlowBT extends BrowserTest {
         captureScreenshot("confirmation-page");
 
         // wait for registration confirmation mail
-        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 2);
-        final var successMessage = greenMail.getReceivedMessages()[1];
-        assertThat(successMessage.getSubject()).isEqualTo("[Komunumo Test] Your registration is confirmed");
+        final var successMessage = getEmailBySubject("[Komunumo Test] Your registration is confirmed");
         assertThat(getBody(successMessage)).contains("You are now officially signed up for the event.");
     }
 
     @Test
-    void testRegistrationFlowSuccess_withLocalUser() throws MessagingException, FolderException {
+    void testRegistrationFlowSuccess_withLocalUser() throws FolderException {
         final var greenMail = getGreenMail();
 
         // prepare a test event
@@ -166,12 +157,10 @@ class EventRegistrationFlowBT extends BrowserTest {
         closeButton.click();
 
         // wait for email confirmation mail
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
-        final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject()).isEqualTo("[Komunumo Test] Please confirm your email address");
+        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
         final var confirmationLink = extractLinkFromText(mailBody);
         assertThat(confirmationLink).isNotNull();
 
@@ -182,9 +171,7 @@ class EventRegistrationFlowBT extends BrowserTest {
         captureScreenshot("confirmation-page");
 
         // wait for registration confirmation mail
-        await().atMost(2, SECONDS).until(() -> greenMail.getReceivedMessages().length == 2);
-        final var successMessage = greenMail.getReceivedMessages()[1];
-        assertThat(successMessage.getSubject()).isEqualTo("[Komunumo Test] Your registration is confirmed");
+        final var successMessage = getEmailBySubject("[Komunumo Test] Your registration is confirmed");
         assertThat(getBody(successMessage)).contains("You are now officially signed up for the event.");
 
         // logout the test user
