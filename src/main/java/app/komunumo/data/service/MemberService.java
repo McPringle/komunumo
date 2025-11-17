@@ -87,7 +87,9 @@ public final class MemberService {
         memberRecord.setCommunityId(memberDto.communityId());
         memberRecord.setRole(memberDto.role().name());
 
-        if (memberRecord.getSince() == null) {
+        if (memberRecord.getSince() == null && memberDto.since() != null) {
+            memberRecord.setSince(memberDto.since());
+        } else if (memberRecord.getSince() == null) {
             memberRecord.setSince(ZonedDateTime.now(ZoneOffset.UTC));
         }
 
