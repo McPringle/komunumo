@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
+import static app.komunumo.data.dto.MemberRole.ORGANIZER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -44,7 +45,6 @@ public class MemberServiceKT extends KaribuTest {
     private UserService userService;
 
     @Test
-    @SuppressWarnings("DuplicateExpressions")
     void testStoreUpdateDeleteMember() {
         final var communityList = communityService.getCommunities();
         final var community = communityList.getFirst();
@@ -74,27 +74,6 @@ public class MemberServiceKT extends KaribuTest {
             assertThat(testMemberDto.since()).isBeforeOrEqualTo(ZonedDateTime.now());
         });
 
-        member = memberService.getMembersByCommunityId(community.id()).getFirst(); // order since desc
-        final var since = member.since();
-
-        member = new MemberDto(user.id(), community.id(), role, null);
-        member = memberService.storeMember(member);
-
-        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(5);
-        assertThat(member).isNotNull().satisfies(testMemberDto -> {
-            assertThat(testMemberDto.userId()).isNotNull();
-            assertThat(testMemberDto.userId()).isEqualTo(user.id());
-
-            assertThat(testMemberDto.communityId()).isNotNull();
-            assertThat(testMemberDto.communityId()).isEqualTo(community.id());
-
-            assertThat(testMemberDto.role()).isNotNull();
-            assertThat(testMemberDto.role()).isEqualTo(role);
-
-            assertThat(testMemberDto.since()).isNotNull();
-            assertThat(testMemberDto.since()).isEqualTo(since);
-        });
-
         assertThat(memberService.deleteMember(member)).isTrue();
         assertThat(memberService.deleteMember(member)).isFalse();
         assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(4);
@@ -113,4 +92,24 @@ public class MemberServiceKT extends KaribuTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    @Test
+    void dontUpdateSinceWhenMemberExists() {
+        final var communityList = communityService.getCommunities();
+        final var community = communityList.getFirst();
+
+        assertThat(community.id()).isNotNull();
+        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(4);
+
+        final var member = memberService.getMembersByCommunityId(community.id(), MemberRole.MEMBER).getFirst();
+        final var organizer = memberService.storeMember(
+                new MemberDto(member.userId(), member.communityId(), ORGANIZER, null));
+
+        assertThat(memberService.getMembersByCommunityId(community.id())).hasSize(4);
+        assertThat(organizer).isNotNull().satisfies(testOrganizerDto -> {
+            assertThat(testOrganizerDto.userId()).isEqualTo(member.userId());
+            assertThat(testOrganizerDto.communityId()).isEqualTo(member.communityId());
+            assertThat(testOrganizerDto.role()).isEqualTo(ORGANIZER);
+            assertThat(testOrganizerDto.since()).isEqualTo(member.since());
+        });
+    }
 }
