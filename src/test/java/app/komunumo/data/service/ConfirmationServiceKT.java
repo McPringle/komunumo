@@ -37,9 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 class ConfirmationServiceKT extends KaribuTest {
 
@@ -70,17 +68,12 @@ class ConfirmationServiceKT extends KaribuTest {
         final var confirmationRequest = new ConfirmationRequest(actionMessage, actionHandler, actionContext, locale);
         confirmationService.sendConfirmationMail(email, confirmationRequest);
 
-        await().atMost(2, SECONDS).untilAsserted(() -> getGreenMail().waitForIncomingEmail(1));
         confirmationHandlerCounter.set(0);
-
-        final var receivedMessage = getGreenMail().getReceivedMessages()[0];
-        assertThat(receivedMessage.getAllRecipients()[0])
+        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
+        assertThat(confirmationMessage.getAllRecipients()[0])
                 .hasToString("test@example.com");
 
-        assertThat(receivedMessage.getSubject())
-                .isEqualTo("[Komunumo Test] Please confirm your email address");
-
-        final var body = getBody(receivedMessage);
+        final var body = getBody(confirmationMessage);
         assertThat(body)
                 .doesNotContain("${instanceName}")
                 .doesNotContain("${confirmationTimeout}")

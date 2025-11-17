@@ -20,6 +20,7 @@ package app.komunumo.data.service;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.ui.KaribuTest;
+import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Locale;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 @TestPropertySource(properties = {
         "komunumo.mail.replyTo="
@@ -40,20 +39,19 @@ class MailServiceNoReplyToKT extends KaribuTest {
     private @NotNull MailService mailService;
 
     @Test
-    void sendMailSuccessWithoutReplyTo() {
+    void sendMailSuccessWithoutReplyTo() throws MessagingException {
         final var result = mailService.sendMail(
                 MailTemplateId.TEST, Locale.ENGLISH, MailFormat.MARKDOWN,
                 null, "test@komunumo.app");
         assertThat(result).isTrue();
-        await().atMost(2, SECONDS).untilAsserted(() -> {
-            final var receivedMessage = getGreenMail().getReceivedMessages()[0];
-            assertThat(receivedMessage.getFrom()[0])
-                    .hasToString("sender@localhost");
-            assertThat(receivedMessage.getReplyTo()[0])
-                    .hasToString("sender@localhost");
-            assertThat(receivedMessage.getAllRecipients()[0])
-                    .hasToString("test@komunumo.app");
-        });
+
+        final var receivedMessage = getEmailBySubject("[Komunumo Test] Test mail");
+        assertThat(receivedMessage.getFrom()[0])
+                .hasToString("sender@localhost");
+        assertThat(receivedMessage.getReplyTo()[0])
+                .hasToString("sender@localhost");
+        assertThat(receivedMessage.getAllRecipients()[0])
+                .hasToString("test@komunumo.app");
     }
 
 }

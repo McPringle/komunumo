@@ -22,13 +22,10 @@ import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
-import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.util.TestUtil.extractLinkFromText;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 class LoginFlowBT extends BrowserTest {
 
@@ -49,7 +46,7 @@ class LoginFlowBT extends BrowserTest {
 
     @Test
     @SuppressWarnings({"java:S2925", "java:S2699"})
-    void loginShouldFail() throws MessagingException {
+    void loginShouldFail() {
         final var page = getPage();
 
         // navigate to events page
@@ -86,14 +83,10 @@ class LoginFlowBT extends BrowserTest {
         captureScreenshot("loginFails_after-email-requested");
 
         // wait for the confirmation email
-        final var greenMail = getGreenMail();
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
-        final var receivedMessage = greenMail.getReceivedMessages()[0];
-        assertThat(receivedMessage.getSubject())
-                .isEqualTo("[Komunumo Test] Please confirm your email address");
+        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(receivedMessage);
+        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
         final var confirmationLink = extractLinkFromText(mailBody);
         assertThat(confirmationLink).isNotNull();
 

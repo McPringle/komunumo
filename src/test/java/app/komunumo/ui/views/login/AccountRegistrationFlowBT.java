@@ -26,7 +26,6 @@ import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
-import jakarta.mail.MessagingException;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
@@ -56,19 +55,19 @@ public class AccountRegistrationFlowBT extends BrowserTest {
     }
 
     @Test
-    void newUserCanRegister() throws MessagingException, FolderException {
+    void newUserCanRegister() throws FolderException {
         testRegistrationFlow("newUserCanRegister", NEW_USER_EMAIL);
     }
 
     @Test
-    void anonymousUserCanUpgrade() throws MessagingException, FolderException {
+    void anonymousUserCanUpgrade() throws FolderException {
         final var anonymousUser = getTestUser(UserType.ANONYMOUS);
         assertThat(anonymousUser.email()).isNotNull();
         testRegistrationFlow("anonymousUserCanUpgrade", anonymousUser.email());
     }
 
     @Test
-    void remoteUserCanUpgrade() throws MessagingException, FolderException {
+    void remoteUserCanUpgrade() throws FolderException {
         final var remoteUser = getTestUser(UserType.REMOTE);
         assertThat(remoteUser.email()).isNotNull();
         testRegistrationFlow("remoteUserCanUpgrade", remoteUser.email());
@@ -76,7 +75,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
     private void testRegistrationFlow(final @NotNull String screenshotPrefix,
                                       final @NotNull String email)
-            throws MessagingException, FolderException {
+            throws FolderException {
         final var greenMail = getGreenMail();
         greenMail.purgeEmailFromAllMailboxes();
 
@@ -113,10 +112,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         captureScreenshot(screenshotPrefix + "_after-email-requested");
 
         // wait for the confirmation email
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(1));
-        final var confirmationMessage = greenMail.getReceivedMessages()[0];
-        assertThat(confirmationMessage.getSubject())
-                .isEqualTo("[Komunumo Test] Please confirm your email address");
+        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
 
         // extract the confirmation link
         final var confirmationMailBody = GreenMailUtil.getBody(confirmationMessage);
@@ -141,10 +137,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
         assertThat(localUser.orElseThrow().type()).isEqualTo(UserType.LOCAL);
 
         // wait for the registration email
-        await().atMost(2, SECONDS).untilAsserted(() -> greenMail.waitForIncomingEmail(2));
-        final var registrationMessage = greenMail.getReceivedMessages()[1];
-        assertThat(registrationMessage.getSubject())
-                .isEqualTo("[Komunumo Test] Your new local account is ready");
+        getEmailBySubject("[Komunumo Test] Your new local account is ready");
 
         // reload page and check that user is logged in
         page.reload();
