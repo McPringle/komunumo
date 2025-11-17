@@ -57,6 +57,11 @@ import static org.awaitility.Awaitility.await;
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
 
+    /**
+     * <p>Defines the maximum number of seconds to wait for incoming emails when using GreenMail in integration tests.
+     * This timeout is applied to Awaitility-based waits that poll for messages delivered asynchronously by the
+     * application under test.</p>
+     */
     private static final int GREENMAIL_WAIT_TIMEOUT = 2;
 
     /**
