@@ -68,7 +68,10 @@ class ArchitectureTest {
     void jooqClassesShouldOnlyBeAccessedByServiceLayer() {
         noClasses()
                 .that()
-                .resideOutsideOfPackages("app.komunumo.data.service..", "app.komunumo.data.db..")
+                .resideOutsideOfPackages(
+                        "app.komunumo.data.service..", // old service layer
+                        "app.komunumo.business..control..", // new service layer
+                        "app.komunumo.data.db..") // jOOQ generated classes
                 .should()
                 .accessClassesThat()
                 .resideInAnyPackage("app.komunumo.data.db..")
