@@ -32,7 +32,7 @@ public class EventCard extends KomunumoCard {
         super(eventWithImage.event().title(), eventWithImage.image());
         addClassName("event-card");
         addBeginDateAndTime(eventWithImage.event());
-        addClickListener((event -> UI.getCurrent().navigate(LinkUtil.getLink(eventWithImage.event()))));
+        addClickListener((_ -> UI.getCurrent().navigate(LinkUtil.getLink(eventWithImage.event()))));
     }
 
     private void addBeginDateAndTime(final @NotNull EventDto event) {
