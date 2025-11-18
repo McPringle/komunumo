@@ -37,7 +37,7 @@ import java.time.ZonedDateTime;
  * <p>This service ensures a consistent handling of record metadata across
  * all entities managed by Komunumo.</p>
  */
-abstract class StorageService {
+public abstract class StorageService {
 
     /**
      * <p>The generator used to create unique identifiers for new records.</p>

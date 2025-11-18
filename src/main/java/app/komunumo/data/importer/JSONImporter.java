@@ -18,12 +18,12 @@
 package app.komunumo.data.importer;
 
 import app.komunumo.KomunumoException;
+import app.komunumo.business.event.entity.EventDto;
+import app.komunumo.business.event.entity.EventStatus;
+import app.komunumo.business.event.entity.EventVisibility;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.dto.ContentType;
-import app.komunumo.data.dto.EventDto;
-import app.komunumo.data.dto.EventStatus;
-import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.GlobalPageDto;
 import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.data.dto.MemberDto;
@@ -33,7 +33,7 @@ import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.EventService;
+import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.data.service.MemberService;

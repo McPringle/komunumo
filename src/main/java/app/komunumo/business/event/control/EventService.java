@@ -15,18 +15,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.event.control;
 
+import app.komunumo.business.event.entity.EventDto;
+import app.komunumo.business.event.entity.EventStatus;
+import app.komunumo.business.event.entity.EventVisibility;
+import app.komunumo.business.event.entity.EventWithImageDto;
 import app.komunumo.data.db.tables.Image;
 import app.komunumo.data.db.tables.records.EventRecord;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ContentType;
-import app.komunumo.data.dto.EventDto;
-import app.komunumo.data.dto.EventStatus;
-import app.komunumo.data.dto.EventVisibility;
-import app.komunumo.data.dto.EventWithImageDto;
 import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
+import app.komunumo.data.service.StorageService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;

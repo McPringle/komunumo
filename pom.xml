@@ -911,12 +911,12 @@
                                     <converter>app.komunumo.data.converter.ZonedDateTimeConverter</converter>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>app.komunumo.data.dto.EventStatus</userType>
+                                    <userType>app.komunumo.business.event.entity.EventStatus</userType>
                                     <converter>app.komunumo.data.converter.EventStatusConverter</converter>
                                     <includeExpression>event\.status</includeExpression>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>app.komunumo.data.dto.EventVisibility</userType>
+                                    <userType>app.komunumo.business.event.entity.EventVisibility</userType>
                                     <converter>app.komunumo.data.converter.EventVisibilityConverter</converter>
                                     <includeExpression>event\.visibility</includeExpression>
                                 </forcedType>

@@ -17,8 +17,8 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.business.event.entity.EventDto;
 import app.komunumo.data.db.tables.records.ParticipationRecord;
-import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.ParticipationDto;

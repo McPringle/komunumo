@@ -18,8 +18,8 @@
 package app.komunumo.ui.views.community;
 
 import app.komunumo.ui.KaribuTest;
-import app.komunumo.ui.views.events.EventCard;
-import app.komunumo.ui.views.events.EventGrid;
+import app.komunumo.business.event.boundary.EventCard;
+import app.komunumo.business.event.boundary.EventGrid;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;

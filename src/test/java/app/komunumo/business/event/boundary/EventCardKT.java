@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.events;
+package app.komunumo.business.event.boundary;
 
-import app.komunumo.data.dto.EventDto;
-import app.komunumo.data.dto.EventStatus;
-import app.komunumo.data.dto.EventVisibility;
-import app.komunumo.data.dto.EventWithImageDto;
+import app.komunumo.business.event.entity.EventDto;
+import app.komunumo.business.event.entity.EventStatus;
+import app.komunumo.business.event.entity.EventVisibility;
+import app.komunumo.business.event.entity.EventWithImageDto;
 import app.komunumo.ui.KaribuTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

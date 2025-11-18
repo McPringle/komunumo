@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.events;
+package app.komunumo.business.event.boundary;
 
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.EventService;
+import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.service.UserService;
 import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;

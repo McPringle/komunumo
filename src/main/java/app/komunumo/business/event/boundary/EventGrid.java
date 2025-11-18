@@ -15,10 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.business.event.boundary;
 
-public enum EventStatus {
-    DRAFT,
-    PUBLISHED,
-    CANCELED
+import app.komunumo.business.event.entity.EventWithImageDto;
+import app.komunumo.ui.components.KomunumoGrid;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+
+public class EventGrid extends KomunumoGrid {
+
+    public EventGrid(final @NotNull List<EventWithImageDto> events) {
+        super(events.stream()
+                .map(EventCard::new)
+                .toArray(EventCard[]::new));
+        addClassName("event-grid");
+    }
+
 }

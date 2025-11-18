@@ -26,7 +26,7 @@ import app.komunumo.ui.views.admin.config.ConfigurationEditorView;
 import app.komunumo.ui.views.admin.importer.ImporterView;
 import app.komunumo.ui.views.community.CommunityGridView;
 import app.komunumo.ui.views.community.CreateCommunityView;
-import app.komunumo.ui.views.events.EventGridView;
+import app.komunumo.business.event.boundary.EventGridView;
 import app.komunumo.ui.views.login.LogoutView;
 import app.komunumo.util.LocationUtil;
 import app.komunumo.util.ThemeUtil;

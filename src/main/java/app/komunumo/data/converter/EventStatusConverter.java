@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.converter;
 
-import app.komunumo.data.dto.EventStatus;
+import app.komunumo.business.event.entity.EventStatus;
 
 public final class EventStatusConverter extends EnumByNameConverter<EventStatus> {
     public EventStatusConverter() {

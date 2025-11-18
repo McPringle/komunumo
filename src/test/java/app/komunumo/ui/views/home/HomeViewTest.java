@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.views.home;
 
-import app.komunumo.ui.views.events.EventGridView;
+import app.komunumo.business.event.boundary.EventGridView;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import org.junit.jupiter.api.Test;
 

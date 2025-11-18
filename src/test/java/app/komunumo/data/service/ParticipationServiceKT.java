@@ -17,6 +17,7 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;

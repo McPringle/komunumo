@@ -19,9 +19,9 @@ package app.komunumo.util;
 
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.ConfigurationSetting;
-import app.komunumo.data.dto.EventDto;
-import app.komunumo.data.dto.EventStatus;
-import app.komunumo.data.dto.EventVisibility;
+import app.komunumo.business.event.entity.EventDto;
+import app.komunumo.business.event.entity.EventStatus;
+import app.komunumo.business.event.entity.EventVisibility;
 import app.komunumo.data.service.ConfigurationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

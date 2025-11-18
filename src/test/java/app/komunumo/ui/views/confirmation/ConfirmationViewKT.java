@@ -22,7 +22,7 @@ import app.komunumo.data.service.confirmation.ConfirmationService;
 import app.komunumo.data.service.confirmation.ConfirmationStatus;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.PersistentNotification;
-import app.komunumo.ui.views.events.EventGridView;
+import app.komunumo.business.event.boundary.EventGridView;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
