@@ -19,8 +19,8 @@ package app.komunumo;
 
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.ImageService;
-import app.komunumo.servlets.images.ImageServlet;
+import app.komunumo.business.core.image.control.ImageService;
+import app.komunumo.business.core.image.boundary.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;

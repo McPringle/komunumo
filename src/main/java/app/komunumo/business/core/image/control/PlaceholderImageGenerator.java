@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.servlets.images;
+package app.komunumo.business.core.image.control;
 
 import app.komunumo.configuration.AppConfig;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -32,7 +32,7 @@ import java.util.Map;
 import static app.komunumo.util.ResourceUtil.getResourceAsString;
 import static app.komunumo.util.TemplateUtil.replaceVariables;
 
-final class PlaceholderImageGenerator {
+public final class PlaceholderImageGenerator {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(PlaceholderImageGenerator.class);
 
@@ -58,7 +58,7 @@ final class PlaceholderImageGenerator {
             .maximumSize(100)
             .build();
 
-    PlaceholderImageGenerator(final @NotNull AppConfig appConfig) {
+    public PlaceholderImageGenerator(final @NotNull AppConfig appConfig) {
         final var instanceLogo = loadInstanceLogo(appConfig.files().basedir());
 
         this.templateApplier = new SvgHelper(instanceLogo);
@@ -99,7 +99,7 @@ final class PlaceholderImageGenerator {
      * @param imageHeight the height of the placeholder image
      * @return the SVG code for the placeholder image
      */
-    String getPlaceholderImage(final int imageWidth, final int imageHeight) {
+    public String getPlaceholderImage(final int imageWidth, final int imageHeight) {
         final var cacheKey = new CacheKey(imageWidth, imageHeight);
         return imageCache.get(cacheKey, _ -> generatePlaceholderImage(imageWidth, imageHeight));
     }

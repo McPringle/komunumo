@@ -18,8 +18,8 @@
 package app.komunumo.util;
 
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.dto.ImageDto;
-import app.komunumo.data.service.ImageService;
+import app.komunumo.business.core.image.entity.ImageDto;
+import app.komunumo.business.core.image.control.ImageService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;

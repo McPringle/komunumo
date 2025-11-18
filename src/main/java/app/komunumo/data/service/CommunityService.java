@@ -21,7 +21,7 @@ import app.komunumo.data.db.Tables;
 import app.komunumo.data.db.tables.records.CommunityRecord;
 import app.komunumo.data.dto.CommunityDto;
 import app.komunumo.data.dto.CommunityWithImageDto;
-import app.komunumo.data.dto.ImageDto;
+import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;

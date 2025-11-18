@@ -25,7 +25,7 @@ import app.komunumo.data.dto.EventDto;
 import app.komunumo.data.dto.EventStatus;
 import app.komunumo.data.dto.EventVisibility;
 import app.komunumo.data.dto.EventWithImageDto;
-import app.komunumo.data.dto.ImageDto;
+import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.servlets.images;
+package app.komunumo.business.core.image.boundary;
 
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.configuration.DemoConfig;
@@ -23,8 +23,8 @@ import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.InstanceConfig;
 import app.komunumo.configuration.MailConfig;
 import app.komunumo.data.dto.ContentType;
-import app.komunumo.data.dto.ImageDto;
-import app.komunumo.data.service.ImageService;
+import app.komunumo.business.core.image.entity.ImageDto;
+import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.util.ImageUtil;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;

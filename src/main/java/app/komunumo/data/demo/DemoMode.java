@@ -24,7 +24,7 @@ import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.EventService;
 import app.komunumo.data.service.GlobalPageService;
-import app.komunumo.data.service.ImageService;
+import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.data.service.UserService;

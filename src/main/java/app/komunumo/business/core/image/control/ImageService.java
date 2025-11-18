@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.core.image.control;
 
 import app.komunumo.data.db.Tables;
 import app.komunumo.data.db.tables.records.ImageRecord;
-import app.komunumo.data.dto.ImageDto;
+import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;

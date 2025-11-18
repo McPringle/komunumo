@@ -19,7 +19,7 @@ package app.komunumo.data.demo;
 
 import app.komunumo.data.service.CommunityService;
 import app.komunumo.data.service.EventService;
-import app.komunumo.data.service.ImageService;
+import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.ui.KaribuTest;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;

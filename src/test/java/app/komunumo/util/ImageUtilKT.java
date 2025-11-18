@@ -18,8 +18,8 @@
 package app.komunumo.util;
 
 import app.komunumo.data.dto.ContentType;
-import app.komunumo.data.dto.ImageDto;
-import app.komunumo.data.service.ImageService;
+import app.komunumo.business.core.image.entity.ImageDto;
+import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

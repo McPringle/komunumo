@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.servlets.images;
+package app.komunumo.business.core.image.control;
 
 import app.komunumo.KomunumoException;
 import app.komunumo.util.ImageUtil;

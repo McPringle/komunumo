@@ -15,10 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.core.image.control;
 
 import app.komunumo.data.dto.ContentType;
-import app.komunumo.data.dto.ImageDto;
+import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
