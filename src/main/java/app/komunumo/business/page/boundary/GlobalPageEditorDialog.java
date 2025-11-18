@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package app.komunumo.ui.views.page;
+package app.komunumo.business.page.boundary;
 
-import app.komunumo.data.dto.GlobalPageDto;
-import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.business.page.entity.GlobalPageDto;
+import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.ui.components.PersistentNotification;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.ClickEvent;
@@ -120,7 +120,7 @@ public class GlobalPageEditorDialog extends Dialog {
         footer.add(saveButton);
 
         // Enable save button only if changes are made
-        ValueChangeListener<? super ValueChangeEvent<String>> valueChangeListener = event -> {
+        ValueChangeListener<? super ValueChangeEvent<String>> valueChangeListener = _ -> {
             if (!saveButton.isEnabled()) {
                 saveButton.setEnabled(true);
             }
@@ -158,17 +158,17 @@ public class GlobalPageEditorDialog extends Dialog {
 
             confirmDialog.setCancelable(true);
             confirmDialog.setCancelText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.keepEditing"));
-            confirmDialog.addCancelListener(event -> confirmDialog.close());
+            confirmDialog.addCancelListener(_ -> confirmDialog.close());
 
             confirmDialog.setRejectable(true);
             confirmDialog.setRejectText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.discard"));
-            confirmDialog.addRejectListener(event -> {
+            confirmDialog.addRejectListener(_ -> {
                 confirmDialog.close();
                 close();
             });
 
             confirmDialog.setConfirmText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.save"));
-            confirmDialog.addConfirmListener(event -> {
+            confirmDialog.addConfirmListener(_ -> {
                 confirmDialog.close();
                 save(null);
             });

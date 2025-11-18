@@ -19,7 +19,7 @@ package app.komunumo.ui.components;
 
 import app.komunumo.data.service.AccountService;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.ui.signals.AuthenticationSignal;
 import app.komunumo.ui.views.admin.config.ConfigurationEditorView;

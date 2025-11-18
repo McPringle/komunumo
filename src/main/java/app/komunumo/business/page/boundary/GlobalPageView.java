@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.page;
+package app.komunumo.business.page.boundary;
 
-import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.business.page.entity.GlobalPageDto;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import app.komunumo.util.SecurityUtil;

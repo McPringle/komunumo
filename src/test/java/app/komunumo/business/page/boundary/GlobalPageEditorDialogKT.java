@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.page;
+package app.komunumo.business.page.boundary;
 
-import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.business.page.entity.GlobalPageDto;
 import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.PersistentNotification;
 import com.github.mvysny.kaributesting.v10.MockVaadin;

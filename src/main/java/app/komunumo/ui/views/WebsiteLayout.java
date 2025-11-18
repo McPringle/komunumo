@@ -20,7 +20,7 @@ package app.komunumo.ui.views;
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.service.AccountService;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.GlobalPageService;
+import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.data.service.LoginService;
 import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.components.NavigationBar;

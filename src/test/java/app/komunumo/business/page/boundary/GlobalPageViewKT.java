@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.page;
+package app.komunumo.business.page.boundary;
 
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.AbstractView;

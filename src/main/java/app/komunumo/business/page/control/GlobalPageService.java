@@ -15,10 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.page.control;
 
 import app.komunumo.data.db.tables.records.GlobalPageRecord;
-import app.komunumo.data.dto.GlobalPageDto;
+import app.komunumo.business.page.entity.GlobalPageDto;
 import app.komunumo.util.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
