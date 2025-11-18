@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.demo;
 
-import app.komunumo.data.service.CommunityService;
+import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.ui.KaribuTest;

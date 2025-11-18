@@ -21,7 +21,7 @@ import app.komunumo.business.event.entity.EventDto;
 import app.komunumo.business.event.entity.EventStatus;
 import app.komunumo.business.event.entity.EventVisibility;
 import app.komunumo.business.event.entity.EventWithImageDto;
-import app.komunumo.data.service.CommunityService;
+import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

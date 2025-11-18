@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.demo;
 
-import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.business.community.entity.CommunityDto;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.business.event.entity.EventDto;
 import app.komunumo.business.event.entity.EventStatus;
@@ -27,7 +27,7 @@ import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.data.dto.UserDto;
 import app.komunumo.data.dto.UserRole;
 import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.CommunityService;
+import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.service.GlobalPageService;
 import app.komunumo.business.core.image.control.ImageService;

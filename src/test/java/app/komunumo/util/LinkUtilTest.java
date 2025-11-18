@@ -17,7 +17,7 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.business.community.entity.CommunityDto;
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.business.event.entity.EventDto;
 import app.komunumo.business.event.entity.EventStatus;

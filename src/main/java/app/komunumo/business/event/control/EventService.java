@@ -23,7 +23,7 @@ import app.komunumo.business.event.entity.EventVisibility;
 import app.komunumo.business.event.entity.EventWithImageDto;
 import app.komunumo.data.db.tables.Image;
 import app.komunumo.data.db.tables.records.EventRecord;
-import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.business.community.entity.CommunityDto;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;

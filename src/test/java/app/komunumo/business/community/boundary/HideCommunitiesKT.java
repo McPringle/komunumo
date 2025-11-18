@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.community;
+package app.komunumo.business.community.boundary;
 
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.views.WebsiteLayout;
-import com.icegreen.greenmail.store.FolderException;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouterLink;
@@ -40,7 +39,7 @@ class HideCommunitiesKT extends KaribuTest {
     private ConfigurationService configurationService;
 
     @Test
-    void checkCommunityLinkNotVisible() throws FolderException {
+    void checkCommunityLinkNotVisible() {
         try {
             configurationService.setConfiguration(INSTANCE_HIDE_COMMUNITIES, true);
 

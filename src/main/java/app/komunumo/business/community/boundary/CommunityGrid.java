@@ -15,24 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.community;
+package app.komunumo.business.community.boundary;
 
-import app.komunumo.data.dto.CommunityWithImageDto;
-import app.komunumo.ui.components.KomunumoCard;
-import app.komunumo.util.LinkUtil;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Div;
+import app.komunumo.business.community.entity.CommunityWithImageDto;
+import app.komunumo.ui.components.KomunumoGrid;
 import org.jetbrains.annotations.NotNull;
 
-public class CommunityCard extends KomunumoCard {
+import java.util.List;
 
-    public CommunityCard(final @NotNull CommunityWithImageDto communityWithImage) {
-        super(communityWithImage.community().name(), communityWithImage.image());
-        addClassName("community-card");
+public class CommunityGrid extends KomunumoGrid {
 
-        final var community = communityWithImage.community();
-        setSubtitle(new Div(community.profile()));
-        addClickListener((event -> UI.getCurrent().navigate(LinkUtil.getLink(community))));
+    public CommunityGrid(final @NotNull List<CommunityWithImageDto> communities) {
+        super(communities.stream()
+                .map(CommunityCard::new)
+                .toArray(CommunityCard[]::new));
+        addClassName("community-grid");
     }
 
 }

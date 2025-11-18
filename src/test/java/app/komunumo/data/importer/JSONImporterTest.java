@@ -19,7 +19,7 @@ package app.komunumo.data.importer;
 
 import app.komunumo.KomunumoException;
 import app.komunumo.business.core.image.entity.ImageDto;
-import app.komunumo.data.service.CommunityService;
+import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.service.GlobalPageService;

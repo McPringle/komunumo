@@ -17,6 +17,7 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
 import app.komunumo.data.dto.UserDto;

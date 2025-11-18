@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.service;
 
-import app.komunumo.data.dto.CommunityDto;
+import app.komunumo.business.community.entity.CommunityDto;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.MemberDto;

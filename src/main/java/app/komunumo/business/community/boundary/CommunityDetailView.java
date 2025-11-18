@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.community;
+package app.komunumo.business.community.boundary;
 
-import app.komunumo.data.dto.CommunityDto;
-import app.komunumo.data.dto.CommunityWithImageDto;
-import app.komunumo.data.service.CommunityService;
+import app.komunumo.business.community.entity.CommunityDto;
+import app.komunumo.business.community.entity.CommunityWithImageDto;
+import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.service.LoginService;

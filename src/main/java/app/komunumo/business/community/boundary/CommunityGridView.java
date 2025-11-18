@@ -15,39 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.community;
+package app.komunumo.business.community.boundary;
 
-import app.komunumo.data.service.CommunityService;
+import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
-import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
-import jakarta.annotation.security.RolesAllowed;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
-@RolesAllowed("USER_LOCAL")
-@Route(value = "/communities/new", layout = WebsiteLayout.class)
-public class CreateCommunityView extends AbstractView {
+@Route(value = "communities", layout = WebsiteLayout.class)
+@AnonymousAllowed
+public final class CommunityGridView extends AbstractView {
 
-    public CreateCommunityView(final @NotNull ConfigurationService configurationService,
-                               final @NotNull CommunityService communityService,
-                               final @NotNull MemberService memberService) {
+    public CommunityGridView(final @NotNull ConfigurationService configurationService,
+                             final @NotNull CommunityService communityService) {
         super(configurationService);
-
-        add(new H2(getTranslation("ui.views.community.CreateCommunityView.title")));
-        add(new CreateCommunityComponent(configurationService, communityService, memberService));
+        setId("community-view");
+        final var communities = communityService.getCommunitiesWithImage();
+        add(new CommunityGrid(communities));
     }
 
-    /**
-     * <p>The fragment of the page title that will appear before the instance name, separated by a hyphen.</p>
-     *
-     * @return the translated page title value, based on locale
-     */
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation("ui.views.community.CreateCommunityView.title");
+        return getTranslation(UI.getCurrent().getLocale(), "ui.views.community.CommunityGridView.title");
     }
-
 }

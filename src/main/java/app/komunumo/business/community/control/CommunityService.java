@@ -15,14 +15,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.community.control;
 
 import app.komunumo.data.db.Tables;
 import app.komunumo.data.db.tables.records.CommunityRecord;
-import app.komunumo.data.dto.CommunityDto;
-import app.komunumo.data.dto.CommunityWithImageDto;
+import app.komunumo.business.community.entity.CommunityDto;
+import app.komunumo.business.community.entity.CommunityWithImageDto;
 import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
+import app.komunumo.data.service.StorageService;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;

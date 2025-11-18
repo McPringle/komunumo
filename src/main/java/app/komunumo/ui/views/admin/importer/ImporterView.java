@@ -19,7 +19,7 @@ package app.komunumo.ui.views.admin.importer;
 
 import app.komunumo.data.importer.ImporterLog;
 import app.komunumo.data.importer.JSONImporter;
-import app.komunumo.data.service.CommunityService;
+import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.service.GlobalPageService;
