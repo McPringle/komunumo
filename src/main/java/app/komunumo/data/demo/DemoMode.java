@@ -21,7 +21,7 @@ import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.importer.ImporterLog;
 import app.komunumo.data.importer.JSONImporter;
 import app.komunumo.business.community.control.CommunityService;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.business.core.image.control.ImageService;

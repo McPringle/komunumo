@@ -18,11 +18,11 @@
 package app.komunumo.util;
 
 import app.komunumo.business.community.entity.CommunityDto;
-import app.komunumo.data.dto.ConfigurationSetting;
+import app.komunumo.business.core.config.entity.ConfigurationSetting;
 import app.komunumo.business.event.entity.EventDto;
 import app.komunumo.business.event.entity.EventStatus;
 import app.komunumo.business.event.entity.EventVisibility;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

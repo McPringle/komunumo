@@ -17,8 +17,8 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.data.dto.ConfigurationSetting;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.entity.ConfigurationSetting;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Page;
 import org.jetbrains.annotations.NotNull;

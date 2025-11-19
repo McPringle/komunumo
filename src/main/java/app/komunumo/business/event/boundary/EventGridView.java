@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.event.boundary;
 
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;

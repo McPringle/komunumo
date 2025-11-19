@@ -15,10 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.admin.config;
+package app.komunumo.business.core.config.boundary;
 
-import app.komunumo.data.dto.ConfigurationSetting;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.entity.ConfigurationSetting;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.html.H2;

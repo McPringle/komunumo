@@ -19,7 +19,7 @@ package app.komunumo.ui.views;
 
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.business.user.control.RegistrationService;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.business.user.control.LoginService;
 import app.komunumo.ui.components.InfoBanner;
@@ -38,8 +38,8 @@ import com.vaadin.flow.router.RouterLayout;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_SLOGAN;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_SLOGAN;
 
 public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnterObserver {
 

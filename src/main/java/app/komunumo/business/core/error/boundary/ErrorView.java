@@ -18,7 +18,7 @@
 package app.komunumo.business.core.error.boundary;
 
 import app.komunumo.business.core.error.entity.ErrorType;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.ui.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;

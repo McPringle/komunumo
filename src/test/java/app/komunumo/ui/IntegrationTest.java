@@ -18,8 +18,8 @@
 package app.komunumo.ui;
 
 import app.komunumo.data.demo.DemoMode;
-import app.komunumo.data.dto.ConfigurationSetting;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.entity.ConfigurationSetting;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;

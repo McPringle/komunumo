@@ -17,8 +17,8 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.data.dto.ConfigurationSetting;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.entity.ConfigurationSetting;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Paragraph;

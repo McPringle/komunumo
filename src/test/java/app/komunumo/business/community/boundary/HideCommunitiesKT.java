@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.community.boundary;
 
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.views.WebsiteLayout;
@@ -27,7 +27,7 @@ import com.vaadin.flow.router.RouterLink;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
 import static app.komunumo.util.TestUtil.assertContainsExactlyOneRouterLinkOf;
 import static app.komunumo.util.TestUtil.findComponent;
 import static app.komunumo.util.TestUtil.findComponents;

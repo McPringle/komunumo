@@ -21,7 +21,7 @@ import app.komunumo.business.community.entity.CommunityDto;
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
 import app.komunumo.business.community.control.CommunityService;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.components.ProfileField;
 import app.komunumo.util.SecurityUtil;

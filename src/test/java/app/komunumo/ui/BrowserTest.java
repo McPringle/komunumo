@@ -20,7 +20,7 @@ package app.komunumo.ui;
 import app.komunumo.business.user.entity.UserDto;
 import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.business.user.entity.UserType;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.user.control.UserService;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Browser;
@@ -47,7 +47,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static org.assertj.core.api.Assertions.assertThat;
 

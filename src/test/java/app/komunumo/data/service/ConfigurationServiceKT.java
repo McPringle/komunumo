@@ -17,7 +17,8 @@
  */
 package app.komunumo.data.service;
 
-import app.komunumo.data.dto.ConfigurationSetting;
+import app.komunumo.business.core.config.control.ConfigurationService;
+import app.komunumo.business.core.config.entity.ConfigurationSetting;
 import app.komunumo.ui.KaribuTest;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Locale;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 

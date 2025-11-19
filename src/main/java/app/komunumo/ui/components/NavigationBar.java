@@ -18,11 +18,11 @@
 package app.komunumo.ui.components;
 
 import app.komunumo.business.user.control.RegistrationService;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.business.user.control.LoginService;
 import app.komunumo.ui.signals.AuthenticationSignal;
-import app.komunumo.ui.views.admin.config.ConfigurationEditorView;
+import app.komunumo.business.core.config.boundary.ConfigurationEditorView;
 import app.komunumo.ui.views.admin.importer.ImporterView;
 import app.komunumo.business.community.boundary.CommunityGridView;
 import app.komunumo.business.community.boundary.CreateCommunityView;
@@ -42,9 +42,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 
 public final class NavigationBar extends HorizontalLayout {
 

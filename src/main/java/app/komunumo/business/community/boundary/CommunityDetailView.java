@@ -20,7 +20,7 @@ package app.komunumo.business.community.boundary;
 import app.komunumo.business.community.entity.CommunityDto;
 import app.komunumo.business.community.entity.CommunityWithImageDto;
 import app.komunumo.business.community.control.CommunityService;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.business.user.control.LoginService;
 import app.komunumo.data.service.MemberService;

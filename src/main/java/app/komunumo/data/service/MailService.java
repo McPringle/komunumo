@@ -17,6 +17,7 @@
  */
 package app.komunumo.data.service;
 
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplate;
@@ -38,8 +39,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static app.komunumo.data.db.tables.MailTemplate.MAIL_TEMPLATE;
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_URL;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_URL;
 import static app.komunumo.data.dto.MailFormat.HTML;
 import static app.komunumo.data.dto.MailFormat.MARKDOWN;
 import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;

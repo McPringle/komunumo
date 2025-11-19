@@ -18,7 +18,7 @@
 package app.komunumo;
 
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.business.core.image.boundary.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
@@ -40,7 +40,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
 
 /**
  * The entry point of the Spring Boot application.

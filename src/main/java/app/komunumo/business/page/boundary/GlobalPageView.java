@@ -18,7 +18,7 @@
 package app.komunumo.business.page.boundary;
 
 import app.komunumo.business.page.entity.GlobalPageDto;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;

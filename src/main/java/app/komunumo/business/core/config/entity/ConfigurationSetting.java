@@ -15,8 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.business.core.config.entity;
 
+import app.komunumo.business.core.config.control.ConfigurationService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
  * <p>Defines all configuration settings available in Komunumo.</p>
  *
  * <p>Each constant maps to a configuration entry stored in the {@code config} table and can be accessed
- * through the {@link app.komunumo.data.service.ConfigurationService}. Settings can be language independent or
+ * through the {@link ConfigurationService}. Settings can be language independent or
  * language dependent, as indicated by {@link #isLanguageDependent()}.</p>
  */
 public enum ConfigurationSetting {

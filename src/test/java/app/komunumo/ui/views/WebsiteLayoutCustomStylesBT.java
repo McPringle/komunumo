@@ -17,14 +17,14 @@
  */
 package app.komunumo.ui.views;
 
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.ui.BrowserTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
 
 class WebsiteLayoutCustomStylesBT extends BrowserTest {
 

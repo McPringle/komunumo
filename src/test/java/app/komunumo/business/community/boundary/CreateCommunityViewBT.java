@@ -18,12 +18,12 @@
 package app.komunumo.business.community.boundary;
 
 import app.komunumo.business.user.entity.UserType;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateCommunityViewBT extends BrowserTest {

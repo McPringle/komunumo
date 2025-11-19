@@ -18,7 +18,7 @@
 package app.komunumo.business.event.boundary;
 
 import app.komunumo.business.event.entity.EventWithImageDto;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.ui.components.AbstractView;

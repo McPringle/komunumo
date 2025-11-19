@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.core.confirmation.control;
 
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.data.service.MailService;
 import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
@@ -39,8 +39,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_NAME;
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_URL;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_URL;
 import static app.komunumo.data.dto.MailFormat.MARKDOWN;
 import static app.komunumo.data.dto.MailTemplateId.CONFIRMATION_PROCESS;
 

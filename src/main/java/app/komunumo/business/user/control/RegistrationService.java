@@ -22,7 +22,7 @@ import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.business.user.entity.UserDto;
 import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.business.user.entity.UserType;
-import app.komunumo.data.service.ConfigurationService;
+import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.data.service.MailService;
 import app.komunumo.business.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.business.core.confirmation.control.ConfirmationHandler;
@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 import java.util.Locale;
 import java.util.Map;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
+import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 
 @Service
 public final class RegistrationService {
