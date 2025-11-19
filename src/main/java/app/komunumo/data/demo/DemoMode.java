@@ -18,8 +18,8 @@
 package app.komunumo.data.demo;
 
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.importer.ImporterLog;
-import app.komunumo.data.importer.JSONImporter;
+import app.komunumo.business.core.importer.control.ImporterLog;
+import app.komunumo.business.core.importer.control.JSONImporter;
 import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.event.control.EventService;

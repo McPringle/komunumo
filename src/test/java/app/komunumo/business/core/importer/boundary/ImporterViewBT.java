@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.admin.importer;
+package app.komunumo.business.core.importer.boundary;
 
 import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.ui.BrowserTest;

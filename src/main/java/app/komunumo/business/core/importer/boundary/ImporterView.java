@@ -15,10 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.admin.importer;
+package app.komunumo.business.core.importer.boundary;
 
-import app.komunumo.data.importer.ImporterLog;
-import app.komunumo.data.importer.JSONImporter;
+import app.komunumo.business.core.importer.control.ImporterLog;
+import app.komunumo.business.core.importer.control.JSONImporter;
 import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
