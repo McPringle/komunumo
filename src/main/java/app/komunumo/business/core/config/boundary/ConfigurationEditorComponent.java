@@ -19,7 +19,7 @@ package app.komunumo.business.core.config.boundary;
 
 import app.komunumo.business.core.config.entity.ConfigurationSetting;
 import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.ui.TranslationProvider;
+import app.komunumo.business.core.i18n.controller.TranslationProvider;
 import app.komunumo.util.LocaleUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;

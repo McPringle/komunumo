@@ -21,7 +21,7 @@ import app.komunumo.business.user.control.RegistrationService;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.business.user.control.LoginService;
-import app.komunumo.ui.signals.AuthenticationSignal;
+import app.komunumo.business.user.entity.AuthenticationSignal;
 import app.komunumo.business.core.config.boundary.ConfigurationEditorView;
 import app.komunumo.business.core.importer.boundary.ImporterView;
 import app.komunumo.business.community.boundary.CommunityGridView;

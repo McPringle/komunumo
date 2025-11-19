@@ -22,7 +22,7 @@ import app.komunumo.data.service.MailService;
 import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.ui.TranslationProvider;
+import app.komunumo.business.core.i18n.controller.TranslationProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

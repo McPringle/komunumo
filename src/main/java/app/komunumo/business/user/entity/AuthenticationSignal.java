@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.signals;
+package app.komunumo.business.user.entity;
 
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.signals.ValueSignal;

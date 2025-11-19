@@ -26,7 +26,7 @@ import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.components.PageFooter;
 import app.komunumo.ui.components.PageHeader;
-import app.komunumo.ui.signals.AuthenticationSignal;
+import app.komunumo.business.user.entity.AuthenticationSignal;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;

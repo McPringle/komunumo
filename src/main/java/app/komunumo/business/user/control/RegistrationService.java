@@ -30,7 +30,7 @@ import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.business.core.confirmation.control.ConfirmationService;
 import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.ui.TranslationProvider;
+import app.komunumo.business.core.i18n.controller.TranslationProvider;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
