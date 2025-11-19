@@ -17,7 +17,6 @@
  */
 package app.komunumo.business.core.config.entity;
 
-import app.komunumo.business.core.config.control.ConfigurationService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
  * <p>Defines all configuration settings available in Komunumo.</p>
  *
  * <p>Each constant maps to a configuration entry stored in the {@code config} table and can be accessed
- * through the {@link ConfigurationService}. Settings can be language independent or
- * language dependent, as indicated by {@link #isLanguageDependent()}.</p>
+ * through the {@link app.komunumo.business.core.config.control.ConfigurationService}. Settings can be
+ * language independent or language dependent, as indicated by {@link #isLanguageDependent()}.</p>
  */
 public enum ConfigurationSetting {
 
