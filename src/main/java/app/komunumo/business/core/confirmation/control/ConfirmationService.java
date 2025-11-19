@@ -23,7 +23,7 @@ import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
 import app.komunumo.business.core.i18n.controller.TranslationProvider;
-import app.komunumo.ui.components.ConfirmationDialog;
+import app.komunumo.business.core.confirmation.boundary.ConfirmationDialog;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;

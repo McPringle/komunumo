@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.components;
+package app.komunumo.business.core.confirmation.boundary;
 
 import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.business.core.confirmation.control.ConfirmationService;
