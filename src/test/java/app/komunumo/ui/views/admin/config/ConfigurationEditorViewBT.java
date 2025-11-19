@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.views.admin.config;
 
-import app.komunumo.data.dto.UserRole;
+import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.BrowserTest;
 import org.jetbrains.annotations.NotNull;

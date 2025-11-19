@@ -18,10 +18,10 @@
 package app.komunumo.ui.views;
 
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.service.AccountService;
+import app.komunumo.business.user.control.RegistrationService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.business.page.control.GlobalPageService;
-import app.komunumo.data.service.LoginService;
+import app.komunumo.business.user.control.LoginService;
 import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.components.PageFooter;
@@ -49,7 +49,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
                          final @NotNull ConfigurationService configurationService,
                          final @NotNull GlobalPageService globalPageService,
                          final @NotNull LoginService loginService,
-                         final @NotNull AccountService accountService,
+                         final @NotNull RegistrationService registrationService,
                          final @NotNull AuthenticationSignal authenticationSignal) {
         super();
         authenticationSignal.refreshFromSecurityContext();
@@ -60,7 +60,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         }
 
         addPageHeader(configurationService);
-        add(new NavigationBar(configurationService, globalPageService, loginService, accountService, authenticationSignal));
+        add(new NavigationBar(configurationService, globalPageService, loginService, registrationService, authenticationSignal));
 
         main = new Main();
         add(main);

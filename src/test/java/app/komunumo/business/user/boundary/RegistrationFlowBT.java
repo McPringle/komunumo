@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.login;
+package app.komunumo.business.user.boundary;
 
-import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.AccountService;
+import app.komunumo.business.user.entity.UserType;
+import app.komunumo.business.user.control.RegistrationService;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.UserService;
+import app.komunumo.business.user.control.UserService;
 import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -38,7 +38,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-public class AccountRegistrationFlowBT extends BrowserTest {
+public class RegistrationFlowBT extends BrowserTest {
 
     private static final String REGISTER_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Register')";
     private static final String NEW_USER_EMAIL = "new@example.com";
@@ -180,7 +180,7 @@ public class AccountRegistrationFlowBT extends BrowserTest {
 
     @Test
     void registrationDisabled() {
-        try (var logCaptor = LogCaptor.forClass(AccountService.class)) {
+        try (var logCaptor = LogCaptor.forClass(RegistrationService.class)) {
 
             // new registrations are allowed by default
             assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isTrue();

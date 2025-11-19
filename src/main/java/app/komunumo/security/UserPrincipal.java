@@ -17,8 +17,8 @@
  */
 package app.komunumo.security;
 
-import app.komunumo.data.dto.UserDto;
-import app.komunumo.data.dto.UserType;
+import app.komunumo.business.user.entity.UserDto;
+import app.komunumo.business.user.entity.UserType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;

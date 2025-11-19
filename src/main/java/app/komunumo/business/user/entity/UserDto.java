@@ -15,31 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.business.user.entity;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.jetbrains.annotations.Nullable;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.time.ZonedDateTime;
+import java.util.UUID;
 
-class UserTypeTest {
-
-    @ParameterizedTest(name = "{index} ⇒ {0}.isLoginAllowed() == {1}")
-    @CsvSource({
-            "LOCAL, true",
-            "REMOTE, false",
-            "ANONYMOUS, false"
-    })
-    void shouldReturnExpectedLoginAllowedFlag(final @NotNull UserType userType, final boolean expected) {
-        final var actual = userType.isLoginAllowed();
-        assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    void shouldHaveExactlyThreeUserTypes() {
-        assertThat(UserType.values()).hasSize(3);
-    }
-
-}
+public record UserDto(
+        @Nullable UUID id,
+        @Nullable ZonedDateTime created,
+        @Nullable ZonedDateTime updated,
+        @Nullable String profile,
+        @Nullable String email,
+        @NotNull String name,
+        @NotNull String bio,
+        @Nullable UUID imageId,
+        @NotNull UserRole role,
+        @NotNull UserType type
+) { }

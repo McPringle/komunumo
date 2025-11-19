@@ -21,7 +21,7 @@ import app.komunumo.admin.AdminBootstrapper;
 import app.komunumo.configuration.AppConfig;
 import app.komunumo.data.demo.DemoMode;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.UserService;
+import app.komunumo.business.user.control.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

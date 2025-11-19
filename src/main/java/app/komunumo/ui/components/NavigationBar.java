@@ -17,17 +17,17 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.data.service.AccountService;
+import app.komunumo.business.user.control.RegistrationService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.business.page.control.GlobalPageService;
-import app.komunumo.data.service.LoginService;
+import app.komunumo.business.user.control.LoginService;
 import app.komunumo.ui.signals.AuthenticationSignal;
 import app.komunumo.ui.views.admin.config.ConfigurationEditorView;
 import app.komunumo.ui.views.admin.importer.ImporterView;
 import app.komunumo.business.community.boundary.CommunityGridView;
 import app.komunumo.business.community.boundary.CreateCommunityView;
 import app.komunumo.business.event.boundary.EventGridView;
-import app.komunumo.ui.views.login.LogoutView;
+import app.komunumo.business.user.boundary.LogoutView;
 import app.komunumo.util.LocationUtil;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.Component;
@@ -51,7 +51,7 @@ public final class NavigationBar extends HorizontalLayout {
     public NavigationBar(final @NotNull ConfigurationService configurationService,
                          final @NotNull GlobalPageService globalPageService,
                          final @NotNull LoginService loginService,
-                         final @NotNull AccountService accountService,
+                         final @NotNull RegistrationService registrationService,
                          final @NotNull AuthenticationSignal authenticationSignal) {
         super();
         final var ui = UI.getCurrent();
@@ -62,7 +62,7 @@ public final class NavigationBar extends HorizontalLayout {
         menuContainer.add(getNavigationBar(ui, configurationService, globalPageService));
         addToStart(menuContainer);
 
-        addToEnd(getAvatar(ui, configurationService, loginService, accountService, authenticationSignal));
+        addToEnd(getAvatar(ui, configurationService, loginService, registrationService, authenticationSignal));
     }
 
     private Component getNavigationBar(final @NotNull UI ui,
@@ -84,7 +84,7 @@ public final class NavigationBar extends HorizontalLayout {
     private Component getAvatar(final @NotNull UI ui,
                                 final @NotNull ConfigurationService configurationService,
                                 final @NotNull LoginService loginService,
-                                final @NotNull AccountService accountService,
+                                final @NotNull RegistrationService registrationService,
                                 final @NotNull AuthenticationSignal authenticationSignal) {
         final var avatar = new Avatar();
         final var avatarMenu = new ContextMenu(avatar);
@@ -106,7 +106,7 @@ public final class NavigationBar extends HorizontalLayout {
         );
 
         final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), _ ->
-                accountService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+                registrationService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
         // create community

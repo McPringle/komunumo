@@ -22,7 +22,7 @@ import app.komunumo.business.community.entity.CommunityWithImageDto;
 import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
-import app.komunumo.data.service.LoginService;
+import app.komunumo.business.user.control.LoginService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;

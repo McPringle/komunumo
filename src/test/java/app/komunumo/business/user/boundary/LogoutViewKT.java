@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.login;
+package app.komunumo.business.user.boundary;
 
-import app.komunumo.data.dto.UserRole;
+import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.util.SecurityUtil;
 import com.github.mvysny.kaributesting.v10.MockVaadin;

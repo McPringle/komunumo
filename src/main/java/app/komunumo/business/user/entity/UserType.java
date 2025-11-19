@@ -15,23 +15,33 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.business.user.entity;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+public enum UserType {
 
-import java.time.ZonedDateTime;
-import java.util.UUID;
+    /**
+     * Regular local account, login possible.
+     */
+    LOCAL(true),
 
-public record UserDto(
-        @Nullable UUID id,
-        @Nullable ZonedDateTime created,
-        @Nullable ZonedDateTime updated,
-        @Nullable String profile,
-        @Nullable String email,
-        @NotNull String name,
-        @NotNull String bio,
-        @Nullable UUID imageId,
-        @NotNull UserRole role,
-        @NotNull UserType type
-) { }
+    /**
+     * Federated/remote actor, usually no email, no login possible.
+     */
+    REMOTE(false),
+
+    /**
+     * Email-only shadow account, no login possible.
+     */
+    ANONYMOUS(false);
+
+    private final boolean loginAllowed;
+
+    UserType(final boolean loginAllowed) {
+        this.loginAllowed = loginAllowed;
+    }
+
+    public boolean isLoginAllowed() {
+        return loginAllowed;
+    }
+
+}

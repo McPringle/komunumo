@@ -18,11 +18,11 @@
 package app.komunumo.ui;
 
 import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.dto.UserDto;
-import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.dto.UserType;
-import app.komunumo.data.service.LoginService;
-import app.komunumo.data.service.UserService;
+import app.komunumo.business.user.entity.UserDto;
+import app.komunumo.business.user.entity.UserRole;
+import app.komunumo.business.user.entity.UserType;
+import app.komunumo.business.user.control.LoginService;
+import app.komunumo.business.user.control.UserService;
 import app.komunumo.security.UserPrincipal;
 import com.github.mvysny.fakeservlet.FakeRequest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;

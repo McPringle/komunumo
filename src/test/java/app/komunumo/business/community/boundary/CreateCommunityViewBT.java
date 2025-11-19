@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.community.boundary;
 
-import app.komunumo.data.dto.UserType;
+import app.komunumo.business.user.entity.UserType;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;

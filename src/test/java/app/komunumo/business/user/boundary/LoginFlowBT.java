@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.login;
+package app.komunumo.business.user.boundary;
 
-import app.komunumo.data.dto.UserRole;
+import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.ui.BrowserTest;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;

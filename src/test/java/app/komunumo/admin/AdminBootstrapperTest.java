@@ -22,8 +22,8 @@ import app.komunumo.configuration.DemoConfig;
 import app.komunumo.configuration.FilesConfig;
 import app.komunumo.configuration.InstanceConfig;
 import app.komunumo.configuration.MailConfig;
-import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.service.UserService;
+import app.komunumo.business.user.entity.UserRole;
+import app.komunumo.business.user.control.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 

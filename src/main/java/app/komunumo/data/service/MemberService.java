@@ -18,11 +18,12 @@
 package app.komunumo.data.service;
 
 import app.komunumo.business.community.entity.CommunityDto;
+import app.komunumo.business.user.control.UserService;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
-import app.komunumo.data.dto.UserDto;
+import app.komunumo.business.user.entity.UserDto;
 import app.komunumo.data.service.confirmation.ConfirmationContext;
 import app.komunumo.data.service.confirmation.ConfirmationHandler;
 import app.komunumo.data.service.confirmation.ConfirmationRequest;

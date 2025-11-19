@@ -18,7 +18,7 @@
 package app.komunumo.business.page.control;
 
 import app.komunumo.business.page.entity.GlobalPageDto;
-import app.komunumo.data.dto.UserRole;
+import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

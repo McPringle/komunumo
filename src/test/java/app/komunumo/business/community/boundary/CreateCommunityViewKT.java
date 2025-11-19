@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.community.boundary;
 
-import app.komunumo.data.dto.UserRole;
+import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.ProfileField;
 import com.vaadin.flow.component.UI;

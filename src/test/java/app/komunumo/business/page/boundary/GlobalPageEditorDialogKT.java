@@ -18,7 +18,7 @@
 package app.komunumo.business.page.boundary;
 
 import app.komunumo.business.page.entity.GlobalPageDto;
-import app.komunumo.data.dto.UserRole;
+import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.PersistentNotification;

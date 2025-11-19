@@ -27,7 +27,7 @@ import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.data.service.ParticipationService;
-import app.komunumo.data.service.UserService;
+import app.komunumo.business.user.control.UserService;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

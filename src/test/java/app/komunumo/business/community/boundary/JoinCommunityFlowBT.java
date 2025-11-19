@@ -18,12 +18,12 @@
 package app.komunumo.business.community.boundary;
 
 import app.komunumo.business.community.entity.CommunityDto;
-import app.komunumo.data.dto.UserDto;
-import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.dto.UserType;
+import app.komunumo.business.user.entity.UserDto;
+import app.komunumo.business.user.entity.UserRole;
+import app.komunumo.business.user.entity.UserType;
 import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.data.service.MemberService;
-import app.komunumo.data.service.UserService;
+import app.komunumo.business.user.control.UserService;
 import app.komunumo.ui.BrowserTest;
 import app.komunumo.util.LinkUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;

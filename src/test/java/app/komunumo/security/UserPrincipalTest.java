@@ -17,9 +17,9 @@
  */
 package app.komunumo.security;
 
-import app.komunumo.data.dto.UserDto;
-import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.dto.UserType;
+import app.komunumo.business.user.entity.UserDto;
+import app.komunumo.business.user.entity.UserRole;
+import app.komunumo.business.user.entity.UserType;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

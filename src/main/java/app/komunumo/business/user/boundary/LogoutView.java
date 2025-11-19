@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package app.komunumo.ui.views.login;
+package app.komunumo.business.user.boundary;
 
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.LoginService;
+import app.komunumo.business.user.control.LoginService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.UI;

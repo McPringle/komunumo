@@ -18,11 +18,12 @@
 package app.komunumo.data.service;
 
 import app.komunumo.business.community.control.CommunityService;
+import app.komunumo.business.user.control.UserService;
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
-import app.komunumo.data.dto.UserDto;
-import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.dto.UserType;
+import app.komunumo.business.user.entity.UserDto;
+import app.komunumo.business.user.entity.UserRole;
+import app.komunumo.business.user.entity.UserType;
 import app.komunumo.ui.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

@@ -25,7 +25,7 @@ import app.komunumo.business.event.control.EventService;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.data.service.MemberService;
-import app.komunumo.data.service.UserService;
+import app.komunumo.business.user.control.UserService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.component.UI;

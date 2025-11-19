@@ -17,11 +17,11 @@
  */
 package app.komunumo.ui;
 
-import app.komunumo.data.dto.UserDto;
-import app.komunumo.data.dto.UserRole;
-import app.komunumo.data.dto.UserType;
+import app.komunumo.business.user.entity.UserDto;
+import app.komunumo.business.user.entity.UserRole;
+import app.komunumo.business.user.entity.UserType;
 import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.UserService;
+import app.komunumo.business.user.control.UserService;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;

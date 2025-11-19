@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.views.admin.importer;
 
-import app.komunumo.data.dto.UserRole;
+import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.ui.BrowserTest;
 import org.junit.jupiter.api.Test;
 

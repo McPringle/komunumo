@@ -17,7 +17,6 @@
  */
 package app.komunumo.ui.signals;
 
-import app.komunumo.data.dto.UserDto;
 import app.komunumo.security.UserPrincipal;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
