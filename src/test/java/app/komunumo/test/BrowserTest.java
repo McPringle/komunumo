@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui;
+package app.komunumo.test;
 
 import app.komunumo.business.user.entity.UserDto;
 import app.komunumo.business.user.entity.UserRole;

@@ -20,7 +20,7 @@ package app.komunumo.data.generator;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.business.core.image.control.ImageService;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import com.github.benmanes.caffeine.cache.Cache;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;

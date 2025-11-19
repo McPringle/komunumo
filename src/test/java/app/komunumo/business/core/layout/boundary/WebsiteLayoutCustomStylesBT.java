@@ -18,7 +18,7 @@
 package app.komunumo.business.core.layout.boundary;
 
 import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

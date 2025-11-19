@@ -22,7 +22,7 @@ import app.komunumo.business.event.entity.EventStatus;
 import app.komunumo.business.event.entity.EventVisibility;
 import app.komunumo.business.event.entity.EventWithImageDto;
 import app.komunumo.business.community.control.CommunityService;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

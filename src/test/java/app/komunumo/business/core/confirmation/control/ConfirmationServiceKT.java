@@ -22,7 +22,7 @@ import app.komunumo.business.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import jakarta.mail.MessagingException;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;

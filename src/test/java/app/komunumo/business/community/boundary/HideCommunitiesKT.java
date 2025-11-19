@@ -18,7 +18,7 @@
 package app.komunumo.business.community.boundary;
 
 import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.UI;

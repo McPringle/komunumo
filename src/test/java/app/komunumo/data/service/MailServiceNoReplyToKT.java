@@ -19,7 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplateId;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import jakarta.mail.MessagingException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

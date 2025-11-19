@@ -21,7 +21,7 @@ import app.komunumo.business.user.entity.UserType;
 import app.komunumo.business.user.control.RegistrationService;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.user.control.UserService;
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;

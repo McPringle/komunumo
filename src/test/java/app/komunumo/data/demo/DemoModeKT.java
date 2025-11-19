@@ -32,7 +32,7 @@ import app.komunumo.business.event.control.EventService;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.business.user.control.UserService;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

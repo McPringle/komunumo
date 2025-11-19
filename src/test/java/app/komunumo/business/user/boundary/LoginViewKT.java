@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.user.boundary;
 
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.ui.components.ConfirmationDialog;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;

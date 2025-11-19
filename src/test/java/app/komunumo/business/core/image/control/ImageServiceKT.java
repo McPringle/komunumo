@@ -19,7 +19,7 @@ package app.komunumo.business.core.image.control;
 
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.business.core.image.entity.ImageDto;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;

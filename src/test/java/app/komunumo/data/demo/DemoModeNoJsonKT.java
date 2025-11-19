@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.demo;
 
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

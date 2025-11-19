@@ -18,7 +18,7 @@
 package app.komunumo.business.user.boundary;
 
 import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;

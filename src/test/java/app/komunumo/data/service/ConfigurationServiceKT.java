@@ -19,7 +19,7 @@ package app.komunumo.data.service;
 
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.core.config.entity.ConfigurationSetting;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

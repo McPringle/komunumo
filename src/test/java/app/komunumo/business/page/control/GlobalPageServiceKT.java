@@ -19,7 +19,7 @@ package app.komunumo.business.page.control;
 
 import app.komunumo.business.page.entity.GlobalPageDto;
 import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

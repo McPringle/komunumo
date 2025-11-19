@@ -34,7 +34,7 @@ import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.components.PageHeader;
 

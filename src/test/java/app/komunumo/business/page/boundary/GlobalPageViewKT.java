@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.page.boundary;
 
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.ui.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;

@@ -18,7 +18,7 @@
 package app.komunumo.business.event.boundary;
 
 import app.komunumo.business.event.control.EventService;
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

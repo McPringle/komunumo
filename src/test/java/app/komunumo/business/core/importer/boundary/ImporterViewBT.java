@@ -18,7 +18,7 @@
 package app.komunumo.business.core.importer.boundary;
 
 import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;

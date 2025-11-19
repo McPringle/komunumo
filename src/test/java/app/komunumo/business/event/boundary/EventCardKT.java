@@ -21,7 +21,7 @@ import app.komunumo.business.event.entity.EventDto;
 import app.komunumo.business.event.entity.EventStatus;
 import app.komunumo.business.event.entity.EventVisibility;
 import app.komunumo.business.event.entity.EventWithImageDto;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

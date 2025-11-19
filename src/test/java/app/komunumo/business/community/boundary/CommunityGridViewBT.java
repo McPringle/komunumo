@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.community.boundary;
 
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

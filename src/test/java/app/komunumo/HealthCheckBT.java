@@ -17,7 +17,7 @@
  */
 package app.komunumo;
 
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;

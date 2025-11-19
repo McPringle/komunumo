@@ -24,7 +24,7 @@ import app.komunumo.business.user.entity.UserType;
 import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.business.user.control.UserService;
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import app.komunumo.util.LinkUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;

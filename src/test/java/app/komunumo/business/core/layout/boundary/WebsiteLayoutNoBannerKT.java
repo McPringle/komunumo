@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.core.layout.boundary;
 
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.ui.components.InfoBanner;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;

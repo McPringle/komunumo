@@ -19,7 +19,7 @@ package app.komunumo.business.community.boundary;
 
 import app.komunumo.business.user.entity.UserType;
 import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.ui.BrowserTest;
+import app.komunumo.test.BrowserTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

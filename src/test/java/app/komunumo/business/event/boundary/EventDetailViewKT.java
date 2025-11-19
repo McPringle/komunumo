@@ -18,7 +18,7 @@
 package app.komunumo.business.event.boundary;
 
 import app.komunumo.business.event.control.EventService;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.util.DateTimeUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;

@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.community.boundary;
 
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.business.event.boundary.EventCard;
 import app.komunumo.business.event.boundary.EventGrid;
 import com.vaadin.flow.component.UI;

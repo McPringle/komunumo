@@ -17,8 +17,8 @@
  */
 package app.komunumo;
 
-import app.komunumo.ui.BrowserTest;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.BrowserTest;
+import app.komunumo.test.KaribuTest;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;

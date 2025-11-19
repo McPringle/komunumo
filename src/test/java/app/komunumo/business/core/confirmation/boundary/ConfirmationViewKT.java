@@ -20,7 +20,7 @@ package app.komunumo.business.core.confirmation.boundary;
 import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.business.core.confirmation.control.ConfirmationService;
 import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.ui.components.PersistentNotification;
 import app.komunumo.business.event.boundary.EventGridView;
 import com.github.mvysny.kaributesting.v10.MockVaadin;

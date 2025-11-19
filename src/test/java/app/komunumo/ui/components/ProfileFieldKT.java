@@ -19,7 +19,7 @@ package app.komunumo.ui.components;
 
 import app.komunumo.business.core.config.entity.ConfigurationSetting;
 import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.ui.components.ProfileField.ProfileNameAvailabilityChecker;
 import com.vaadin.flow.component.html.Paragraph;
 import org.junit.jupiter.api.BeforeEach;

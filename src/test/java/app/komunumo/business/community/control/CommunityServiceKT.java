@@ -18,7 +18,7 @@
 package app.komunumo.business.community.control;
 
 import app.komunumo.business.community.entity.CommunityDto;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

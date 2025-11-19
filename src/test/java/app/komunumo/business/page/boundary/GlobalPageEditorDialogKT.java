@@ -20,7 +20,7 @@ package app.komunumo.business.page.boundary;
 import app.komunumo.business.page.entity.GlobalPageDto;
 import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.business.page.control.GlobalPageService;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.KaribuTest;
 import app.komunumo.ui.components.PersistentNotification;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.HtmlContainer;
