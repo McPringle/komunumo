@@ -17,7 +17,7 @@
  */
 package app.komunumo.business.core.layout.boundary;
 
-import app.komunumo.configuration.AppConfig;
+import app.komunumo.business.core.config.entity.AppConfig;
 import app.komunumo.business.user.control.RegistrationService;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.page.control.GlobalPageService;

@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.demo;
 
-import app.komunumo.configuration.AppConfig;
+import app.komunumo.business.core.config.entity.AppConfig;
 import app.komunumo.business.core.importer.control.ImporterLog;
 import app.komunumo.business.core.importer.control.JSONImporter;
 import app.komunumo.business.community.control.CommunityService;

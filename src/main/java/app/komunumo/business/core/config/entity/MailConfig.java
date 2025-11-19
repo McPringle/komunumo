@@ -15,8 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.configuration;
+package app.komunumo.business.core.config.entity;
 
 import org.jetbrains.annotations.NotNull;
 
-public record DemoConfig(boolean enabled, @NotNull String json) { }
+public record MailConfig(@NotNull String from,
+                         @NotNull String replyTo) { }

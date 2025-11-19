@@ -17,7 +17,7 @@
  */
 package app.komunumo;
 
-import app.komunumo.configuration.AppConfig;
+import app.komunumo.business.core.config.entity.AppConfig;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.business.core.image.boundary.ImageServlet;

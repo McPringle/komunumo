@@ -18,7 +18,7 @@
 package app.komunumo;
 
 import app.komunumo.admin.AdminBootstrapper;
-import app.komunumo.configuration.AppConfig;
+import app.komunumo.business.core.config.entity.AppConfig;
 import app.komunumo.data.demo.DemoMode;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.user.control.UserService;

@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui;
 
-import app.komunumo.configuration.AppConfig;
+import app.komunumo.business.core.config.entity.AppConfig;
 import app.komunumo.business.user.entity.UserDto;
 import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.business.user.entity.UserType;

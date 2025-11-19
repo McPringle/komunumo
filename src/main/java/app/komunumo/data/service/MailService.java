@@ -18,7 +18,7 @@
 package app.komunumo.data.service;
 
 import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.configuration.AppConfig;
+import app.komunumo.business.core.config.entity.AppConfig;
 import app.komunumo.data.dto.MailFormat;
 import app.komunumo.data.dto.MailTemplate;
 import app.komunumo.data.dto.MailTemplateId;

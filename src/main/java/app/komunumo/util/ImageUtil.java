@@ -17,7 +17,7 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.configuration.AppConfig;
+import app.komunumo.business.core.config.entity.AppConfig;
 import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.business.core.image.control.ImageService;
 import org.jetbrains.annotations.NotNull;

@@ -17,11 +17,11 @@
  */
 package app.komunumo.business.core.image.boundary;
 
-import app.komunumo.configuration.AppConfig;
-import app.komunumo.configuration.DemoConfig;
-import app.komunumo.configuration.FilesConfig;
-import app.komunumo.configuration.InstanceConfig;
-import app.komunumo.configuration.MailConfig;
+import app.komunumo.business.core.config.entity.AppConfig;
+import app.komunumo.business.core.config.entity.DemoConfig;
+import app.komunumo.business.core.config.entity.FilesConfig;
+import app.komunumo.business.core.config.entity.InstanceConfig;
+import app.komunumo.business.core.config.entity.MailConfig;
 import app.komunumo.data.dto.ContentType;
 import app.komunumo.business.core.image.entity.ImageDto;
 import app.komunumo.business.core.image.control.ImageService;
