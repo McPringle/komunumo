@@ -15,15 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.core.confirmation.control;
 
 import app.komunumo.KomunumoException;
-import app.komunumo.data.service.confirmation.ConfirmationContext;
-import app.komunumo.data.service.confirmation.ConfirmationHandler;
-import app.komunumo.data.service.confirmation.ConfirmationRequest;
-import app.komunumo.data.service.confirmation.ConfirmationResponse;
-import app.komunumo.data.service.confirmation.ConfirmationService;
-import app.komunumo.data.service.confirmation.ConfirmationStatus;
+import app.komunumo.business.core.confirmation.entity.ConfirmationContext;
+import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
+import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
+import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
 import app.komunumo.ui.KaribuTest;
 import jakarta.mail.MessagingException;
 import nl.altindag.log.LogCaptor;

@@ -20,7 +20,7 @@ package app.komunumo.business.user.control;
 import app.komunumo.business.user.entity.UserDto;
 import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.business.user.entity.UserType;
-import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.business.core.confirmation.control.ConfirmationService;
 import app.komunumo.security.UserPrincipal;
 import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.signals.AuthenticationSignal;

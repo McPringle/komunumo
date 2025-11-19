@@ -17,8 +17,8 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.data.service.confirmation.ConfirmationRequest;
-import app.komunumo.data.service.confirmation.ConfirmationService;
+import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
+import app.komunumo.business.core.confirmation.control.ConfirmationService;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;

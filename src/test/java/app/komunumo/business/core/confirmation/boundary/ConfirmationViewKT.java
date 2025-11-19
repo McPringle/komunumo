@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.confirmation;
+package app.komunumo.business.core.confirmation.boundary;
 
-import app.komunumo.data.service.confirmation.ConfirmationResponse;
-import app.komunumo.data.service.confirmation.ConfirmationService;
-import app.komunumo.data.service.confirmation.ConfirmationStatus;
+import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
+import app.komunumo.business.core.confirmation.control.ConfirmationService;
+import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.PersistentNotification;
 import app.komunumo.business.event.boundary.EventGridView;

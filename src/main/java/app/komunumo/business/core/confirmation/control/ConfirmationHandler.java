@@ -15,8 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service.confirmation;
+package app.komunumo.business.core.confirmation.control;
 
+import app.komunumo.business.core.confirmation.entity.ConfirmationContext;
+import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;

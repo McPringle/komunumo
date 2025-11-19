@@ -15,10 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service.confirmation;
+package app.komunumo.business.core.confirmation.control;
 
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.data.service.MailService;
+import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
+import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
+import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
 import app.komunumo.ui.TranslationProvider;
 import app.komunumo.ui.components.ConfirmationDialog;
 import com.github.benmanes.caffeine.cache.Cache;
