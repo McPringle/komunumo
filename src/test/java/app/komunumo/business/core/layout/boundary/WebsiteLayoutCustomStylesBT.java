@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views;
+package app.komunumo.business.core.layout.boundary;
 
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.ui.BrowserTest;

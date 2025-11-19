@@ -27,7 +27,7 @@ import app.komunumo.business.core.image.control.ImageService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.business.user.control.UserService;
 import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;

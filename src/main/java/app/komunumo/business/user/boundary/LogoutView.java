@@ -21,7 +21,7 @@ package app.komunumo.business.user.boundary;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.user.control.LoginService;
 import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;

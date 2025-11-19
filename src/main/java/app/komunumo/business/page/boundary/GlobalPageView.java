@@ -21,7 +21,7 @@ import app.komunumo.business.page.entity.GlobalPageDto;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.page.control.GlobalPageService;
 import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.contextmenu.ContextMenu;

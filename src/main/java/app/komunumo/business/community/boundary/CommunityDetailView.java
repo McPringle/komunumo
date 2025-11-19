@@ -25,7 +25,7 @@ import app.komunumo.business.event.control.EventService;
 import app.komunumo.business.user.control.LoginService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import app.komunumo.business.event.boundary.EventGrid;
 import app.komunumo.util.ImageUtil;
 import com.vaadin.flow.component.Component;

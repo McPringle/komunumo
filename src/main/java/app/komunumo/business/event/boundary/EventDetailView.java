@@ -22,7 +22,7 @@ import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.event.control.EventService;
 import app.komunumo.data.service.ParticipationService;
 import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.ImageUtil;
 import app.komunumo.util.ParseUtil;

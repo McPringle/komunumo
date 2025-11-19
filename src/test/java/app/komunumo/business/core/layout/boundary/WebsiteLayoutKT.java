@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views;
+package app.komunumo.business.core.layout.boundary;
 
 import app.komunumo.ui.components.InfoBanner;
 import app.komunumo.ui.components.PageFooter;
@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Test;
 import app.komunumo.ui.KaribuTest;
 import app.komunumo.ui.components.NavigationBar;
 import app.komunumo.ui.components.PageHeader;
-import app.komunumo.ui.views.home.HomeView;
 
 import java.util.Optional;
 
@@ -56,7 +55,7 @@ class WebsiteLayoutKT extends KaribuTest {
 
     @BeforeEach
     void setUp() {
-        UI.getCurrent().navigate(HomeView.class);
+        UI.getCurrent().navigate(RootView.class);
         final var uiParent = UI.getCurrent()
                 .getCurrentView()
                 .getParent().orElseThrow()

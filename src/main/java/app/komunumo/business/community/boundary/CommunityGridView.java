@@ -20,7 +20,7 @@ package app.komunumo.business.community.boundary;
 import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;

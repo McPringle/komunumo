@@ -15,28 +15,27 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.home;
+package app.komunumo.business.core.layout.boundary;
 
 import app.komunumo.business.event.boundary.EventGridView;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
-import org.junit.jupiter.api.Test;
+import com.vaadin.flow.router.BeforeEnterObserver;
+import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
+import org.jetbrains.annotations.NotNull;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+@Route(value = "", layout = WebsiteLayout.class)
+@AnonymousAllowed
+public final class RootView extends VerticalLayout implements BeforeEnterObserver {
 
-class HomeViewTest {
+    public RootView() {
+        super();
+    }
 
-    @Test
-    void shouldForwardToEventGridView() {
-        // Arrange
-        var event = mock(BeforeEnterEvent.class);
-        var view = new HomeView();
-
-        // Act
-        view.beforeEnter(event);
-
-        // Assert
-        verify(event).forwardTo(EventGridView.class);
+    @Override
+    public void beforeEnter(final @NotNull BeforeEnterEvent beforeEnterEvent) {
+        beforeEnterEvent.forwardTo(EventGridView.class);
     }
 
 }

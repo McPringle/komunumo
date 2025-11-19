@@ -21,7 +21,7 @@ import app.komunumo.business.community.control.CommunityService;
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;

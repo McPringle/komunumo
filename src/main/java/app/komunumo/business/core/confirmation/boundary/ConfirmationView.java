@@ -21,7 +21,7 @@ import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.core.confirmation.control.ConfirmationService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.ui.components.PersistentNotification;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;

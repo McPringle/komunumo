@@ -21,7 +21,7 @@ import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.user.control.LoginService;
 import app.komunumo.security.SecurityConfig;
 import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.views.WebsiteLayout;
+import app.komunumo.business.core.layout.boundary.WebsiteLayout;
 import app.komunumo.util.LocationUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
