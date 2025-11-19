@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.error;
+package app.komunumo.business.core.error.boundary;
 
 import app.komunumo.data.dto.ConfigurationSetting;
 import app.komunumo.data.service.ConfigurationService;
@@ -23,6 +23,7 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
+import com.vaadin.flow.router.NotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -35,13 +36,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-class InternalServerErrorViewTest {
+class NotFoundViewTest {
 
     @Test
     void checkErrorMessage() {
 
         // Arrange
-        final var ui = TestUIProvider.mockUiWithTranslation("ui.views.error.ErrorView.internalServerError", "Test Error Message");
+        final var ui = TestUIProvider.mockUiWithTranslation("ui.views.error.ErrorView.notFound", "Test Error Message");
         final var beforeEnterEvent = mock(BeforeEnterEvent.class);
         when(beforeEnterEvent.getUI()).thenReturn(ui);
         final var configurationService = mock(ConfigurationService.class);
@@ -52,15 +53,15 @@ class InternalServerErrorViewTest {
             mockedStatic.when(UI::getCurrent).thenReturn(ui);
 
             // Act
-            final var view = new InternalServerErrorView(configurationService);
-            final var errorParameter = new ErrorParameter<>(Exception.class, new Exception());
+            final var view = new NotFoundView(configurationService);
+            final var errorParameter = new ErrorParameter<>(NotFoundException.class, new NotFoundException());
             final var status = view.setErrorParameter(beforeEnterEvent, errorParameter);
 
             // Assert
             final var h2 = (H2) view.getChildren().findFirst().orElseThrow();
             assertThat(h2.getText()).isEqualTo("Test Error Message");
             assertThat(view.getViewTitle()).isEqualTo("Test Error Message");
-            assertThat(status).isEqualTo(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            assertThat(status).isEqualTo(HttpServletResponse.SC_NOT_FOUND);
         }
     }
 

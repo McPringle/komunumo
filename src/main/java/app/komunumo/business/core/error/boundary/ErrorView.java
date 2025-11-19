@@ -15,8 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.error;
+package app.komunumo.business.core.error.boundary;
 
+import app.komunumo.business.core.error.entity.ErrorType;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.components.AbstractView;
 import com.vaadin.flow.component.UI;

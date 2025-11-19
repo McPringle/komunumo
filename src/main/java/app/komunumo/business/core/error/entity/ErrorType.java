@@ -15,11 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.error;
+package app.komunumo.business.core.error.entity;
 
 import org.jetbrains.annotations.NotNull;
 
-enum ErrorType {
+public enum ErrorType {
         NOT_FOUND("notFound"),
         INTERNAL_SERVER_ERROR("internalServerError");
 
@@ -29,7 +29,7 @@ enum ErrorType {
             this.translationKey = translationKey;
         }
 
-        @NotNull String getTranslationKey() {
+        public @NotNull String getTranslationKey() {
             return translationKey;
         }
     }

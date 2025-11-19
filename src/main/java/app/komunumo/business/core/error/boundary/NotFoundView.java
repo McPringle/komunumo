@@ -15,28 +15,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.views.error;
+package app.komunumo.business.core.error.boundary;
 
+import app.komunumo.business.core.error.entity.ErrorType;
 import app.komunumo.data.service.ConfigurationService;
 import app.komunumo.ui.views.WebsiteLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.router.HasErrorParameter;
+import com.vaadin.flow.router.NotFoundException;
 import com.vaadin.flow.router.Route;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 
-@Route(value = "error/500", layout = WebsiteLayout.class)
-public final class InternalServerErrorView extends ErrorView implements HasErrorParameter<Exception> {
+@Route(value = "error/404", layout = WebsiteLayout.class)
+public final class NotFoundView extends ErrorView implements HasErrorParameter<NotFoundException> {
 
-    public InternalServerErrorView(final @NotNull ConfigurationService configurationService) {
-        super(ErrorType.INTERNAL_SERVER_ERROR, configurationService);
+    public NotFoundView(final @NotNull ConfigurationService configurationService) {
+        super(ErrorType.NOT_FOUND, configurationService);
     }
 
     @Override
     public int setErrorParameter(final @NotNull BeforeEnterEvent beforeEnterEvent,
-                                 final @NotNull ErrorParameter<Exception> errorParameter) {
-        return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+                                 final @NotNull ErrorParameter<NotFoundException> errorParameter) {
+        return HttpServletResponse.SC_NOT_FOUND;
     }
 
 }
