@@ -82,7 +82,7 @@ class ArchitectureTest {
     @Test
     void servicesShouldNotReturnStreams() {
         methods()
-                .that().areDeclaredInClassesThat().resideInAPackage("..data.service..")
+                .that().areDeclaredInClassesThat().resideInAPackage("..control..")
                 .and().arePublic()
                 .and().areNotDeclaredIn(Object.class)
                 .should().notHaveRawReturnType(Stream.class)
