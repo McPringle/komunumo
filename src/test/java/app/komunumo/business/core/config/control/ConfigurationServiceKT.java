@@ -15,9 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.core.config.control;
 
-import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.core.config.entity.ConfigurationSetting;
 import app.komunumo.test.KaribuTest;
 import org.jooq.DSLContext;
