@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.domain.participation.control;
 
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.user.control.UserService;
@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
-import static app.komunumo.data.service.ParticipationService.CONTEXT_KEY_EVENT;
+import static app.komunumo.domain.participation.control.ParticipationService.CONTEXT_KEY_EVENT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ParticipationServiceKT extends KaribuTest {

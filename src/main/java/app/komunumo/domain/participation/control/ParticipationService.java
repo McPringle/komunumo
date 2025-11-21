@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.domain.participation.control;
 
 import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.event.entity.EventDto;
@@ -23,7 +23,7 @@ import app.komunumo.domain.user.control.UserService;
 import app.komunumo.data.db.tables.records.ParticipationRecord;
 import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
-import app.komunumo.data.dto.ParticipationDto;
+import app.komunumo.domain.participation.entity.ParticipationDto;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;

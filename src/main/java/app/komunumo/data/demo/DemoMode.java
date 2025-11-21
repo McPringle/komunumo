@@ -26,7 +26,7 @@ import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.member.control.MemberService;
-import app.komunumo.data.service.ParticipationService;
+import app.komunumo.domain.participation.control.ParticipationService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;

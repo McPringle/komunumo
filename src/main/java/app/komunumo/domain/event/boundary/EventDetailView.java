@@ -20,7 +20,7 @@ package app.komunumo.domain.event.boundary;
 import app.komunumo.domain.event.entity.EventWithImageDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
-import app.komunumo.data.service.ParticipationService;
+import app.komunumo.domain.participation.control.ParticipationService;
 import app.komunumo.ui.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.util.DateTimeUtil;
