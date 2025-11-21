@@ -18,7 +18,7 @@
 package app.komunumo.business.core.confirmation.control;
 
 import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.data.service.MailService;
+import app.komunumo.business.core.mail.control.MailService;
 import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
@@ -41,8 +41,8 @@ import java.util.UUID;
 
 import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_URL;
-import static app.komunumo.data.dto.MailFormat.MARKDOWN;
-import static app.komunumo.data.dto.MailTemplateId.CONFIRMATION_PROCESS;
+import static app.komunumo.business.core.mail.entity.MailFormat.MARKDOWN;
+import static app.komunumo.business.core.mail.entity.MailTemplateId.CONFIRMATION_PROCESS;
 
 @Service
 public final class ConfirmationService {

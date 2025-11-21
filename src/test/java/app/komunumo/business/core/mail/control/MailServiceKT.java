@@ -15,10 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.core.mail.control;
 
-import app.komunumo.data.dto.MailFormat;
-import app.komunumo.data.dto.MailTemplateId;
+import app.komunumo.business.core.mail.entity.MailFormat;
+import app.komunumo.business.core.mail.entity.MailTemplateId;
 import app.komunumo.test.KaribuTest;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import jakarta.mail.MessagingException;

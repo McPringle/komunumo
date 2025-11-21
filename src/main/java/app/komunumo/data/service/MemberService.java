@@ -18,9 +18,10 @@
 package app.komunumo.data.service;
 
 import app.komunumo.business.community.entity.CommunityDto;
+import app.komunumo.business.core.mail.control.MailService;
 import app.komunumo.business.user.control.UserService;
-import app.komunumo.data.dto.MailFormat;
-import app.komunumo.data.dto.MailTemplateId;
+import app.komunumo.business.core.mail.entity.MailFormat;
+import app.komunumo.business.core.mail.entity.MailTemplateId;
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
 import app.komunumo.business.user.entity.UserDto;

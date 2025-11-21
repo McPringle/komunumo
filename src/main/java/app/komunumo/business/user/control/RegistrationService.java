@@ -17,13 +17,13 @@
  */
 package app.komunumo.business.user.control;
 
-import app.komunumo.data.dto.MailFormat;
-import app.komunumo.data.dto.MailTemplateId;
+import app.komunumo.business.core.mail.entity.MailFormat;
+import app.komunumo.business.core.mail.entity.MailTemplateId;
 import app.komunumo.business.user.entity.UserDto;
 import app.komunumo.business.user.entity.UserRole;
 import app.komunumo.business.user.entity.UserType;
 import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.data.service.MailService;
+import app.komunumo.business.core.mail.control.MailService;
 import app.komunumo.business.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.business.core.confirmation.control.ConfirmationHandler;
 import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;

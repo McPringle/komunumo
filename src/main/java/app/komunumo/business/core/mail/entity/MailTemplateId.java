@@ -15,14 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.business.core.mail.entity;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
-
-public record MailTemplate(
-        @NotNull MailTemplateId id,
-        @NotNull Locale language,
-        @NotNull String subject,
-        @NotNull String markdown) { }
+public enum MailTemplateId {
+    ACCOUNT_REGISTRATION_SUCCESS,
+    COMMUNITY_JOIN_SUCCESS_MEMBER,
+    COMMUNITY_JOIN_SUCCESS_OWNER,
+    CONFIRMATION_PROCESS,
+    EVENT_REGISTRATION_SUCCESS,
+    TEST
+}

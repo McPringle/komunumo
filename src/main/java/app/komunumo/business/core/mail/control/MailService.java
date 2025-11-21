@@ -15,13 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.business.core.mail.control;
 
 import app.komunumo.business.core.config.control.ConfigurationService;
 import app.komunumo.business.core.config.entity.AppConfig;
-import app.komunumo.data.dto.MailFormat;
-import app.komunumo.data.dto.MailTemplate;
-import app.komunumo.data.dto.MailTemplateId;
+import app.komunumo.business.core.mail.entity.MailFormat;
+import app.komunumo.business.core.mail.entity.MailTemplate;
+import app.komunumo.business.core.mail.entity.MailTemplateId;
 import app.komunumo.util.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,8 +41,8 @@ import java.util.Optional;
 import static app.komunumo.data.db.tables.MailTemplate.MAIL_TEMPLATE;
 import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_URL;
-import static app.komunumo.data.dto.MailFormat.HTML;
-import static app.komunumo.data.dto.MailFormat.MARKDOWN;
+import static app.komunumo.business.core.mail.entity.MailFormat.HTML;
+import static app.komunumo.business.core.mail.entity.MailFormat.MARKDOWN;
 import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;
 import static app.komunumo.util.TemplateUtil.replaceVariables;
 
