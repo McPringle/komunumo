@@ -17,7 +17,7 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.business.core.image.entity.ImageDto;
+import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.util.ImageUtil;
 import com.vaadin.flow.component.card.Card;
 import com.vaadin.flow.component.card.CardVariant;

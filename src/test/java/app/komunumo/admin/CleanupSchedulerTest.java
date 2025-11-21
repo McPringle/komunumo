@@ -17,7 +17,7 @@
  */
 package app.komunumo.admin;
 
-import app.komunumo.business.core.image.control.ImageService;
+import app.komunumo.domain.core.image.control.ImageService;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;

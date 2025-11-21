@@ -17,11 +17,11 @@
  */
 package app.komunumo.admin;
 
-import app.komunumo.business.core.config.entity.AppConfig;
-import app.komunumo.business.user.entity.UserDto;
-import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.business.user.entity.UserType;
-import app.komunumo.business.user.control.UserService;
+import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.domain.user.control.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -70,7 +70,7 @@ class ArchitectureTest {
                 .that()
                 .resideOutsideOfPackages(
                         "app.komunumo.data.service..", // old service layer
-                        "app.komunumo.business..control..", // new service layer
+                        "app.komunumo.domain..control..", // new service layer
                         "app.komunumo.data.db..") // jOOQ generated classes
                 .should()
                 .accessClassesThat()

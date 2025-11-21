@@ -17,13 +17,13 @@
  */
 package app.komunumo.data.service;
 
-import app.komunumo.business.event.control.EventService;
-import app.komunumo.business.user.control.UserService;
-import app.komunumo.business.user.entity.UserDto;
-import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.business.user.entity.UserType;
-import app.komunumo.business.core.confirmation.entity.ConfirmationContext;
-import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
+import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
 import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

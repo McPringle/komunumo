@@ -17,7 +17,7 @@
  */
 package app.komunumo.security;
 
-import app.komunumo.business.user.boundary.LoginView;
+import app.komunumo.domain.user.boundary.LoginView;
 import com.vaadin.flow.spring.security.VaadinAwareSecurityContextHolderStrategyConfiguration;
 import com.vaadin.flow.spring.security.VaadinSecurityConfigurer;
 import org.jetbrains.annotations.NotNull;

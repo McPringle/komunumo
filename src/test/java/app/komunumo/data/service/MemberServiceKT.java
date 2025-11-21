@@ -17,13 +17,13 @@
  */
 package app.komunumo.data.service;
 
-import app.komunumo.business.community.control.CommunityService;
-import app.komunumo.business.user.control.UserService;
+import app.komunumo.domain.community.control.CommunityService;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.data.dto.MemberDto;
 import app.komunumo.data.dto.MemberRole;
-import app.komunumo.business.user.entity.UserDto;
-import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.business.user.entity.UserType;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

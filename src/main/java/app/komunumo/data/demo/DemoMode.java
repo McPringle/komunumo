@@ -17,17 +17,17 @@
  */
 package app.komunumo.data.demo;
 
-import app.komunumo.business.core.config.entity.AppConfig;
-import app.komunumo.business.core.importer.control.ImporterLog;
-import app.komunumo.business.core.importer.control.JSONImporter;
-import app.komunumo.business.community.control.CommunityService;
-import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.business.event.control.EventService;
-import app.komunumo.business.page.control.GlobalPageService;
-import app.komunumo.business.core.image.control.ImageService;
+import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.domain.core.importer.control.ImporterLog;
+import app.komunumo.domain.core.importer.control.JSONImporter;
+import app.komunumo.domain.community.control.CommunityService;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.page.control.GlobalPageService;
+import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.data.service.MemberService;
 import app.komunumo.data.service.ParticipationService;
-import app.komunumo.business.user.control.UserService;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

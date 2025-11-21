@@ -18,10 +18,10 @@
 package app.komunumo;
 
 import app.komunumo.admin.AdminBootstrapper;
-import app.komunumo.business.core.config.entity.AppConfig;
+import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.data.demo.DemoMode;
-import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.business.user.control.UserService;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.user.control.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;

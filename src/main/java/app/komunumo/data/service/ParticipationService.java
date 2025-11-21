@@ -17,21 +17,21 @@
  */
 package app.komunumo.data.service;
 
-import app.komunumo.business.core.mail.control.MailService;
-import app.komunumo.business.event.entity.EventDto;
-import app.komunumo.business.user.control.UserService;
+import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.domain.event.entity.EventDto;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.data.db.tables.records.ParticipationRecord;
-import app.komunumo.business.core.mail.entity.MailFormat;
-import app.komunumo.business.core.mail.entity.MailTemplateId;
+import app.komunumo.domain.core.mail.entity.MailFormat;
+import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.data.dto.ParticipationDto;
-import app.komunumo.business.user.entity.UserDto;
-import app.komunumo.business.core.confirmation.entity.ConfirmationContext;
-import app.komunumo.business.core.confirmation.control.ConfirmationHandler;
-import app.komunumo.business.core.confirmation.entity.ConfirmationRequest;
-import app.komunumo.business.core.confirmation.entity.ConfirmationResponse;
-import app.komunumo.business.core.confirmation.control.ConfirmationService;
-import app.komunumo.business.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.business.core.i18n.controller.TranslationProvider;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
+import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
+import app.komunumo.domain.core.confirmation.control.ConfirmationService;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
+import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;

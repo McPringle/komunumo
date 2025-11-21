@@ -17,11 +17,11 @@
  */
 package app.komunumo.test;
 
-import app.komunumo.business.user.entity.UserDto;
-import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.business.user.entity.UserType;
-import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.business.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.user.control.UserService;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
@@ -47,7 +47,7 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static org.assertj.core.api.Assertions.assertThat;
 

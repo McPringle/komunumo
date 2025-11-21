@@ -17,8 +17,8 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.business.user.entity.UserType;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.security.UserPrincipal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

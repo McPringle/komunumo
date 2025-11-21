@@ -17,12 +17,12 @@
  */
 package app.komunumo.test;
 
-import app.komunumo.business.core.config.entity.AppConfig;
-import app.komunumo.business.user.entity.UserDto;
-import app.komunumo.business.user.entity.UserRole;
-import app.komunumo.business.user.entity.UserType;
-import app.komunumo.business.user.control.LoginService;
-import app.komunumo.business.user.control.UserService;
+import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.security.UserPrincipal;
 import com.github.mvysny.fakeservlet.FakeRequest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;

@@ -17,7 +17,7 @@
  */
 package app.komunumo.admin;
 
-import app.komunumo.business.core.image.control.ImageService;
+import app.komunumo.domain.core.image.control.ImageService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

@@ -17,17 +17,17 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.business.user.control.RegistrationService;
-import app.komunumo.business.core.config.control.ConfigurationService;
-import app.komunumo.business.page.control.GlobalPageService;
-import app.komunumo.business.user.control.LoginService;
-import app.komunumo.business.user.entity.AuthenticationSignal;
-import app.komunumo.business.core.config.boundary.ConfigurationEditorView;
-import app.komunumo.business.core.importer.boundary.ImporterView;
-import app.komunumo.business.community.boundary.CommunityGridView;
-import app.komunumo.business.community.boundary.CreateCommunityView;
-import app.komunumo.business.event.boundary.EventGridView;
-import app.komunumo.business.user.boundary.LogoutView;
+import app.komunumo.domain.user.control.RegistrationService;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.page.control.GlobalPageService;
+import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.domain.user.entity.AuthenticationSignal;
+import app.komunumo.domain.core.config.boundary.ConfigurationEditorView;
+import app.komunumo.domain.core.importer.boundary.ImporterView;
+import app.komunumo.domain.community.boundary.CommunityGridView;
+import app.komunumo.domain.community.boundary.CreateCommunityView;
+import app.komunumo.domain.event.boundary.EventGridView;
+import app.komunumo.domain.user.boundary.LogoutView;
 import app.komunumo.util.LocationUtil;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.Component;
@@ -42,9 +42,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 
-import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
-import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
-import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 
 public final class NavigationBar extends HorizontalLayout {
 

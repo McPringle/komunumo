@@ -1,0 +1,157 @@
+/*
+ * Komunumo - Open Source Community Manager
+ * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package app.komunumo.domain.core.image.control;
+
+import app.komunumo.KomunumoException;
+import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.domain.core.config.entity.DemoConfig;
+import app.komunumo.domain.core.config.entity.FilesConfig;
+import app.komunumo.domain.core.config.entity.InstanceConfig;
+import app.komunumo.domain.core.config.entity.MailConfig;
+import app.komunumo.util.ResourceUtil;
+import nl.altindag.log.LogCaptor;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static java.lang.Boolean.TRUE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mockStatic;
+
+class PlaceholderImageGeneratorTest {
+
+    private static final @NotNull String TEST_SVG = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <svg width="500" height="400" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="40" fill="red" />
+            </svg>""";
+
+    private AppConfig getAppConfigMock() {
+        final var userHome = System.getProperty("user.home");
+        final var basedir = Path.of(userHome, ".komunumo", "test");
+
+        final var demoConfig = new DemoConfig(false, "");
+        final var filesConfig = new FilesConfig(basedir);
+        final var mailConfig = new MailConfig("noreply@foo.bar", "support@foo.bar");
+        final var instanceConfig = new InstanceConfig("admin@foo.bar");
+
+        return new AppConfig("0.0.0", demoConfig, filesConfig, instanceConfig, mailConfig);
+    }
+
+    @Test
+    void generateHorizontalPlaceholderImage() {
+        final var appConfig = getAppConfigMock();
+        final var generator = new PlaceholderImageGenerator(appConfig);
+        final var image = generator.getPlaceholderImage(200, 100);
+        assertThat(image)
+                .isNotNull()
+                .contains("width=\"200\"")
+                .contains("height=\"100\"");
+    }
+
+    @Test
+    void generateVerticalPlaceholderImage() {
+        final var appConfig = getAppConfigMock();
+        final var generator = new PlaceholderImageGenerator(appConfig);
+        final var image = generator.getPlaceholderImage(100, 200);
+        assertThat(image)
+                .isNotNull()
+                .contains("width=\"100\"")
+                .contains("height=\"200\"");
+    }
+
+    @Test
+    void useCustomLogoWhenAvailable() {
+        final var appConfig = getAppConfigMock();
+        final var customLogoPath = appConfig.files().basedir()
+                .resolve(Path.of("custom", "images", "logo.svg"));
+
+        try (MockedStatic<Files> mocked = mockStatic(Files.class, CALLS_REAL_METHODS);
+             var logCaptor = LogCaptor.forClass(PlaceholderImageGenerator.class)) {
+            mocked.when(() -> Files.exists(customLogoPath))
+                    .thenReturn(TRUE);
+            mocked.when(() -> Files.readString(customLogoPath))
+                    .thenReturn(TEST_SVG);
+
+            final var generator = new PlaceholderImageGenerator(appConfig);
+            final var image = generator.getPlaceholderImage(200, 100);
+
+            assertThat(logCaptor.getInfoLogs())
+                    .contains("Custom logo found and successfully loaded.");
+            assertThat(image)
+                    .isNotNull()
+                    .contains("<circle")
+                    .contains("cx=\"50\"")
+                    .contains("cy=\"50\"")
+                    .contains("r=\"40\"")
+                    .contains("fill=\"red\"");
+        }
+    }
+
+    @Test
+    void exceptionWhenReadingCustomLogo() {
+        final var appConfig = getAppConfigMock();
+        final var customLogoPath = appConfig.files().basedir()
+                .resolve(Path.of("custom", "images", "logo.svg"));
+
+        try (MockedStatic<Files> mocked = mockStatic(Files.class, CALLS_REAL_METHODS);
+             var logCaptor = LogCaptor.forClass(PlaceholderImageGenerator.class)) {
+            mocked.when(() -> Files.exists(customLogoPath))
+                    .thenReturn(TRUE);
+            mocked.when(() -> Files.readString(customLogoPath))
+                    .thenThrow(new IOException("boom"));
+
+            new PlaceholderImageGenerator(appConfig);
+
+            final var expectedMessage = "Failed to read custom logo from '" + customLogoPath + "', fallback to default logo.";
+            assertThat(logCaptor.getWarnLogs()).contains(expectedMessage);
+        }
+    }
+
+    @Test
+    void exceptionWhenReadingDefaultLogo() {
+        final var appConfig = getAppConfigMock();
+        final var inputStream = new InputStream() {
+            @Override
+            public int read() throws IOException {
+                throw new IOException("boom");
+            }
+        };
+
+        try (MockedStatic<ResourceUtil> mocked = mockStatic(ResourceUtil.class, CALLS_REAL_METHODS);
+             var logCaptor = LogCaptor.forClass(PlaceholderImageGenerator.class)) {
+            //noinspection resource
+            mocked.when(() -> ResourceUtil.openResourceStream("/META-INF/resources/images/komunumo.svg"))
+                    .thenReturn(inputStream);
+
+            assertThatThrownBy(() -> new PlaceholderImageGenerator(appConfig))
+                    .isInstanceOf(KomunumoException.class)
+                    .hasMessageStartingWith("Failed to initialize template parser:");
+            assertThat(logCaptor.getInfoLogs()).contains("No custom logo found, using default logo.");
+            assertThat(logCaptor.getWarnLogs()).contains("Failed to read default logo from '/META-INF/resources/images/komunumo.svg', fallback to empty logo.");
+        }
+    }
+
+}

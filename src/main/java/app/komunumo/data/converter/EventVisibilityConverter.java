@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.converter;
 
-import app.komunumo.business.event.entity.EventVisibility;
+import app.komunumo.domain.event.entity.EventVisibility;
 
 public final class EventVisibilityConverter extends EnumByNameConverter<EventVisibility> {
     public EventVisibilityConverter() {

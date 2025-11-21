@@ -17,12 +17,12 @@
  */
 package app.komunumo.ui.components;
 
-import app.komunumo.business.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.control.ConfigurationService;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HasDynamicTitle;
 import org.jetbrains.annotations.NotNull;
 
-import static app.komunumo.business.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 
 public abstract class AbstractView extends VerticalLayout implements HasDynamicTitle {
 
