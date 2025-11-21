@@ -22,7 +22,7 @@ import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.domain.community.control.CommunityService;
-import app.komunumo.data.service.MemberService;
+import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.test.BrowserTest;
 import app.komunumo.util.LinkUtil;
@@ -37,7 +37,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static app.komunumo.data.dto.MemberRole.OWNER;
+import static app.komunumo.domain.member.entity.MemberRole.OWNER;
 import static app.komunumo.util.TestUtil.extractLinkFromText;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static org.assertj.core.api.Assertions.assertThat;

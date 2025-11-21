@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.domain.member.control;
 
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.user.control.UserService;
-import app.komunumo.data.dto.MemberDto;
-import app.komunumo.data.dto.MemberRole;
+import app.komunumo.domain.member.entity.MemberDto;
+import app.komunumo.domain.member.entity.MemberRole;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
@@ -32,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
-import static app.komunumo.data.dto.MemberRole.ORGANIZER;
+import static app.komunumo.domain.member.entity.MemberRole.ORGANIZER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

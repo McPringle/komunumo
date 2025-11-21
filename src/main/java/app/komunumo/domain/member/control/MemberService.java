@@ -15,15 +15,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.domain.member.control;
 
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
-import app.komunumo.data.dto.MemberDto;
-import app.komunumo.data.dto.MemberRole;
+import app.komunumo.domain.member.entity.MemberDto;
+import app.komunumo.domain.member.entity.MemberRole;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;

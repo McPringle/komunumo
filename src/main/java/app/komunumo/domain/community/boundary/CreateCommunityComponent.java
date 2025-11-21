@@ -18,11 +18,11 @@
 package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.community.entity.CommunityDto;
-import app.komunumo.data.dto.MemberDto;
-import app.komunumo.data.dto.MemberRole;
+import app.komunumo.domain.member.entity.MemberDto;
+import app.komunumo.domain.member.entity.MemberRole;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.data.service.MemberService;
+import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.ui.components.ProfileField;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.Component;

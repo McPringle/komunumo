@@ -15,11 +15,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.dto;
+package app.komunumo.domain.member.entity;
 
-public enum MemberRole {
-    OWNER,
-    ORGANIZER,
-    MEMBER
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.ZonedDateTime;
+import java.util.UUID;
+
+public record MemberDto(
+        @NotNull UUID userId,
+        @NotNull UUID communityId,
+        @NotNull MemberRole role,
+        @Nullable ZonedDateTime since
+) {
 }
