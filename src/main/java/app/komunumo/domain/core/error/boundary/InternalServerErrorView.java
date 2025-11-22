@@ -26,9 +26,13 @@ import com.vaadin.flow.router.HasErrorParameter;
 import com.vaadin.flow.router.Route;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Route(value = "error/500", layout = WebsiteLayout.class)
 public final class InternalServerErrorView extends ErrorView implements HasErrorParameter<Exception> {
+
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(InternalServerErrorView.class);
 
     public InternalServerErrorView(final @NotNull ConfigurationService configurationService) {
         super(ErrorType.INTERNAL_SERVER_ERROR, configurationService);
@@ -37,7 +41,7 @@ public final class InternalServerErrorView extends ErrorView implements HasError
     @Override
     public int setErrorParameter(final @NotNull BeforeEnterEvent beforeEnterEvent,
                                  final @NotNull ErrorParameter<Exception> errorParameter) {
+        LOGGER.error("Internal Server Error: {}", errorParameter.getCustomMessage(), errorParameter.getException());
         return HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
     }
-
 }
