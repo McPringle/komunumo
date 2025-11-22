@@ -224,17 +224,16 @@ Once enabled, you can use Podman just like Docker, without elevated privileges.
 To make sure that Testcontainers can connect to your Podman socket, set the following environment variables in your shell:
 
 ```bash
- export DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
- export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/user/1000/podman/podman.sock
- export TESTCONTAINERS_RYUK_CONTAINER_PRIVILEGED=true
+export DOCKER_HOST=unix://$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}')
+export TESTCONTAINERS_RYUK_CONTAINER_PRIVILEGED=true
 ```
 
-Replace `1000` with your actual user ID if it differs.
-You can find your user ID by running:
-
-```bash
-id -u
-```
+If you use Podman Desktop for macOS, activate the full Docker compatibility layer instead:
+1. Start the Podman Desktop App
+2. Navigate to Settings, Preferences, Docker Compatibility and Enable it
+3. Now a new entry Docker Compatibility appears directly under Settings
+4. Make sure, 'Third-Party Docker Tool Compatibility' is activated
 
 ### Clone and Verify
 
