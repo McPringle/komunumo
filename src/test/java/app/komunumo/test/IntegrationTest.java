@@ -17,7 +17,7 @@
  */
 package app.komunumo.test;
 
-import app.komunumo.data.demo.DemoMode;
+import app.komunumo.domain.core.demo.control.DemoMode;
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;

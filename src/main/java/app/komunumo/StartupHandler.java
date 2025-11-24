@@ -19,7 +19,7 @@ package app.komunumo;
 
 import app.komunumo.admin.AdminBootstrapper;
 import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.data.demo.DemoMode;
+import app.komunumo.domain.core.demo.control.DemoMode;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.user.control.UserService;
 import org.jetbrains.annotations.NotNull;

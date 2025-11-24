@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.demo;
+package app.komunumo.domain.demo.control;
 
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.demo.control.DemoMode;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventStatus;
 import app.komunumo.domain.event.entity.EventVisibility;

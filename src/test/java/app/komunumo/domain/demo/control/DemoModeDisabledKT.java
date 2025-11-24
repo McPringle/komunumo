@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.demo;
+package app.komunumo.domain.demo.control;
 
 import app.komunumo.domain.community.control.CommunityService;
+import app.komunumo.domain.core.demo.control.DemoMode;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.test.KaribuTest;
