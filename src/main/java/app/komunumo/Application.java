@@ -17,10 +17,10 @@
  */
 package app.komunumo;
 
-import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.ImageService;
-import app.komunumo.servlets.images.ImageServlet;
+import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.core.image.boundary.ImageServlet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
@@ -40,7 +40,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static app.komunumo.data.dto.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
 
 /**
  * The entry point of the Spring Boot application.

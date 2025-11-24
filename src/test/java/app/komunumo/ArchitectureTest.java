@@ -17,8 +17,8 @@
  */
 package app.komunumo;
 
-import app.komunumo.ui.BrowserTest;
-import app.komunumo.ui.KaribuTest;
+import app.komunumo.test.BrowserTest;
+import app.komunumo.test.KaribuTest;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
@@ -68,7 +68,10 @@ class ArchitectureTest {
     void jooqClassesShouldOnlyBeAccessedByServiceLayer() {
         noClasses()
                 .that()
-                .resideOutsideOfPackages("app.komunumo.data.service..", "app.komunumo.data.db..")
+                .resideOutsideOfPackages(
+                        "app.komunumo.data.service..", // old service layer
+                        "app.komunumo.domain..control..", // new service layer
+                        "app.komunumo.data.db..") // jOOQ generated classes
                 .should()
                 .accessClassesThat()
                 .resideInAnyPackage("app.komunumo.data.db..")
@@ -79,7 +82,7 @@ class ArchitectureTest {
     @Test
     void servicesShouldNotReturnStreams() {
         methods()
-                .that().areDeclaredInClassesThat().resideInAPackage("..data.service..")
+                .that().areDeclaredInClassesThat().resideInAPackage("..control..")
                 .and().arePublic()
                 .and().areNotDeclaredIn(Object.class)
                 .should().notHaveRawReturnType(Stream.class)
@@ -104,7 +107,8 @@ class ArchitectureTest {
 
         classes()
                 .that()
-                .resideInAPackage("..dto..")
+                .resideInAPackage("..entity..")
+                .and().haveSimpleNameEndingWith("Dto")
                 .should(beRecordOrEnum)
                 .because("DTOs should be implemented as Java records or enums to ensure immutability and clarity")
                 .check(classesWithoutTests);
@@ -128,7 +132,7 @@ class ArchitectureTest {
                 "not depend on " + forbiddenTypeList) {
             @Override
             public void check(@NotNull JavaClass clazz, @NotNull ConditionEvents events) {
-                if (clazz.getFullName().equals("app.komunumo.data.converter.ZonedDateTimeConverter")) {
+                if (clazz.getFullName().equals("app.komunumo.jooq.ZonedDateTimeConverter")) {
                     return; // exception for ZonedDateTimeConverter
                 }
 

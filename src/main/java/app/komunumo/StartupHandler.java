@@ -17,18 +17,26 @@
  */
 package app.komunumo;
 
-import app.komunumo.admin.AdminBootstrapper;
-import app.komunumo.configuration.AppConfig;
-import app.komunumo.data.demo.DemoMode;
-import app.komunumo.data.service.ConfigurationService;
-import app.komunumo.data.service.UserService;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.domain.core.demo.control.DemoMode;
+import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 @Component
 public final class StartupHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StartupHandler.class);
 
     private final @NotNull AppConfig appConfig;
     private final @NotNull ConfigurationService configurationService;
@@ -61,8 +69,22 @@ public final class StartupHandler {
     }
 
     private void createInitialAdmin() {
-        final var adminBootstrapper = new AdminBootstrapper(appConfig, userService);
-        adminBootstrapper.createInitialAdminIfMissing();
+        if (userService.getAdminCount() > 0) {
+            LOGGER.info("There are already instance admins. Skipping admin creation.");
+            return;
+        }
+
+        final var adminEmail = appConfig.instance().admin().trim().toLowerCase(Locale.getDefault());
+        if (adminEmail.isBlank()) {
+            LOGGER.warn("No instance admin exists and KOMUNUMO_INSTANCE_ADMIN is not set. Skipping admin creation.");
+            return;
+        }
+
+        final var adminUser = new UserDto(null, null, null,
+                "@admin", adminEmail, "Admin", "", null,
+                UserRole.ADMIN, UserType.LOCAL);
+        userService.storeUser(adminUser);
+        LOGGER.info("Initial admin user created with email: {}", adminEmail);
     }
 
 }

@@ -1,0 +1,172 @@
+/*
+ * Komunumo - Open Source Community Manager
+ * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+package app.komunumo.domain.community.boundary;
+
+import app.komunumo.domain.community.entity.CommunityDto;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.domain.community.control.CommunityService;
+import app.komunumo.domain.member.control.MemberService;
+import app.komunumo.domain.user.control.UserService;
+import app.komunumo.test.BrowserTest;
+import app.komunumo.util.LinkUtil;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.WaitForSelectorState;
+import jakarta.mail.MessagingException;
+import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static app.komunumo.domain.member.entity.MemberRole.OWNER;
+import static app.komunumo.test.TestUtil.extractLinkFromText;
+import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class JoinCommunityFlowBT extends BrowserTest {
+
+    private static final String JOIN_BUTTON_SELECTOR = "vaadin-button:has-text('Join Community')";
+
+    @Autowired
+    private @NotNull CommunityService communityService;
+
+    @Autowired
+    private @NotNull MemberService memberService;
+
+    @Autowired
+    private @NotNull UserService userService;
+
+    private @NotNull CommunityDto demoCommunity;
+    private @NotNull UserDto demoCommunityOwner;
+
+    @BeforeEach
+    void setup() {
+        demoCommunity = communityService.getCommunities().getFirst();
+        assertThat(demoCommunity).isNotNull();
+        assertThat(demoCommunity.id()).isNotNull();
+
+        final var owner = memberService.getMembersByCommunityId(demoCommunity.id(), OWNER).getFirst();
+        demoCommunityOwner = userService.getUserById(owner.userId()).orElseThrow();
+    }
+
+    @Test
+    void joinCommunityAnonymously() throws MessagingException {
+        final var emailAddressMember = getRandomEmailAddress();
+        final var demoCommunityNameSelector = "h2.community-name";
+
+        final var page = getPage();
+        page.navigate(LinkUtil.getLink(demoCommunity, true));
+        page.waitForURL("**/communities/" + demoCommunity.profile());
+        page.waitForSelector(demoCommunityNameSelector);
+        captureScreenshot("joinCommunityAnonymously_detailViewLoaded");
+
+        // click the join button
+        page.click(JOIN_BUTTON_SELECTOR);
+
+        // wait for join dialog to appear
+        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
+                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
+        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        captureScreenshot("joinCommunityAnonymously_dialog");
+
+        // fill in email address
+        final var emailInput = page.locator("vaadin-email-field").locator("input");
+        emailInput.fill(emailAddressMember);
+        captureScreenshot("joinCommunityAnonymously_dialogFilled");
+
+        // click on the request email button
+        page.locator("vaadin-button.email-button").click();
+
+        // close the dialog
+        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
+        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
+        captureScreenshot("joinCommunityAnonymously_dialogAfterEmailRequested");
+        closeButton.click();
+
+        // wait for email confirmation mail
+        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
+
+        // extract the confirmation link
+        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
+        final var confirmationLink = extractLinkFromText(mailBody);
+        assertThat(confirmationLink).isNotNull();
+
+        // open the confirmation link
+        page.navigate(confirmationLink);
+        page.waitForURL("**/confirm**");
+        page.waitForSelector(getInstanceNameSelector());
+        captureScreenshot("joinCommunityAnonymously_confirmationPage");
+
+        // wait for join confirmation mail for the new member
+        final var memberMessage = getEmailBySubject("[Komunumo Test] You have joined a community");
+        assertThat(memberMessage.getAllRecipients()[0].toString()).isEqualTo(emailAddressMember);
+        assertThat(getBody(memberMessage)).contains("You are now a member of the community \"%s\"."
+                .formatted(demoCommunity.name()));
+
+        // wait for join confirmation mail for the community owner
+        final var ownerMessage = getEmailBySubject("[Komunumo Test] You have a new member");
+        assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(demoCommunityOwner.email());
+        assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 5 members."
+                .formatted(demoCommunity.name()));
+    }
+
+    @Test
+    void joinCommunityWhenLoggedIn() throws MessagingException {
+        final var localUserEmail = getRandomEmailAddress();
+        final var profile = localUserEmail.split("@")[0];
+        final var localUser = userService.storeUser(new UserDto(null, null, null,
+                profile, localUserEmail,"Join Community Test", "", null, UserRole.USER, UserType.LOCAL));
+        login(localUser);
+
+        final var demoCommunityNameSelector = "h2.community-name";
+
+        final var page = getPage();
+        page.navigate(LinkUtil.getLink(demoCommunity, true));
+        page.waitForURL("**/communities/" + demoCommunity.profile());
+        page.waitForSelector(demoCommunityNameSelector);
+        captureScreenshot("joinCommunityWhenLoggedIn_detailViewLoaded");
+
+        // click the join button
+        page.click(JOIN_BUTTON_SELECTOR);
+
+        // confirm the join dialog
+        page.getByRole(
+                AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Yes, join")
+        ).click();
+        captureScreenshot("joinCommunityWhenLoggedIn_dialogConfirmed");
+
+        // wait for join confirmation mail for the new member
+        final var memberMessage = getEmailBySubject("[Komunumo Test] You have joined a community");
+        assertThat(memberMessage.getAllRecipients()[0].toString()).isEqualTo(localUserEmail);
+        assertThat(getBody(memberMessage)).contains("You are now a member of the community \"%s\"."
+                .formatted(demoCommunity.name()));
+
+        // wait for join confirmation mail for the community owner
+        final var ownerMessage = getEmailBySubject("[Komunumo Test] You have a new member");
+        assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(demoCommunityOwner.email());
+        assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 5 members."
+                .formatted(demoCommunity.name()));
+    }
+
+}

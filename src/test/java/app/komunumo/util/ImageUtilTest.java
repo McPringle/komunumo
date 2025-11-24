@@ -17,12 +17,12 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.configuration.AppConfig;
-import app.komunumo.configuration.DemoConfig;
-import app.komunumo.configuration.FilesConfig;
-import app.komunumo.configuration.InstanceConfig;
-import app.komunumo.configuration.MailConfig;
-import app.komunumo.data.service.ImageService;
+import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.domain.core.config.entity.DemoConfig;
+import app.komunumo.domain.core.config.entity.FilesConfig;
+import app.komunumo.domain.core.config.entity.InstanceConfig;
+import app.komunumo.domain.core.config.entity.MailConfig;
+import app.komunumo.domain.core.image.control.ImageService;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;

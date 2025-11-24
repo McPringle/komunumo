@@ -897,27 +897,27 @@
                                     <includeExpression>(^id$|.*_id$)</includeExpression>
                                     <excludeExpression>mail_template\.id</excludeExpression>
                                     <userType>java.util.UUID</userType>
-                                    <converter>app.komunumo.data.converter.UUIDConverter</converter>
+                                    <converter>app.komunumo.jooq.UUIDConverter</converter>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>app.komunumo.data.dto.ContentType</userType>
-                                    <converter>app.komunumo.data.converter.ContentTypeConverter</converter>
+                                    <userType>app.komunumo.domain.core.image.entity.ContentType</userType>
+                                    <converter>app.komunumo.domain.core.image.control.ContentTypeConverter</converter>
                                     <includeExpression>.*\.content_type</includeExpression>
                                 </forcedType>
                                 <forcedType>
                                     <includeTypes>TIMESTAMP</includeTypes>
                                     <includeExpression>.*</includeExpression>
                                     <userType>java.time.ZonedDateTime</userType>
-                                    <converter>app.komunumo.data.converter.ZonedDateTimeConverter</converter>
+                                    <converter>app.komunumo.jooq.ZonedDateTimeConverter</converter>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>app.komunumo.data.dto.EventStatus</userType>
-                                    <converter>app.komunumo.data.converter.EventStatusConverter</converter>
+                                    <userType>app.komunumo.domain.event.entity.EventStatus</userType>
+                                    <converter>app.komunumo.domain.event.control.EventStatusConverter</converter>
                                     <includeExpression>event\.status</includeExpression>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>app.komunumo.data.dto.EventVisibility</userType>
-                                    <converter>app.komunumo.data.converter.EventVisibilityConverter</converter>
+                                    <userType>app.komunumo.domain.event.entity.EventVisibility</userType>
+                                    <converter>app.komunumo.domain.event.control.EventVisibilityConverter</converter>
                                     <includeExpression>event\.visibility</includeExpression>
                                 </forcedType>
                             </forcedTypes>
@@ -933,7 +933,7 @@
                                 <tables>
                                     <table>
                                         <expression>^(COMMUNITY|EVENT|USER)$</expression>
-                                        <recordImplements>app.komunumo.data.RecordWithTimestamps</recordImplements>
+                                        <recordImplements>app.komunumo.jooq.RecordWithTimestamps</recordImplements>
                                     </table>
                                 </tables>
                             </matchers>
