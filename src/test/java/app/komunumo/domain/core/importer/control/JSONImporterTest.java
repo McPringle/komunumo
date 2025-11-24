@@ -21,7 +21,6 @@ import app.komunumo.KomunumoException;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.image.control.ImageService;
-import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.page.control.GlobalPageService;
@@ -30,7 +29,6 @@ import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.UUID;
 
