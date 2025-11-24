@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.components;
+package app.komunumo.vaadin.components;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

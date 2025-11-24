@@ -19,7 +19,7 @@ package app.komunumo.domain.core.config.boundary;
 
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.ui.components.AbstractView;
+import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.AfterNavigationEvent;

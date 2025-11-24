@@ -18,7 +18,7 @@
 package app.komunumo.domain.core.layout.boundary;
 
 import app.komunumo.test.KaribuTest;
-import app.komunumo.ui.components.InfoBanner;
+import app.komunumo.vaadin.components.InfoBanner;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;

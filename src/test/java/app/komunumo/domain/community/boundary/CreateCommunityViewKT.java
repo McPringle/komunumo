@@ -19,7 +19,7 @@ package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.test.KaribuTest;
-import app.komunumo.ui.components.ProfileField;
+import app.komunumo.vaadin.components.ProfileField;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;

@@ -26,7 +26,7 @@ import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.user.control.UserService;
-import app.komunumo.ui.components.AbstractView;
+import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;

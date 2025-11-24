@@ -20,7 +20,7 @@ package app.komunumo.domain.page.boundary;
 
 import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.domain.page.control.GlobalPageService;
-import app.komunumo.ui.components.PersistentNotification;
+import app.komunumo.vaadin.components.PersistentNotification;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;

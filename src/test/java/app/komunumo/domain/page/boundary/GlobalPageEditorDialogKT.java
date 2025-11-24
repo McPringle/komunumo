@@ -21,7 +21,7 @@ import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.test.KaribuTest;
-import app.komunumo.ui.components.PersistentNotification;
+import app.komunumo.vaadin.components.PersistentNotification;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.UI;

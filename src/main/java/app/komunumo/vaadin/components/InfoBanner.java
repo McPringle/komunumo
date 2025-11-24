@@ -15,25 +15,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.components;
+package app.komunumo.vaadin.components;
 
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.AnchorTarget;
-import com.vaadin.flow.component.html.Footer;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.markdown.Markdown;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Year;
+public class InfoBanner extends Div {
 
-public final class PageFooter extends Footer {
-
-    public PageFooter(final @NotNull UI ui,
-                      final @NotNull String version) {
+    public InfoBanner(final @NotNull String message) {
         super();
-        addClassName("page-footer");
-
-        final var komunumoFooter = ui.getTranslation("ui.components.PageFooter.komunumo", version, Year.now());
-        add(new Anchor("https://komunumo.app/", komunumoFooter, AnchorTarget.BLANK));
+        addClassName("info-banner");
+        add(new Markdown(message));
     }
 
 }

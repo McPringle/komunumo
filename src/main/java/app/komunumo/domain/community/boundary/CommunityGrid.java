@@ -18,7 +18,7 @@
 package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.community.entity.CommunityWithImageDto;
-import app.komunumo.ui.components.KomunumoGrid;
+import app.komunumo.vaadin.components.KomunumoGrid;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

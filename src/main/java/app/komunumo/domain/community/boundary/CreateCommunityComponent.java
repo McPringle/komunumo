@@ -23,7 +23,7 @@ import app.komunumo.domain.member.entity.MemberRole;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.member.control.MemberService;
-import app.komunumo.ui.components.ProfileField;
+import app.komunumo.vaadin.components.ProfileField;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;

@@ -20,7 +20,7 @@ package app.komunumo.domain.community.boundary;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.member.control.MemberService;
-import app.komunumo.ui.components.AbstractView;
+import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.Route;

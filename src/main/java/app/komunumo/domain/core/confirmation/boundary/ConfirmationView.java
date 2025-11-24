@@ -19,8 +19,8 @@ package app.komunumo.domain.core.confirmation.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.ui.components.AbstractView;
-import app.komunumo.ui.components.PersistentNotification;
+import app.komunumo.vaadin.components.AbstractView;
+import app.komunumo.vaadin.components.PersistentNotification;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;

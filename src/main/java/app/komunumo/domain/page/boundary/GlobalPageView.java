@@ -20,7 +20,7 @@ package app.komunumo.domain.page.boundary;
 import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.page.control.GlobalPageService;
-import app.komunumo.ui.components.AbstractView;
+import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.HtmlContainer;

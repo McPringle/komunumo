@@ -15,18 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.components;
+package app.komunumo.vaadin.components;
 
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.markdown.Markdown;
 import org.jetbrains.annotations.NotNull;
 
-public class InfoBanner extends Div {
+public abstract class KomunumoGrid extends Div {
 
-    public InfoBanner(final @NotNull String message) {
+    protected KomunumoGrid(final @NotNull KomunumoCard... cards) {
         super();
-        addClassName("info-banner");
-        add(new Markdown(message));
+        addClassName("komunumo-grid");
+        add(cards);
     }
 
 }

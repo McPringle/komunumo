@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.components;
+package app.komunumo.vaadin.components;
 
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;

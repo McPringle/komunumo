@@ -24,7 +24,7 @@ import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.member.control.MemberService;
-import app.komunumo.ui.components.AbstractView;
+import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.event.boundary.EventGrid;
 import app.komunumo.util.ImageUtil;

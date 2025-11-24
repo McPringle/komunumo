@@ -21,7 +21,7 @@ import app.komunumo.domain.event.entity.EventWithImageDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.participation.control.ParticipationService;
-import app.komunumo.ui.components.AbstractView;
+import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.ImageUtil;

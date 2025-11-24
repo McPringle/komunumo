@@ -19,7 +19,7 @@ package app.komunumo.domain.core.error.boundary;
 
 import app.komunumo.domain.core.error.entity.ErrorType;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.ui.components.AbstractView;
+import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.server.auth.AnonymousAllowed;

@@ -18,7 +18,7 @@
 package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.community.entity.CommunityWithImageDto;
-import app.komunumo.ui.components.KomunumoCard;
+import app.komunumo.vaadin.components.KomunumoCard;
 import app.komunumo.util.LinkUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;

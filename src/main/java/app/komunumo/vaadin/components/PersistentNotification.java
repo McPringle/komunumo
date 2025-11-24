@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.ui.components;
+package app.komunumo.vaadin.components;
 
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
@@ -37,7 +37,7 @@ public class PersistentNotification extends Notification {
         final var closeButton = new Button(new Icon("lumo", "cross"));
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
         closeButton.setAriaLabel(getTranslation("ui.components.PersistentNotification.close"));
-        closeButton.addClickListener(event -> close());
+        closeButton.addClickListener(_ -> close());
 
         final var layout = new HorizontalLayout(text, closeButton);
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
