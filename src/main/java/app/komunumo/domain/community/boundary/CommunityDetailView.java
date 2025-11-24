@@ -125,6 +125,13 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         created.addClassName("community-created");
         pageContent.add(created);
 
+        final var memberCount = memberService.getMemberCount(community.id());
+        final var memberCountText = getTranslation(locale, "ui.views.community.CommunityDetailView.memberCount",
+                memberCount);
+        final var memberCountParagraph = new Paragraph(memberCountText);
+        memberCountParagraph.addClassName("community-memberCount");
+        pageContent.add(memberCountParagraph);
+
         final var description = new Markdown(community.description());
         description.addClassName("community-description");
         pageContent.add(description);
