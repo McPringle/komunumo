@@ -155,8 +155,13 @@ public final class JSONImporter {
 
                 final var user = new UserDto(userId, null, null, profile, email, name, bio, imageId,
                         role, type);
-                userService.storeUser(user);
-                counter.incrementAndGet();
+                try {
+                    userService.storeUser(user);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import user with id '%s': %s"
+                            .formatted(userId, e.getMessage()));
+                }
             });
             importerLog.info("...finished importing %d users.".formatted(counter.get()));
         } else {
@@ -256,10 +261,16 @@ public final class JSONImporter {
                 final var since = parseDateTime(jsonObject.optString("since", ""));
 
                 final var member = new MemberDto(userId, communityId, role, since);
-                memberService.storeMember(member);
-                counter.incrementAndGet();
+
+                try {
+                    memberService.storeMember(member);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import member with User Id '%s' and Community Id '%s': %s"
+                            .formatted(userId, communityId, e.getMessage()));
+                }
             });
-            importerLog.info("...finished importing %d events.".formatted(counter.get()));
+            importerLog.info("...finished importing %d members.".formatted(counter.get()));
         } else {
             importerLog.warn("No members found in JSON data.");
         }

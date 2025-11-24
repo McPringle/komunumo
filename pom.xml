@@ -194,7 +194,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mariadb</artifactId>
-            <version>1.21.3</version>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
@@ -250,7 +249,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>1.21.3</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion> <!-- TODO CVE-2024-25710, CVE-2024-26308 -->
@@ -351,11 +349,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.21.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -509,14 +502,6 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <skipTests>true</skipTests>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <executions>
                     <execution>
@@ -636,7 +621,6 @@
 
                 <configuration>
                     <reportsDirectories>
-                        <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                         <reportsDirectory>${project.build.directory}/failsafe-reports</reportsDirectory>
                     </reportsDirectories>
                     <outputName>test-report</outputName>

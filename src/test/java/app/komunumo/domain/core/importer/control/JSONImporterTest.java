@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
@@ -211,6 +212,26 @@ class JSONImporterTest {
     }
 
     @Test
+    void testImportUsersWithFailure() {
+        final var userService = mock(UserService.class);
+        final var jsonUrl = "http://localhost:8082/import/data.json";
+        doThrow(new RuntimeException("Simulated failure")).when(userService).storeUser(any());
+
+        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
+            final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
+            importer.importUsers(userService);
+
+            assertThat(logCaptor.getInfoLogs()).containsExactly(
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    "Start importing users...",
+                    "...finished importing 0 users.");
+            assertThat(logCaptor.getWarnLogs()).hasSize(4);
+            assertThat(logCaptor.getWarnLogs().get(0)).contains("Failed to import user with id").contains("Simulated failure");
+            verify(userService, times(4)).storeUser(any());
+        }
+    }
+
+    @Test
     void testImportCommunities() {
         final var communityService = mock(CommunityService.class);
         final var jsonUrl = "http://localhost:8082/import/data.json";
@@ -253,7 +274,27 @@ class JSONImporterTest {
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
                     "Start importing members...",
-                    "...finished importing 24 events.");
+                    "...finished importing 24 members.");
+            verify(memberService, times(24)).storeMember(any());
+        }
+    }
+
+    @Test
+    void testImportMembersWithFailure() {
+        final var memberService = mock(MemberService.class);
+        final var jsonUrl = "http://localhost:8082/import/data.json";
+        doThrow(new RuntimeException("Simulated failure")).when(memberService).storeMember(any());
+
+        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
+            final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
+            importer.importMembers(memberService);
+
+            assertThat(logCaptor.getInfoLogs()).containsExactly(
+                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    "Start importing members...",
+                    "...finished importing 0 members.");
+            assertThat(logCaptor.getWarnLogs()).hasSize(24);
+            assertThat(logCaptor.getWarnLogs().get(0)).contains("Failed to import member with User Id").contains("Simulated failure");
             verify(memberService, times(24)).storeMember(any());
         }
     }
