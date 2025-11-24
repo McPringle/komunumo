@@ -19,7 +19,7 @@ package app.komunumo.util;
 
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.security.UserPrincipal;
+import app.komunumo.domain.user.entity.UserPrincipal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.Authentication;

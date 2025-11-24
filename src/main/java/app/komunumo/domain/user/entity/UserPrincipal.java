@@ -15,10 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.security;
+package app.komunumo.domain.user.entity;
 
-import app.komunumo.domain.user.entity.UserDto;
-import app.komunumo.domain.user.entity.UserType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;

@@ -21,7 +21,7 @@ import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.security.UserPrincipal;
+import app.komunumo.domain.user.entity.UserPrincipal;
 import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.domain.user.entity.AuthenticationSignal;
 import app.komunumo.util.SecurityUtil;
