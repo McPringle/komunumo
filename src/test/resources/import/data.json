@@ -354,6 +354,18 @@
       "imageId": "",
       "visibility": "PUBLIC",
       "status": "PUBLISHED"
+    },
+    {
+      "eventId": "00000000-0000-0000-0000-000000000000",
+      "communityId": "42524267-be7e-404b-a9bf-c3da72b97717",
+      "title": "Event with invalid community",
+      "description": "Event with a community that does not exist for integration tests.",
+      "location": "Somewhere",
+      "begin": "2030-01-07T18:00:00+02:00[Europe/Zurich]",
+      "end": "2030-01-07T20:00:00+02:00[Europe/Zurich]",
+      "imageId": "",
+      "visibility": "PRIVATE",
+      "status": "DRAFT"
     }
   ],
   "images": [

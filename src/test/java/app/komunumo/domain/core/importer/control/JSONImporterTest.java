@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 6 events, 25 members, and 2 global pages.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, and 2 global pages.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -244,16 +244,21 @@ class JSONImporterTest {
     @Test
     void testImportEvents() {
         final var eventService = mock(EventService.class);
+        doThrow(new RuntimeException("Simulated failure"))
+                .when(eventService)
+                .storeEvent(argThat(event -> UUID_ZERO.equals(event.id())));
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importEvents(eventService);
-
+            verify(eventService, times(7)).storeEvent(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing events...",
                     "...finished importing 6 events.");
-            verify(eventService, times(6)).storeEvent(any());
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                    "Failed to import event: Simulated failure");
+            assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
 

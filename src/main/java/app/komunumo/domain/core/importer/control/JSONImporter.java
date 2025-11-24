@@ -231,22 +231,26 @@ public final class JSONImporter {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing events...");
             jsonData.getJSONArray("events").forEach(object -> {
-                final var jsonObject = (JSONObject) object;
-                final var eventId = UUID.fromString(jsonObject.getString("eventId"));
-                final var communityId = UUID.fromString(jsonObject.getString("communityId"));
-                final var title = jsonObject.getString("title").trim();
-                final var description = jsonObject.getString("description").trim();
-                final var location = jsonObject.getString("location").trim();
-                final var begin = parseDateTime(jsonObject.optString("begin", ""));
-                final var end = parseDateTime(jsonObject.optString("end", ""));
-                final var imageId = parseUUID(jsonObject.optString("imageId", ""));
-                final var visibility = EventVisibility.valueOf(jsonObject.getString("visibility"));
-                final var status = EventStatus.valueOf(jsonObject.getString("status"));
+                try {
+                    final var jsonObject = (JSONObject) object;
+                    final var eventId = UUID.fromString(jsonObject.getString("eventId"));
+                    final var communityId = UUID.fromString(jsonObject.getString("communityId"));
+                    final var title = jsonObject.getString("title").trim();
+                    final var description = jsonObject.getString("description").trim();
+                    final var location = jsonObject.getString("location").trim();
+                    final var begin = parseDateTime(jsonObject.optString("begin", ""));
+                    final var end = parseDateTime(jsonObject.optString("end", ""));
+                    final var imageId = parseUUID(jsonObject.optString("imageId", ""));
+                    final var visibility = EventVisibility.valueOf(jsonObject.getString("visibility"));
+                    final var status = EventStatus.valueOf(jsonObject.getString("status"));
 
-                final var event = new EventDto(eventId, communityId, null, null,
-                        title, description, location, begin, end, imageId, visibility, status);
-                eventService.storeEvent(event);
-                counter.incrementAndGet();
+                    final var event = new EventDto(eventId, communityId, null, null,
+                            title, description, location, begin, end, imageId, visibility, status);
+                    eventService.storeEvent(event);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import event: %s".formatted(e.getMessage()));
+                }
             });
             importerLog.info("...finished importing %d events.".formatted(counter.get()));
         } else {
