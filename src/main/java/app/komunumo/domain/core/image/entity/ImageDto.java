@@ -17,7 +17,6 @@
  */
 package app.komunumo.domain.core.image.entity;
 
-import app.komunumo.data.dto.ContentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

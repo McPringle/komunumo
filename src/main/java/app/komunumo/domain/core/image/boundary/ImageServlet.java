@@ -19,7 +19,7 @@ package app.komunumo.domain.core.image.boundary;
 
 import app.komunumo.domain.core.image.control.PlaceholderImageGenerator;
 import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.util.ImageUtil;

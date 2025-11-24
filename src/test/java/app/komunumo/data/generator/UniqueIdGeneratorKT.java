@@ -17,7 +17,7 @@
  */
 package app.komunumo.data.generator;
 
-import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.test.KaribuTest;

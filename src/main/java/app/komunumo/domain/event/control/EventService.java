@@ -24,7 +24,7 @@ import app.komunumo.domain.event.entity.EventWithImageDto;
 import app.komunumo.data.db.tables.Image;
 import app.komunumo.data.db.tables.records.EventRecord;
 import app.komunumo.domain.community.entity.CommunityDto;
-import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.data.generator.UniqueIdGenerator;
 import app.komunumo.data.service.StorageService;

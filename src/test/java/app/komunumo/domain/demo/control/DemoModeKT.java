@@ -18,7 +18,7 @@
 package app.komunumo.domain.demo.control;
 
 import app.komunumo.domain.community.entity.CommunityDto;
-import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.demo.control.DemoMode;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventStatus;

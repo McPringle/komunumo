@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.converter;
+package app.komunumo.domain.core.image.control;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Converter;
-import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.image.entity.ContentType;
 
 public final class ContentTypeConverter implements Converter<String, ContentType> {
 

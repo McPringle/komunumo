@@ -22,7 +22,7 @@ import app.komunumo.domain.core.config.entity.DemoConfig;
 import app.komunumo.domain.core.config.entity.FilesConfig;
 import app.komunumo.domain.core.config.entity.InstanceConfig;
 import app.komunumo.domain.core.config.entity.MailConfig;
-import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.util.ImageUtil;

@@ -17,8 +17,9 @@
  */
 package app.komunumo.data.converter;
 
+import app.komunumo.domain.core.image.control.ContentTypeConverter;
 import org.junit.jupiter.api.Test;
-import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.image.entity.ContentType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

@@ -900,8 +900,8 @@
                                     <converter>app.komunumo.data.converter.UUIDConverter</converter>
                                 </forcedType>
                                 <forcedType>
-                                    <userType>app.komunumo.data.dto.ContentType</userType>
-                                    <converter>app.komunumo.data.converter.ContentTypeConverter</converter>
+                                    <userType>app.komunumo.domain.core.image.entity.ContentType</userType>
+                                    <converter>app.komunumo.domain.core.image.control.ContentTypeConverter</converter>
                                     <includeExpression>.*\.content_type</includeExpression>
                                 </forcedType>
                                 <forcedType>

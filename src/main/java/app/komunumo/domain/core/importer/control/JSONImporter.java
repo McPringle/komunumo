@@ -23,7 +23,7 @@ import app.komunumo.domain.event.entity.EventStatus;
 import app.komunumo.domain.event.entity.EventVisibility;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
-import app.komunumo.data.dto.ContentType;
+import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.member.entity.MemberDto;
