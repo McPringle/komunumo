@@ -263,20 +263,18 @@ public final class JSONImporter {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing members...");
             jsonData.getJSONArray("members").forEach(object -> {
-                final var jsonObject = (JSONObject) object;
-                final var userId = UUID.fromString(jsonObject.getString("userId"));
-                final var communityId = UUID.fromString(jsonObject.getString("communityId"));
-                final var role = MemberRole.valueOf(jsonObject.getString("role"));
-                final var since = parseDateTime(jsonObject.optString("since", ""));
-
-                final var member = new MemberDto(userId, communityId, role, since);
-
                 try {
+                    final var jsonObject = (JSONObject) object;
+                    final var userId = UUID.fromString(jsonObject.getString("userId"));
+                    final var communityId = UUID.fromString(jsonObject.getString("communityId"));
+                    final var role = MemberRole.valueOf(jsonObject.getString("role"));
+                    final var since = parseDateTime(jsonObject.optString("since", ""));
+
+                    final var member = new MemberDto(userId, communityId, role, since);
                     memberService.storeMember(member);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import member with User Id '%s' and Community Id '%s': %s"
-                            .formatted(userId, communityId, e.getMessage()));
+                    importerLog.warn("Failed to import member: %s".formatted(e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d members.".formatted(counter.get()));

@@ -278,8 +278,7 @@ class JSONImporterTest {
                     "Start importing members...",
                     "...finished importing 24 members.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import member with User Id '00000000-0000-0000-0000-000000000000' "
-                    + "and Community Id '00000000-0000-0000-0000-000000000000': Simulated failure");
+                    "Failed to import member: Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
