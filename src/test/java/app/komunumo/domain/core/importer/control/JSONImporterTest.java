@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 3 images, 5 users, 6 communities, 6 events, 25 members, and 2 global pages.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 6 communities, 6 events, 25 members, and 2 global pages.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -182,27 +182,22 @@ class JSONImporterTest {
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class);
              var mockedImageUtil = mockStatic(ImageUtil.class)) {
-            mockedImageUtil.when(() -> ImageUtil.storeImage(any(), any())).thenAnswer(invocation -> {
-                final var image = invocation.getArgument(0, ImageDto.class);
-                final var imageId = image.id();
-                assertThat(imageId).isNotNull();
-                if (imageId.toString().equals("4ca05a55-de1e-4571-a833-c9e5e4f4bfba")) {
-                    throw new IOException("Simulated failure");
-                }
-                return null;
-            });
 
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importImages(imageService);
 
+            mockedImageUtil.verify(() -> ImageUtil.storeImage(any(), any()), times(2));
+            verify(imageService, times(2)).storeImage(any());
+
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing images...",
-                    "...finished importing 3 images.");
-            assertThat(logCaptor.getErrorLogs()).containsExactly(
-                    "Failed to import image: Simulated failure");
-            mockedImageUtil.verify(() -> ImageUtil.storeImage(any(), any()), times(2));
-            verify(imageService, times(1)).storeImage(any());
+                    "...finished importing 2 images.");
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                    "Failed to import image: Failed to download file from "
+                    + "'http://localhost:8082/import/non-existing.svg': HTTP status code 404",
+                    "Failed to import image: Invalid data URL: data:broken");
+            assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
 

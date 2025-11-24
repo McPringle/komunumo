@@ -17,11 +17,13 @@
  */
 package app.komunumo.util;
 
+import app.komunumo.KomunumoException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class DownloadUtilTest {
 
@@ -44,9 +46,9 @@ class DownloadUtilTest {
             "http://localhost:8888/",
             "data:invalid"
     })
-    void shouldReturnNullForInvalidOrUnreachableUrls(final String url) {
-        final var path = DownloadUtil.downloadFile(url);
-        assertThat(path).isNull();
+    void shouldThrowExceptionForInvalidOrUnreachableUrls(final String url) {
+        assertThatThrownBy(() -> DownloadUtil.downloadFile(url))
+                .isInstanceOf(KomunumoException.class);
     }
 
 }

@@ -17,10 +17,8 @@
  */
 package app.komunumo.util;
 
+import app.komunumo.KomunumoException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,8 +35,6 @@ import java.util.Base64;
 
 public final class DownloadUtil {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadUtil.class);
-
     public static @NotNull String getString(final @NotNull String location)
             throws IOException, URISyntaxException {
         try (InputStream in = new URI(location).toURL().openStream()) {
@@ -47,7 +43,7 @@ public final class DownloadUtil {
     }
 
     @SuppressWarnings({"java:S2095", "java:S2142", "LoggingSimilarMessage"})
-    public static @Nullable Path downloadFile(final @NotNull String location) {
+    public static @NotNull Path downloadFile(final @NotNull String location) {
         try {
             final var tempFile = Files.createTempFile("download-", ".tmp");
             tempFile.toFile().deleteOnExit();
@@ -55,9 +51,8 @@ public final class DownloadUtil {
             if (location.startsWith("data:")) {
                 final var commaIndex = location.indexOf(',');
                 if (commaIndex < 0) {
-                    LOGGER.error("Invalid data URI: '{}'", location);
                     Files.deleteIfExists(tempFile);
-                    return null;
+                    throw new KomunumoException("Invalid data URL: " + location);
                 }
 
                 final var metadata = location.substring(5, commaIndex); // skip "data:"
@@ -85,13 +80,14 @@ public final class DownloadUtil {
             if (statusCode == 200) {
                 return tempFile;
             } else {
-                LOGGER.error("Failed to download file from '{}': HTTP status code {}", location, statusCode);
                 Files.deleteIfExists(tempFile);
+                throw new KomunumoException("Failed to download file from '%s': HTTP status code %s"
+                        .formatted(location, statusCode));
             }
         } catch (final IOException | InterruptedException e) {
-            LOGGER.error("Failed to download file from '{}': {}", location, e.getMessage());
+            throw new KomunumoException("Failed to download file from '%s': %s"
+                    .formatted(location, e.getMessage()), e);
         }
-        return null;
     }
 
     private DownloadUtil() {

@@ -364,6 +364,11 @@
       "imageId": "d7bd2d09-3310-4e37-ad0a-c7c4c43389ad",
       "contentType": "image/svg+xml",
       "url": "http://localhost:8082/import/non-existing.svg"
+    },
+    {
+      "imageId": "c81bca0e-6a1f-422c-b03f-aee75bee6779",
+      "contentType": "image/png",
+      "url": "data:broken"
     }
   ],
   "globalPages": [

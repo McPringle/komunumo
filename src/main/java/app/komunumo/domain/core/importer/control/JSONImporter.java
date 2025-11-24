@@ -178,23 +178,21 @@ public final class JSONImporter {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing images...");
             jsonData.getJSONArray("images").forEach(object -> {
-                final var jsonObject = (JSONObject) object;
-                final var imageId = UUID.fromString(jsonObject.getString("imageId"));
-                final var contentType = ContentType.fromContentType(jsonObject.getString("contentType"));
+                try {
+                    final var jsonObject = (JSONObject) object;
+                    final var imageId = UUID.fromString(jsonObject.getString("imageId"));
+                    final var contentType = ContentType.fromContentType(jsonObject.getString("contentType"));
 
-                final var url = jsonObject.getString("url");
-                final var path = DownloadUtil.downloadFile(url);
+                    final var url = jsonObject.getString("url");
+                    final var path = DownloadUtil.downloadFile(url);
 
-                if (path != null) {
                     final var image = new ImageDto(imageId, contentType);
-                    try {
-                        ImageUtil.storeImage(image, path);
-                        imageService.storeImage(image);
-                    } catch (final IOException e) {
-                        importerLog.error("Failed to import image: %s".formatted(e.getMessage()));
-                    }
+                    ImageUtil.storeImage(image, path);
+                    imageService.storeImage(image);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import image: %s".formatted(e.getMessage()));
                 }
-                counter.incrementAndGet();
             });
             importerLog.info("...finished importing %d images.".formatted(counter.get()));
         } else {
