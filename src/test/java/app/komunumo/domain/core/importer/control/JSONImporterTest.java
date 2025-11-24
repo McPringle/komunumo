@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 6 communities, 6 events, 25 members, and 2 global pages.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 6 events, 25 members, and 2 global pages.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -223,16 +223,21 @@ class JSONImporterTest {
     @Test
     void testImportCommunities() {
         final var communityService = mock(CommunityService.class);
+        doThrow(new RuntimeException("Simulated failure"))
+                .when(communityService)
+                .storeCommunity(argThat(community -> UUID_ZERO.equals(community.id())));
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importCommunities(communityService);
-
+            verify(communityService, times(7)).storeCommunity(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing communities...",
                     "...finished importing 6 communities.");
-            verify(communityService, times(6)).storeCommunity(any());
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                    "Failed to import community: Simulated failure");
+            assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
 

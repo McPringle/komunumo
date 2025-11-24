@@ -205,17 +205,21 @@ public final class JSONImporter {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing communities...");
             jsonData.getJSONArray("communities").forEach(object -> {
-                final var jsonObject = (JSONObject) object;
-                final var communityId = UUID.fromString(jsonObject.getString("communityId"));
-                final var profile = jsonObject.getString("profile").trim();
-                final var name = jsonObject.getString("name").trim();
-                final var description = jsonObject.getString("description").trim();
-                final var imageId = parseUUID(jsonObject.optString("imageId"));
+                try {
+                    final var jsonObject = (JSONObject) object;
+                    final var communityId = UUID.fromString(jsonObject.getString("communityId"));
+                    final var profile = jsonObject.getString("profile").trim();
+                    final var name = jsonObject.getString("name").trim();
+                    final var description = jsonObject.getString("description").trim();
+                    final var imageId = parseUUID(jsonObject.optString("imageId"));
 
-                final var community = new CommunityDto(communityId, profile, null, null,
-                        name, description, imageId);
-                communityService.storeCommunity(community);
-                counter.incrementAndGet();
+                    final var community = new CommunityDto(communityId, profile, null, null,
+                            name, description, imageId);
+                    communityService.storeCommunity(community);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import community: %s".formatted(e.getMessage()));
+                }
             });
             importerLog.info("...finished importing %d communities.".formatted(counter.get()));
         } else {

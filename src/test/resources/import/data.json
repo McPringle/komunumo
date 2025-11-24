@@ -121,6 +121,13 @@
       "name": "Demo Community 6",
       "description": "A description of the demo community.",
       "imageId": ""
+    },
+    {
+      "communityId": "00000000-0000-0000-0000-000000000000",
+      "profile": "@demoCommunity1",
+      "name": "Duplicate Profile Community",
+      "description": "A community with duplicate profile for integration tests.",
+      "imageId": ""
     }
   ],
   "members": [
