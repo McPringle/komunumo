@@ -147,24 +147,23 @@ public final class JSONImporter {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing users...");
             jsonData.getJSONArray("users").forEach(object -> {
-                final var jsonObject = (JSONObject) object;
-                final var userId = UUID.fromString(jsonObject.getString("userId"));
-                final var profile = jsonObject.getString("profile").trim();
-                final var email = jsonObject.getString("email").trim();
-                final var name = jsonObject.getString("name").trim();
-                final var bio = jsonObject.getString("bio").trim();
-                final var imageId = parseUUID(jsonObject.optString("imageId"));
-                final var role = UserRole.valueOf(jsonObject.getString("role").trim());
-                final var type = UserType.valueOf(jsonObject.getString("type").trim());
-
-                final var user = new UserDto(userId, null, null, profile, email, name, bio, imageId,
-                        role, type);
                 try {
+                    final var jsonObject = (JSONObject) object;
+                    final var userId = UUID.fromString(jsonObject.getString("userId"));
+                    final var profile = jsonObject.getString("profile").trim();
+                    final var email = jsonObject.getString("email").trim();
+                    final var name = jsonObject.getString("name").trim();
+                    final var bio = jsonObject.getString("bio").trim();
+                    final var imageId = parseUUID(jsonObject.optString("imageId"));
+                    final var role = UserRole.valueOf(jsonObject.getString("role").trim());
+                    final var type = UserType.valueOf(jsonObject.getString("type").trim());
+
+                    final var user = new UserDto(userId, null, null, profile, email, name, bio, imageId,
+                            role, type);
                     userService.storeUser(user);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import user with id '%s': %s"
-                            .formatted(userId, e.getMessage()));
+                    importerLog.warn("Failed to import user: %s".formatted(e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d users.".formatted(counter.get()));

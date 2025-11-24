@@ -215,7 +215,7 @@ class JSONImporterTest {
                     "Start importing users...",
                     "...finished importing 4 users.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import user with id '00000000-0000-0000-0000-000000000000': Simulated failure");
+                    "Failed to import user: Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
