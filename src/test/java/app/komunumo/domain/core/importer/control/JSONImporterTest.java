@@ -286,20 +286,18 @@ class JSONImporterTest {
     @Test
     void testImportGlobalPages() {
         final var globalPageService = mock(GlobalPageService.class);
-        doThrow(new RuntimeException("Simulated failure"))
-                .when(globalPageService)
-                .storeGlobalPage(argThat(page -> "invalid".equals(page.slot())));
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importGlobalPages(globalPageService);
-            verify(globalPageService, times(3)).storeGlobalPage(any());
+            verify(globalPageService, times(2)).storeGlobalPage(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing global pages...",
                     "...finished importing 2 global pages.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import global page: Simulated failure");
+                    "Failed to import global page: JSONObject[\"language\"] is not a string "
+                    + "(class org.json.JSONObject$Null : null).");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }

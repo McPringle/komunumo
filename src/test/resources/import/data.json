@@ -405,7 +405,7 @@
     },
     {
       "slot": "invalid",
-      "language": "00",
+      "language": null,
       "title": "Page with invalid language",
       "markdown": "This page has an invalid language code for integration tests."
     }
