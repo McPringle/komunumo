@@ -30,6 +30,7 @@ Special thanks for all these wonderful people who had helped this project so far
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/LinuxSquare"><img src="https://avatars.githubusercontent.com/u/39629672?v=4?s=100" width="100px;" alt="LinuxSquare"/><br /><sub><b>LinuxSquare</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=LinuxSquare" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ab-schneider"><img src="https://avatars.githubusercontent.com/u/231430351?v=4?s=100" width="100px;" alt="ab-schneider"/><br /><sub><b>ab-schneider</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=ab-schneider" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://hendrik-schick.me/"><img src="https://avatars.githubusercontent.com/u/30866028?v=4?s=100" width="100px;" alt="Hendrik Schick"/><br /><sub><b>Hendrik Schick</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=ky0n" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/danncortes"><img src="https://avatars.githubusercontent.com/u/2078330?v=4?s=100" width="100px;" alt="Daniel Cortes"/><br /><sub><b>Daniel Cortes</b></sub></a><br /><a href="https://github.com/McPringle/komunumo/commits?author=danncortes" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
