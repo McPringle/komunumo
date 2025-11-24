@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, and 2 global pages.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, and 3 global pages.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -287,16 +287,21 @@ class JSONImporterTest {
     @Test
     void testImportGlobalPages() {
         final var globalPageService = mock(GlobalPageService.class);
+        doThrow(new RuntimeException("Simulated failure"))
+                .when(globalPageService)
+                .storeGlobalPage(argThat(page -> "invalid".equals(page.slot())));
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importGlobalPages(globalPageService);
-
+            verify(globalPageService, times(3)).storeGlobalPage(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing global pages...",
                     "...finished importing 2 global pages.");
-            verify(globalPageService, times(2)).storeGlobalPage(any());
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                    "Failed to import global page: Simulated failure");
+            assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
 

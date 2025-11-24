@@ -402,6 +402,12 @@
       "language": "de",
       "title": "Impressum",
       "markdown": "## Impressum\n\nDies ist eine Demo **nur** für Testzwecke."
+    },
+    {
+      "slot": "invalid",
+      "language": "00",
+      "title": "Page with invalid language",
+      "markdown": "This page has an invalid language code for integration tests."
     }
   ]
 }

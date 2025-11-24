@@ -290,15 +290,19 @@ public final class JSONImporter {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing global pages...");
             jsonData.getJSONArray("globalPages").forEach(object -> {
-                final var jsonObject = (JSONObject) object;
-                final var slot = jsonObject.getString("slot").trim();
-                final var locale = Locale.forLanguageTag(jsonObject.getString("language"));
-                final var title = jsonObject.getString("title").trim();
-                final var markdown = jsonObject.getString("markdown").trim();
+                try {
+                    final var jsonObject = (JSONObject) object;
+                    final var slot = jsonObject.getString("slot").trim();
+                    final var locale = Locale.forLanguageTag(jsonObject.getString("language"));
+                    final var title = jsonObject.getString("title").trim();
+                    final var markdown = jsonObject.getString("markdown").trim();
 
-                final var globalPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
-                globalPageService.storeGlobalPage(globalPage);
-                counter.incrementAndGet();
+                    final var globalPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
+                    globalPageService.storeGlobalPage(globalPage);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import global page: %s".formatted(e.getMessage()));
+                }
             });
             importerLog.info("...finished importing %d global pages.".formatted(counter.get()));
         } else {
