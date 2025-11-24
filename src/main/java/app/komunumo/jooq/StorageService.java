@@ -15,10 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.service;
+package app.komunumo.jooq;
 
-import app.komunumo.data.RecordWithTimestamps;
-import app.komunumo.data.generator.UniqueIdGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.impl.TableImpl;
 

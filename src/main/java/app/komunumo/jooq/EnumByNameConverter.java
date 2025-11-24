@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.tools;
+package app.komunumo.jooq;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

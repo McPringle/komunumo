@@ -897,7 +897,7 @@
                                     <includeExpression>(^id$|.*_id$)</includeExpression>
                                     <excludeExpression>mail_template\.id</excludeExpression>
                                     <userType>java.util.UUID</userType>
-                                    <converter>app.komunumo.tools.UUIDConverter</converter>
+                                    <converter>app.komunumo.jooq.UUIDConverter</converter>
                                 </forcedType>
                                 <forcedType>
                                     <userType>app.komunumo.domain.core.image.entity.ContentType</userType>
@@ -908,7 +908,7 @@
                                     <includeTypes>TIMESTAMP</includeTypes>
                                     <includeExpression>.*</includeExpression>
                                     <userType>java.time.ZonedDateTime</userType>
-                                    <converter>app.komunumo.tools.ZonedDateTimeConverter</converter>
+                                    <converter>app.komunumo.jooq.ZonedDateTimeConverter</converter>
                                 </forcedType>
                                 <forcedType>
                                     <userType>app.komunumo.domain.event.entity.EventStatus</userType>
@@ -933,7 +933,7 @@
                                 <tables>
                                     <table>
                                         <expression>^(COMMUNITY|EVENT|USER)$</expression>
-                                        <recordImplements>app.komunumo.data.RecordWithTimestamps</recordImplements>
+                                        <recordImplements>app.komunumo.jooq.RecordWithTimestamps</recordImplements>
                                     </table>
                                 </tables>
                             </matchers>

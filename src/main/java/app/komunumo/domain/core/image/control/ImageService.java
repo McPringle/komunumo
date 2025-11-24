@@ -20,7 +20,7 @@ package app.komunumo.domain.core.image.control;
 import app.komunumo.data.db.Tables;
 import app.komunumo.data.db.tables.records.ImageRecord;
 import app.komunumo.domain.core.image.entity.ImageDto;
-import app.komunumo.data.generator.UniqueIdGenerator;
+import app.komunumo.jooq.UniqueIdGenerator;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

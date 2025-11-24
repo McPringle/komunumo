@@ -107,7 +107,8 @@ class ArchitectureTest {
 
         classes()
                 .that()
-                .resideInAPackage("..dto..")
+                .resideInAPackage("..entity..")
+                .and().haveSimpleNameEndingWith("Dto")
                 .should(beRecordOrEnum)
                 .because("DTOs should be implemented as Java records or enums to ensure immutability and clarity")
                 .check(classesWithoutTests);
@@ -131,7 +132,7 @@ class ArchitectureTest {
                 "not depend on " + forbiddenTypeList) {
             @Override
             public void check(@NotNull JavaClass clazz, @NotNull ConditionEvents events) {
-                if (clazz.getFullName().equals("app.komunumo.data.converter.ZonedDateTimeConverter")) {
+                if (clazz.getFullName().equals("app.komunumo.jooq.ZonedDateTimeConverter")) {
                     return; // exception for ZonedDateTimeConverter
                 }
 

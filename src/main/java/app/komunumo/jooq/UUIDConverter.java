@@ -15,38 +15,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.tools;
+package app.komunumo.jooq;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Converter;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.util.UUID;
 
-public final class ZonedDateTimeConverter implements Converter<LocalDateTime, ZonedDateTime> {
+public final class UUIDConverter implements Converter<String, UUID> {
 
     @Override
-    public @Nullable ZonedDateTime from(final @Nullable LocalDateTime databaseObject) {
-        // DB time is interpreted as UTC
-        return databaseObject == null ? null : databaseObject.atZone(ZoneOffset.UTC);
+    public @Nullable UUID from(final @Nullable String databaseObject) {
+        return databaseObject == null ? null : UUID.fromString(databaseObject);
     }
 
     @Override
-    public @Nullable LocalDateTime to(final @Nullable ZonedDateTime userObject) {
-        // UTC time is saved without zone
-        return userObject == null ? null : userObject.withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
+    public @Nullable String to(final @Nullable UUID userObject) {
+        return userObject == null ? null : userObject.toString();
     }
 
     @Override
-    public @NotNull Class<LocalDateTime> fromType() {
-        return LocalDateTime.class;
+    public @NotNull Class<String> fromType() {
+        return String.class;
     }
 
     @Override
-    public @NotNull Class<ZonedDateTime> toType() {
-        return ZonedDateTime.class;
+    public @NotNull Class<UUID> toType() {
+        return UUID.class;
     }
 
 }

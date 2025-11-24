@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data;
+package app.komunumo.jooq;
 
 import jakarta.validation.constraints.NotNull;
 import org.jooq.exception.DataAccessException;

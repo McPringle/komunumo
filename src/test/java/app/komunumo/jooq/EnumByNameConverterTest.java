@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.tools;
+package app.komunumo.jooq;
 
 import org.junit.jupiter.api.Test;
 
@@ -36,11 +36,10 @@ class EnumByNameConverterTest {
 
         assertThatThrownBy(() -> converter.from("UNKNOWN"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("No enum constant app.komunumo.data.converter.EnumByNameConverterTest.TestEnum.UNKNOWN");
+                .hasMessage("No enum constant app.komunumo.jooq.EnumByNameConverterTest.TestEnum.UNKNOWN");
     }
 
     @Test
-    @SuppressWarnings("ConstantValue")
     void to() {
         final var converter = new TestEnumConverter();
         assertThat(converter.to(null)).isNull();
