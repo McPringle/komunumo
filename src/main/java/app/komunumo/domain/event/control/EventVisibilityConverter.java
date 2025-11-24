@@ -15,12 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.converter;
+package app.komunumo.domain.event.control;
 
-import app.komunumo.domain.event.entity.EventStatus;
+import app.komunumo.data.converter.EnumByNameConverter;
+import app.komunumo.domain.event.entity.EventVisibility;
 
-public final class EventStatusConverter extends EnumByNameConverter<EventStatus> {
-    public EventStatusConverter() {
-        super(EventStatus.class);
+public final class EventVisibilityConverter extends EnumByNameConverter<EventVisibility> {
+    public EventVisibilityConverter() {
+        super(EventVisibility.class);
     }
 }

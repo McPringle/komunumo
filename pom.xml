@@ -912,12 +912,12 @@
                                 </forcedType>
                                 <forcedType>
                                     <userType>app.komunumo.domain.event.entity.EventStatus</userType>
-                                    <converter>app.komunumo.data.converter.EventStatusConverter</converter>
+                                    <converter>app.komunumo.domain.event.control.EventStatusConverter</converter>
                                     <includeExpression>event\.status</includeExpression>
                                 </forcedType>
                                 <forcedType>
                                     <userType>app.komunumo.domain.event.entity.EventVisibility</userType>
-                                    <converter>app.komunumo.data.converter.EventVisibilityConverter</converter>
+                                    <converter>app.komunumo.domain.event.control.EventVisibilityConverter</converter>
                                     <includeExpression>event\.visibility</includeExpression>
                                 </forcedType>
                             </forcedTypes>
