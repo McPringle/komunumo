@@ -15,9 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.data.converter;
+package app.komunumo.domain.core.image.control;
 
-import app.komunumo.domain.core.image.control.ContentTypeConverter;
 import org.junit.jupiter.api.Test;
 import app.komunumo.domain.core.image.entity.ContentType;
 
