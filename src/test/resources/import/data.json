@@ -63,6 +63,16 @@
       "imageId": "",
       "role": "USER",
       "type": "ANONYMOUS"
+    },
+    {
+      "userId": "00000000-0000-0000-0000-000000000000",
+      "profile": "@duplicate@example.com",
+      "email": "anonymous@example.com",
+      "name": "Duplicate Email",
+      "bio": "User with duplicate email for integration tests",
+      "imageId": "",
+      "role": "USER",
+      "type": "ANONYMOUS"
     }
   ],
   "communities": [
@@ -251,6 +261,12 @@
     {
       "userId": "44444444-4444-4444-4444-444444444444",
       "communityId": "af1a9ddf-346e-4bcf-b581-2685d4cf363e",
+      "role": "MEMBER",
+      "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+    },
+    {
+      "userId": "00000000-0000-0000-0000-000000000000",
+      "communityId": "00000000-0000-0000-0000-000000000000",
       "role": "MEMBER",
       "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
     }

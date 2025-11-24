@@ -18,13 +18,13 @@
 package app.komunumo.domain.core.importer.control;
 
 import app.komunumo.KomunumoException;
-import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.core.image.entity.ImageDto;
+import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.member.control.MemberService;
+import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
@@ -32,10 +32,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -43,6 +45,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
+
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 5 settings, 3 images, 5 users, 6 communities, 6 events, 25 members, and 2 global pages.";
+    private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
     void testImporterWithURLNotFound() {
@@ -142,10 +147,9 @@ class JSONImporterTest {
     @Test
     void testImporterWithRealJson() {
         final var jsonUrl = "http://localhost:8082/import/data.json";
-        final var expectedMessage = "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             new JSONImporter(new ImporterLog(null), jsonUrl);
-            assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
+            assertThat(logCaptor.getInfoLogs()).containsExactly(IDENTIFIED_COUNTS_MESSAGE);
         }
     }
 
@@ -158,7 +162,7 @@ class JSONImporterTest {
             importer.importSettings(configurationService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing settings...",
                     "...finished importing 3 settings.");
             verify(configurationService, times(3)).setConfiguration(any(), any(), any());
@@ -185,7 +189,7 @@ class JSONImporterTest {
             importer.importImages(imageService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing images...",
                     "...finished importing 3 images.");
             assertThat(logCaptor.getErrorLogs()).containsExactly(
@@ -198,36 +202,21 @@ class JSONImporterTest {
     @Test
     void testImportUsers() {
         final var userService = mock(UserService.class);
+        doThrow(new RuntimeException("Simulated failure"))
+                .when(userService)
+                .storeUser(argThat(user -> UUID_ZERO.equals(user.id())));
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importUsers(userService);
-
+            verify(userService, times(5)).storeUser(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing users...",
                     "...finished importing 4 users.");
-            verify(userService, times(4)).storeUser(any());
-        }
-    }
-
-    @Test
-    void testImportUsersWithFailure() {
-        final var userService = mock(UserService.class);
-        final var jsonUrl = "http://localhost:8082/import/data.json";
-        doThrow(new RuntimeException("Simulated failure")).when(userService).storeUser(any());
-
-        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
-            final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
-            importer.importUsers(userService);
-
-            assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
-                    "Start importing users...",
-                    "...finished importing 0 users.");
-            assertThat(logCaptor.getWarnLogs()).hasSize(4);
-            assertThat(logCaptor.getWarnLogs().get(0)).contains("Failed to import user with id").contains("Simulated failure");
-            verify(userService, times(4)).storeUser(any());
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                    "Failed to import user with id '00000000-0000-0000-0000-000000000000': Simulated failure");
+            assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
 
@@ -240,7 +229,7 @@ class JSONImporterTest {
             importer.importCommunities(communityService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing communities...",
                     "...finished importing 6 communities.");
             verify(communityService, times(6)).storeCommunity(any());
@@ -256,7 +245,7 @@ class JSONImporterTest {
             importer.importEvents(eventService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing events...",
                     "...finished importing 6 events.");
             verify(eventService, times(6)).storeEvent(any());
@@ -266,36 +255,22 @@ class JSONImporterTest {
     @Test
     void testImportMembers() {
         final var memberService = mock(MemberService.class);
+        doThrow(new RuntimeException("Simulated failure"))
+                .when(memberService)
+                .storeMember(argThat(member -> UUID_ZERO.equals(member.userId())));
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importMembers(memberService);
-
+            verify(memberService, times(25)).storeMember(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing members...",
                     "...finished importing 24 members.");
-            verify(memberService, times(24)).storeMember(any());
-        }
-    }
-
-    @Test
-    void testImportMembersWithFailure() {
-        final var memberService = mock(MemberService.class);
-        final var jsonUrl = "http://localhost:8082/import/data.json";
-        doThrow(new RuntimeException("Simulated failure")).when(memberService).storeMember(any());
-
-        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
-            final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
-            importer.importMembers(memberService);
-
-            assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
-                    "Start importing members...",
-                    "...finished importing 0 members.");
-            assertThat(logCaptor.getWarnLogs()).hasSize(24);
-            assertThat(logCaptor.getWarnLogs().get(0)).contains("Failed to import member with User Id").contains("Simulated failure");
-            verify(memberService, times(24)).storeMember(any());
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                    "Failed to import member with User Id '00000000-0000-0000-0000-000000000000' "
+                    + "and Community Id '00000000-0000-0000-0000-000000000000': Simulated failure");
+            assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
 
@@ -308,7 +283,7 @@ class JSONImporterTest {
             importer.importGlobalPages(globalPageService);
 
             assertThat(logCaptor.getInfoLogs()).containsExactly(
-                    "Identified 5 settings, 3 images, 4 users, 6 communities, 6 events, 24 members, and 2 global pages.",
+                    IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing global pages...",
                     "...finished importing 2 global pages.");
             verify(globalPageService, times(2)).storeGlobalPage(any());
