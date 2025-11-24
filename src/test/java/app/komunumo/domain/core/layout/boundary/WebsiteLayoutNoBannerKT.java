@@ -25,7 +25,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import static app.komunumo.util.TestUtil.findComponent;
+import static app.komunumo.test.TestUtil.findComponent;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @TestPropertySource(properties = "komunumo.demo.enabled=false")

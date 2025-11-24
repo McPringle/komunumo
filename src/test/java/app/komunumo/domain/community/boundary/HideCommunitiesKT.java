@@ -28,9 +28,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
-import static app.komunumo.util.TestUtil.assertContainsExactlyOneRouterLinkOf;
-import static app.komunumo.util.TestUtil.findComponent;
-import static app.komunumo.util.TestUtil.findComponents;
+import static app.komunumo.test.TestUtil.assertContainsExactlyOneRouterLinkOf;
+import static app.komunumo.test.TestUtil.findComponent;
+import static app.komunumo.test.TestUtil.findComponents;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class HideCommunitiesKT extends KaribuTest {

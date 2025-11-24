@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.util;
+package app.komunumo.test;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.html.Anchor;

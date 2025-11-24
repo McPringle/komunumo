@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static app.komunumo.util.TestUtil.extractLinkFromText;
+import static app.komunumo.test.TestUtil.extractLinkFromText;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -38,7 +38,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Locale;
 
-import static app.komunumo.util.TestUtil.findComponent;
+import static app.komunumo.test.TestUtil.findComponent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._assertNone;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;

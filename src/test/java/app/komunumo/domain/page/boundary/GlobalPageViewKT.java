@@ -25,7 +25,7 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.markdown.Markdown;
 import org.junit.jupiter.api.Test;
 
-import static app.komunumo.util.TestUtil.findComponent;
+import static app.komunumo.test.TestUtil.findComponent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 

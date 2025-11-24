@@ -42,10 +42,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static app.komunumo.util.TestUtil.assertContainsExactlyOneInstanceOf;
-import static app.komunumo.util.TestUtil.assertContainsExactlyOneRouterLinkOf;
-import static app.komunumo.util.TestUtil.findComponent;
-import static app.komunumo.util.TestUtil.findComponents;
+import static app.komunumo.test.TestUtil.assertContainsExactlyOneInstanceOf;
+import static app.komunumo.test.TestUtil.assertContainsExactlyOneRouterLinkOf;
+import static app.komunumo.test.TestUtil.findComponent;
+import static app.komunumo.test.TestUtil.findComponents;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

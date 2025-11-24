@@ -24,7 +24,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import org.junit.jupiter.api.Test;
 
-import static app.komunumo.util.TestUtil.extractLinkFromText;
+import static app.komunumo.test.TestUtil.extractLinkFromText;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LoginFlowBT extends BrowserTest {

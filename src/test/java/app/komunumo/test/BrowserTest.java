@@ -48,7 +48,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
-import static app.komunumo.util.TestUtil.extractLinkFromText;
+import static app.komunumo.test.TestUtil.extractLinkFromText;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class BrowserTest extends IntegrationTest {
