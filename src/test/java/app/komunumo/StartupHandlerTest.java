@@ -15,37 +15,41 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.admin;
+package app.komunumo;
 
+import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.config.entity.DemoConfig;
 import app.komunumo.domain.core.config.entity.FilesConfig;
 import app.komunumo.domain.core.config.entity.InstanceConfig;
 import app.komunumo.domain.core.config.entity.MailConfig;
-import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.core.demo.control.DemoMode;
 import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserRole;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class AdminBootstrapperTest {
+class StartupHandlerTest {
 
     @Test
     @SuppressWarnings("DataFlowIssue")
     void shouldCreateAdminIfNoneExistsAndEmailIsSet() {
-        final var userService = mockUserService(0);
         final var appConfig = createAppConfig("admin@example.eu");
+        final var configurationService = mock(ConfigurationService.class);
+        final var userService = mockUserService(0);
+        final var demoMode = mock(DemoMode.class);
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
-        bootstrapper.createInitialAdminIfMissing();
+        final var startupHandler = new StartupHandler(appConfig, configurationService, userService, demoMode);
+        startupHandler.onApplicationReady();
 
         verify(userService).storeUser(argThat(user ->
                 user.email().equals("admin@example.eu") &&
@@ -56,22 +60,26 @@ class AdminBootstrapperTest {
 
     @Test
     void shouldSkipCreationIfAdminAlreadyExists() {
-        final var userService = mockUserService(1);
         final var appConfig = createAppConfig("admin@example.eu");
+        final var configurationService = mock(ConfigurationService.class);
+        final var userService = mockUserService(1);
+        final var demoMode = mock(DemoMode.class);
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
-        bootstrapper.createInitialAdminIfMissing();
+        final var startupHandler = new StartupHandler(appConfig, configurationService, userService, demoMode);
+        startupHandler.onApplicationReady();
 
         verify(userService, never()).storeUser(any());
     }
 
     @Test
     void shouldSkipCreationIfNoEmailSet() {
-        final var userService = mockUserService(0);
         final var appConfig = createAppConfig("");
+        final var configurationService = mock(ConfigurationService.class);
+        final var userService = mockUserService(0);
+        final var demoMode = mock(DemoMode.class);
 
-        final var bootstrapper = new AdminBootstrapper(appConfig, userService);
-        bootstrapper.createInitialAdminIfMissing();
+        final var startupHandler = new StartupHandler(appConfig, configurationService, userService, demoMode);
+        startupHandler.onApplicationReady();
 
         verify(userService, never()).storeUser(any());
     }
