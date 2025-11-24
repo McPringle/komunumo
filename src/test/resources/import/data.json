@@ -21,6 +21,10 @@
       "setting": "instance.custom.styles",
       "language": "de",
       "value": "Should be ignored because custom styles are language independent but a language is given."
+    },
+    {
+      "setting": "simulated.failure",
+      "value": "The test will throw an exception if this setting is read."
     }
   ],
   "users": [

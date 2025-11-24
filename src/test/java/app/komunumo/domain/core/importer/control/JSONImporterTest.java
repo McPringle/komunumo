@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 5 settings, 3 images, 5 users, 6 communities, 6 events, 25 members, and 2 global pages.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 3 images, 5 users, 6 communities, 6 events, 25 members, and 2 global pages.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -156,16 +156,23 @@ class JSONImporterTest {
     @Test
     void testImportSettings() {
         final var configurationService = mock(ConfigurationService.class);
+        doThrow(new RuntimeException("Simulated failure"))
+                .when(configurationService)
+                .setConfiguration(argThat(setting -> "simulated.failure".equals(setting.setting())), any());
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importSettings(configurationService);
-
+            verify(configurationService, times(3)).setConfiguration(any(), any(), any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing settings...",
                     "...finished importing 3 settings.");
-            verify(configurationService, times(3)).setConfiguration(any(), any(), any());
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                    "Skipping setting 'instance.slogan' because it is language-dependent but no language was provided.",
+                    "Skipping setting 'instance.custom.styles' because it is not language-dependent but a language was provided.",
+                    "Failed to import setting: Unknown setting: simulated.failure");
+            assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
 

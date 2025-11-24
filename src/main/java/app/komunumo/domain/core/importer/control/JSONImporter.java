@@ -112,24 +112,28 @@ public final class JSONImporter {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing settings...");
             jsonData.getJSONArray("settings").forEach(object -> {
-                final var jsonObject = (JSONObject) object;
-                final var setting = ConfigurationSetting.fromString(jsonObject.getString("setting"));
-                final var language = jsonObject.optString("language", null);
+                try {
+                    final var jsonObject = (JSONObject) object;
+                    final var setting = ConfigurationSetting.fromString(jsonObject.getString("setting"));
+                    final var language = jsonObject.optString("language", null);
 
-                if (setting.isLanguageDependent() && language == null) {
-                    importerLog.warn("Skipping setting '%s' because it is language-dependent but no language was provided."
-                            .formatted(setting.setting()));
-                    return;
-                } else if (!setting.isLanguageDependent() && language != null) {
-                    importerLog.warn("Skipping setting '%s' because it is not language-dependent but a language was provided."
-                            .formatted(setting.setting()));
-                    return;
+                    if (setting.isLanguageDependent() && language == null) {
+                        importerLog.warn("Skipping setting '%s' because it is language-dependent but no language was provided."
+                                .formatted(setting.setting()));
+                        return;
+                    } else if (!setting.isLanguageDependent() && language != null) {
+                        importerLog.warn("Skipping setting '%s' because it is not language-dependent but a language was provided."
+                                .formatted(setting.setting()));
+                        return;
+                    }
+
+                    final var locale = language == null ? null : Locale.forLanguageTag(language);
+                    final var value = jsonObject.getString("value");
+                    configurationService.setConfiguration(setting, locale, value);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import setting: %s".formatted(e.getMessage()));
                 }
-
-                final var locale = language == null ? null : Locale.forLanguageTag(language);
-                final var value = jsonObject.getString("value");
-                configurationService.setConfiguration(setting, locale, value);
-                counter.incrementAndGet();
             });
             configurationService.clearCache();
             importerLog.info("...finished importing %d settings.".formatted(counter.get()));
