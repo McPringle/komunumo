@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.admin;
+package app.komunumo;
 
 import app.komunumo.util.LocaleUtil;
 import app.komunumo.util.TimeZoneUtil;
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class UIInitListener implements VaadinServiceInitListener {
+public final class ServiceInitListener implements VaadinServiceInitListener {
 
     @Override
     public void serviceInit(final @NotNull ServiceInitEvent event) {
