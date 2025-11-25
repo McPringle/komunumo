@@ -19,11 +19,18 @@ package app.komunumo.domain.core.i18n.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class TranslationProviderTest {
 
@@ -37,18 +44,18 @@ class TranslationProviderTest {
     @Test
     void testProviderLocales() {
         assertThat(translationProvider.getProvidedLocales())
-                .containsExactlyInAnyOrder(Locale.ENGLISH, Locale.GERMAN);
+                .containsExactlyInAnyOrder(ENGLISH, GERMAN);
     }
 
     @Test
     void testGetMessageInEnglish() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.ENGLISH))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", ENGLISH))
                 .isEqualTo("Events");
     }
 
     @Test
     void testTranslationInGerman() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.GERMAN))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", GERMAN))
                 .isEqualTo("Veranstaltungen");
     }
 
@@ -72,34 +79,46 @@ class TranslationProviderTest {
 
     @Test
     void testWithPlaceholder() {
-        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", Locale.ENGLISH, "foobar"))
+        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", ENGLISH, "foobar"))
                 .isEqualTo("Profile picture of foobar");
     }
 
-    @Test
-    void testWithNamedPlaceholder() {
-        final var params = Map.of("count", 5);
-        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.memberCount", Locale.ENGLISH, params))
-                .isEqualTo("5 members");
+    @ParameterizedTest
+    @MethodSource("testWithNamedPlaceholderArguments")
+    void testWithNamedPlaceholder(final int count, final Locale locale, final String expectedText) {
+        final var params = Map.of("count", count);
+        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.memberCount", locale, params))
+                .isEqualTo(expectedText);
+    }
+
+    private static Stream<Arguments> testWithNamedPlaceholderArguments() {
+        return Stream.of(
+                arguments(0, ENGLISH, "no members"),
+                arguments(1, ENGLISH, "one member"),
+                arguments(2, ENGLISH, "2 members"),
+                arguments(0, GERMAN, "keine Mitglieder"),
+                arguments(1, GERMAN, "ein Mitglied"),
+                arguments(2, GERMAN, "2 Mitglieder")
+        );
     }
 
     @Test
     void testWithMissingPlaceholder() {
-        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", Locale.ENGLISH))
+        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", ENGLISH))
                 .isEqualTo("Profile picture of {0}");
     }
 
     @Test
     void testMissingPlaceholder() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.ENGLISH, "foobar"))
+        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", ENGLISH, "foobar"))
                 .isEqualTo("Events");
     }
 
     @Test
     void testMissingTranslation() {
-        assertThat(translationProvider.getTranslation("test.missing.translation", Locale.ENGLISH))
+        assertThat(translationProvider.getTranslation("test.missing.translation", ENGLISH))
                 .isEqualTo("!en: test.missing.translation");
-        assertThat(translationProvider.getTranslation("test.missing.translation", Locale.GERMAN))
+        assertThat(translationProvider.getTranslation("test.missing.translation", GERMAN))
                 .isEqualTo("!de: test.missing.translation");
     }
 
