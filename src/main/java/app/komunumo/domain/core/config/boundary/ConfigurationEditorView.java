@@ -19,6 +19,7 @@ package app.komunumo.domain.core.config.boundary;
 
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.html.H2;
@@ -33,10 +34,13 @@ import org.jetbrains.annotations.NotNull;
 public final class ConfigurationEditorView extends AbstractView implements AfterNavigationObserver {
 
     private final @NotNull ConfigurationService configurationService;
+    private final @NotNull TranslationProvider translationProvider;
 
-    public ConfigurationEditorView(final @NotNull ConfigurationService configurationService) {
+    public ConfigurationEditorView(final @NotNull ConfigurationService configurationService,
+                                   final @NotNull TranslationProvider translationProvider) {
         super(configurationService);
         this.configurationService = configurationService;
+        this.translationProvider = translationProvider;
         addClassName("configuration-editor-view");
         add(new H2(getTranslation("ui.views.admin.config.ConfigurationEditorView.title")));
     }
@@ -49,7 +53,7 @@ public final class ConfigurationEditorView extends AbstractView implements After
     @Override
     public void afterNavigation(final @NotNull AfterNavigationEvent afterNavigationEvent) {
         for (final var setting : ConfigurationSetting.values()) {
-            add(new ConfigurationEditorComponent(configurationService, setting));
+            add(new ConfigurationEditorComponent(configurationService, setting, translationProvider));
         }
     }
 

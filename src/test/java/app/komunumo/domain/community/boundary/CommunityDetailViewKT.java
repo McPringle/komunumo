@@ -49,7 +49,7 @@ class CommunityDetailViewKT extends KaribuTest {
 
         final var memberCount = _get(Paragraph.class, spec -> spec.withClasses("community-memberCount"));
         assertThat(memberCount).isNotNull();
-        assertThat(memberCount.getText()).isEqualTo("4 member");
+        assertThat(memberCount.getText()).isEqualTo("4 members");
 
         final var image = _get(Image.class, spec -> spec.withClasses("community-image"));
         assertThat(image).isNotNull();

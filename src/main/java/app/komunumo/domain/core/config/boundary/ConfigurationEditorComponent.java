@@ -39,12 +39,15 @@ final class ConfigurationEditorComponent extends VerticalLayout {
 
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull ConfigurationSetting configurationSetting;
+    private final @NotNull TranslationProvider translationProvider;
 
     ConfigurationEditorComponent(final @NotNull ConfigurationService configurationService,
-                                 final @NotNull ConfigurationSetting configurationSetting) {
+                                 final @NotNull ConfigurationSetting configurationSetting,
+                                 final @NotNull TranslationProvider translationProvider) {
         super();
         this.configurationService = configurationService;
         this.configurationSetting = configurationSetting;
+        this.translationProvider = translationProvider;
         addClassName("configuration-editor-component");
         add(createComponent());
     }
@@ -53,7 +56,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         if (configurationSetting.isLanguageDependent()) {
             final var container = new VerticalLayout();
             container.addClassName("language-group");
-            for (final var locale : TranslationProvider.getSupportedLocales()) {
+            for (final var locale : translationProvider.getProvidedLocales()) {
                 container.add(createComponent(locale));
             }
             return container;

@@ -49,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
+import java.util.Map;
 
 @Route(value = "communities/:profile", layout = WebsiteLayout.class)
 @AnonymousAllowed
@@ -127,7 +128,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
 
         final var memberCount = memberService.getMemberCount(community.id());
         final var memberCountText = getTranslation(locale, "ui.views.community.CommunityDetailView.memberCount",
-                memberCount);
+                Map.of("count", memberCount));
         final var memberCountParagraph = new Paragraph(memberCountText);
         memberCountParagraph.addClassName("community-memberCount");
         pageContent.add(memberCountParagraph);

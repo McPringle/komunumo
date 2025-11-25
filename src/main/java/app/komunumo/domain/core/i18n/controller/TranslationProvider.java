@@ -17,28 +17,39 @@
  */
 package app.komunumo.domain.core.i18n.controller;
 
-import com.vaadin.flow.i18n.DefaultI18NProvider;
+import app.komunumo.util.LocaleUtil;
+import com.ibm.icu.text.MessageFormat;
+import com.ibm.icu.util.ULocale;
+import com.vaadin.flow.i18n.I18NProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 
 @Component
-public final class TranslationProvider extends DefaultI18NProvider {
+public final class TranslationProvider implements I18NProvider {
 
-    private static final @NotNull List<Locale> SUPPORTED_LOCALES = List.of(
+    // src/main/resources/vaadin-i18n/translations*.properties
+    private static final @NotNull String BUNDLE_BASENAME =
+            com.vaadin.flow.i18n.DefaultI18NProvider.BUNDLE_FOLDER + "."
+                    + com.vaadin.flow.i18n.DefaultI18NProvider.BUNDLE_FILENAME;
+
+    private static final @NotNull List<Locale> PROVIDED_LOCALES = List.of(
             Locale.ENGLISH, Locale.GERMAN);
 
-    public static @NotNull List<Locale> getSupportedLocales() {
-        return SUPPORTED_LOCALES;
+    public TranslationProvider() {
+        Locale.setDefault(Locale.ENGLISH);
     }
 
-    public TranslationProvider() {
-        super(getSupportedLocales());
-        Locale.setDefault(Locale.ENGLISH);
+    @Override
+    public @NotNull List<Locale> getProvidedLocales() {
+        return PROVIDED_LOCALES;
     }
 
     @Override
@@ -46,7 +57,33 @@ public final class TranslationProvider extends DefaultI18NProvider {
                                           final @Nullable Locale locale,
                                           final @NotNull Object... params) {
         final var effectiveLocale = locale != null ? locale : Locale.ENGLISH;
-        return super.getTranslation(key, effectiveLocale, params);
+
+        final String pattern;
+        try {
+            final var bundle = ResourceBundle.getBundle(BUNDLE_BASENAME, effectiveLocale);
+            pattern = bundle.getString(key);
+        } catch (final MissingResourceException ex) {
+            // Missing translation → return placeholder
+            return "!" + LocaleUtil.getLanguageCode(effectiveLocale).toLowerCase(Locale.ENGLISH) + ": " + key;
+        }
+
+        // No placeholder → return directly
+        if (params.length == 0) {
+            return pattern;
+        }
+
+        final var uLocale = ULocale.forLocale(effectiveLocale);
+        final var icuFormat = new MessageFormat(pattern, uLocale);
+
+        // Optional: Support named arguments when a map is the first argument
+        if (params.length == 1 && params[0] instanceof Map<?, ?> map) {
+            @SuppressWarnings("unchecked")
+            final var namedArgs = (Map<String, Object>) map;
+            return icuFormat.format(namedArgs);
+        }
+
+        // Standard: Position arguments {0}, {1}, ...
+        return icuFormat.format(params);
     }
 
 }

@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,6 +74,13 @@ class TranslationProviderTest {
     void testWithPlaceholder() {
         assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", Locale.ENGLISH, "foobar"))
                 .isEqualTo("Profile picture of foobar");
+    }
+
+    @Test
+    void testWithNamedPlaceholder() {
+        final var params = Map.of("count", 5);
+        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.memberCount", Locale.ENGLISH, params))
+                .isEqualTo("5 members");
     }
 
     @Test
