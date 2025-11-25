@@ -134,24 +134,34 @@ The structure of the JSON file must follow the expected format used by *Komunumo
     ],
     "users": [
         {
+            "userId": "1b7cd51b-4f1b-43d1-a51c-e58043b5d7a4",
+            "profile": "@admin@example.com",
+            "email": "admin@example.com",
+            "name": "Admin User",
+            "bio": "The bio of the admin.",
+            "imageId": "",
+            "role": "ADMIN",
+            "type": "LOCAL"
+        },
+        {
             "userId": "025d62be-b564-4bd4-9325-f2f1d8bf2093",
             "profile": "@user@example.com",
             "email": "user@example.com",
             "name": "Test User",
-            "bio": "The bio of the test user.",
+            "bio": "The bio of the user.",
             "imageId": "24a27732-09c3-45e0-9b4c-3d6a3f2eb81b",
             "role": "USER",
             "type": "LOCAL"
         },
         {
-            "userId": "1b7cd51b-4f1b-43d1-a51c-e58043b5d7a4",
-            "profile": "@admin@example.com",
-            "email": "admin@example.com",
-            "name": "Admin User",
-            "bio": "The bio of the test admin.",
+            "userId": "f309ee0d-519d-4eaa-8781-256f3200f243",
+            "profile": null,
+            "email": "anonymous@example.com",
+            "name": "",
+            "bio": "",
             "imageId": "",
-            "role": "ADMIN",
-            "type": "LOCAL"
+            "role": "USER",
+            "type": "ANONYMOUS"
         }
     ],
     "communities": [
@@ -161,6 +171,26 @@ The structure of the JSON file must follow the expected format used by *Komunumo
             "name": "Demo Community",
             "description": "A description of the demo community.",
             "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795"
+        }
+    ],
+    "members": [
+        {
+            "userId": "1b7cd51b-4f1b-43d1-a51c-e58043b5d7a4",
+            "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+            "role": "OWNER",
+            "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+        },
+        {
+            "userId": "025d62be-b564-4bd4-9325-f2f1d8bf2093",
+            "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+            "role": "ORGANIZER",
+            "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
+        },
+        {
+            "userId": "f309ee0d-519d-4eaa-8781-256f3200f243",
+            "communityId": "9a73690b-6dbd-456a-88e9-dc3f77b69aa0",
+            "role": "MEMBER",
+            "since": "2025-01-01T10:00:00+02:00[Europe/Zurich]"
         }
     ],
     "events": [
@@ -210,8 +240,13 @@ The structure of the JSON file must follow the expected format used by *Komunumo
 - The `communityId`, `eventId`, and `imageId` fields must be valid UUIDs.
 - The `begin` and `end` fields in the `events` object must be in ISO 8601 format with a timezone offset, such as `2025-08-06T18:00:00+02:00[Europe/Zurich]`. This ensures correct interpretation of event times, including proper handling of daylight saving time. They can be empty or `null` if not applicable.
 - The `imageId` fields in the `users`, `communities`, and `events` objects must refer to the IDs of the images in the `images` array. The `url` field in each image object must point to a publicly accessible image file. If the `imageId` is blank, the community or event will not have an image associated with it.
+- The `type` fields in the `users` object can be set to `LOCAL`, `REMOTE`, or `ANONYMOUS` to define the user type.
+- The `role` fields in the `users` object can be set to `ADMIN` or `USER` to define the role of the user for this instance.
+- The `role` fields in the `members` object can be set to `OWNER`, `ORGANIZER`, or `MEMBER` to define the membership role of the user in the community.
 - The `visibility` field in the `events` object can be set to `PUBLIC` or `PRIVATE`, to define the visibility of the event.
 - The `status` field can be set to `DRAFT`, `PUBLISHED`, or `CANCELED` to reflect the current state of the event.
+- The `contentType` field in the `images` object must contain a valid MIME type for the image and be one of: `image/gif`, `image/jpeg`, `image/png`, `image/svg+xml`, or `image/webp`
+- The `url` field in the `images` object must point to a publicly accessible image file using `https://`, to an accessible file using `file://`, or contain the image data using `data:`.
 
 ### Mail Configuration
 
