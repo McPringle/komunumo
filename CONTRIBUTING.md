@@ -366,17 +366,50 @@ The server of *Komunumo* is written using the [Java programming language](https:
 
 Vaadin web applications are full-stack and include both client-side and server-side code in the same project.
 
-| Directory                                  | Description                                 |
-|:-------------------------------------------|:--------------------------------------------|
-| `src/main/frontend/`                       | Client-side source directory                |
-| &nbsp;&nbsp;&nbsp;&nbsp;`index.html`       | HTML template                               |
-| &nbsp;&nbsp;&nbsp;&nbsp;`index.ts`         | Frontend entrypoint                         |
-| &nbsp;&nbsp;&nbsp;&nbsp;`main-layout.ts`   | Main layout Web Component (optional)        |
-| &nbsp;&nbsp;&nbsp;&nbsp;`views/`           | UI views Web Components (TypeScript / HTML) |
-| &nbsp;&nbsp;&nbsp;&nbsp;`styles/`          | Styles directory (CSS)                      |
-| `src/main/java/app/komunumo/`              | Server-side source directory                |
-| &nbsp;&nbsp;&nbsp;&nbsp;`Application.java` | Server entrypoint                           |
-| &nbsp;&nbsp;&nbsp;&nbsp;`AppShell.java`    | application-shell configuration             |
+| Directory                                    | Description                                                |
+|:---------------------------------------------|:-----------------------------------------------------------|
+| `src/main/frontend/themes/komunumo/`         | Base directory for default *Komunumo* theme                |
+| &nbsp;&nbsp;&nbsp;&nbsp;`components/`        | Directory with CSS files for UI components                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;`fonts/`             | Directory containing font files                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;`views/`             | Directory with CSS files for UI views                      |
+| &nbsp;&nbsp;&nbsp;&nbsp;`styles.css`         | Base CSS file with includes only                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;`theme.json`         | Theme configuration for Vaadin                             |
+| `src/main/java/app/komunumo/`                | Server-side source directory                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;`domain/`            | Code for all business domains (BCE architecture)           |
+| &nbsp;&nbsp;&nbsp;&nbsp;`jooq/`              | jOOQ DB layer code (converters, generators, etc.)          |
+| &nbsp;&nbsp;&nbsp;&nbsp;`util/`              | Universal utility classes (not bound to a business domain) |
+| &nbsp;&nbsp;&nbsp;&nbsp;`vaadin/components/` | Universal UI components (not bound to a business domain)   |
+| &nbsp;&nbsp;&nbsp;&nbsp;`Application.java`   | Server entrypoint with `main` class                        |
+
+#### Boundary Control Entity Architecture
+
+*Komunumo* follows the Boundary Control Entity (BCE) architecture pattern. This pattern divides the application into three main layers:
+
+- **Boundary Layer**: This layer contains all user interface components, including Vaadin views and UI components. It handles user interactions and displays data to the user.
+- **Control Layer**: This layer contains the service classes that implement the business logic of the application. It acts as an intermediary between the boundary and entity layers, coordinating data flow and enforcing business rules.
+- **Entity Layer**: This layer contains the data model, like DTOs.
+
+Inside the `domain` package, each business domain has its own subpackage containing its boundary, control, and entity classes. This modular structure promotes separation of concerns, making the codebase easier to maintain and extend. Each layer has a well-defined responsibility, ensuring that changes in one layer have minimal impact on others. Example:
+
+| Directory                             | Description                                           |
+|:--------------------------------------|:------------------------------------------------------|
+| `src/main/java/app/komunumo/domain/`  | Code for all business domains (BCE architecture)      |
+| &nbsp;&nbsp;&nbsp;&nbsp;`community/`  | Subpackage for the "Community" domain                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;`event/`      | Subpackage for the "Event" domain                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;`core/`       | Subpackage for core features not specific to a domain |
+| &nbsp;&nbsp;&nbsp;&nbsp;`core/config` | Subpackage for the "Configuration" core feature       |
+
+Inside each domain subpackage, you will find the following structure:
+
+| Directory                                      | Description                                 |
+|:-----------------------------------------------|:--------------------------------------------|
+| `src/main/java/app/komunumo/domain/community/` | Subpackage for the "Community" domain       |
+| &nbsp;&nbsp;&nbsp;&nbsp;`boundary/`            | Everything regarding the **Boundary Layer** |
+| &nbsp;&nbsp;&nbsp;&nbsp;`control/`             | Everything regarding the **Control Layer**  |
+| &nbsp;&nbsp;&nbsp;&nbsp;`entity`               | Everything regarding the **Entity Layer**   |
+
+> [!TIP]
+> More information about the BCE architecture can be found on the [BDE Design](https://bce.design/) website.
 
 ### Useful Vaadin Links
 
