@@ -209,6 +209,8 @@ Make sure the following tools are installed:
 
 #### Important Podman Information
 
+##### Linux Users
+
 If you are using Podman on Linux, you need to enable the `podman.socket` systemd service.
 This allows non-root users to run Podman commands without `sudo`.
 
@@ -229,11 +231,15 @@ export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=$(podman machine inspect --format '
 export TESTCONTAINERS_RYUK_CONTAINER_PRIVILEGED=true
 ```
 
+##### macOS Users
+
 If you use Podman Desktop for macOS, activate the full Docker compatibility layer instead:
-1. Start the Podman Desktop App
-2. Navigate to Settings, Preferences, Docker Compatibility and Enable it
-3. Now a new entry Docker Compatibility appears directly under Settings
-4. Make sure, 'Third-Party Docker Tool Compatibility' is activated
+
+1. Start the "Podman Desktop" app.
+2. Navigate to "Settings", "Preferences", "Docker Compatibility" and *enable* it.
+3. Now a new entry "Docker Compatibility" appears directly under "Settings".
+4. Click on the new entry "Docker Compatibility".
+5. Make sure, "Third-Party Docker Tool Compatibility" is *activated*.
 
 ### Clone and Verify
 
