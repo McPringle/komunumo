@@ -77,7 +77,7 @@ public final class RegistrationService {
             return;
         }
 
-        final var actionMessage = translationProvider.getTranslation("data.service.AccountService.registrationText", locale);
+        final var actionMessage = translationProvider.getTranslation("user.control.AccountService.registrationText", locale);
         final ConfirmationHandler actionHandler = this::passwordlessRegistrationHandler;
         final var actionContext = ConfirmationContext.of(CONTEXT_REGISTRATION_LOCATION, location);
         final var confirmationRequest = new ConfirmationRequest(
@@ -103,7 +103,7 @@ public final class RegistrationService {
         loginService.login(email);
 
         final var status = ConfirmationStatus.SUCCESS;
-        final var message = translationProvider.getTranslation("data.service.AccountService.successMessage", locale);
+        final var message = translationProvider.getTranslation("user.control.AccountService.successMessage", locale);
         final var location = (String) context.getOrDefault(CONTEXT_REGISTRATION_LOCATION, "");
         return new ConfirmationResponse(status, message, location);
     }

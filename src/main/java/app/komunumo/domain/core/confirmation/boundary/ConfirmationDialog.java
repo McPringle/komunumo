@@ -52,7 +52,7 @@ public final class ConfirmationDialog extends Dialog {
         getFooter().removeAll();
         removeAll();
 
-        setHeaderTitle(getTranslation("ui.components.ConfirmationDialog.title"));
+        setHeaderTitle(getTranslation("core.confirmation.boundary.ConfirmationDialog.title"));
         final var closeDialogButton = new Button(new Icon("lumo", "cross"),
                 _ -> close());
         closeDialogButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -64,21 +64,21 @@ public final class ConfirmationDialog extends Dialog {
         add(actionMessage);
 
         final var confirmationTimeout = confirmationService.getConfirmationTimeoutText(getLocale());
-        final var infoText = new Paragraph(getTranslation("ui.components.ConfirmationDialog.infoText", confirmationTimeout));
+        final var infoText = new Paragraph(getTranslation("core.confirmation.boundary.ConfirmationDialog.infoText", confirmationTimeout));
         add(infoText);
 
         final var emailField = new EmailField();
-        emailField.setPlaceholder(getTranslation("ui.components.ConfirmationDialog.field.email"));
+        emailField.setPlaceholder(getTranslation("core.confirmation.boundary.ConfirmationDialog.field.email"));
         emailField.setValueChangeMode(EAGER);
         emailField.setWidthFull();
         add(emailField);
 
-        final var emailButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.email"));
+        final var emailButton = new Button(getTranslation("core.confirmation.boundary.ConfirmationDialog.button.email"));
         emailButton.addThemeVariants(LUMO_PRIMARY);
         emailButton.addClassName("email-button");
         getFooter().add(emailButton);
 
-        final var cancelButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.cancel"),
+        final var cancelButton = new Button(getTranslation("core.confirmation.boundary.ConfirmationDialog.button.cancel"),
                 _ -> close());
         cancelButton.addThemeVariants(LUMO_TERTIARY);
         cancelButton.addClassName("cancel-button");
@@ -87,7 +87,7 @@ public final class ConfirmationDialog extends Dialog {
         final var binder = new Binder<DummyBean>();
         binder.forField(emailField)
                 .asRequired("")
-                .withValidator(new EmailValidator(getTranslation("ui.components.ConfirmationDialog.email.error")))
+                .withValidator(new EmailValidator(getTranslation("core.confirmation.boundary.ConfirmationDialog.email.error")))
                 .bind(_ -> null, (_, _) -> { });
         binder.setBean(new DummyBean());
         binder.addStatusChangeListener(_ -> emailButton.setEnabled(binder.isValid()));
@@ -98,11 +98,11 @@ public final class ConfirmationDialog extends Dialog {
             confirmationService.sendConfirmationMail(email, confirmationRequest);
 
             removeAll();
-            add(new Markdown(getTranslation("ui.components.ConfirmationDialog.email.send",
+            add(new Markdown(getTranslation("core.confirmation.boundary.ConfirmationDialog.email.send",
                     email, confirmationTimeout)));
 
             getFooter().removeAll();
-            final var closeButton = new Button(getTranslation("ui.components.ConfirmationDialog.button.close"));
+            final var closeButton = new Button(getTranslation("core.confirmation.boundary.ConfirmationDialog.button.close"));
             closeButton.addThemeVariants(LUMO_PRIMARY);
             closeButton.addClassName("close-button");
             closeButton.addClickListener(_ -> close());

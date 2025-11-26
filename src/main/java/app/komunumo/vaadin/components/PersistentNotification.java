@@ -36,7 +36,7 @@ public class PersistentNotification extends Notification {
         final var text = new Div(new Text(message));
         final var closeButton = new Button(new Icon("lumo", "cross"));
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-        closeButton.setAriaLabel(getTranslation("ui.components.PersistentNotification.close"));
+        closeButton.setAriaLabel(getTranslation("vaadin.components.PersistentNotification.close"));
         closeButton.addClickListener(_ -> close());
 
         final var layout = new HorizontalLayout(text, closeButton);

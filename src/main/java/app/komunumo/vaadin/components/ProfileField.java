@@ -64,11 +64,11 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
         textField.addValueChangeListener(_ -> {
             final var value = textField.getValue();
             if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
-                showErrorMessage(getTranslation("ui.components.ProfileField.errorLength", MIN_LENGTH, MAX_LENGTH));
+                showErrorMessage(getTranslation("vaadin.components.ProfileField.errorLength", MIN_LENGTH, MAX_LENGTH));
             } else if (profileNameAvailabilityChecker.isProfileNameAvailable(getValue())) {
-                showSuccessMessage(getTranslation("ui.components.ProfileField.usernameAvailable"));
+                showSuccessMessage(getTranslation("vaadin.components.ProfileField.usernameAvailable"));
             } else {
-                showErrorMessage(getTranslation("ui.components.ProfileField.usernameNotAvailable"));
+                showErrorMessage(getTranslation("vaadin.components.ProfileField.usernameNotAvailable"));
             }
         });
 
@@ -99,7 +99,7 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
         originalValue = value;
 
         if (!value.matches(PROFILE_PATTERN)) {
-            showErrorMessage(getTranslation("ui.components.ProfileField.syntaxError", value));
+            showErrorMessage(getTranslation("vaadin.components.ProfileField.syntaxError", value));
             setReadOnly(true);
             return;
         }
@@ -108,7 +108,7 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
         final var localPart = parts[1];
         final var domainPart = parts[2];
         if (!domainPart.equals(domainName)) {
-            showErrorMessage(getTranslation("ui.components.ProfileField.domainError", domainPart, domainName));
+            showErrorMessage(getTranslation("vaadin.components.ProfileField.domainError", domainPart, domainName));
             textField.setReadOnly(true);
             return;
         }

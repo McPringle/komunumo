@@ -42,7 +42,7 @@ class NotFoundViewTest {
     void checkErrorMessage() {
 
         // Arrange
-        final var ui = TestUIProvider.mockUiWithTranslation("ui.views.error.ErrorView.notFound", "Test Error Message");
+        final var ui = TestUIProvider.mockUiWithTranslation("core.error.boundary.ErrorView.notFound", "Test Error Message");
         final var beforeEnterEvent = mock(BeforeEnterEvent.class);
         when(beforeEnterEvent.getUI()).thenReturn(ui);
         final var configurationService = mock(ConfigurationService.class);

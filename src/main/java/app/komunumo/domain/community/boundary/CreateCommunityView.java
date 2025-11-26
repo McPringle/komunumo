@@ -36,7 +36,7 @@ public class CreateCommunityView extends AbstractView {
                                final @NotNull MemberService memberService) {
         super(configurationService);
 
-        add(new H2(getTranslation("ui.views.community.CreateCommunityView.title")));
+        add(new H2(getTranslation("community.boundary.CreateCommunityView.title")));
         add(new CreateCommunityComponent(configurationService, communityService, memberService));
     }
 
@@ -47,7 +47,7 @@ public class CreateCommunityView extends AbstractView {
      */
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation("ui.views.community.CreateCommunityView.title");
+        return getTranslation("community.boundary.CreateCommunityView.title");
     }
 
 }

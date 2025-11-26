@@ -70,10 +70,10 @@ public final class NavigationBar extends HorizontalLayout {
                                        final @NotNull GlobalPageService globalPageService) {
         final var menuBar = new Nav();
         menuBar.addClassName("menu-bar");
-        menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.events"), EventGridView.class));
+        menuBar.add(new RouterLink(ui.getTranslation("vaadin.components.NavigationBar.events"), EventGridView.class));
 
         if (!configurationService.getConfiguration(INSTANCE_HIDE_COMMUNITIES, Boolean.class)) {
-            menuBar.add(new RouterLink(ui.getTranslation("ui.components.NavigationBar.communities"), CommunityGridView.class));
+            menuBar.add(new RouterLink(ui.getTranslation("vaadin.components.NavigationBar.communities"), CommunityGridView.class));
         }
         globalPageService
                 .getGlobalPages(ui.getLocale())
@@ -91,33 +91,33 @@ public final class NavigationBar extends HorizontalLayout {
         avatarMenu.setOpenOnClick(true);
 
         // admin menu
-        final var adminMenuItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.admin"));
+        final var adminMenuItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.admin"));
         final var adminMenu = adminMenuItem.getSubMenu();
-        adminMenu.addItem(ui.getTranslation("ui.components.NavigationBar.config"), _ ->
+        adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.config"), _ ->
                 ui.navigate(ConfigurationEditorView.class)
         );
-        adminMenu.addItem(ui.getTranslation("ui.components.NavigationBar.import"), _ ->
+        adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.import"), _ ->
                 ui.navigate(ImporterView.class)
         );
 
         // login as first entry in the menu
-        final var loginItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.login"), _ ->
+        final var loginItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.login"), _ ->
                 loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
-        final var registerItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.register"), _ ->
+        final var registerItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.register"), _ ->
                 registrationService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
         // create community
-        final var createCommunityItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.createCommunity"),
+        final var createCommunityItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.createCommunity"),
                 _ -> ui.navigate(CreateCommunityView.class));
 
         // dark theme toggle
-        avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.toggleDarkMode"), _ -> ThemeUtil.toggleDarkMode());
+        avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.toggleDarkMode"), _ -> ThemeUtil.toggleDarkMode());
 
         // logout as last entry in the menu
-        final var logoutItem = avatarMenu.addItem(ui.getTranslation("ui.components.NavigationBar.logout"), _ ->
+        final var logoutItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.logout"), _ ->
                 ui.navigate(LogoutView.class)
         );
 

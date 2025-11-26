@@ -75,7 +75,7 @@ public final class ParticipationService {
     public void startConfirmationProcess(final @NotNull EventDto event,
                                          final @NotNull Locale locale) {
         final var actionMessage = translationProvider.getTranslation(
-                "data.service.ParticipationService.actionText", locale, event.title());
+                "participation.control.ParticipationService.actionText", locale, event.title());
         final ConfirmationHandler actionHandler = this::registerForEvent;
         final var actionContext = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var confirmationRequest = new ConfirmationRequest(
@@ -108,7 +108,7 @@ public final class ParticipationService {
                 mailVariables, email);
 
         final var status = ConfirmationStatus.SUCCESS;
-        final var message = translationProvider.getTranslation("data.service.ParticipationService.successMessage",
+        final var message = translationProvider.getTranslation("participation.control.ParticipationService.successMessage",
                 locale, eventTitle);
         return new ConfirmationResponse(status, message, eventLink);
     }

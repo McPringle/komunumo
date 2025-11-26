@@ -42,12 +42,12 @@ public final class ConfigurationEditorView extends AbstractView implements After
         this.configurationService = configurationService;
         this.translationProvider = translationProvider;
         addClassName("configuration-editor-view");
-        add(new H2(getTranslation("ui.views.admin.config.ConfigurationEditorView.title")));
+        add(new H2(getTranslation("core.config.boundary.ConfigurationEditorView.title")));
     }
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation("ui.views.admin.config.ConfigurationEditorView.title");
+        return getTranslation("core.config.boundary.ConfigurationEditorView.title");
     }
 
     @Override

@@ -83,7 +83,7 @@ public final class GlobalPageView extends AbstractView implements BeforeEnterObs
 
         if (SecurityUtil.isAdmin()) {
             contextMenu = new ContextMenu(markdownContent);
-            contextMenu.addItem(getTranslation("ui.views.page.GlobalPageView.edit"), _ ->
+            contextMenu.addItem(getTranslation("page.boundary.GlobalPageView.edit"), _ ->
                     new GlobalPageEditorDialog(globalPageService, globalPage, this::renderPage)
                             .open());
         }

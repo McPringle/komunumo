@@ -155,7 +155,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             // click the "Edit page content" menu item to open the editor dialog
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()
@@ -176,11 +176,11 @@ class GlobalPageEditorDialogKT extends KaribuTest {
 
             // check the buttons: "Cancel" should be enabled, "Save" should be disabled
             final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.cancel")));
             assertThat(cancelButton).isNotNull();
             assertThat(cancelButton.isEnabled()).isTrue();
             final var saveButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.save")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.save")));
             assertThat(saveButton).isNotNull();
             assertThat(saveButton.isEnabled()).isFalse();
 
@@ -228,7 +228,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             // click the "Edit page content" menu item to open the editor dialog
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()
@@ -249,11 +249,11 @@ class GlobalPageEditorDialogKT extends KaribuTest {
 
             // check the buttons: "Cancel" should be enabled, "Save" should be disabled
             final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.cancel")));
             assertThat(cancelButton).isNotNull();
             assertThat(cancelButton.isEnabled()).isTrue();
             final var saveButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.save")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.save")));
             assertThat(saveButton).isNotNull();
             assertThat(saveButton.isEnabled()).isFalse();
 
@@ -299,7 +299,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             // click the "Edit page content" menu item to open the editor dialog
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()
@@ -320,11 +320,11 @@ class GlobalPageEditorDialogKT extends KaribuTest {
 
             // check the buttons: "Cancel" should be enabled, "Save" should be disabled
             final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.cancel")));
             assertThat(cancelButton).isNotNull();
             assertThat(cancelButton.isEnabled()).isTrue();
             final var saveButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.save")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.save")));
             assertThat(saveButton).isNotNull();
             assertThat(saveButton.isEnabled()).isFalse();
 
@@ -364,7 +364,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
                     spec -> spec.withClasses("global-page-view"));
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()
@@ -380,7 +380,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
 
             // click the cancel button
             final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.cancel")));
             _click(cancelButton);
 
             // check that the confirmation dialog appears
@@ -415,7 +415,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
                     spec -> spec.withClasses("global-page-view"));
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()
@@ -431,7 +431,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
 
             // click the cancel button
             final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.cancel")));
             _click(cancelButton);
 
             // check that the confirmation dialog appears
@@ -470,7 +470,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
                     spec -> spec.withClasses("global-page-view"));
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()
@@ -486,7 +486,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
 
             // click the cancel button
             final var cancelButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.cancel")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.cancel")));
             _click(cancelButton);
 
             // check that the confirmation dialog appears
@@ -525,7 +525,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
                     spec -> spec.withClasses("global-page-view"));
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()
@@ -544,7 +544,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
 
             // try to save the changes
             final var saveButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.save")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.save")));
             assertThat(saveButton.isEnabled()).isTrue();
             _click(saveButton);
 
@@ -590,7 +590,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
                     spec -> spec.withClasses("global-page-view"));
             final var contextMenu = view.getContextMenu();
             assertThat(contextMenu).isNotNull();
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()
@@ -609,7 +609,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
 
             // try to save the changes
             final var saveButton = _get(dialog, Button.class, spec -> spec.withText(
-                    ui.getTranslation("ui.views.page.GlobalPageEditorDialog.save")));
+                    ui.getTranslation("page.boundary.GlobalPageEditorDialog.save")));
             assertThat(saveButton.isEnabled()).isTrue();
             _click(saveButton);
 
@@ -665,7 +665,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
 
             // click the "Edit page content" menu item to open the editor dialog
-            final var i18nEdit = ui.getTranslation("ui.views.page.GlobalPageView.edit");
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
             final var editItem = contextMenu.getItems().stream()
                     .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
                     .findFirst()

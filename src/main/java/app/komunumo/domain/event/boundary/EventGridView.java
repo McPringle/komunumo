@@ -40,7 +40,7 @@ public final class EventGridView extends AbstractView {
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation(UI.getCurrent().getLocale(), "ui.views.events.EventGridView.title");
+        return getTranslation(UI.getCurrent().getLocale(), "event.boundary.EventGridView.title");
     }
 
 }

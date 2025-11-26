@@ -65,14 +65,14 @@ public class CreateCommunityComponent extends VerticalLayout {
     private @NotNull Component createAddCommunityComponent() {
         final var profileField = new ProfileField(configurationService, communityService::isProfileNameAvailable);
         profileField.addClassName("profile-field");
-        profileField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.profile"));
+        profileField.setLabel(getTranslation("community.boundary.CreateCommunityComponent.label.profile"));
         profileField.setRequired(true);
         profileField.setWidthFull();
 
         final var nameField = new TextField();
         nameField.addClassName("name-field");
         nameField.setValueChangeMode(ValueChangeMode.EAGER);
-        nameField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.name"));
+        nameField.setLabel(getTranslation("community.boundary.CreateCommunityComponent.label.name"));
         nameField.setRequired(true);
         nameField.setMaxLength(255);
         nameField.setWidthFull();
@@ -80,24 +80,24 @@ public class CreateCommunityComponent extends VerticalLayout {
         final var descriptionField = new TextArea();
         descriptionField.addClassName("description-field");
         descriptionField.setValueChangeMode(ValueChangeMode.EAGER);
-        descriptionField.setLabel(getTranslation("ui.views.community.CreateCommunityView.label.description"));
+        descriptionField.setLabel(getTranslation("community.boundary.CreateCommunityComponent.label.description"));
         descriptionField.setWidthFull();
 
         binder.forField(profileField)
-                .asRequired(getTranslation("ui.views.community.CreateCommunityView.validation.profile.required"))
+                .asRequired(getTranslation("community.boundary.CreateCommunityComponent.validation.profile.required"))
                 .withValidator(communityService::isProfileNameAvailable,
-                        getTranslation("ui.views.community.CreateCommunityView.validation.profile.exists"))
+                        getTranslation("community.boundary.CreateCommunityComponent.validation.profile.exists"))
                 .bind(CommunityDto::profile, null);
 
         binder.forField(nameField)
-                .asRequired(getTranslation("ui.views.community.CreateCommunityView.validation.name.required"))
+                .asRequired(getTranslation("community.boundary.CreateCommunityComponent.validation.name.required"))
                 .bind(CommunityDto::name, null);
 
-        Button createButton = new Button(getTranslation("ui.views.community.CreateCommunityView.createButton"), _ -> {
+        Button createButton = new Button(getTranslation("community.boundary.CreateCommunityComponent.createButton"), _ -> {
             var userPrincipalOptional = SecurityUtil.getUserPrincipal();
 
             if (userPrincipalOptional.isEmpty()) {
-                showNotification("ui.views.community.CreateCommunityView.permissionError", NotificationVariant.LUMO_ERROR);
+                showNotification("community.boundary.CreateCommunityComponent.permissionError", NotificationVariant.LUMO_ERROR);
             } else if (binder.validate().isOk()) {
                 var communityDto = new CommunityDto(null, profileField.getValue(), null, null,
                         nameField.getValue(), descriptionField.getValue(), null);
@@ -110,12 +110,12 @@ public class CreateCommunityComponent extends VerticalLayout {
 
                 memberService.storeMember(memberDto);
 
-                showNotification("ui.views.community.CreateCommunityView.notification.success", NotificationVariant.LUMO_SUCCESS);
+                showNotification("community.boundary.CreateCommunityComponent.notification.success", NotificationVariant.LUMO_SUCCESS);
 
                 UI.getCurrent().navigate("communities/%s".formatted(communityDto.profile()));
 
             } else {
-                showNotification("ui.views.community.CreateCommunityView.notification.error", NotificationVariant.LUMO_ERROR);
+                showNotification("community.boundary.CreateCommunityComponent.notification.error", NotificationVariant.LUMO_ERROR);
             }
         });
 

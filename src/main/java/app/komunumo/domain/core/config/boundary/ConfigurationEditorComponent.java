@@ -67,7 +67,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
 
     private @NotNull Component createComponent(final @Nullable Locale locale) {
         final var defaultValue = configurationSetting.defaultValue();
-        final var label = getTranslation("ui.views.admin.config.ConfigurationEditorView.label." + configurationSetting.setting());
+        final var label = getTranslation("core.config.boundary.ConfigurationEditorComponent.label." + configurationSetting.setting());
         final var localizedLabel = locale != null ? label + " (" + locale.getDisplayLanguage(locale) + ")" : label;
         final var className = "setting-" + configurationSetting.setting().replace('.', '-');
         final var localizedClassName = locale != null ? className + "-" + LocaleUtil.getLanguageCode(locale) : className;
