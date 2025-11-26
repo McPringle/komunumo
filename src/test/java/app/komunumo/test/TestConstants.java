@@ -26,21 +26,21 @@ public interface TestConstants {
     /**
      * UUID of the predefined local test user.
      */
-    @NotNull UUID USER_ID_LOCAL = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    @NotNull UUID USER_ID_LOCAL = UUID.fromString("c9fc8b0a-6ff7-4c00-a6f2-d85f5829edff");
 
     /**
      * UUID of the predefined admin test user.
      */
-    @NotNull UUID USER_ID_ADMIN = UUID.fromString("22222222-2222-2222-2222-222222222222");
+    @NotNull UUID USER_ID_ADMIN = UUID.fromString("4a7c0871-915f-49d6-8182-9e1e8d253f79");
 
     /**
      * UUID of the predefined remote test user.
      */
-    @NotNull UUID USER_ID_REMOTE = UUID.fromString("33333333-3333-3333-3333-333333333333");
+    @NotNull UUID USER_ID_REMOTE = UUID.fromString("e7d67a8e-26f5-427d-9339-bf81fe598b39");
 
     /**
      * UUID of the predefined anonymous test user.
      */
-    @NotNull UUID USER_ID_ANONYMOUS = UUID.fromString("44444444-4444-4444-4444-444444444444");
+    @NotNull UUID USER_ID_ANONYMOUS = UUID.fromString("2cf14b04-2975-4ac8-b68d-48e445180d26");
 
 }

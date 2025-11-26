@@ -310,7 +310,7 @@ class JSONImporterTest {
                     "Start importing participations...",
                     "...finished importing 6 participations.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping participation '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"registered\":\"2029-12-07T12:00:00+02:00[Europe/Zurich]\",\"userId\":\"11111111-1111-1111-1111-111111111111\"}': Simulated failure");
+                    "Skipping participation '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"registered\":\"2029-12-07T12:00:00+02:00[Europe/Zurich]\",\"userId\":\"c9fc8b0a-6ff7-4c00-a6f2-d85f5829edff\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
