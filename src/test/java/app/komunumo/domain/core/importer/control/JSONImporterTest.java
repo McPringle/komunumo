@@ -135,7 +135,7 @@ class JSONImporterTest {
     @Test
     void testParticipationsNotFound() {
         final var jsonUrl = "http://localhost:8082/import/no-data.json";
-        final var expectedMessage = "No event participations found in JSON data.";
+        final var expectedMessage = "No participations found in JSON data.";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importParticipations(mock(ParticipationService.class));
@@ -181,7 +181,7 @@ class JSONImporterTest {
             assertThat(logCaptor.getWarnLogs()).containsExactly(
                     "Skipping setting 'instance.slogan' because it is language-dependent but no language was provided.",
                     "Skipping setting 'instance.custom.styles' because it is not language-dependent but a language was provided.",
-                    "Failed to import setting: Unknown setting: simulated.failure");
+                    "Skipping setting '{\"value\":\"The test will throw an exception if this setting is read.\",\"setting\":\"simulated.failure\"}': Unknown setting: simulated.failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -204,9 +204,8 @@ class JSONImporterTest {
                     "Start importing images...",
                     "...finished importing 2 images.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import image: Failed to download file from "
-                    + "'http://localhost:8082/import/non-existing.svg': HTTP status code 404",
-                    "Failed to import image: Invalid data URL: data:broken");
+                    "Skipping image '{\"imageId\":\"d7bd2d09-3310-4e37-ad0a-c7c4c43389ad\",\"contentType\":\"image/svg+xml\",\"url\":\"http://localhost:8082/import/non-existing.svg\"}': Failed to download file from 'http://localhost:8082/import/non-existing.svg': HTTP status code 404",
+                    "Skipping image '{\"imageId\":\"c81bca0e-6a1f-422c-b03f-aee75bee6779\",\"contentType\":\"image/png\",\"url\":\"data:broken\"}': Invalid data URL: data:broken");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -227,7 +226,7 @@ class JSONImporterTest {
                     "Start importing users...",
                     "...finished importing 4 users.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import user: Simulated failure");
+                    "Skipping user '{\"imageId\":\"\",\"role\":\"USER\",\"profile\":\"@duplicate@example.com\",\"name\":\"Duplicate Email\",\"bio\":\"User with duplicate email for integration tests\",\"type\":\"ANONYMOUS\",\"userId\":\"00000000-0000-0000-0000-000000000000\",\"email\":\"anonymous@example.com\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -248,7 +247,7 @@ class JSONImporterTest {
                     "Start importing communities...",
                     "...finished importing 6 communities.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import community: Simulated failure");
+                    "Skipping community '{\"imageId\":\"\",\"profile\":\"@demoCommunity1\",\"name\":\"Duplicate Profile Community\",\"description\":\"A community with duplicate profile for integration tests.\",\"communityId\":\"00000000-0000-0000-0000-000000000000\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -269,7 +268,7 @@ class JSONImporterTest {
                     "Start importing events...",
                     "...finished importing 6 events.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import event: Simulated failure");
+                    "Skipping event '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"imageId\":\"\",\"visibility\":\"PRIVATE\",\"description\":\"Event with a community that does not exist for integration tests.\",\"location\":\"Somewhere\",\"end\":\"2030-01-07T20:00:00+02:00[Europe/Zurich]\",\"communityId\":\"42524267-be7e-404b-a9bf-c3da72b97717\",\"title\":\"Event with invalid community\",\"begin\":\"2030-01-07T18:00:00+02:00[Europe/Zurich]\",\"status\":\"DRAFT\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -290,7 +289,7 @@ class JSONImporterTest {
                     "Start importing members...",
                     "...finished importing 24 members.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import member: Simulated failure");
+                    "Skipping member '{\"role\":\"MEMBER\",\"communityId\":\"00000000-0000-0000-0000-000000000000\",\"userId\":\"00000000-0000-0000-0000-000000000000\",\"since\":\"2025-01-01T10:00:00+02:00[Europe/Zurich]\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -308,10 +307,10 @@ class JSONImporterTest {
             verify(participationService, times(7)).storeParticipation(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
-                    "Start importing event participations...",
-                    "...finished importing 6 event participations.");
+                    "Start importing participations...",
+                    "...finished importing 6 participations.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import event participations: Simulated failure");
+                    "Skipping participation '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"registered\":\"2029-12-07T12:00:00+02:00[Europe/Zurich]\",\"userId\":\"11111111-1111-1111-1111-111111111111\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -329,8 +328,7 @@ class JSONImporterTest {
                     "Start importing global pages...",
                     "...finished importing 2 global pages.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import global page: JSONObject[\"language\"] is not a string "
-                    + "(class org.json.JSONObject$Null : null).");
+                    "Skipping global page '{\"markdown\":\"This page has an invalid language code for integration tests.\",\"language\":null,\"slot\":\"invalid\",\"title\":\"Page with invalid language\"}': JSONObject[\"language\"] is not a string (class org.json.JSONObject$Null : null).");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }

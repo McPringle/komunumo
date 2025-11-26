@@ -135,7 +135,7 @@ public final class JSONImporter {
                     configurationService.setConfiguration(setting, locale, value);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import setting: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping setting '%s': %s".formatted(object, e.getMessage()));
                 }
             });
             configurationService.clearCache();
@@ -166,7 +166,7 @@ public final class JSONImporter {
                     userService.storeUser(user);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import user: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping user '%s': %s".formatted(object, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d users.".formatted(counter.get()));
@@ -193,7 +193,7 @@ public final class JSONImporter {
                     imageService.storeImage(image);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import image: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping image '%s': %s".formatted(object, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d images.".formatted(counter.get()));
@@ -220,7 +220,7 @@ public final class JSONImporter {
                     communityService.storeCommunity(community);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import community: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping community '%s': %s".formatted(object, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d communities.".formatted(counter.get()));
@@ -252,7 +252,7 @@ public final class JSONImporter {
                     eventService.storeEvent(event);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import event: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping event '%s': %s".formatted(object, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d events.".formatted(counter.get()));
@@ -264,7 +264,7 @@ public final class JSONImporter {
     public void importParticipations(final @NotNull ParticipationService participationService) {
         if (jsonData.has("participations")) {
             final var counter = new AtomicInteger(0);
-            importerLog.info("Start importing event participations...");
+            importerLog.info("Start importing participations...");
             jsonData.getJSONArray("participations").forEach(object -> {
                 try {
                     final var jsonObject = (JSONObject) object;
@@ -275,12 +275,12 @@ public final class JSONImporter {
                     participationService.storeParticipation(participation);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import event participations: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping participation '%s': %s".formatted(object, e.getMessage()));
                 }
             });
-            importerLog.info("...finished importing %d event participations.".formatted(counter.get()));
+            importerLog.info("...finished importing %d participations.".formatted(counter.get()));
         } else {
-            importerLog.warn("No event participations found in JSON data.");
+            importerLog.warn("No participations found in JSON data.");
         }
     }
 
@@ -300,7 +300,7 @@ public final class JSONImporter {
                     memberService.storeMember(member);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import member: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping member '%s': %s".formatted(object, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d members.".formatted(counter.get()));
@@ -325,7 +325,7 @@ public final class JSONImporter {
                     globalPageService.storeGlobalPage(globalPage);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import global page: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping global page '%s': %s".formatted(object, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d global pages.".formatted(counter.get()));
