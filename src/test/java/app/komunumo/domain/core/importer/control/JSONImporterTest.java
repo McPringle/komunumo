@@ -226,7 +226,7 @@ class JSONImporterTest {
                     "Start importing users...",
                     "...finished importing 4 users.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping user '{\"imageId\":\"\",\"role\":\"USER\",\"profile\":\"@duplicate@example.com\",\"name\":\"Duplicate Email\",\"bio\":\"User with duplicate email for integration tests\",\"type\":\"ANONYMOUS\",\"userId\":\"00000000-0000-0000-0000-000000000000\",\"email\":\"anonymous@example.com\"}': Simulated failure");
+                    "Skipping user '{\"imageId\":\"\",\"role\":\"USER\",\"profile\":\"@duplicate@example.com\",\"name\":\"Doris Duplicate\",\"bio\":\"User with duplicate email for integration tests\",\"type\":\"ANONYMOUS\",\"userId\":\"00000000-0000-0000-0000-000000000000\",\"email\":\"anonymous@example.com\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
