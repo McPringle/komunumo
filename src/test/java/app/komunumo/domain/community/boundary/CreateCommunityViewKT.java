@@ -37,23 +37,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CreateCommunityViewKT extends KaribuTest {
 
     @Test
-    void testComponent() {
+    void testView() {
         login(getTestUser(UserRole.USER));
 
         UI.getCurrent().navigate(CreateCommunityView.class);
-        var container = _get(VerticalLayout.class, spec -> spec.withClasses("community-add-component"));
-        assertThat(container).isNotNull();
+        final var view = _get(VerticalLayout.class, spec -> spec.withClasses("create-community-view"));
+        assertThat(view).isNotNull();
 
-        var profileField = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
+        final var profileField = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
         assertThat(profileField).isNotNull();
 
-        var nameField = _get(TextField.class, spec -> spec.withClasses("name-field"));
+        final var nameField = _get(TextField.class, spec -> spec.withClasses("name-field"));
         assertThat(nameField).isNotNull();
 
-        var descriptionField = _get(TextArea.class, spec -> spec.withClasses("description-field"));
+        final var descriptionField = _get(TextArea.class, spec -> spec.withClasses("description-field"));
         assertThat(descriptionField).isNotNull();
 
-        var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
+        final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
         assertThat(createButton).isNotNull();
     }
 
@@ -62,8 +62,8 @@ public class CreateCommunityViewKT extends KaribuTest {
         login(getTestUser(UserRole.USER));
         UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
-        var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
+        final var component = _get(CreateCommunityView.class);
+        final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
         createButton.click();
 
         assertThat(component.getBinder().isValid()).isFalse();
@@ -74,14 +74,14 @@ public class CreateCommunityViewKT extends KaribuTest {
         login(getTestUser(UserRole.USER));
         UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
-        var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
-        var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
-        var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
+        final var view = _get(CreateCommunityView.class);
+        final var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
+        final var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
+        final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
         profile.setValue("@testCommunity");
         name.setValue("Test Community");
-        assertThat(component.getBinder().isValid()).isTrue();
+        assertThat(view.getBinder().isValid()).isTrue();
 
         createButton.click();
 
@@ -98,14 +98,14 @@ public class CreateCommunityViewKT extends KaribuTest {
         login(getTestUser(UserRole.USER));
         UI.getCurrent().navigate(CreateCommunityView.class);
 
-        CreateCommunityComponent component = _get(CreateCommunityComponent.class);
-        var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
-        var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
-        var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
+        final var view = _get(CreateCommunityView.class);
+        final var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
+        final var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
+        final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
         profile.setValue("Test Profile");
         name.setValue("Test Name");
-        assertThat(component.getBinder().isValid()).isTrue();
+        assertThat(view.getBinder().isValid()).isTrue();
 
         logout(); // simulate session timeout by logging out
 
