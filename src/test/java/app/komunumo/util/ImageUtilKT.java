@@ -97,7 +97,7 @@ class ImageUtilKT extends KaribuTest {
     void loadImageWithException() {
         // Arrange
         final var image = new ImageDto(
-                UUID.fromString("11111111-1111-1111-1111-111111111111"),
+                UUID.fromString("d23dab3b-bb6b-400a-9e7b-4a85e0c89226"),
                 ContentType.IMAGE_WEBP
         );
 
@@ -124,8 +124,8 @@ class ImageUtilKT extends KaribuTest {
         assertThat(ImageUtil.extractImageIdFromUrl("")).isNull();
         assertThat(ImageUtil.extractImageIdFromUrl(" ")).isNull();
         assertThat(ImageUtil.extractImageIdFromUrl("/images/test.jpg")).isNull();
-        assertThat(ImageUtil.extractImageIdFromUrl("/images/11111111-1111-1111-1111-111111111111.jpg"))
-                .isEqualTo(UUID.fromString("11111111-1111-1111-1111-111111111111"));
+        assertThat(ImageUtil.extractImageIdFromUrl("/images/d23dab3b-bb6b-400a-9e7b-4a85e0c89226.jpg"))
+                .isEqualTo(UUID.fromString("d23dab3b-bb6b-400a-9e7b-4a85e0c89226"));
         assertThat(ImageUtil.extractImageIdFromUrl("/images/afc3478d-2c92-41b5-b89f-2a9111d79c73.jpg"))
                 .isEqualTo(UUID.fromString("afc3478d-2c92-41b5-b89f-2a9111d79c73"));
     }

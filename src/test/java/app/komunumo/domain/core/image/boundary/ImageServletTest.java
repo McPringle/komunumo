@@ -132,8 +132,8 @@ class ImageServletTest {
         final var appConfig = getAppConfigMock();
         final var imageService = mock(ImageService.class);
 
-        final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
-        final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        final var pathInfo = "/images/d23dab3b-bb6b-400a-9e7b-4a85e0c89226.jpg";
+        final var imageId = UUID.fromString("d23dab3b-bb6b-400a-9e7b-4a85e0c89226");
         final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG);
 
         when(request.getPathInfo()).thenReturn(pathInfo);
@@ -155,7 +155,7 @@ class ImageServletTest {
     @Test
     void redirectsTo500Page_whenStreamingFails() throws IOException {
         // Arrange
-        final UUID imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        final UUID imageId = UUID.fromString("d23dab3b-bb6b-400a-9e7b-4a85e0c89226");
         final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG);
 
         final var request = mock(HttpServletRequest.class);
@@ -192,7 +192,7 @@ class ImageServletTest {
     @Test
     void streamsImageSuccessfully_whenAllConditionsAreMet() throws IOException {
         // Arrange
-        final UUID imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        final UUID imageId = UUID.fromString("d23dab3b-bb6b-400a-9e7b-4a85e0c89226");
         final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG);
 
         final var request = mock(HttpServletRequest.class);
@@ -262,8 +262,8 @@ class ImageServletTest {
         final var appConfig = getAppConfigMock();
         final var imageService = mock(ImageService.class);
 
-        final var pathInfo = "/images/11111111-1111-1111-1111-111111111111.jpg";
-        final var imageId = UUID.fromString("11111111-1111-1111-1111-111111111111");
+        final var pathInfo = "/images/d23dab3b-bb6b-400a-9e7b-4a85e0c89226.jpg";
+        final var imageId = UUID.fromString("d23dab3b-bb6b-400a-9e7b-4a85e0c89226");
         final var image = new ImageDto(imageId, ContentType.IMAGE_JPEG);
 
         when(request.getPathInfo()).thenReturn(pathInfo);
