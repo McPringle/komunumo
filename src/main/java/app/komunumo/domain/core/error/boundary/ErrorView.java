@@ -40,7 +40,7 @@ abstract class ErrorView extends AbstractView {
                         final @NotNull ConfigurationService configurationService) {
         super(configurationService);
         final var ui = UI.getCurrent();
-        this.viewTitle = ui.getTranslation("ui.views.error.ErrorView." + errorType.getTranslationKey());
+        this.viewTitle = ui.getTranslation("core.error.boundary.ErrorView." + errorType.getTranslationKey());
         add(new H2(viewTitle));
     }
 

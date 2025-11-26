@@ -67,7 +67,7 @@ public class GlobalPageEditorDialog extends Dialog {
         setCloseOnOutsideClick(true);
 
         addClassName("global-page-editor-dialog");
-        setHeaderTitle(getTranslation("ui.views.page.GlobalPageEditorDialog.title"));
+        setHeaderTitle(getTranslation("page.boundary.GlobalPageEditorDialog.title"));
 
         final var closeButton = new Button(new Icon("lumo", "cross"), this::cancel);
         closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
@@ -76,14 +76,14 @@ public class GlobalPageEditorDialog extends Dialog {
 
         // TextField for editing title
         pageTitle = new TextField();
-        pageTitle.setLabel(getTranslation("ui.views.page.GlobalPageEditorDialog.pageTitle"));
+        pageTitle.setLabel(getTranslation("page.boundary.GlobalPageEditorDialog.pageTitle"));
         pageTitle.setValue(globalPage.title());
         pageTitle.setValueChangeMode(ValueChangeMode.EAGER);
         pageTitle.setWidthFull();
 
         // TextArea for editing markdown
         pageEditor = new TextArea();
-        pageEditor.setLabel(getTranslation("ui.views.page.GlobalPageEditorDialog.pageEditor"));
+        pageEditor.setLabel(getTranslation("page.boundary.GlobalPageEditorDialog.pageEditor"));
         pageEditor.setValue(globalPage.markdown());
         pageEditor.setValueChangeMode(ValueChangeMode.EAGER);
         pageEditor.setSizeFull();
@@ -97,14 +97,14 @@ public class GlobalPageEditorDialog extends Dialog {
 
         // Tab sheet to switch between edit and preview
         final var tabSheet = new TabSheet();
-        tabSheet.add(getTranslation("ui.views.page.GlobalPageEditorDialog.edit"), editorLayout);
-        tabSheet.add(getTranslation("ui.views.page.GlobalPageEditorDialog.preview"), pagePreview);
+        tabSheet.add(getTranslation("page.boundary.GlobalPageEditorDialog.edit"), editorLayout);
+        tabSheet.add(getTranslation("page.boundary.GlobalPageEditorDialog.preview"), pagePreview);
         tabSheet.setSizeFull();
         add(tabSheet);
 
         // Update preview when text area changes
         tabSheet.addSelectedChangeListener(event -> {
-            final var previewLabelText = getTranslation("ui.views.page.GlobalPageEditorDialog.preview");
+            final var previewLabelText = getTranslation("page.boundary.GlobalPageEditorDialog.preview");
             if (event.getSelectedTab().getLabel().equals(previewLabelText)) {
                 pagePreview.setContent(pageEditor.getValue());
             }
@@ -112,9 +112,9 @@ public class GlobalPageEditorDialog extends Dialog {
 
         // Add cancel and save buttons to footer
         final var footer = getFooter();
-        final var cancelButton = new Button(getTranslation("ui.views.page.GlobalPageEditorDialog.cancel"), this::cancel);
+        final var cancelButton = new Button(getTranslation("page.boundary.GlobalPageEditorDialog.cancel"), this::cancel);
         footer.add(cancelButton);
-        saveButton = new Button(getTranslation("ui.views.page.GlobalPageEditorDialog.save"), this::save);
+        saveButton = new Button(getTranslation("page.boundary.GlobalPageEditorDialog.save"), this::save);
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         saveButton.setEnabled(false);
         footer.add(saveButton);
@@ -137,13 +137,13 @@ public class GlobalPageEditorDialog extends Dialog {
                 saveButton.setEnabled(false);
                 close();
             } else {
-                final var message = getTranslation("ui.views.page.GlobalPageEditorDialog.saveError");
+                final var message = getTranslation("page.boundary.GlobalPageEditorDialog.saveError");
                 final var notification = new PersistentNotification(message);
                 notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
                 notification.open();
             }
         } else {
-            final var message = getTranslation("ui.views.page.GlobalPageEditorDialog.permissionError");
+            final var message = getTranslation("page.boundary.GlobalPageEditorDialog.permissionError");
             final var notification = new PersistentNotification(message);
             notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
             notification.open();
@@ -153,21 +153,21 @@ public class GlobalPageEditorDialog extends Dialog {
     private void cancel(final @Nullable ClickEvent<Button> buttonClickEvent) {
         if (saveButton.isEnabled()) {
             final var confirmDialog = new ConfirmDialog();
-            confirmDialog.setHeader(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.title"));
-            confirmDialog.setText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.text"));
+            confirmDialog.setHeader(getTranslation("page.boundary.GlobalPageEditorDialog.ConfirmDialog.title"));
+            confirmDialog.setText(getTranslation("page.boundary.GlobalPageEditorDialog.ConfirmDialog.text"));
 
             confirmDialog.setCancelable(true);
-            confirmDialog.setCancelText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.keepEditing"));
+            confirmDialog.setCancelText(getTranslation("page.boundary.GlobalPageEditorDialog.ConfirmDialog.keepEditing"));
             confirmDialog.addCancelListener(_ -> confirmDialog.close());
 
             confirmDialog.setRejectable(true);
-            confirmDialog.setRejectText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.discard"));
+            confirmDialog.setRejectText(getTranslation("page.boundary.GlobalPageEditorDialog.ConfirmDialog.discard"));
             confirmDialog.addRejectListener(_ -> {
                 confirmDialog.close();
                 close();
             });
 
-            confirmDialog.setConfirmText(getTranslation("ui.views.page.GlobalPageEditorDialog.ConfirmDialog.save"));
+            confirmDialog.setConfirmText(getTranslation("page.boundary.GlobalPageEditorDialog.ConfirmDialog.save"));
             confirmDialog.addConfirmListener(_ -> {
                 confirmDialog.close();
                 save(null);

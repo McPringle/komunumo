@@ -49,37 +49,37 @@ class TranslationProviderTest {
 
     @Test
     void testGetMessageInEnglish() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", ENGLISH))
+        assertThat(translationProvider.getTranslation("event.boundary.EventGridView.title", ENGLISH))
                 .isEqualTo("Events");
     }
 
     @Test
     void testTranslationInGerman() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", GERMAN))
+        assertThat(translationProvider.getTranslation("event.boundary.EventGridView.title", GERMAN))
                 .isEqualTo("Veranstaltungen");
     }
 
     @Test
     void testSwissGermanFallbackToGerman() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.forLanguageTag("de-CH")))
+        assertThat(translationProvider.getTranslation("event.boundary.EventGridView.title", Locale.forLanguageTag("de-CH")))
                 .isEqualTo("Veranstaltungen");
     }
 
     @Test
     void testFallbackToEnglish() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", Locale.ITALIAN))
+        assertThat(translationProvider.getTranslation("event.boundary.EventGridView.title", Locale.ITALIAN))
                 .isEqualTo("Events");
     }
 
     @Test
     void testFallbackWhenLocaleIsNull() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", null))
+        assertThat(translationProvider.getTranslation("event.boundary.EventGridView.title", null))
                 .isEqualTo("Events");
     }
 
     @Test
     void testWithPlaceholder() {
-        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", ENGLISH, "foobar"))
+        assertThat(translationProvider.getTranslation("community.boundary.CommunityDetailView.profileImage", ENGLISH, "foobar"))
                 .isEqualTo("Profile picture of foobar");
     }
 
@@ -87,7 +87,7 @@ class TranslationProviderTest {
     @MethodSource("testWithNamedPlaceholderArguments")
     void testWithNamedPlaceholder(final int count, final Locale locale, final String expectedText) {
         final var params = Map.of("count", count);
-        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.memberCount", locale, params))
+        assertThat(translationProvider.getTranslation("community.boundary.CommunityDetailView.memberCount", locale, params))
                 .isEqualTo(expectedText);
     }
 
@@ -104,13 +104,13 @@ class TranslationProviderTest {
 
     @Test
     void testWithMissingPlaceholder() {
-        assertThat(translationProvider.getTranslation("ui.views.community.CommunityDetailView.profileImage", ENGLISH))
+        assertThat(translationProvider.getTranslation("community.boundary.CommunityDetailView.profileImage", ENGLISH))
                 .isEqualTo("Profile picture of {0}");
     }
 
     @Test
     void testMissingPlaceholder() {
-        assertThat(translationProvider.getTranslation("ui.views.events.EventGridView.title", ENGLISH, "foobar"))
+        assertThat(translationProvider.getTranslation("event.boundary.EventGridView.title", ENGLISH, "foobar"))
                 .isEqualTo("Events");
     }
 

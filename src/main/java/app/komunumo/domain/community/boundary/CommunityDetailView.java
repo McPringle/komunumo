@@ -105,7 +105,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
 
         if (image != null) {
             final var imageUrl = ImageUtil.resolveImageUrl(image);
-            final var altText = getTranslation(locale, "ui.views.community.CommunityDetailView.profileImage", community.name());
+            final var altText = getTranslation(locale, "community.boundary.CommunityDetailView.profileImage", community.name());
             final var htmlImage = new Image(imageUrl, altText);
             htmlImage.addClassName("community-image");
             pageContent.add(htmlImage);
@@ -120,14 +120,14 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         pageContent.add(profile);
 
         final var prettyTime = new PrettyTime(locale);
-        final var createdText = getTranslation(locale, "ui.views.community.CommunityDetailView.created",
+        final var createdText = getTranslation(locale, "community.boundary.CommunityDetailView.created",
                 prettyTime.format(community.created()));
         final var created = new Paragraph(createdText);
         created.addClassName("community-created");
         pageContent.add(created);
 
         final var memberCount = memberService.getMemberCount(community.id());
-        final var memberCountText = getTranslation(locale, "ui.views.community.CommunityDetailView.memberCount",
+        final var memberCountText = getTranslation(locale, "community.boundary.CommunityDetailView.memberCount",
                 Map.of("count", memberCount));
         final var memberCountParagraph = new Paragraph(memberCountText);
         memberCountParagraph.addClassName("community-memberCount");
@@ -137,7 +137,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         description.addClassName("community-description");
         pageContent.add(description);
 
-        final var joinButton = new Button(getTranslation(locale, "ui.views.community.CommunityDetailView.joinButton"));
+        final var joinButton = new Button(getTranslation(locale, "community.boundary.CommunityDetailView.joinButton"));
         joinButton.addClickListener(_ -> {
             final var loggedInUser = loginService.getLoggedInUser();
             if (loggedInUser.isPresent()) {
@@ -165,10 +165,10 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
 
         final var tabEvents = new TabSheet();
         tabEvents.add(
-                getTranslation(locale, "ui.views.community.CommunityDetailView.upcomingEvents"),
+                getTranslation(locale, "community.boundary.CommunityDetailView.upcomingEvents"),
                 upcomingEventsPlaceholder);
         final var pastEventsTab = tabEvents.add(
-                getTranslation(locale, "ui.views.community.CommunityDetailView.pastEvents"),
+                getTranslation(locale, "community.boundary.CommunityDetailView.pastEvents"),
                 pastEventsPlaceholder);
 
         tabEvents.addSelectedChangeListener(changeEvent -> {
@@ -189,7 +189,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
                                                  final @NotNull Locale locale) {
         final var events = eventService.getUpcomingEventsWithImage(community);
         if (events.isEmpty()) {
-            return new Paragraph(getTranslation(locale, "ui.views.community.CommunityDetailView.noUpcomingEvents"));
+            return new Paragraph(getTranslation(locale, "community.boundary.CommunityDetailView.noUpcomingEvents"));
         }
         return new EventGrid(events);
     }
@@ -198,7 +198,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
                                                  final @NotNull Locale locale) {
         final var events = eventService.getPastEventsWithImage(community);
         if (events.isEmpty()) {
-            return new Paragraph(getTranslation(locale, "ui.views.community.CommunityDetailView.noPastEvents"));
+            return new Paragraph(getTranslation(locale, "community.boundary.CommunityDetailView.noPastEvents"));
         }
         return new EventGrid(events);
     }

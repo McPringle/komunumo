@@ -135,7 +135,7 @@ public final class MemberService {
     public void joinCommunityStartConfirmationProcess(final @NotNull CommunityDto community,
                                                       final @NotNull Locale locale) {
         final var actionMessage = translationProvider.getTranslation(
-                "data.service.MemberService.join.actionText", locale, community.name());
+                "member.control.MemberService.join.actionText", locale, community.name());
         final ConfirmationHandler actionHandler = this::joinCommunityWithEmail;
         final var actionContext = ConfirmationContext.of(CONTEXT_KEY_COMMUNITY, community);
         final var confirmationRequest = new ConfirmationRequest(
@@ -159,7 +159,7 @@ public final class MemberService {
         final var communityName = community.name();
         final var communityLink = LinkUtil.getLink(community);
         final var status = ConfirmationStatus.SUCCESS;
-        final var message = translationProvider.getTranslation("data.service.MemberService.join.successMessage",
+        final var message = translationProvider.getTranslation("member.control.MemberService.join.successMessage",
                 locale, communityName);
         return new ConfirmationResponse(status, message, communityLink);
     }

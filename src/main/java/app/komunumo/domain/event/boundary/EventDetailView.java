@@ -94,7 +94,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
 
         if (image != null) {
             final var imageUrl = ImageUtil.resolveImageUrl(image);
-            final var altText = getTranslation(locale, "ui.views.events.EventDetailView.image", event.title());
+            final var altText = getTranslation(locale, "event.boundary.EventDetailView.image", event.title());
             final var htmlImage = new Image(imageUrl, altText);
             htmlImage.addClassName("event-image");
             pageContent.add(htmlImage);
@@ -105,18 +105,18 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         pageContent.add(title);
 
         final var location = new Paragraph(
-                getTranslation(locale, "ui.views.events.EventDetailView.location") + ": " + event.location());
+                getTranslation(locale, "event.boundary.EventDetailView.location") + ": " + event.location());
         location.addClassName("event-location");
         pageContent.add(location);
 
-        addDateTimeText(event.begin(), locale, "ui.views.events.EventDetailView.beginDate", "event-date-begin");
-        addDateTimeText(event.end(), locale, "ui.views.events.EventDetailView.endDate", "event-date-end");
+        addDateTimeText(event.begin(), locale, "event.boundary.EventDetailView.beginDate", "event-date-begin");
+        addDateTimeText(event.end(), locale, "event.boundary.EventDetailView.endDate", "event-date-end");
 
         final var description = new Markdown(event.description());
         description.addClassName("event-description");
         pageContent.add(description);
 
-        final var registrationButton = new Button(getTranslation("ui.views.events.EventDetailView.register"));
+        final var registrationButton = new Button(getTranslation("event.boundary.EventDetailView.register"));
         registrationButton.addClickListener(_ -> participationService.startConfirmationProcess(event, locale));
         registrationButton.addClassName("registration-button");
         pageContent.add(registrationButton);

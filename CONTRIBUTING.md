@@ -434,7 +434,7 @@ Inside each domain subpackage, you will find the following structure:
 
 All user-facing text is externalized into properties files located in the `src/main/resources/vaadin-i18n/` directory. The english language is the default and is stored in `translations.properties`. Other languages follow the naming convention `translations_xx.properties`, where `xx` is the ISO 639-1 language code (e.g., `de` for German, `fr` for French).
 
-As the key for the translations, we use a dot-separated hierarchical structure that reflects the package structure without the leading `app.komunumo`. This makes it easier to locate and manage translations.
+As the key for the translations, we use a dot-separated hierarchical structure that reflects the package structure without the leading `app.komunumo.domain` and include the class name. This makes it easier to locate and manage translations.
 
 Please try keep the translation files sorted alphabetically by key for better maintainability.
 
@@ -445,7 +445,7 @@ Please try keep the translation files sorted alphabetically by key for better ma
 
 **Example (English):**
 ```
-community.member.count = {0, plural,
+community.boundary.CommunityDetailView.memberCount = {0, plural,
     =0 {no members}
     one {one member}
     other {# members}
@@ -454,7 +454,7 @@ community.member.count = {0, plural,
 
 **Example (German):**
 ```
-community.member.count = {0, plural,
+community.boundary.CommunityDetailView.memberCount = {0, plural,
     =0 {keine Mitglieder}
     one {ein Mitglied}
     other {# Mitglieder}
@@ -463,7 +463,7 @@ community.member.count = {0, plural,
 
 **Example (Russian):**
 ```
-community.member.count = {0, plural,
+community.boundary.CommunityDetailView.memberCount = {0, plural,
     =0 {нет участников}
     one {один участник}
     few {# участника}
@@ -478,7 +478,7 @@ The ICU message format also supports named parameters for better readability.
 
 **Example (English):**
 ```
-community.member.count = {count, plural,
+community.boundary.CommunityDetailView.memberCount = {count, plural,
     =0 {no members}
     one {one member}
     other {{count} members}

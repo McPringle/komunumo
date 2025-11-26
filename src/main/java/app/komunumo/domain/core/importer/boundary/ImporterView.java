@@ -98,11 +98,11 @@ public final class ImporterView extends AbstractView {
 
         final var uploadI18N = new UploadI18N();
         uploadI18N.setAddFiles(new UploadI18N.AddFiles().setOne(
-                getTranslation("ui.views.admin.importer.ImporterView.uploadButton")));
+                getTranslation("core.importer.boundary.ImporterView.uploadButton")));
         uploadI18N.setDropFiles(new UploadI18N.DropFiles().setOne(
-                getTranslation("ui.views.admin.importer.ImporterView.uploadDrop")));
+                getTranslation("core.importer.boundary.ImporterView.uploadDrop")));
         uploadI18N.setError(new UploadI18N.Error().setIncorrectFileType(
-                getTranslation("ui.views.admin.importer.ImporterView.uploadIncorrectFileType")));
+                getTranslation("core.importer.boundary.ImporterView.uploadIncorrectFileType")));
 
         final var uploadField = new Upload(uploadHandler);
         uploadField.setSizeFull();
@@ -112,16 +112,16 @@ public final class ImporterView extends AbstractView {
 
         urlField = new TextField();
         urlField.setValueChangeMode(ValueChangeMode.EAGER);
-        urlField.setPlaceholder(getTranslation("ui.views.admin.importer.ImporterView.urlFieldPlaceholder"));
+        urlField.setPlaceholder(getTranslation("core.importer.boundary.ImporterView.urlFieldPlaceholder"));
         urlField.setWidthFull();
         urlField.addClassName("url-field");
 
-        importButton = new Button(getTranslation("ui.views.admin.importer.ImporterView.startImportButton"));
+        importButton = new Button(getTranslation("core.importer.boundary.ImporterView.startImportButton"));
         importButton.setEnabled(false);
         importButton.addClassName("start-import-button");
         importButton.addClickListener(_ -> processImport());
 
-        final var importLogTitle = new H3(getTranslation("ui.views.admin.importer.ImporterView.importLogTitle"));
+        final var importLogTitle = new H3(getTranslation("core.importer.boundary.ImporterView.importLogTitle"));
         importLog = new UnorderedList();
         importLog.addClassName("import-log");
 
@@ -129,7 +129,7 @@ public final class ImporterView extends AbstractView {
                 importButton.setEnabled(!valueChangeEvent.getValue().isBlank()));
 
         addClassName("importer-view");
-        add(new H2(getTranslation("ui.views.admin.importer.ImporterView.title")));
+        add(new H2(getTranslation("core.importer.boundary.ImporterView.title")));
 
         importFieldsContainer = new VerticalLayout();
         importFieldsContainer.setId("import-fields-container");
@@ -189,7 +189,7 @@ public final class ImporterView extends AbstractView {
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation("ui.views.admin.importer.ImporterView.title");
+        return getTranslation("core.importer.boundary.ImporterView.title");
     }
 
 }

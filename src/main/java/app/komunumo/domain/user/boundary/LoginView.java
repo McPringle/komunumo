@@ -45,7 +45,7 @@ public final class LoginView extends AbstractView implements BeforeEnterObserver
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation(UI.getCurrent().getLocale(), "ui.views.login.title");
+        return getTranslation(UI.getCurrent().getLocale(), "user.boundary.LoginView.title");
     }
 
     @Override
