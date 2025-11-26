@@ -22,6 +22,7 @@ import app.komunumo.domain.core.importer.control.JSONImporter;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.participation.control.ParticipationService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.member.control.MemberService;
@@ -58,6 +59,7 @@ public final class ImporterView extends AbstractView {
     private final @NotNull CommunityService communityService;
     private final @NotNull MemberService memberService;
     private final @NotNull EventService eventService;
+    private final @NotNull ParticipationService participationService;
     private final @NotNull GlobalPageService globalPageService;
 
     private final @NotNull UI ui;
@@ -70,12 +72,14 @@ public final class ImporterView extends AbstractView {
 
     private File uploadFile = null;
 
+    @SuppressWarnings("checkstyle:ParameterNumber") // constructor injection
     public ImporterView(final @NotNull ConfigurationService configurationService,
                         final @NotNull ImageService imageService,
                         final @NotNull UserService userService,
                         final @NotNull CommunityService communityService,
                         final @NotNull MemberService memberService,
                         final @NotNull EventService eventService,
+                        final @NotNull ParticipationService participationService,
                         final @NotNull GlobalPageService globalPageService) {
         super(configurationService);
 
@@ -85,6 +89,7 @@ public final class ImporterView extends AbstractView {
         this.communityService = communityService;
         this.memberService = memberService;
         this.eventService = eventService;
+        this.participationService = participationService;
         this.globalPageService = globalPageService;
         this.ui = UI.getCurrent();
 
@@ -165,6 +170,7 @@ public final class ImporterView extends AbstractView {
                     jsonImporter.importCommunities(communityService);
                     jsonImporter.importMembers(memberService);
                     jsonImporter.importEvents(eventService);
+                    jsonImporter.importParticipations(participationService);
                     jsonImporter.importGlobalPages(globalPageService);
                 })
                 .thenRunAsync(() -> ui.access(() -> {

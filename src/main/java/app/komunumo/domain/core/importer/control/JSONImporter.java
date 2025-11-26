@@ -25,6 +25,7 @@ import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.page.entity.GlobalPageDto;
+import app.komunumo.domain.participation.entity.ParticipationDto;
 import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
@@ -34,6 +35,7 @@ import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.participation.control.ParticipationService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.member.control.MemberService;
@@ -88,7 +90,7 @@ public final class JSONImporter {
     }
 
     private void logJSONInfo(final @NotNull JSONObject jsonObject) {
-        importerLog.info("Identified %d settings, %d images, %d users, %d communities, %d events, %d members, and %d global pages."
+        importerLog.info("Identified %d settings, %d images, %d users, %d communities, %d events, %d members, %d participations, and %d global pages."
                 .formatted(
                         countArrayItems(jsonObject, "settings"),
                         countArrayItems(jsonObject, "images"),
@@ -96,6 +98,7 @@ public final class JSONImporter {
                         countArrayItems(jsonObject, "communities"),
                         countArrayItems(jsonObject, "events"),
                         countArrayItems(jsonObject, "members"),
+                        countArrayItems(jsonObject, "participations"),
                         countArrayItems(jsonObject, "globalPages")));
     }
 
@@ -255,6 +258,29 @@ public final class JSONImporter {
             importerLog.info("...finished importing %d events.".formatted(counter.get()));
         } else {
             importerLog.warn("No events found in JSON data.");
+        }
+    }
+
+    public void importParticipations(final @NotNull ParticipationService participationService) {
+        if (jsonData.has("participations")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing event participations...");
+            jsonData.getJSONArray("participations").forEach(object -> {
+                try {
+                    final var jsonObject = (JSONObject) object;
+                    final var eventId = UUID.fromString(jsonObject.getString("eventId"));
+                    final var userId = UUID.fromString(jsonObject.getString("userId"));
+                    final var registeredDate = parseDateTime(jsonObject.getString("registered"));
+                    final var participation =  new ParticipationDto(eventId, userId, registeredDate);
+                    participationService.storeParticipation(participation);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import event participations: %s".formatted(e.getMessage()));
+                }
+            });
+            importerLog.info("...finished importing %d event participations.".formatted(counter.get()));
+        } else {
+            importerLog.warn("No event participations found in JSON data.");
         }
     }
 
