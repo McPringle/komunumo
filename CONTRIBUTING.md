@@ -425,6 +425,66 @@ Inside each domain subpackage, you will find the following structure:
 - Ask questions on [Stack Overflow](https://stackoverflow.com/questions/tagged/vaadin) or join our [Discord channel](https://discord.gg/MYFq5RTbBn).
 - Report issues, create pull requests in [GitHub](https://github.com/vaadin/platform).
 
+## Internationalization
+
+> [!IMPORTANT]  
+> *Komunumo* uses the ICU message format for all translation files. This allows for advanced formatting options, including pluralization and named parameters. ICU stands for "International Components for Unicode".
+
+### Translation Files
+
+All user-facing text is externalized into properties files located in the `src/main/resources/vaadin-i18n/` directory. The english language is the default and is stored in `translations.properties`. Other languages follow the naming convention `translations_xx.properties`, where `xx` is the ISO 639-1 language code (e.g., `de` for German, `fr` for French).
+
+As the key for the translations, we use a dot-separated hierarchical structure that reflects the package structure without the leading `app.komunumo`. This makes it easier to locate and manage translations.
+
+Please try keep the translation files sorted alphabetically by key for better maintainability.
+
+### Message Format
+
+> [!IMPORTANT]  
+> The message needs to be added to the properties files on a single line without line breaks. Line breaks in the examples below are for better readability only!
+
+**Example (English):**
+```
+community.member.count = {0, plural,
+    =0 {no members}
+    one {one member}
+    other {# members}
+}
+```
+
+**Example (German):**
+```
+community.member.count = {0, plural,
+    =0 {keine Mitglieder}
+    one {ein Mitglied}
+    other {# Mitglieder}
+}
+```
+
+**Example (Russian):**
+```
+community.member.count = {0, plural,
+    =0 {нет участников}
+    one {один участник}
+    few {# участника}
+    many {# участников}
+    other {# участников}
+}
+```
+
+#### Named Parameters
+
+The ICU message format also supports named parameters for better readability.
+
+**Example (English):**
+```
+community.member.count = {count, plural,
+    =0 {no members}
+    one {one member}
+    other {{count} members}
+}
+```
+
 ## Database
 
 ### General Principles
