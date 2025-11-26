@@ -48,7 +48,11 @@ class ParticipationServiceKT extends KaribuTest {
 
     @Test
     void joinEventExistingUser() {
-        assertThat(participationService.getAllParticipations()).isEmpty();
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(event).isNotNull();
+        assertThat(event.id()).isNotNull();
+
+        assertThat(participationService.getParticipantsCount(event.id())).isZero();
 
         final var email = "test@komunumo.app";
         assertThat(userService.getUserByEmail(email)).isEmpty();
@@ -58,14 +62,12 @@ class ParticipationServiceKT extends KaribuTest {
         final var user = userService.getUserByEmail(email).orElseThrow();
         assertThat(user).isNotNull();
 
-        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
-        assertThat(event).isNotNull();
-
         final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
         final var confirmationResponse = participationService.registerForEvent(email, context, locale);
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
+        assertThat(participationService.getParticipantsCount(event.id())).isOne();
         final var participations = participationService.getAllParticipations();
         assertThat(participations).hasSize(1);
 
@@ -80,6 +82,7 @@ class ParticipationServiceKT extends KaribuTest {
         assertThat(participationService.deleteParticipation(participation)).isTrue();
         assertThat(participationService.deleteParticipation(participation)).isFalse();
         assertThat(participationService.getAllParticipations()).isEmpty();
+        assertThat(participationService.getParticipantsCount(event.id())).isZero();
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();

@@ -17,21 +17,21 @@
  */
 package app.komunumo.domain.participation.control;
 
-import app.komunumo.domain.core.mail.control.MailService;
-import app.komunumo.domain.event.entity.EventDto;
-import app.komunumo.domain.user.control.UserService;
 import app.komunumo.data.db.tables.records.ParticipationRecord;
-import app.komunumo.domain.core.mail.entity.MailFormat;
-import app.komunumo.domain.core.mail.entity.MailTemplateId;
-import app.komunumo.domain.participation.entity.ParticipationDto;
-import app.komunumo.domain.user.entity.UserDto;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
+import app.komunumo.domain.core.confirmation.control.ConfirmationService;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
-import app.komunumo.domain.core.confirmation.control.ConfirmationService;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
 import app.komunumo.domain.core.i18n.controller.TranslationProvider;
+import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.domain.core.mail.entity.MailFormat;
+import app.komunumo.domain.core.mail.entity.MailTemplateId;
+import app.komunumo.domain.event.entity.EventDto;
+import app.komunumo.domain.participation.entity.ParticipationDto;
+import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static app.komunumo.data.db.tables.Participation.PARTICIPATION;
 
@@ -147,4 +148,12 @@ public final class ParticipationService {
                 .execute() > 0;
     }
 
+    public int getParticipantsCount(final @NotNull UUID eventId) {
+        return Optional.ofNullable(
+                dsl.selectCount()
+                        .from(PARTICIPATION)
+                        .where(PARTICIPATION.EVENT_ID.eq(eventId))
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
 }

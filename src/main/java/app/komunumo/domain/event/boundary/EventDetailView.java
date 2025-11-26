@@ -116,6 +116,11 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
+        final var participantCount = this.participationService.getParticipantsCount(event.id());
+        final var participantParagraph = new Paragraph(getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
+        participantParagraph.addClassName("event-participant-count");
+        pageContent.add(participantParagraph);
+
         final var registrationButton = new Button(getTranslation("event.boundary.EventDetailView.register"));
         registrationButton.addClickListener(_ -> participationService.startConfirmationProcess(event, locale));
         registrationButton.addClassName("registration-button");

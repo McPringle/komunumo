@@ -72,6 +72,10 @@ class EventDetailViewKT extends KaribuTest {
         assertThat(description).isNotNull();
         assertThat(description.getContent()).isEqualTo(testEvent.description());
 
+        final var participantCount = _get(Paragraph.class, spec -> spec.withClasses("event-participant-count"));
+        assertThat(participantCount).isNotNull();
+        assertThat(participantCount.getText()).isEqualTo("no participants");
+
         final var image = _get(Image.class, spec -> spec.withClasses("event-image"));
         assertThat(image).isNotNull();
         assertThat(image.getSrc()).isNotBlank().isEqualTo("/images/" + testImage.id() + ".svg");
