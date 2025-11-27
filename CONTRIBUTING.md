@@ -23,7 +23,11 @@
     - [GitHub Discussions](#github-discussions)
 - [Architecture](#architecture)
     - [Structure](#structure)
+    - [Boundary Control Entity Architecture](#boundary-control-entity-architecture)
     - [Useful Vaadin Links](#useful-vaadin-links)
+- [Internationalization](#internationalization)
+    - [Translation Files](#translation-files)
+    - [Message Format](#message-format)
 - [Database](#database)
     - [General Principles](#general-principles)
     - [Index Names](#index-names)
@@ -381,7 +385,7 @@ Vaadin web applications are full-stack and include both client-side and server-s
 | &nbsp;&nbsp;&nbsp;&nbsp;`vaadin/components/` | Universal UI components (not bound to a business domain)   |
 | &nbsp;&nbsp;&nbsp;&nbsp;`Application.java`   | Server entrypoint with `main` class                        |
 
-#### Boundary Control Entity Architecture
+### Boundary Control Entity Architecture
 
 *Komunumo* follows the Boundary Control Entity (BCE) architecture pattern. This pattern divides the application into three main layers:
 
