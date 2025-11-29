@@ -20,7 +20,7 @@ package app.komunumo.domain.event.boundary;
 import app.komunumo.domain.event.entity.EventWithImageDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.participation.control.ParticipationService;
+import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.util.DateTimeUtil;
@@ -54,16 +54,16 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
 
     private final @NotNull HtmlContainer pageContent = new Div();
     private final @NotNull EventService eventService;
-    private final @NotNull ParticipationService participationService;
+    private final @NotNull ParticipantService participantService;
 
     private @NotNull String pageTitle = "";
 
     public EventDetailView(final @NotNull ConfigurationService configurationService,
                            final @NotNull EventService eventService,
-                           final @NotNull ParticipationService participationService) {
+                           final @NotNull ParticipantService participantService) {
         super(configurationService);
         this.eventService = eventService;
-        this.participationService = participationService;
+        this.participantService = participantService;
         addClassName("event-detail-view");
         add(pageContent);
     }
@@ -116,13 +116,13 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        final var participantCount = this.participationService.getParticipantsCount(event.id());
+        @SuppressWarnings("DataFlowIssue") final var participantCount = this.participantService.getParticipantsCount(event.id());
         final var participantParagraph = new Paragraph(getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
         participantParagraph.addClassName("event-participant-count");
         pageContent.add(participantParagraph);
 
         final var registrationButton = new Button(getTranslation("event.boundary.EventDetailView.register"));
-        registrationButton.addClickListener(_ -> participationService.startConfirmationProcess(event, locale));
+        registrationButton.addClickListener(_ -> participantService.startConfirmationProcess(event, locale));
         registrationButton.addClassName("registration-button");
         pageContent.add(registrationButton);
     }

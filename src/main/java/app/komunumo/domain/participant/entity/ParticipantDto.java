@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.domain.participation.entity;
+package app.komunumo.domain.participant.entity;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-public record ParticipationDto(
+public record ParticipantDto(
         @NotNull UUID eventId,
         @NotNull UUID userId,
         @Nullable ZonedDateTime registered

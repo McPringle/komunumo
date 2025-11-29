@@ -24,7 +24,7 @@ import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.page.control.GlobalPageService;
-import app.komunumo.domain.participation.control.ParticipationService;
+import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, 7 participations, and 3 global pages.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, 7 participants, and 3 global pages.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -133,12 +133,12 @@ class JSONImporterTest {
     }
 
     @Test
-    void testParticipationsNotFound() {
+    void testParticipantsNotFound() {
         final var jsonUrl = "http://localhost:8082/import/no-data.json";
-        final var expectedMessage = "No participations found in JSON data.";
+        final var expectedMessage = "No participants found in JSON data.";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
-            importer.importParticipations(mock(ParticipationService.class));
+            importer.importParticipants(mock(ParticipantService.class));
             assertThat(logCaptor.getWarnLogs()).contains(expectedMessage);
         }
     }
@@ -295,22 +295,22 @@ class JSONImporterTest {
     }
 
     @Test
-    void testImportParticipations() {
-        final var participationService = mock(ParticipationService.class);
+    void testImportParticipants() {
+        final var participantService = mock(ParticipantService.class);
         doThrow(new RuntimeException("Simulated failure"))
-                .when(participationService)
-                .storeParticipation(argThat(participation -> UUID_ZERO.equals(participation.eventId())));
+                .when(participantService)
+                .storeParticipant(argThat(participant -> UUID_ZERO.equals(participant.eventId())));
         final var jsonUrl = "http://localhost:8082/import/data.json";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
-            importer.importParticipations(participationService);
-            verify(participationService, times(7)).storeParticipation(any());
+            importer.importParticipants(participantService);
+            verify(participantService, times(7)).storeParticipant(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
-                    "Start importing participations...",
-                    "...finished importing 6 participations.");
+                    "Start importing participants...",
+                    "...finished importing 6 participants.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping participation '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"registered\":\"2029-12-07T12:00:00+02:00[Europe/Zurich]\",\"userId\":\"c9fc8b0a-6ff7-4c00-a6f2-d85f5829edff\"}': Simulated failure");
+                    "Skipping participant '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"registered\":\"2029-12-07T12:00:00+02:00[Europe/Zurich]\",\"userId\":\"c9fc8b0a-6ff7-4c00-a6f2-d85f5829edff\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -336,7 +336,7 @@ class JSONImporterTest {
     @Test
     void testNoData() {
         final var jsonUrl = "http://localhost:8082/import/no-data.json";
-        final var expectedMessage = "Identified 0 settings, 0 images, 0 users, 0 communities, 0 events, 0 members, 0 participations, and 0 global pages.";
+        final var expectedMessage = "Identified 0 settings, 0 images, 0 users, 0 communities, 0 events, 0 members, 0 participants, and 0 global pages.";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             new JSONImporter(new ImporterLog(null), jsonUrl);
             assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);

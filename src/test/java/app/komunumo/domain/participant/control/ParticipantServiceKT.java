@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.domain.participation.control;
+package app.komunumo.domain.participant.control;
 
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.user.control.UserService;
@@ -32,13 +32,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
-import static app.komunumo.domain.participation.control.ParticipationService.CONTEXT_KEY_EVENT;
+import static app.komunumo.domain.participant.control.ParticipantService.CONTEXT_KEY_EVENT;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ParticipationServiceKT extends KaribuTest {
+class ParticipantServiceKT extends KaribuTest {
 
     @Autowired
-    private @NotNull ParticipationService participationService;
+    private @NotNull ParticipantService participantService;
 
     @Autowired
     private @NotNull EventService eventService;
@@ -52,7 +52,7 @@ class ParticipationServiceKT extends KaribuTest {
         assertThat(event).isNotNull();
         assertThat(event.id()).isNotNull();
 
-        assertThat(participationService.getParticipantsCount(event.id())).isZero();
+        assertThat(participantService.getParticipantsCount(event.id())).isZero();
 
         final var email = "test@komunumo.app";
         assertThat(userService.getUserByEmail(email)).isEmpty();
@@ -64,25 +64,25 @@ class ParticipationServiceKT extends KaribuTest {
 
         final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
-        final var confirmationResponse = participationService.registerForEvent(email, context, locale);
+        final var confirmationResponse = participantService.registerForEvent(email, context, locale);
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
-        assertThat(participationService.getParticipantsCount(event.id())).isOne();
-        final var participations = participationService.getAllParticipations();
-        assertThat(participations).hasSize(1);
+        assertThat(participantService.getParticipantsCount(event.id())).isOne();
+        final var participants = participantService.getAllParticipants();
+        assertThat(participants).hasSize(1);
 
-        final var participation = participations.getFirst();
-        assertThat(participation).isNotNull().satisfies(testee -> {
+        final var participant = participants.getFirst();
+        assertThat(participant).isNotNull().satisfies(testee -> {
             assertThat(testee.eventId()).isEqualTo(event.id());
             assertThat(testee.userId()).isEqualTo(user.id());
             assertThat(testee.registered()).isNotNull();
             assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
         });
 
-        assertThat(participationService.deleteParticipation(participation)).isTrue();
-        assertThat(participationService.deleteParticipation(participation)).isFalse();
-        assertThat(participationService.getAllParticipations()).isEmpty();
-        assertThat(participationService.getParticipantsCount(event.id())).isZero();
+        assertThat(participantService.deleteParticipant(participant)).isTrue();
+        assertThat(participantService.deleteParticipant(participant)).isFalse();
+        assertThat(participantService.getAllParticipants()).isEmpty();
+        assertThat(participantService.getParticipantsCount(event.id())).isZero();
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();
@@ -90,7 +90,7 @@ class ParticipationServiceKT extends KaribuTest {
 
     @Test
     void joinEventAnonymousUser() {
-        assertThat(participationService.getAllParticipations()).isEmpty();
+        assertThat(participantService.getAllParticipants()).isEmpty();
 
         final var email = "test@komunumo.app";
         assertThat(userService.getUserByEmail(email)).isEmpty();
@@ -100,30 +100,30 @@ class ParticipationServiceKT extends KaribuTest {
 
         final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
-        final var confirmationResponse1 = participationService.registerForEvent(email, context, locale);
+        final var confirmationResponse1 = participantService.registerForEvent(email, context, locale);
         assertThat(confirmationResponse1.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         // try to join again with the same email
-        final var confirmationResponse2 = participationService.registerForEvent(email, context, locale);
+        final var confirmationResponse2 = participantService.registerForEvent(email, context, locale);
         assertThat(confirmationResponse2.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
-        final var participations = participationService.getAllParticipations();
-        assertThat(participations).hasSize(1);
+        final var participants = participantService.getAllParticipants();
+        assertThat(participants).hasSize(1);
 
         final var user = userService.getUserByEmail(email).orElseThrow();
         assertThat(user.email()).isEqualTo(email);
 
-        final var participation = participations.getFirst();
-        assertThat(participation).isNotNull().satisfies(testee -> {
+        final var participant = participants.getFirst();
+        assertThat(participant).isNotNull().satisfies(testee -> {
             assertThat(testee.eventId()).isEqualTo(event.id());
             assertThat(testee.userId()).isEqualTo(user.id());
             assertThat(testee.registered()).isNotNull();
             assertThat(testee.registered()).isBeforeOrEqualTo(ZonedDateTime.now());
         });
 
-        assertThat(participationService.deleteParticipation(participation)).isTrue();
-        assertThat(participationService.deleteParticipation(participation)).isFalse();
-        assertThat(participationService.getAllParticipations()).isEmpty();
+        assertThat(participantService.deleteParticipant(participant)).isTrue();
+        assertThat(participantService.deleteParticipant(participant)).isFalse();
+        assertThat(participantService.getAllParticipants()).isEmpty();
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();

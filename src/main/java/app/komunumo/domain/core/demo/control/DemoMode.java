@@ -26,7 +26,7 @@ import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.member.control.MemberService;
-import app.komunumo.domain.participation.control.ParticipationService;
+import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public final class DemoMode {
     private final @NotNull ImageService imageService;
     private final @NotNull CommunityService communityService;
     private final @NotNull EventService eventService;
-    private final @NotNull ParticipationService participationService;
+    private final @NotNull ParticipantService participantService;
     private final @NotNull GlobalPageService globalPageService;
 
     private final boolean enabled;
@@ -60,14 +60,14 @@ public final class DemoMode {
                     final @NotNull CommunityService communityService,
                     final @NotNull EventService eventService,
                     final @NotNull MemberService memberService,
-                    final @NotNull ParticipationService participationService,
+                    final @NotNull ParticipantService participantService,
                     final @NotNull GlobalPageService globalPageService) {
         this.configurationService = configurationService;
         this.userService = userService;
         this.imageService = imageService;
         this.communityService = communityService;
         this.eventService = eventService;
-        this.participationService = participationService;
+        this.participantService = participantService;
         this.globalPageService = globalPageService;
 
         final var demoConfig = appConfig.demo();
@@ -90,7 +90,7 @@ public final class DemoMode {
 
         LOGGER.info("Deleting existing data...");
         configurationService.deleteAllConfigurations();
-        participationService.getAllParticipations().forEach(participationService::deleteParticipation);
+        participantService.getAllParticipants().forEach(participantService::deleteParticipant);
         eventService.getEvents().forEach(eventService::deleteEvent);
         memberService.getMembers().forEach(memberService::deleteMember);
         communityService.getCommunities().forEach(communityService::deleteCommunity);

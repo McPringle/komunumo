@@ -25,7 +25,7 @@ import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.page.entity.GlobalPageDto;
-import app.komunumo.domain.participation.entity.ParticipationDto;
+import app.komunumo.domain.participant.entity.ParticipantDto;
 import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
@@ -35,7 +35,7 @@ import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.participation.control.ParticipationService;
+import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.member.control.MemberService;
@@ -90,7 +90,7 @@ public final class JSONImporter {
     }
 
     private void logJSONInfo(final @NotNull JSONObject jsonObject) {
-        importerLog.info("Identified %d settings, %d images, %d users, %d communities, %d events, %d members, %d participations, and %d global pages."
+        importerLog.info("Identified %d settings, %d images, %d users, %d communities, %d events, %d members, %d participants, and %d global pages."
                 .formatted(
                         countArrayItems(jsonObject, "settings"),
                         countArrayItems(jsonObject, "images"),
@@ -98,7 +98,7 @@ public final class JSONImporter {
                         countArrayItems(jsonObject, "communities"),
                         countArrayItems(jsonObject, "events"),
                         countArrayItems(jsonObject, "members"),
-                        countArrayItems(jsonObject, "participations"),
+                        countArrayItems(jsonObject, "participants"),
                         countArrayItems(jsonObject, "globalPages")));
     }
 
@@ -261,26 +261,26 @@ public final class JSONImporter {
         }
     }
 
-    public void importParticipations(final @NotNull ParticipationService participationService) {
-        if (jsonData.has("participations")) {
+    public void importParticipants(final @NotNull ParticipantService participantService) {
+        if (jsonData.has("participants")) {
             final var counter = new AtomicInteger(0);
-            importerLog.info("Start importing participations...");
-            jsonData.getJSONArray("participations").forEach(object -> {
+            importerLog.info("Start importing participants...");
+            jsonData.getJSONArray("participants").forEach(object -> {
                 try {
                     final var jsonObject = (JSONObject) object;
                     final var eventId = UUID.fromString(jsonObject.getString("eventId"));
                     final var userId = UUID.fromString(jsonObject.getString("userId"));
                     final var registeredDate = parseDateTime(jsonObject.getString("registered"));
-                    final var participation =  new ParticipationDto(eventId, userId, registeredDate);
-                    participationService.storeParticipation(participation);
+                    final var participant =  new ParticipantDto(eventId, userId, registeredDate);
+                    participantService.storeParticipant(participant);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping participation '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping participant '%s': %s".formatted(object, e.getMessage()));
                 }
             });
-            importerLog.info("...finished importing %d participations.".formatted(counter.get()));
+            importerLog.info("...finished importing %d participants.".formatted(counter.get()));
         } else {
-            importerLog.warn("No participations found in JSON data.");
+            importerLog.warn("No participants found in JSON data.");
         }
     }
 

@@ -15,9 +15,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.domain.participation.control;
+package app.komunumo.domain.participant.control;
 
-import app.komunumo.data.db.tables.records.ParticipationRecord;
+import app.komunumo.data.db.tables.records.ParticipantRecord;
 import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
@@ -29,7 +29,7 @@ import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.event.entity.EventDto;
-import app.komunumo.domain.participation.entity.ParticipationDto;
+import app.komunumo.domain.participant.entity.ParticipantDto;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.util.LinkUtil;
@@ -46,10 +46,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static app.komunumo.data.db.tables.Participation.PARTICIPATION;
+import static app.komunumo.data.db.tables.Participant.PARTICIPANT;
 
 @Service
-public final class ParticipationService {
+public final class ParticipantService {
 
     @VisibleForTesting
     static final @NotNull String CONTEXT_KEY_EVENT = "event";
@@ -60,11 +60,11 @@ public final class ParticipationService {
     private final @NotNull ConfirmationService confirmationService;
     private final @NotNull TranslationProvider translationProvider;
 
-    public ParticipationService(final @NotNull DSLContext dsl,
-                                final @NotNull MailService mailService,
-                                final @NotNull UserService userService,
-                                final @NotNull ConfirmationService confirmationService,
-                                final @NotNull TranslationProvider translationProvider) {
+    public ParticipantService(final @NotNull DSLContext dsl,
+                              final @NotNull MailService mailService,
+                              final @NotNull UserService userService,
+                              final @NotNull ConfirmationService confirmationService,
+                              final @NotNull TranslationProvider translationProvider) {
         super();
         this.dsl = dsl;
         this.mailService = mailService;
@@ -76,7 +76,7 @@ public final class ParticipationService {
     public void startConfirmationProcess(final @NotNull EventDto event,
                                          final @NotNull Locale locale) {
         final var actionMessage = translationProvider.getTranslation(
-                "participation.control.ParticipationService.actionText", locale, event.title());
+                "participant.control.ParticipantService.actionText", locale, event.title());
         final ConfirmationHandler actionHandler = this::registerForEvent;
         final var actionContext = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var confirmationRequest = new ConfirmationRequest(
@@ -97,9 +97,9 @@ public final class ParticipationService {
                 .orElseGet(() -> userService.createAnonymousUserWithEmail(email));
 
         @SuppressWarnings("DataFlowIssue") // event and user objects are from the DB and are guaranteed to have an ID
-        final var participation = getParticipation(event, user) // try to get existing participation
-                .orElseGet(() -> new ParticipationDto(event.id(), user.id(), null));
-        storeParticipation(participation);
+        final var participant = getParticipant(event, user) // try to get existing participant
+                .orElseGet(() -> new ParticipantDto(event.id(), user.id(), null));
+        storeParticipant(participant);
 
         final var eventTitle = event.title();
         final var eventLink = LinkUtil.getLink(event);
@@ -109,50 +109,50 @@ public final class ParticipationService {
                 mailVariables, email);
 
         final var status = ConfirmationStatus.SUCCESS;
-        final var message = translationProvider.getTranslation("participation.control.ParticipationService.successMessage",
+        final var message = translationProvider.getTranslation("participant.control.ParticipantService.successMessage",
                 locale, eventTitle);
         return new ConfirmationResponse(status, message, eventLink);
     }
 
-    public void storeParticipation(final @NotNull ParticipationDto participation) {
-        final ParticipationRecord participationRecord = dsl.fetchOptional(PARTICIPATION,
-                        PARTICIPATION.EVENT_ID.eq(participation.eventId())
-                                .and(PARTICIPATION.USER_ID.eq(participation.userId())))
-                .orElse(dsl.newRecord(PARTICIPATION));
-        participationRecord.from(participation);
+    public void storeParticipant(final @NotNull ParticipantDto participant) {
+        final ParticipantRecord participantRecord = dsl.fetchOptional(PARTICIPANT,
+                        PARTICIPANT.EVENT_ID.eq(participant.eventId())
+                                .and(PARTICIPANT.USER_ID.eq(participant.userId())))
+                .orElse(dsl.newRecord(PARTICIPANT));
+        participantRecord.from(participant);
 
         final var now = ZonedDateTime.now(ZoneOffset.UTC);
-        if (participationRecord.getRegistered() == null) { // NOSONAR (false positive)
-            participationRecord.setRegistered(now);
+        if (participantRecord.getRegistered() == null) { // NOSONAR (false positive)
+            participantRecord.setRegistered(now);
         }
-        participationRecord.store();
+        participantRecord.store();
     }
 
-    public @NotNull List<@NotNull ParticipationDto> getAllParticipations() {
-        return dsl.selectFrom(PARTICIPATION)
-                .fetchInto(ParticipationDto.class);
+    public @NotNull List<@NotNull ParticipantDto> getAllParticipants() {
+        return dsl.selectFrom(PARTICIPANT)
+                .fetchInto(ParticipantDto.class);
     }
 
-    public @NotNull Optional<ParticipationDto> getParticipation(final @NotNull EventDto event,
-                                                                final @NotNull UserDto user) {
-        return dsl.selectFrom(PARTICIPATION)
-                .where(PARTICIPATION.EVENT_ID.eq(event.id())
-                        .and(PARTICIPATION.USER_ID.eq(user.id())))
-                .fetchOptionalInto(ParticipationDto.class);
+    public @NotNull Optional<ParticipantDto> getParticipant(final @NotNull EventDto event,
+                                                            final @NotNull UserDto user) {
+        return dsl.selectFrom(PARTICIPANT)
+                .where(PARTICIPANT.EVENT_ID.eq(event.id())
+                        .and(PARTICIPANT.USER_ID.eq(user.id())))
+                .fetchOptionalInto(ParticipantDto.class);
     }
 
-    public boolean deleteParticipation(final @NotNull ParticipationDto participation) {
-        return dsl.delete(PARTICIPATION)
-                .where(PARTICIPATION.EVENT_ID.eq(participation.eventId())
-                        .and(PARTICIPATION.USER_ID.eq(participation.userId())))
+    public boolean deleteParticipant(final @NotNull ParticipantDto participant) {
+        return dsl.delete(PARTICIPANT)
+                .where(PARTICIPANT.EVENT_ID.eq(participant.eventId())
+                        .and(PARTICIPANT.USER_ID.eq(participant.userId())))
                 .execute() > 0;
     }
 
     public int getParticipantsCount(final @NotNull UUID eventId) {
         return Optional.ofNullable(
                 dsl.selectCount()
-                        .from(PARTICIPATION)
-                        .where(PARTICIPATION.EVENT_ID.eq(eventId))
+                        .from(PARTICIPANT)
+                        .where(PARTICIPANT.EVENT_ID.eq(eventId))
                         .fetchOne(0, Integer.class)
         ).orElse(0);
     }
