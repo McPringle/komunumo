@@ -446,5 +446,31 @@
       "title": "Page with invalid language",
       "markdown": "This page has an invalid language code for integration tests."
     }
+  ],
+  "mailTemplates": [
+    {
+      "mailTemplateId": "ACCOUNT_REGISTRATION_SUCCESS",
+      "language": "en",
+      "subject": "Welcome to Komunumo!",
+      "markdown": "Hello {{name}},\n\nWelcome to Komunumo. We're glad to have you here!"
+    },
+    {
+      "mailTemplateId": "EVENT_REGISTRATION_SUCCESS",
+      "language": "de",
+      "subject": "Willkommen bei Komunumo!",
+      "markdown": "Hallo {{name}},\n\nWillkommen bei Komunumo. Wir freuen uns, dass du hier bist!"
+    },
+    {
+      "mailTemplateId": "TEST",
+      "language": "en",
+      "subject": "Password Reset Request",
+      "markdown": "Hello {{name}},\n\nTo reset your password, please click the following link: {{resetLink}}"
+    },
+    {
+      "mailTemplateId": "INVALID_TEMPLATE",
+      "language": "en",
+      "subject": "This should fail",
+      "markdown": "This template has an invalid ID"
+    }
   ]
 }

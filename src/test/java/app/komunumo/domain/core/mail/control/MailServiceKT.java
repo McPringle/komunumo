@@ -168,4 +168,46 @@ class MailServiceKT extends KaribuTest {
         }
     }
 
+    @Test
+    void storeMailTemplateCreatesNewTemplate() {
+        final var newTemplate = new app.komunumo.domain.core.mail.entity.MailTemplate(
+                MailTemplateId.TEST,
+                Locale.FRENCH,
+                "New test email",
+                "Hello,\n\nthis is a new test email from Komunumo Test.");
+
+        final var storedTemplate = mailService.storeMailTemplate(newTemplate);
+
+        assertThat(storedTemplate).isNotNull();
+        assertThat(storedTemplate.id()).isEqualTo(MailTemplateId.TEST);
+        assertThat(storedTemplate.language()).isEqualTo(Locale.FRENCH);
+        assertThat(storedTemplate.subject()).isEqualTo("New test email");
+        assertThat(storedTemplate.markdown()).isEqualTo("Hello,\n\nthis is a new test email from Komunumo Test.");
+
+        final var retrievedTemplate = mailService.getMailTemplate(MailTemplateId.TEST, Locale.FRENCH);
+        assertThat(retrievedTemplate).isNotEmpty();
+        assertThat(retrievedTemplate.orElseThrow().subject()).isEqualTo("New test email");
+    }
+
+    @Test
+    void storeMailTemplateUpdatesExistingTemplate() {
+        final var updatedTemplate = new app.komunumo.domain.core.mail.entity.MailTemplate(
+                MailTemplateId.TEST,
+                Locale.ENGLISH,
+                "Updated test mail",
+                "Hello,\n\nthis is an updated test mail from Komunumo Test.");
+
+        final var storedTemplate = mailService.storeMailTemplate(updatedTemplate);
+
+        assertThat(storedTemplate).isNotNull();
+        assertThat(storedTemplate.id()).isEqualTo(MailTemplateId.TEST);
+        assertThat(storedTemplate.language()).isEqualTo(Locale.ENGLISH);
+        assertThat(storedTemplate.subject()).isEqualTo("Updated test mail");
+        assertThat(storedTemplate.markdown()).isEqualTo("Hello,\n\nthis is an updated test mail from Komunumo Test.");
+
+        final var retrievedTemplate = mailService.getMailTemplate(MailTemplateId.TEST, Locale.ENGLISH);
+        assertThat(retrievedTemplate).isNotEmpty();
+        assertThat(retrievedTemplate.orElseThrow().subject()).isEqualTo("Updated test mail");
+    }
+
 }

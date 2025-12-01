@@ -21,6 +21,7 @@ import app.komunumo.KomunumoException;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.page.control.GlobalPageService;
@@ -45,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, 7 participants, and 3 global pages.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, 7 participants, 3 global pages, and 4 mail templates.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -150,6 +151,17 @@ class JSONImporterTest {
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importGlobalPages(mock(GlobalPageService.class));
+            assertThat(logCaptor.getWarnLogs()).contains(expectedMessage);
+        }
+    }
+
+    @Test
+    void testMailTemplatesNotFound() {
+        final var jsonUrl = "http://localhost:8082/import/no-data.json";
+        final var expectedMessage = "No mail templates found in JSON data.";
+        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
+            final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
+            importer.importMailTemplates(mock(MailService.class));
             assertThat(logCaptor.getWarnLogs()).contains(expectedMessage);
         }
     }
@@ -334,9 +346,31 @@ class JSONImporterTest {
     }
 
     @Test
+    void testImportMailTemplates() {
+        final var mailService = mock(MailService.class);
+        doThrow(new RuntimeException("Simulated failure"))
+                .when(mailService)
+                .storeMailTemplate(argThat(template -> "TEST".equals(template.id().name())));
+        final var jsonUrl = "http://localhost:8082/import/data.json";
+        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
+            final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
+            importer.importMailTemplates(mailService);
+            verify(mailService, times(3)).storeMailTemplate(any());
+            assertThat(logCaptor.getInfoLogs()).containsExactly(
+                    IDENTIFIED_COUNTS_MESSAGE,
+                    "Start importing mail templates...",
+                    "...finished importing 2 mail templates.");
+            assertThat(logCaptor.getWarnLogs()).containsExactly(
+                    "Failed to import mail template: Simulated failure",
+                    "Failed to import mail template: No enum constant app.komunumo.domain.core.mail.entity.MailTemplateId.INVALID_TEMPLATE");
+            assertThat(logCaptor.getErrorLogs()).isEmpty();
+        }
+    }
+
+    @Test
     void testNoData() {
         final var jsonUrl = "http://localhost:8082/import/no-data.json";
-        final var expectedMessage = "Identified 0 settings, 0 images, 0 users, 0 communities, 0 events, 0 members, 0 participants, and 0 global pages.";
+        final var expectedMessage = "Identified 0 settings, 0 images, 0 users, 0 communities, 0 events, 0 members, 0 participants, 0 global pages, and 0 mail templates.";
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             new JSONImporter(new ImporterLog(null), jsonUrl);
             assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);

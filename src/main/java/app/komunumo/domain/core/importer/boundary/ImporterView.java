@@ -24,6 +24,7 @@ import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.page.control.GlobalPageService;
+import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.user.control.UserService;
@@ -61,6 +62,7 @@ public final class ImporterView extends AbstractView {
     private final @NotNull EventService eventService;
     private final @NotNull ParticipantService participantService;
     private final @NotNull GlobalPageService globalPageService;
+    private final @NotNull MailService mailService;
 
     private final @NotNull UI ui;
     private final @NotNull TextField urlField;
@@ -80,7 +82,8 @@ public final class ImporterView extends AbstractView {
                         final @NotNull MemberService memberService,
                         final @NotNull EventService eventService,
                         final @NotNull ParticipantService participantService,
-                        final @NotNull GlobalPageService globalPageService) {
+                        final @NotNull GlobalPageService globalPageService,
+                        final @NotNull MailService mailService) {
         super(configurationService);
 
         this.configurationService = configurationService;
@@ -91,6 +94,7 @@ public final class ImporterView extends AbstractView {
         this.eventService = eventService;
         this.participantService = participantService;
         this.globalPageService = globalPageService;
+        this.mailService = mailService;
         this.ui = UI.getCurrent();
 
         final var uploadHandler = UploadHandler
@@ -172,6 +176,7 @@ public final class ImporterView extends AbstractView {
                     jsonImporter.importEvents(eventService);
                     jsonImporter.importParticipants(participantService);
                     jsonImporter.importGlobalPages(globalPageService);
+                    jsonImporter.importMailTemplates(mailService);
                 })
                 .thenRunAsync(() -> ui.access(() -> {
                     if (uploadFile != null) {
