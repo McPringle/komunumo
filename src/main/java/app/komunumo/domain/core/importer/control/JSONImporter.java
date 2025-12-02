@@ -26,6 +26,8 @@ import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.domain.participant.entity.ParticipantDto;
+import app.komunumo.domain.core.mail.entity.MailTemplate;
+import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
@@ -37,6 +39,7 @@ import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.page.control.GlobalPageService;
+import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.user.control.UserService;
@@ -90,7 +93,9 @@ public final class JSONImporter {
     }
 
     private void logJSONInfo(final @NotNull JSONObject jsonObject) {
-        importerLog.info("Identified %d settings, %d images, %d users, %d communities, %d events, %d members, %d participants, and %d global pages."
+        importerLog.info("""
+                Identified %d settings, %d images, %d users, %d communities, %d events, %d members, \
+                %d participants, %d global pages, and %d mail templates."""
                 .formatted(
                         countArrayItems(jsonObject, "settings"),
                         countArrayItems(jsonObject, "images"),
@@ -99,7 +104,8 @@ public final class JSONImporter {
                         countArrayItems(jsonObject, "events"),
                         countArrayItems(jsonObject, "members"),
                         countArrayItems(jsonObject, "participants"),
-                        countArrayItems(jsonObject, "globalPages")));
+                        countArrayItems(jsonObject, "globalPages"),
+                        countArrayItems(jsonObject, "mailTemplates")));
     }
 
     private static int countArrayItems(final @NotNull JSONObject jsonData,
@@ -331,6 +337,32 @@ public final class JSONImporter {
             importerLog.info("...finished importing %d global pages.".formatted(counter.get()));
         } else {
             importerLog.warn("No global pages found in JSON data.");
+        }
+    }
+
+    public void importMailTemplates(final @NotNull MailService mailService) {
+        if (jsonData.has("mailTemplates")) {
+            final var counter = new AtomicInteger(0);
+            importerLog.info("Start importing mail templates...");
+            jsonData.getJSONArray("mailTemplates").forEach(object -> {
+                try {
+                    final var jsonObject = (JSONObject) object;
+                    final var mailTemplateId = MailTemplateId.valueOf(jsonObject.getString("mailTemplateId"));
+                    final var language = Locale.forLanguageTag(jsonObject.getString("language"));
+                    final var subject = jsonObject.getString("subject").trim();
+                    final var markdown = jsonObject.getString("markdown").trim();
+
+                    final var mailTemplate = new MailTemplate(mailTemplateId, language, subject, markdown);
+
+                    mailService.storeMailTemplate(mailTemplate);
+                    counter.incrementAndGet();
+                } catch (final Exception e) {
+                    importerLog.warn("Failed to import mail template: %s".formatted(e.getMessage()));
+                }
+            });
+            importerLog.info("...finished importing %d mail templates.".formatted(counter.get()));
+        } else {
+            importerLog.warn("No mail templates found in JSON data.");
         }
     }
 

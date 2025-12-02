@@ -124,4 +124,19 @@ public final class MailService {
                 .fetchOptionalInto(MailTemplate.class);
     }
 
+    public @NotNull MailTemplate storeMailTemplate(final @NotNull MailTemplate mailTemplate) {
+        final var languageCode = LocaleUtil.getLanguageCode(mailTemplate.language());
+        final var mailTemplateRecord = dsl.selectFrom(MAIL_TEMPLATE)
+                .where(MAIL_TEMPLATE.ID.eq(mailTemplate.id().name()))
+                .and(MAIL_TEMPLATE.LANGUAGE.eq(languageCode))
+                .fetchOptional()
+                .orElse(dsl.newRecord(MAIL_TEMPLATE));
+        mailTemplateRecord.setId(mailTemplate.id().name());
+        mailTemplateRecord.setLanguage(languageCode);
+        mailTemplateRecord.setSubject(mailTemplate.subject());
+        mailTemplateRecord.setMarkdown(mailTemplate.markdown());
+        mailTemplateRecord.store();
+        return mailTemplateRecord.into(MailTemplate.class);
+    }
+
 }
