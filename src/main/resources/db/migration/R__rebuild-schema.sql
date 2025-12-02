@@ -1,6 +1,7 @@
 -- Drop table in opposite order to avoid foreign key constraints.
 
 DROP TABLE IF EXISTS global_page;
+DROP TABLE IF EXISTS participation;
 DROP TABLE IF EXISTS participant;
 DROP TABLE IF EXISTS event;
 DROP TABLE IF EXISTS member;
