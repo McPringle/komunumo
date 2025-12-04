@@ -712,4 +712,57 @@ class GlobalPageEditorDialogKT extends KaribuTest {
         }
     }
 
+    @Test
+    void editGlobalPage_checkHelp() {
+        final var ui = UI.getCurrent();
+        final var originalPage = globalPageService.getGlobalPage("imprint", ui.getLocale()).orElseThrow();
+
+        try {
+            // login as admin
+            final var testUser = getTestUser(UserRole.ADMIN);
+            login(testUser);
+
+            // important: navigate after login, so that the Vaadin request is updated
+            ui.navigate("page/imprint");
+
+            // verify that the page is loaded correctly
+            final var view = _get(GlobalPageView.class,
+                    spec -> spec.withClasses("global-page-view"));
+            assertThat(_get(view, Markdown.class).getContent()).startsWith("## Legal Notice");
+
+            // verify that a context menu is attached to the markdown content
+            final var pageContent = _get(HtmlContainer.class,
+                    spec -> spec.withClasses("global-page-content"));
+            final var markdownContent = _get(pageContent, Markdown.class);
+            final var contextMenu = view.getContextMenu();
+            assertThat(contextMenu).isNotNull();
+            assertThat(contextMenu.getTarget()).isSameAs(markdownContent);
+
+            // click the "Edit page content" menu item to open the editor dialog
+            final var i18nEdit = ui.getTranslation("page.boundary.GlobalPageView.edit");
+            final var editItem = contextMenu.getItems().stream()
+                    .filter(menuItem -> i18nEdit.equals(menuItem.getText()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Edit menu item not found"));
+            _click(editItem);
+
+            // check that the dialog opens correctly
+            final var dialog = _get(GlobalPageEditorDialog.class);
+            assertThat(dialog.isOpened()).isTrue();
+
+            // switch to the help tab
+            final var tabSheet = _get(dialog, TabSheet.class);
+            assertThat(tabSheet).isNotNull();
+            tabSheet.setSelectedIndex(2);
+
+            // check that the help has the correct initial content
+            final var markdown = findComponent(dialog, Markdown.class);
+            assertThat(markdown).isNotNull();
+            assertThat(markdown.getContent()).startsWith("## Rich Text Formatting");
+        } finally {
+            globalPageService.storeGlobalPage(originalPage);
+            SecurityContextHolder.clearContext();
+        }
+    }
+
 }

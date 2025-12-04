@@ -20,13 +20,15 @@ package app.komunumo.vaadin.components;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MarkdownEditorTest {
 
     @Test
     void setLabel() {
-        final var markdownEditor = new MarkdownEditor();
+        final var markdownEditor = new MarkdownEditor(Locale.ENGLISH);
         assertThat(markdownEditor.getLabel()).isNull();
         final var label = "Test Label";
         markdownEditor.setLabel(label);
@@ -35,7 +37,7 @@ class MarkdownEditorTest {
 
     @Test
     void setReadOnly() {
-        final var markdownEditor = new MarkdownEditor();
+        final var markdownEditor = new MarkdownEditor(Locale.ENGLISH);
         assertThat(markdownEditor.isReadOnly()).isFalse();
         markdownEditor.setReadOnly(true);
         assertThat(markdownEditor.isReadOnly()).isTrue();
@@ -45,7 +47,7 @@ class MarkdownEditorTest {
 
     @Test
     void setRequiredIndicatorVisible() {
-        final var markdownEditor = new MarkdownEditor();
+        final var markdownEditor = new MarkdownEditor(Locale.ENGLISH);
         assertThat(markdownEditor.isRequiredIndicatorVisible()).isFalse();
         markdownEditor.setRequiredIndicatorVisible(true);
         assertThat(markdownEditor.isRequiredIndicatorVisible()).isTrue();
@@ -55,7 +57,7 @@ class MarkdownEditorTest {
 
     @Test
     void setValueChangeMode() {
-        final var markdownEditor = new MarkdownEditor();
+        final var markdownEditor = new MarkdownEditor(Locale.ENGLISH);
         assertThat(markdownEditor.getValueChangeMode()).isEqualTo(ValueChangeMode.ON_CHANGE);
         markdownEditor.setValueChangeMode(ValueChangeMode.EAGER);
         assertThat(markdownEditor.getValueChangeMode()).isEqualTo(ValueChangeMode.EAGER);
@@ -65,13 +67,13 @@ class MarkdownEditorTest {
 
     @Test
     void getEmptyValue() {
-        final var markdownEditor = new MarkdownEditor();
+        final var markdownEditor = new MarkdownEditor(Locale.ENGLISH);
         assertThat(markdownEditor.getEmptyValue()).isEqualTo("");
     }
 
     @Test
     void generateModelValue() {
-        final var markdownEditor = new MarkdownEditor();
+        final var markdownEditor = new MarkdownEditor(Locale.ENGLISH);
         assertThat(markdownEditor.generateModelValue()).isEqualTo("");
         final var testValue = "Test Markdown Content";
         markdownEditor.setValue(testValue);

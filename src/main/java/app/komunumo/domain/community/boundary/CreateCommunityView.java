@@ -95,7 +95,7 @@ public class CreateCommunityView extends AbstractView {
         nameField.setMaxLength(255);
         nameField.setWidthFull();
 
-        final var descriptionField = new MarkdownEditor();
+        final var descriptionField = new MarkdownEditor(getLocale());
         descriptionField.addClassName("description-field");
         descriptionField.setValueChangeMode(ValueChangeMode.EAGER);
         descriptionField.setLabel(getTranslation("community.boundary.CreateCommunityView.label.description"));
