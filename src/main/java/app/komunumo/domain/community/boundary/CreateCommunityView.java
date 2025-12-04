@@ -26,6 +26,7 @@ import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
 import app.komunumo.util.SecurityUtil;
 import app.komunumo.vaadin.components.AbstractView;
+import app.komunumo.vaadin.components.MarkdownEditor;
 import app.komunumo.vaadin.components.ProfileField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
@@ -35,7 +36,6 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -95,7 +95,7 @@ public class CreateCommunityView extends AbstractView {
         nameField.setMaxLength(255);
         nameField.setWidthFull();
 
-        final var descriptionField = new TextArea();
+        final var descriptionField = new MarkdownEditor();
         descriptionField.addClassName("description-field");
         descriptionField.setValueChangeMode(ValueChangeMode.EAGER);
         descriptionField.setLabel(getTranslation("community.boundary.CreateCommunityView.label.description"));

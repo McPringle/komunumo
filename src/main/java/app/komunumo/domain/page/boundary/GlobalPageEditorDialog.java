@@ -15,13 +15,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package app.komunumo.domain.page.boundary;
 
-import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.domain.page.control.GlobalPageService;
-import app.komunumo.vaadin.components.PersistentNotification;
+import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.util.SecurityUtil;
+import app.komunumo.vaadin.components.MarkdownEditor;
+import app.komunumo.vaadin.components.PersistentNotification;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
@@ -30,11 +30,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.tabs.TabSheet;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.jetbrains.annotations.NotNull;
@@ -49,8 +45,7 @@ public class GlobalPageEditorDialog extends Dialog {
     private final @NotNull Consumer<GlobalPageDto> onSavedCallback;
 
     private final @NotNull TextField pageTitle;
-    private final @NotNull TextArea pageEditor;
-    private final @NotNull Markdown pagePreview;
+    private final @NotNull MarkdownEditor pageEditor;
 
     private final @NotNull Button saveButton;
 
@@ -76,39 +71,19 @@ public class GlobalPageEditorDialog extends Dialog {
 
         // TextField for editing title
         pageTitle = new TextField();
-        pageTitle.setLabel(getTranslation("page.boundary.GlobalPageEditorDialog.pageTitle"));
+        pageTitle.setPlaceholder(getTranslation("page.boundary.GlobalPageEditorDialog.pageTitle"));
         pageTitle.setValue(globalPage.title());
         pageTitle.setValueChangeMode(ValueChangeMode.EAGER);
         pageTitle.setWidthFull();
+        add(pageTitle);
 
-        // TextArea for editing markdown
-        pageEditor = new TextArea();
-        pageEditor.setLabel(getTranslation("page.boundary.GlobalPageEditorDialog.pageEditor"));
+        // MarkdownEditor for editing markdown
+        pageEditor = new MarkdownEditor();
+        pageEditor.setPlaceholder(getTranslation("page.boundary.GlobalPageEditorDialog.pageEditor"));
         pageEditor.setValue(globalPage.markdown());
         pageEditor.setValueChangeMode(ValueChangeMode.EAGER);
         pageEditor.setSizeFull();
-
-        // Layout to hold title and editor
-        final var editorLayout = new VerticalLayout(pageTitle, pageEditor);
-        editorLayout.setSizeFull();
-
-        // Markdown component for preview
-        pagePreview = new Markdown();
-
-        // Tab sheet to switch between edit and preview
-        final var tabSheet = new TabSheet();
-        tabSheet.add(getTranslation("page.boundary.GlobalPageEditorDialog.edit"), editorLayout);
-        tabSheet.add(getTranslation("page.boundary.GlobalPageEditorDialog.preview"), pagePreview);
-        tabSheet.setSizeFull();
-        add(tabSheet);
-
-        // Update preview when text area changes
-        tabSheet.addSelectedChangeListener(event -> {
-            final var previewLabelText = getTranslation("page.boundary.GlobalPageEditorDialog.preview");
-            if (event.getSelectedTab().getLabel().equals(previewLabelText)) {
-                pagePreview.setContent(pageEditor.getValue());
-            }
-        });
+        add(pageEditor);
 
         // Add cancel and save buttons to footer
         final var footer = getFooter();

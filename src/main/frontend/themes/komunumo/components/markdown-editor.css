@@ -16,13 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-.global-page-editor-dialog::part(overlay) {
-    width: 80vw;
-    height: 80vh;
+.markdown-editor {
+    padding: 0;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
-.global-page-editor-dialog::part(content) {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+.markdown-editor vaadin-tabsheet,
+.markdown-editor vaadin-text-area {
+    padding: 0;
+}
+
+.markdown-editor vaadin-tabsheet::part(content) {
+    padding: var(--lumo-space-s) 0 0 0;
 }

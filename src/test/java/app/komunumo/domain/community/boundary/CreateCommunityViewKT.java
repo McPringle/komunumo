@@ -19,15 +19,15 @@ package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.test.KaribuTest;
+import app.komunumo.vaadin.components.MarkdownEditor;
 import app.komunumo.vaadin.components.ProfileField;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +50,7 @@ public class CreateCommunityViewKT extends KaribuTest {
         final var nameField = _get(TextField.class, spec -> spec.withClasses("name-field"));
         assertThat(nameField).isNotNull();
 
-        final var descriptionField = _get(TextArea.class, spec -> spec.withClasses("description-field"));
+        final var descriptionField = _get(MarkdownEditor.class, spec -> spec.withClasses("description-field"));
         assertThat(descriptionField).isNotNull();
 
         final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
@@ -77,10 +77,12 @@ public class CreateCommunityViewKT extends KaribuTest {
         final var view = _get(CreateCommunityView.class);
         final var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
         final var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
+        final var description = _get(MarkdownEditor.class, spec -> spec.withClasses("description-field"));
         final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
 
         profile.setValue("@testCommunity");
         name.setValue("Test Community");
+        description.setValue("Test Community Description");
         assertThat(view.getBinder().isValid()).isTrue();
 
         createButton.click();
@@ -89,8 +91,8 @@ public class CreateCommunityViewKT extends KaribuTest {
                 .isEqualTo("communities/@testCommunity");
         assertThat(_get(H2.class, spec -> spec.withClasses("community-name")).getText())
                 .isEqualTo("Test Community");
-        assertThat(_get(Paragraph.class, spec -> spec.withClasses("community-profile")).getText())
-                .isEqualTo("@testCommunity");
+        assertThat(_get(Markdown.class, spec -> spec.withClasses("community-description")).getContent())
+                .isEqualTo("Test Community Description");
     }
 
     @Test
