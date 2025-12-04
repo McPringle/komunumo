@@ -78,7 +78,7 @@ public class GlobalPageEditorDialog extends Dialog {
         add(pageTitle);
 
         // MarkdownEditor for editing markdown
-        pageEditor = new MarkdownEditor();
+        pageEditor = new MarkdownEditor(getLocale());
         pageEditor.setPlaceholder(getTranslation("page.boundary.GlobalPageEditorDialog.pageEditor"));
         pageEditor.setValue(globalPage.markdown());
         pageEditor.setValueChangeMode(ValueChangeMode.EAGER);
