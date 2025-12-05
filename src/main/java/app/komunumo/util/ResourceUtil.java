@@ -37,6 +37,8 @@ public final class ResourceUtil {
         try (InputStream inputStream = openResourceStream(path)) {
             if (inputStream != null) {
                 returnValue = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            } else  {
+                LOGGER.warn("Resource not found: {}", path);
             }
         } catch (final IOException e) {
             LOGGER.warn(e.getMessage());
