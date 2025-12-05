@@ -41,8 +41,6 @@ public final class MarkdownEditor extends CustomField<String> implements HasValu
         super();
         addClassName("markdown-editor");
 
-        final var language = LocaleUtil.getLanguageCode(locale).toLowerCase(locale);
-
         // create editor
         editor = new TextArea();
         editor.setSizeFull();
@@ -54,29 +52,42 @@ public final class MarkdownEditor extends CustomField<String> implements HasValu
         // create help
         final Markdown help = new Markdown();
         help.setSizeFull();
-        help.setContent(ResourceUtil.getResourceAsString(HELP.formatted(language),
-                ResourceUtil.getResourceAsString(HELP_EN,
-                        getTranslation("vaadin.component.MarkdownEditor.help.error"))));
+
+        // get translated tab labels
+        final var editLabelText = getTranslation("vaadin.component.MarkdownEditor.edit");
+        final var previewLabelText = getTranslation("vaadin.component.MarkdownEditor.preview");
+        final var helpLabelText = getTranslation("vaadin.component.MarkdownEditor.help");
 
         // tab sheet to switch between edit and preview
         final var tabSheet = new TabSheet();
-        tabSheet.add(getTranslation("vaadin.component.MarkdownEditor.edit"), editor);
-        tabSheet.add(getTranslation("vaadin.component.MarkdownEditor.preview"), preview);
-        tabSheet.add(getTranslation("vaadin.component.MarkdownEditor.help"), help);
+        tabSheet.add(editLabelText, editor);
+        tabSheet.add(previewLabelText, preview);
+        tabSheet.add(helpLabelText, help);
         tabSheet.setSizeFull();
         add(tabSheet);
 
-        // update preview when text area changes
         tabSheet.addSelectedChangeListener(event -> {
-            final var previewLabelText = getTranslation("vaadin.component.MarkdownEditor.preview");
             if (event.getSelectedTab().getLabel().equals(previewLabelText)) {
+                // update preview when text area changes
                 preview.setContent(editor.getValue());
+            } else if (event.getSelectedTab().getLabel().equals(helpLabelText)) {
+                // load help content if not already loaded
+                if (help.getContent() == null) {
+                    help.setContent(loadHelpContent(locale));
+                }
             }
         });
 
         // propagate value changes from editor to the CustomField
         editor.addValueChangeListener(e ->
                 setModelValue(e.getValue(), e.isFromClient()));
+    }
+
+    private @NotNull String loadHelpContent(final @NotNull Locale locale) {
+        final var language = LocaleUtil.getLanguageCode(locale).toLowerCase(locale);
+        return ResourceUtil.getResourceAsString(HELP.formatted(language),
+                        ResourceUtil.getResourceAsString(HELP_EN,
+                                getTranslation("vaadin.component.MarkdownEditor.help.error")));
     }
 
     @Override

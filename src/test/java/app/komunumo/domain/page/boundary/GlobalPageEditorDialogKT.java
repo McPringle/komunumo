@@ -759,6 +759,15 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             final var markdown = findComponent(dialog, Markdown.class);
             assertThat(markdown).isNotNull();
             assertThat(markdown.getContent()).startsWith("## Rich Text Formatting");
+
+            // switch back to the edit tab
+            tabSheet.setSelectedIndex(0);
+
+            // switch to the help tab again
+            tabSheet.setSelectedIndex(2);
+
+            // check that the help still has the correct initial content
+            assertThat(markdown.getContent()).startsWith("## Rich Text Formatting");
         } finally {
             globalPageService.storeGlobalPage(originalPage);
             SecurityContextHolder.clearContext();
