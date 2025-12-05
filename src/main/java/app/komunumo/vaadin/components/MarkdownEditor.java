@@ -19,6 +19,8 @@ package app.komunumo.vaadin.components;
 
 import app.komunumo.util.LocaleUtil;
 import app.komunumo.util.ResourceUtil;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.tabs.TabSheet;
@@ -33,6 +35,10 @@ public final class MarkdownEditor extends CustomField<String> implements HasValu
 
     private static final @NotNull String HELP = "/META-INF/resources/files/editor-help-%s.md";
     private static final @NotNull String HELP_EN = HELP.formatted("en");
+    private static final @NotNull Cache<@NotNull String, @NotNull String> CACHE =
+            Caffeine.newBuilder()
+                    .maximumSize(100)
+                    .build();
 
     private final @NotNull TextArea editor;
     private final @NotNull Markdown preview;
@@ -85,9 +91,11 @@ public final class MarkdownEditor extends CustomField<String> implements HasValu
 
     private @NotNull String loadHelpContent(final @NotNull Locale locale) {
         final var language = LocaleUtil.getLanguageCode(locale).toLowerCase(locale);
-        return ResourceUtil.getResourceAsString(HELP.formatted(language),
+        return CACHE.get(language, _ ->
+                ResourceUtil.getResourceAsString(HELP.formatted(language),
                         ResourceUtil.getResourceAsString(HELP_EN,
-                                getTranslation("vaadin.component.MarkdownEditor.help.error")));
+                                getTranslation("vaadin.component.MarkdownEditor.help.error")))
+        );
     }
 
     @Override
