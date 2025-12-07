@@ -17,18 +17,18 @@
  */
 package app.komunumo.vaadin.components;
 
-import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.html.Div;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.shared.Registration;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public final class ProfileField extends Div implements HasValue<HasValue.ValueChangeEvent<String>, String> {
+public final class ProfileField extends CustomField<String> implements HasValueChangeMode {
 
     private static final String USERNAME_PATTERN = "[a-zA-Z0-9_]";
     private static final String DOMAIN_PATTERN = "[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}";
@@ -61,7 +61,7 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
 
         textField.setWidthFull();
         textField.setValueChangeMode(ValueChangeMode.EAGER);
-        textField.addValueChangeListener(_ -> {
+        textField.addValueChangeListener(valueChangeEvent -> {
             final var value = textField.getValue();
             if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
                 showErrorMessage(getTranslation("vaadin.components.ProfileField.errorLength", MIN_LENGTH, MAX_LENGTH));
@@ -70,6 +70,7 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
             } else {
                 showErrorMessage(getTranslation("vaadin.components.ProfileField.usernameNotAvailable"));
             }
+            setModelValue(valueChangeEvent.getValue(), valueChangeEvent.isFromClient());
         });
 
         add(textField, message);
@@ -88,13 +89,51 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
         message.addClassName("error");
     }
 
+    @Override
+    protected String generateModelValue() {
+        return textField.getValue();
+    }
+
+    @Override
+    protected void setPresentationValue(final String value) {
+        textField.setValue(value);
+    }
+
+    public void setPlaceholder(@Nullable final String placeholder) {
+        textField.setPlaceholder(placeholder);
+    }
+
+    public @Nullable String getPlaceholder() {
+        return textField.getPlaceholder();
+    }
+
+    @Override
+    public void setReadOnly(final boolean readOnly) {
+        textField.setReadOnly(readOnly);
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return textField.isReadOnly();
+    }
+
+    public void setRequired(final boolean required) {
+        setRequiredIndicatorVisible(required);
+    }
+
+    public boolean isRequired() {
+        return isRequiredIndicatorVisible();
+    }
+
+    @Override
     public String getValue() {
         if (textField.isReadOnly()) {
             return originalValue;
         }
-        return "@%s@%s".formatted(textField.getValue(), domainName);
+        return "@%s@%s".formatted(super.getValue(), domainName);
     }
 
+    @Override
     public void setValue(final @NotNull String value) {
         originalValue = value;
 
@@ -113,45 +152,22 @@ public final class ProfileField extends Div implements HasValue<HasValue.ValueCh
             return;
         }
 
-        textField.setValue(localPart);
-    }
-
-    public void setLabel(final @NotNull String label) {
-        textField.setLabel(label);
-    }
-
-
-    @Override
-    public Registration addValueChangeListener(final @NotNull ValueChangeListener<? super ValueChangeEvent<String>> valueChangeListener) {
-        return textField.addValueChangeListener(valueChangeListener);
+        super.setValue(localPart);
     }
 
     @Override
-    public void setReadOnly(final boolean readOnly) {
-        textField.setReadOnly(readOnly);
+    public @NotNull ValueChangeMode getValueChangeMode() {
+        return textField.getValueChangeMode();
     }
 
     @Override
-    public boolean isReadOnly() {
-        return textField.isReadOnly();
+    public void setValueChangeMode(final @NotNull ValueChangeMode valueChangeMode) {
+        textField.setValueChangeMode(valueChangeMode);
     }
 
     @Override
-    public void setRequiredIndicatorVisible(final boolean requiredIndicatorVisible) {
-        textField.setRequiredIndicatorVisible(requiredIndicatorVisible);
-    }
-
-    @Override
-    public boolean isRequiredIndicatorVisible() {
-        return textField.isRequiredIndicatorVisible();
-    }
-
-    public void setRequired(final boolean required) {
-        textField.setRequired(required);
-    }
-
-    public boolean isRequired() {
-        return textField.isRequired();
+    public String getEmptyValue() {
+        return "";
     }
 
     @FunctionalInterface

@@ -28,6 +28,7 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.data.value.HasValueChangeMode;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
@@ -108,8 +109,20 @@ public final class MarkdownEditor extends CustomField<String> implements HasValu
         editor.setValue(value);
     }
 
-    public void setPlaceholder(@NotNull final String placeholder) {
+    public void setPlaceholder(@Nullable final String placeholder) {
         editor.setPlaceholder(placeholder);
+    }
+
+    public @Nullable String getPlaceholder() {
+        return editor.getPlaceholder();
+    }
+
+    public void setRequired(final boolean required) {
+        setRequiredIndicatorVisible(required);
+    }
+
+    public boolean isRequired() {
+        return isRequiredIndicatorVisible();
     }
 
     @Override
@@ -120,16 +133,6 @@ public final class MarkdownEditor extends CustomField<String> implements HasValu
     @Override
     public boolean isReadOnly() {
         return editor.isReadOnly();
-    }
-
-    @Override
-    public void setRequiredIndicatorVisible(final boolean requiredIndicatorVisible) {
-        editor.setRequiredIndicatorVisible(requiredIndicatorVisible);
-    }
-
-    @Override
-    public boolean isRequiredIndicatorVisible() {
-        return editor.isRequiredIndicatorVisible();
     }
 
     @Override

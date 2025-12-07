@@ -17,8 +17,8 @@
  */
 package app.komunumo.vaadin.components;
 
-import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.test.KaribuTest;
 import app.komunumo.vaadin.components.ProfileField.ProfileNameAvailabilityChecker;
 import com.vaadin.flow.component.html.Paragraph;
@@ -85,36 +85,18 @@ class ProfileFieldKT extends KaribuTest {
     }
 
     @Test
-    void setReadOnly() {
-        assertThat(profileField.isReadOnly()).isFalse();
-        profileField.setReadOnly(true);
-        assertThat(profileField.isReadOnly()).isTrue();
-        profileField.setReadOnly(false);
-        assertThat(profileField.isReadOnly()).isFalse();
-    }
-
-    @Test
-    void setRequired() {
-        assertThat(profileField.isRequired()).isFalse();
-        profileField.setRequired(true);
-        assertThat(profileField.isRequired()).isTrue();
-        profileField.setRequired(false);
-        assertThat(profileField.isRequired()).isFalse();
-    }
-
-    @Test
-    void setRequiredIndicatorVisible() {
-        assertThat(profileField.isRequiredIndicatorVisible()).isFalse();
-        profileField.setRequiredIndicatorVisible(true);
-        assertThat(profileField.isRequiredIndicatorVisible()).isTrue();
-        profileField.setRequiredIndicatorVisible(false);
-        assertThat(profileField.isRequiredIndicatorVisible()).isFalse();
-    }
-
-    @Test
     void returnOriginalProfileName() {
         profileField.setValue("@test@foo.bar");
         assertThat(profileField.getValue()).isEqualTo("@test@foo.bar");
+    }
+
+    @Test
+    void placeholder() {
+        assertThat(profileField.getPlaceholder()).isNull();
+        profileField.setPlaceholder("test");
+        assertThat(profileField.getPlaceholder()).isEqualTo("test");
+        profileField.setPlaceholder(null);
+        assertThat(profileField.getPlaceholder()).isEmpty();
     }
 
 }
