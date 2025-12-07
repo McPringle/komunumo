@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 6 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, 7 participants, 3 global pages, and 4 mail templates.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 7 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, 7 participants, 3 global pages, and 4 mail templates.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -185,11 +185,11 @@ class JSONImporterTest {
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importSettings(configurationService);
-            verify(configurationService, times(3)).setConfiguration(any(), any(), any());
+            verify(configurationService, times(4)).setConfiguration(any(), any(), any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing settings...",
-                    "...finished importing 3 settings.");
+                    "...finished importing 4 settings.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
                     "Skipping setting 'instance.slogan' because it is language-dependent but no language was provided.",
                     "Skipping setting 'instance.custom.styles' because it is not language-dependent but a language was provided.",

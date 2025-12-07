@@ -1,6 +1,10 @@
 {
   "settings": [
     {
+      "setting": "instance.domain",
+      "value": "example.com"
+    },
+    {
       "setting": "instance.url",
       "value": "http://localhost:8080"
     },
