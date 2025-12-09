@@ -17,24 +17,32 @@
  */
 package app.komunumo.domain.community.boundary;
 
+import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.test.KaribuTest;
+import app.komunumo.vaadin.components.ImageUpload;
 import app.komunumo.vaadin.components.MarkdownEditor;
 import app.komunumo.vaadin.components.ProfileField;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.markdown.Markdown;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateCommunityViewKT extends KaribuTest {
+
+    @Autowired
+    private ImageService imageService;
 
     @Test
     void testView() {
@@ -70,7 +78,7 @@ public class CreateCommunityViewKT extends KaribuTest {
     }
 
     @Test
-    void testCreate_successfulSubmission() {
+    void testCreate_successfulSubmission_withoutImage() {
         login(getTestUser(UserRole.USER));
         UI.getCurrent().navigate(CreateCommunityView.class);
 
@@ -93,6 +101,75 @@ public class CreateCommunityViewKT extends KaribuTest {
                 .isEqualTo("Test Community");
         assertThat(_get(Markdown.class, spec -> spec.withClasses("community-description")).getContent())
                 .isEqualTo("Test Community Description");
+        assertThat(_find(Image.class, spec -> spec.withClasses("community-image")))
+                .isEmpty();
+    }
+
+    @Test
+    void testCreate_successfulSubmission_withImage() {
+        final var imageId = imageService.getAllImageIds().getFirst();
+        final var imageDto = imageService.getImage(imageId).orElseThrow();
+
+        login(getTestUser(UserRole.USER));
+        UI.getCurrent().navigate(CreateCommunityView.class);
+
+        final var view = _get(CreateCommunityView.class);
+        final var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
+        final var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
+        final var description = _get(MarkdownEditor.class, spec -> spec.withClasses("description-field"));
+        final var image = _get(ImageUpload.class, spec -> spec.withClasses("image-field"));
+        final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
+
+        profile.setValue("@testCommunity");
+        name.setValue("Test Community");
+        description.setValue("Test Community Description");
+        image.setValue(imageDto);
+        assertThat(view.getBinder().isValid()).isTrue();
+
+        createButton.click();
+
+        assertThat(UI.getCurrent().getActiveViewLocation().getPath())
+                .isEqualTo("communities/@testCommunity");
+        assertThat(_get(H2.class, spec -> spec.withClasses("community-name")).getText())
+                .isEqualTo("Test Community");
+        assertThat(_get(Markdown.class, spec -> spec.withClasses("community-description")).getContent())
+                .isEqualTo("Test Community Description");
+        assertThat(_get(Image.class, spec -> spec.withClasses("community-image")).getSrc())
+                .isEqualTo("/images/%s.svg".formatted(imageId));
+    }
+
+    @Test
+    void testCreate_successfulSubmission_setAndUnsetImage() {
+        final var imageId = imageService.getAllImageIds().getFirst();
+        final var imageDto = imageService.getImage(imageId).orElseThrow();
+
+        login(getTestUser(UserRole.USER));
+        UI.getCurrent().navigate(CreateCommunityView.class);
+
+        final var view = _get(CreateCommunityView.class);
+        final var profile = _get(ProfileField.class, spec -> spec.withClasses("profile-field"));
+        final var name = _get(TextField.class, spec -> spec.withClasses("name-field"));
+        final var description = _get(MarkdownEditor.class, spec -> spec.withClasses("description-field"));
+        final var image = _get(ImageUpload.class, spec -> spec.withClasses("image-field"));
+        final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
+
+        profile.setValue("@testCommunity");
+        name.setValue("Test Community");
+        description.setValue("Test Community Description");
+        image.setValue(imageDto);
+        image.setValue(null);
+        assertThat(view.getBinder().isValid()).isTrue();
+
+        createButton.click();
+
+        assertThat(UI.getCurrent().getActiveViewLocation().getPath())
+                .isEqualTo("communities/@testCommunity");
+        assertThat(_get(H2.class, spec -> spec.withClasses("community-name")).getText())
+                .isEqualTo("Test Community");
+        assertThat(_get(Markdown.class, spec -> spec.withClasses("community-description")).getContent())
+                .isEqualTo("Test Community Description");
+        assertThat(_find(Image.class, spec -> spec.withClasses("community-image")))
+                .isEmpty();
     }
 
     @Test

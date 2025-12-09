@@ -20,12 +20,14 @@ package app.komunumo.domain.community.boundary;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
 import app.komunumo.util.SecurityUtil;
 import app.komunumo.vaadin.components.AbstractView;
+import app.komunumo.vaadin.components.ImageUpload;
 import app.komunumo.vaadin.components.MarkdownEditor;
 import app.komunumo.vaadin.components.ProfileField;
 import com.vaadin.flow.component.Component;
@@ -54,16 +56,19 @@ public class CreateCommunityView extends AbstractView {
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull CommunityService communityService;
     private final @NotNull MemberService memberService;
+    private final @NotNull ImageService imageService;
 
     private final Binder<CommunityDto> binder = new Binder<>(CommunityDto.class);
 
     public CreateCommunityView(final @NotNull ConfigurationService configurationService,
                                final @NotNull CommunityService communityService,
-                               final @NotNull MemberService memberService) {
+                               final @NotNull MemberService memberService,
+                               final @NotNull ImageService imageService) {
         super(configurationService);
         this.configurationService = configurationService;
         this.communityService = communityService;
         this.memberService = memberService;
+        this.imageService = imageService;
 
         addClassName("create-community-view");
         add(new H2(getTranslation("community.boundary.CreateCommunityView.title")));
@@ -101,6 +106,11 @@ public class CreateCommunityView extends AbstractView {
         descriptionField.setLabel(getTranslation("community.boundary.CreateCommunityView.label.description"));
         descriptionField.setWidthFull();
 
+        final var imageField = new ImageUpload(imageService);
+        imageField.addClassName("image-field");
+        imageField.setLabel(getTranslation("community.boundary.CreateCommunityView.label.image"));
+        imageField.setWidthFull();
+
         binder.forField(profileField)
                 .asRequired(getTranslation("community.boundary.CreateCommunityView.validation.profile.required"))
                 .withValidator(communityService::isProfileNameAvailable,
@@ -111,26 +121,25 @@ public class CreateCommunityView extends AbstractView {
                 .asRequired(getTranslation("community.boundary.CreateCommunityView.validation.name.required"))
                 .bind(CommunityDto::name, null);
 
-        Button createButton = new Button(getTranslation("community.boundary.CreateCommunityView.createButton"), _ -> {
+        final var createButton = new Button(getTranslation("community.boundary.CreateCommunityView.createButton"), _ -> {
             var userPrincipalOptional = SecurityUtil.getUserPrincipal();
 
             if (userPrincipalOptional.isEmpty()) {
                 showNotification("community.boundary.CreateCommunityView.permissionError", NotificationVariant.LUMO_ERROR);
             } else if (binder.validate().isOk()) {
-                var communityDto = new CommunityDto(null, profileField.getValue(), null, null,
-                        nameField.getValue(), descriptionField.getValue(), null);
-
-                communityDto = communityService.storeCommunity(communityDto);
+                final var image = imageField.getValue();
+                final var imageId = image != null ? image.id() : null;
+                final var newCommunity = new CommunityDto(null, profileField.getValue(), null, null,
+                        nameField.getValue(), descriptionField.getValue(), imageId);
+                final var community = communityService.storeCommunity(newCommunity);
 
                 var userPrincipal = userPrincipalOptional.orElseThrow(NotFoundException::new);
                 var memberDto = new MemberDto(userPrincipal.getUserId(),
-                        Objects.requireNonNull(communityDto.id()), MemberRole.OWNER, null);
-
+                        Objects.requireNonNull(community.id()), MemberRole.OWNER, null);
                 memberService.storeMember(memberDto);
 
                 showNotification("community.boundary.CreateCommunityView.notification.success", NotificationVariant.LUMO_SUCCESS);
-
-                UI.getCurrent().navigate("communities/%s".formatted(communityDto.profile()));
+                UI.getCurrent().navigate("communities/%s".formatted(community.profile()));
 
             } else {
                 showNotification("community.boundary.CreateCommunityView.notification.error", NotificationVariant.LUMO_ERROR);
@@ -139,7 +148,7 @@ public class CreateCommunityView extends AbstractView {
 
         createButton.addClassName("create-button");
 
-        return new VerticalLayout(profileField, nameField, descriptionField, createButton);
+        return new VerticalLayout(profileField, nameField, descriptionField, imageField, createButton);
     }
 
     /**
