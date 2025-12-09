@@ -18,6 +18,7 @@
 package app.komunumo.domain.core.mail.control;
 
 import app.komunumo.domain.core.mail.entity.MailFormat;
+import app.komunumo.domain.core.mail.entity.MailTemplate;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.test.KaribuTest;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -170,44 +171,47 @@ class MailServiceKT extends KaribuTest {
 
     @Test
     void storeMailTemplateCreatesNewTemplate() {
-        final var newTemplate = new app.komunumo.domain.core.mail.entity.MailTemplate(
+        final var subjectFrench = "Nouvel e-mail test";
+        final var markdownFrench = "Bonjour,\n\nCeci est un nouvel e-mail test envoyé par Komunumo Test.";
+        final var newTemplate = new MailTemplate(
                 MailTemplateId.TEST,
                 Locale.FRENCH,
-                "New test email",
-                "Hello,\n\nthis is a new test email from Komunumo Test.");
+                subjectFrench,
+                markdownFrench);
 
         final var storedTemplate = mailService.storeMailTemplate(newTemplate);
-
         assertThat(storedTemplate).isNotNull();
         assertThat(storedTemplate.id()).isEqualTo(MailTemplateId.TEST);
         assertThat(storedTemplate.language()).isEqualTo(Locale.FRENCH);
-        assertThat(storedTemplate.subject()).isEqualTo("New test email");
-        assertThat(storedTemplate.markdown()).isEqualTo("Hello,\n\nthis is a new test email from Komunumo Test.");
+        assertThat(storedTemplate.subject()).isEqualTo(subjectFrench);
+        assertThat(storedTemplate.markdown()).isEqualTo(markdownFrench);
 
-        final var retrievedTemplate = mailService.getMailTemplate(MailTemplateId.TEST, Locale.FRENCH);
-        assertThat(retrievedTemplate).isNotEmpty();
-        assertThat(retrievedTemplate.orElseThrow().subject()).isEqualTo("New test email");
+        final var retrievedTemplate = mailService.getMailTemplate(MailTemplateId.TEST, Locale.FRENCH).orElseThrow();
+        assertThat(retrievedTemplate.subject()).isEqualTo(subjectFrench);
+        assertThat(retrievedTemplate.markdown()).isEqualTo(markdownFrench);
     }
 
     @Test
     void storeMailTemplateUpdatesExistingTemplate() {
-        final var updatedTemplate = new app.komunumo.domain.core.mail.entity.MailTemplate(
+        final var subjectEnglish = "Updated test mail";
+        final var markdownEnglish = "Hello,\n\nthis is an updated test mail from Komunumo Test.";
+        final var updatedTemplate = new MailTemplate(
                 MailTemplateId.TEST,
                 Locale.ENGLISH,
-                "Updated test mail",
-                "Hello,\n\nthis is an updated test mail from Komunumo Test.");
+                subjectEnglish,
+                markdownEnglish);
 
         final var storedTemplate = mailService.storeMailTemplate(updatedTemplate);
 
         assertThat(storedTemplate).isNotNull();
         assertThat(storedTemplate.id()).isEqualTo(MailTemplateId.TEST);
         assertThat(storedTemplate.language()).isEqualTo(Locale.ENGLISH);
-        assertThat(storedTemplate.subject()).isEqualTo("Updated test mail");
-        assertThat(storedTemplate.markdown()).isEqualTo("Hello,\n\nthis is an updated test mail from Komunumo Test.");
+        assertThat(storedTemplate.subject()).isEqualTo(subjectEnglish);
+        assertThat(storedTemplate.markdown()).isEqualTo(markdownEnglish);
 
-        final var retrievedTemplate = mailService.getMailTemplate(MailTemplateId.TEST, Locale.ENGLISH);
-        assertThat(retrievedTemplate).isNotEmpty();
-        assertThat(retrievedTemplate.orElseThrow().subject()).isEqualTo("Updated test mail");
+        final var retrievedTemplate = mailService.getMailTemplate(MailTemplateId.TEST, Locale.ENGLISH).orElseThrow();
+        assertThat(retrievedTemplate.subject()).isEqualTo(subjectEnglish);
+        assertThat(retrievedTemplate.markdown()).isEqualTo(markdownEnglish);
     }
 
 }
