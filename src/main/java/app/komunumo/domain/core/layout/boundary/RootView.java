@@ -17,7 +17,6 @@
  */
 package app.komunumo.domain.core.layout.boundary;
 
-import app.komunumo.domain.event.boundary.EventGridView;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -35,7 +34,7 @@ public final class RootView extends VerticalLayout implements BeforeEnterObserve
 
     @Override
     public void beforeEnter(final @NotNull BeforeEnterEvent beforeEnterEvent) {
-        beforeEnterEvent.forwardTo(EventGridView.class);
+        beforeEnterEvent.forwardTo(HomeView.class);
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,16 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+package app.komunumo.domain.event.boundary;
 
-.komunumo-grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: var(--lumo-space-m);
-}
+import app.komunumo.vaadin.components.KomunumoCard;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.html.H3;
 
-.komunumo-grid .komunumo-card {
-    width: unset;
+public final class MoreEventsCard extends KomunumoCard {
+    public MoreEventsCard() {
+
+        addClassName("more-events-card");
+
+        final var title = getTranslation(UI.getCurrent().getLocale(),
+                "event.boundary.MoreEventsCard.title");
+
+        final var titleElement = new H3(title);
+
+        add(titleElement);
+
+        addClickListener((_ -> UI.getCurrent().navigate("events")));
+    }
 }

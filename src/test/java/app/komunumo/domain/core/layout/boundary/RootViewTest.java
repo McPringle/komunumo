@@ -17,7 +17,6 @@
  */
 package app.komunumo.domain.core.layout.boundary;
 
-import app.komunumo.domain.event.boundary.EventGridView;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.verify;
 class RootViewTest {
 
     @Test
-    void shouldForwardToEventGridView() {
+    void shouldForwardToHomeView() {
         // Arrange
         var event = mock(BeforeEnterEvent.class);
         var view = new RootView();
@@ -36,7 +35,7 @@ class RootViewTest {
         view.beforeEnter(event);
 
         // Assert
-        verify(event).forwardTo(EventGridView.class);
+        verify(event).forwardTo(HomeView.class);
     }
 
 }
