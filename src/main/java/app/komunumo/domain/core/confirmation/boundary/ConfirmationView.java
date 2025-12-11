@@ -19,12 +19,10 @@ package app.komunumo.domain.core.confirmation.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.vaadin.components.AbstractView;
-import app.komunumo.vaadin.components.PersistentNotification;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.NotFoundException;
@@ -32,11 +30,11 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
+import static app.komunumo.util.NotificationUtil.showNotification;
+
 @Route(value = "confirm", layout = WebsiteLayout.class)
 @AnonymousAllowed
 public final class ConfirmationView extends AbstractView implements AfterNavigationObserver {
-
-    private static final int NOTIFICATION_DURATION = 10_000;
 
     private final transient @NotNull ConfirmationService confirmationService;
 
@@ -64,33 +62,19 @@ public final class ConfirmationView extends AbstractView implements AfterNavigat
 
         final var confirmationResult = confirmationService.confirm(confirmationId, getLocale());
         final var status = confirmationResult.confirmationStatus();
+        //noinspection ExtractMethodRecommender // readability improvementk
         final var message = confirmationResult.message();
         final var location = confirmationResult.location();
 
         // explicit switch expression to force compile error on status enum modification
         final Runnable checkStatus = switch (status) {
-            case SUCCESS -> () -> {
-                final var notification = new Notification(message);
-                notification.addThemeVariants(status.getNotificationVariant());
-                notification.setDuration(NOTIFICATION_DURATION);
-                notification.open();
+            case SUCCESS, WARNING -> () -> {
+                showNotification(message, status.getNotificationVariant());
                 if (!location.isBlank()) {
                     UI.getCurrent().navigate(location);
                 }
             };
-            case WARNING -> () -> {
-                final var notification = new PersistentNotification(message);
-                notification.addThemeVariants(status.getNotificationVariant());
-                notification.open();
-                if (!location.isBlank()) {
-                    UI.getCurrent().navigate(location);
-                }
-            };
-            case ERROR -> () -> {
-                final var notification = new PersistentNotification(message);
-                notification.addThemeVariants(status.getNotificationVariant());
-                notification.open();
-            };
+            case ERROR -> () -> showNotification(message, status.getNotificationVariant());
         };
         checkStatus.run();
     }

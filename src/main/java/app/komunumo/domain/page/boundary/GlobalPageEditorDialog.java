@@ -21,7 +21,6 @@ import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.util.SecurityUtil;
 import app.komunumo.vaadin.components.MarkdownEditor;
-import app.komunumo.vaadin.components.PersistentNotification;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
@@ -37,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
+
+import static app.komunumo.util.NotificationUtil.showNotification;
 
 public class GlobalPageEditorDialog extends Dialog {
 
@@ -112,16 +113,12 @@ public class GlobalPageEditorDialog extends Dialog {
                 saveButton.setEnabled(false);
                 close();
             } else {
-                final var message = getTranslation("page.boundary.GlobalPageEditorDialog.saveError");
-                final var notification = new PersistentNotification(message);
-                notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
-                notification.open();
+                showNotification(getTranslation("page.boundary.GlobalPageEditorDialog.saveError"),
+                        NotificationVariant.LUMO_WARNING);
             }
         } else {
-            final var message = getTranslation("page.boundary.GlobalPageEditorDialog.permissionError");
-            final var notification = new PersistentNotification(message);
-            notification.addThemeVariants(NotificationVariant.LUMO_WARNING);
-            notification.open();
+            showNotification(getTranslation("page.boundary.GlobalPageEditorDialog.permissionError"),
+                    NotificationVariant.LUMO_WARNING);
         }
     }
 

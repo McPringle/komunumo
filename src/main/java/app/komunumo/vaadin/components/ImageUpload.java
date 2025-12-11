@@ -26,7 +26,6 @@ import com.vaadin.flow.component.customfield.CustomField;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.upload.Upload;
@@ -41,6 +40,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+
+import static app.komunumo.util.NotificationUtil.showNotification;
 
 public final class ImageUpload extends CustomField<ImageDto> {
 
@@ -116,10 +117,8 @@ public final class ImageUpload extends CustomField<ImageDto> {
             setModelValue(currentImage, true);
         } catch (final IOException e) {
             LOGGER.error("Failed to store uploaded image file: {}", e.getMessage(), e);
-            final var errorMessage = getTranslation("vaadin.components.ImageUpload.storeError");
-            final var notification = Notification.show(errorMessage);
-            notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            notification.open();
+            showNotification(getTranslation("vaadin.components.ImageUpload.storeError"),
+                    NotificationVariant.LUMO_ERROR);
         }
     }
 

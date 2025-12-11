@@ -17,12 +17,12 @@
  */
 package app.komunumo.domain.core.confirmation.boundary;
 
-import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
+import app.komunumo.domain.event.boundary.EventGridView;
 import app.komunumo.test.KaribuTest;
 import app.komunumo.vaadin.components.PersistentNotification;
-import app.komunumo.domain.event.boundary.EventGridView;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;

@@ -33,9 +33,7 @@ import app.komunumo.vaadin.components.ProfileField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -48,6 +46,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Objects;
+
+import static app.komunumo.util.NotificationUtil.showNotification;
 
 @RolesAllowed("USER_LOCAL")
 @Route(value = "/communities/new", layout = WebsiteLayout.class)
@@ -125,7 +125,8 @@ public class CreateCommunityView extends AbstractView {
             var userPrincipalOptional = SecurityUtil.getUserPrincipal();
 
             if (userPrincipalOptional.isEmpty()) {
-                showNotification("community.boundary.CreateCommunityView.permissionError", NotificationVariant.LUMO_ERROR);
+                showNotification(getTranslation("community.boundary.CreateCommunityView.permissionError"),
+                        NotificationVariant.LUMO_ERROR);
             } else if (binder.validate().isOk()) {
                 final var image = imageField.getValue();
                 final var imageId = image != null ? image.id() : null;
@@ -138,31 +139,19 @@ public class CreateCommunityView extends AbstractView {
                         Objects.requireNonNull(community.id()), MemberRole.OWNER, null);
                 memberService.storeMember(memberDto);
 
-                showNotification("community.boundary.CreateCommunityView.notification.success", NotificationVariant.LUMO_SUCCESS);
+                showNotification(getTranslation("community.boundary.CreateCommunityView.notification.success"),
+                        NotificationVariant.LUMO_SUCCESS);
                 UI.getCurrent().navigate("communities/%s".formatted(community.profile()));
 
             } else {
-                showNotification("community.boundary.CreateCommunityView.notification.error", NotificationVariant.LUMO_ERROR);
+                showNotification(getTranslation("community.boundary.CreateCommunityView.notification.error"),
+                        NotificationVariant.LUMO_ERROR);
             }
         });
 
         createButton.addClassName("create-button");
 
         return new VerticalLayout(profileField, nameField, descriptionField, imageField, createButton);
-    }
-
-    /**
-     * <p>Utility method to show notification, given the messageKey to display as the message and NotificationVariant
-     * to define the type.</p>
-     *
-     * @param messageKey          the message key that will be shown in the notification
-     * @param notificationVariant the notification variant that will define the theme of the notification
-     */
-    private void showNotification(final @NotNull String messageKey, final @NotNull NotificationVariant notificationVariant) {
-        final var notification = new Notification(new Div(getTranslation(messageKey)));
-        notification.addThemeVariants(notificationVariant);
-        notification.setDuration(10_000);
-        notification.open();
     }
 
     /**
