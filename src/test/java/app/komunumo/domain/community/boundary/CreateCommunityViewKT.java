@@ -61,6 +61,9 @@ public class CreateCommunityViewKT extends KaribuTest {
         final var descriptionField = _get(MarkdownEditor.class, spec -> spec.withClasses("description-field"));
         assertThat(descriptionField).isNotNull();
 
+        final var imageField = _get(ImageUpload.class, spec -> spec.withClasses("image-field"));
+        assertThat(imageField).isNotNull();
+
         final var createButton = _get(Button.class, spec -> spec.withClasses("create-button"));
         assertThat(createButton).isNotNull();
     }
