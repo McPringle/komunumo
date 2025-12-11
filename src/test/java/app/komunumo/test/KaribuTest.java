@@ -132,6 +132,7 @@ public abstract class KaribuTest extends IntegrationTest {
      */
     @AfterEach
     public void tearDownMockVaadin() {
+        logout();
         MockVaadin.tearDown();
     }
 
