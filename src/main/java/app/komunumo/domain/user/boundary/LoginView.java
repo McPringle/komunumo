@@ -17,19 +17,19 @@
  */
 package app.komunumo.domain.user.boundary;
 
-import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.SecurityConfig;
-import app.komunumo.vaadin.components.AbstractView;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.layout.boundary.RootView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.util.LocationUtil;
+import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @AnonymousAllowed
 @Route(value = SecurityConfig.LOGIN_URL, layout = WebsiteLayout.class)
@@ -49,8 +49,13 @@ public final class LoginView extends AbstractView implements BeforeEnterObserver
     }
 
     @Override
-    public void beforeEnter(final @Nullable BeforeEnterEvent beforeEnterEvent) {
-        final var ui = UI.getCurrent();
-        loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui));
+    public void beforeEnter(final @NotNull BeforeEnterEvent beforeEnterEvent) {
+        final var loggedInUser = loginService.getLoggedInUser();
+        if (loggedInUser.isPresent()) {
+            beforeEnterEvent.forwardTo(RootView.class);
+        } else {
+            final var ui = UI.getCurrent();
+            loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui));
+        }
     }
 }

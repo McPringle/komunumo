@@ -17,13 +17,14 @@
  */
 package app.komunumo.domain.user.boundary;
 
-import app.komunumo.test.KaribuTest;
 import app.komunumo.domain.core.confirmation.boundary.ConfirmationDialog;
+import app.komunumo.test.KaribuTest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import org.junit.jupiter.api.Test;
 
+import static app.komunumo.domain.user.entity.UserRole.USER;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,6 +78,15 @@ class LoginViewKT extends KaribuTest {
         MockVaadin.clientRoundtrip();
 
         assertThat(loginDialog.isOpened()).isFalse();
+    }
+
+    @Test
+    void redirectWhenAlreadyLoggedIn() {
+        login(getTestUser(USER));
+        UI.getCurrent().navigate(LoginView.class);
+        MockVaadin.clientRoundtrip();
+        assertThat(KaribuTest.currentViewClass())
+                .isNotEqualTo(LoginView.class);
     }
 
 }
