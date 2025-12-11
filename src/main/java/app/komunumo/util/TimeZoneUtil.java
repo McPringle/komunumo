@@ -25,7 +25,7 @@ import java.time.ZoneId;
 
 public final class TimeZoneUtil {
 
-    private static final String SESSION_TIME_ZONE_KEY = "CLIENT_TIMEZONE_ID";
+    public static final String SESSION_TIME_ZONE_KEY = "CLIENT_TIMEZONE_ID";
 
     /**
      * <p>Detects the client's time zone and stores it in the current Vaadin session.</p>

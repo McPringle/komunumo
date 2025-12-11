@@ -23,6 +23,7 @@ import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -37,6 +38,11 @@ public final class TestUtil {
      */
     private static final @NotNull Pattern HTTP_LINK_PATTERN = Pattern.compile(
             "https?://\\S+", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * The time zone to use for tests (UTC).
+     */
+    public static final @NotNull ZoneId TEST_TIME_ZONE = ZoneId.of("UTC");
 
     /**
      * Extracts the first HTTP(S) link from the given text.

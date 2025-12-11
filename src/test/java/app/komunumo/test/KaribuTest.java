@@ -18,12 +18,12 @@
 package app.komunumo.test;
 
 import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.user.entity.UserDto;
-import app.komunumo.domain.user.entity.UserRole;
-import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserPrincipal;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
 import com.github.mvysny.fakeservlet.FakeRequest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.github.mvysny.kaributesting.v10.Routes;
@@ -32,6 +32,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.VaadinServletRequest;
+import com.vaadin.flow.server.VaadinSession;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterAll;
@@ -53,7 +54,11 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.stream.Stream;
+
+import static app.komunumo.test.TestUtil.TEST_TIME_ZONE;
+import static app.komunumo.util.TimeZoneUtil.SESSION_TIME_ZONE_KEY;
 
 /**
  * An abstract class which sets up Spring, Karibu-Testing and our app.
@@ -115,6 +120,11 @@ public abstract class KaribuTest extends IntegrationTest {
         final var servlet = new MockSpringServlet(routes, applicationContext, uiFactory);
         MockVaadin.setup(uiFactory, servlet);
         UI.getCurrent().setLocale(Locale.ENGLISH);
+
+        final var timeZone = TimeZone.getTimeZone(TEST_TIME_ZONE.getId());
+        TimeZone.setDefault(timeZone);
+        System.setProperty("user.timezone", timeZone.getID());
+        VaadinSession.getCurrent().setAttribute(SESSION_TIME_ZONE_KEY, TEST_TIME_ZONE);
     }
 
     /**
