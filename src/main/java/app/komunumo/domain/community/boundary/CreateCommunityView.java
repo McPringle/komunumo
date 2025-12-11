@@ -58,7 +58,7 @@ public class CreateCommunityView extends AbstractView {
     private final @NotNull MemberService memberService;
     private final @NotNull ImageService imageService;
 
-    private final Binder<CommunityDto> binder = new Binder<>(CommunityDto.class);
+    private final @NotNull Binder<CommunityDto> binder = new Binder<>(CommunityDto.class);
 
     public CreateCommunityView(final @NotNull ConfigurationService configurationService,
                                final @NotNull CommunityService communityService,
@@ -160,7 +160,7 @@ public class CreateCommunityView extends AbstractView {
      * @return the binder object
      */
     @VisibleForTesting
-    Binder<CommunityDto> getBinder() {
+    @NotNull Binder<CommunityDto> getBinder() {
         return binder;
     }
 
