@@ -22,6 +22,7 @@ import app.komunumo.data.db.tables.records.CommunityRecord;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.community.entity.CommunityWithImageDto;
 import app.komunumo.domain.core.image.entity.ImageDto;
+import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.jooq.UniqueIdGenerator;
 import app.komunumo.jooq.StorageService;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +36,8 @@ import java.util.UUID;
 import static app.komunumo.data.db.Tables.MEMBER;
 import static app.komunumo.data.db.tables.Community.COMMUNITY;
 import static app.komunumo.data.db.tables.Image.IMAGE;
+import static app.komunumo.domain.member.entity.MemberRole.ORGANIZER;
+import static app.komunumo.domain.member.entity.MemberRole.OWNER;
 
 @Service
 public final class CommunityService extends StorageService {
@@ -89,6 +92,16 @@ public final class CommunityService extends StorageService {
                 ));
     }
 
+    public @NotNull List<@NotNull CommunityDto> getCommunitiesForOrganizer(final @NotNull UserDto user) {
+        return dsl.select(COMMUNITY.fields())
+                .from(COMMUNITY)
+                .join(MEMBER).on(MEMBER.COMMUNITY_ID.eq(COMMUNITY.ID))
+                .where(MEMBER.USER_ID.eq(user.id())
+                        .and(MEMBER.ROLE.in(OWNER.name(), ORGANIZER.name())))
+                .orderBy(COMMUNITY.NAME)
+                .fetchInto(CommunityDto.class);
+    }
+
     public int getCommunityCount() {
         return Optional.ofNullable(
                 dsl.selectCount()
@@ -112,4 +125,7 @@ public final class CommunityService extends StorageService {
                 .execute() > 0;
     }
 
+    public boolean canCreateNewEvents(final @NotNull UserDto user) {
+        return !getCommunitiesForOrganizer(user).isEmpty();
+    }
 }

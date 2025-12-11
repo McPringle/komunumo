@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 7 settings, 4 images, 5 users, 7 communities, 7 events, 25 members, 7 participants, 3 global pages, and 4 mail templates.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 7 settings, 4 images, 6 users, 7 communities, 7 events, 25 members, 7 participants, 3 global pages, and 4 mail templates.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -232,11 +232,11 @@ class JSONImporterTest {
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importUsers(userService);
-            verify(userService, times(5)).storeUser(any());
+            verify(userService, times(6)).storeUser(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing users...",
-                    "...finished importing 4 users.");
+                    "...finished importing 5 users.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
                     "Skipping user '{\"imageId\":\"\",\"role\":\"USER\",\"profile\":\"@duplicate@example.com\",\"name\":\"Doris Duplicate\",\"bio\":\"User with duplicate email for integration tests\",\"type\":\"ANONYMOUS\",\"userId\":\"00000000-0000-0000-0000-000000000000\",\"email\":\"anonymous@example.com\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();

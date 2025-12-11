@@ -17,16 +17,25 @@
  */
 package app.komunumo.domain.community.boundary;
 
-import app.komunumo.test.KaribuTest;
+import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.event.boundary.EventCard;
 import app.komunumo.domain.event.boundary.EventGrid;
+import app.komunumo.domain.member.control.MemberService;
+import app.komunumo.domain.member.entity.MemberRole;
+import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.test.KaribuTest;
+import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.tabs.TabSheet;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.komunumo.test.TestUtil.findComponent;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
@@ -34,6 +43,15 @@ import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CommunityDetailViewKT extends KaribuTest {
+
+    @Autowired
+    private @NotNull CommunityService communityService;
+
+    @Autowired
+    private @NotNull UserService userService;
+
+    @Autowired
+    private MemberService memberService;
 
     @Test
     void communityWithImage() {
@@ -152,4 +170,70 @@ class CommunityDetailViewKT extends KaribuTest {
         assertThat(h2.getText()).isEqualTo("Page not found");
     }
 
+    @Test
+    void anonymousUserCannotCreateEvents() {
+        UI.getCurrent().navigate("communities/@demoCommunity1");
+
+        final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
+        assertThat(h2).isNotNull();
+        assertThat(h2.getText()).isEqualTo("Demo Community 1");
+        assertThat(_find(Button.class, spec -> spec.withText("Create Event"))).isEmpty();
+    }
+
+    @Test
+    void memberCannotCreateEvents() {
+        final var testUser = getMember("@demoCommunity1", MemberRole.MEMBER);
+        login(testUser);
+
+        UI.getCurrent().navigate("communities/@demoCommunity1");
+
+        final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
+        assertThat(h2).isNotNull();
+        assertThat(h2.getText()).isEqualTo("Demo Community 1");
+        assertThat(_find(Button.class, spec -> spec.withText("Create Event"))).isEmpty();
+    }
+
+    @Test
+    void organizerCanCreateEvents() {
+        final var testUser = getMember("@demoCommunity1", MemberRole.ORGANIZER);
+        login(testUser);
+
+        UI.getCurrent().navigate("communities/@demoCommunity1");
+
+        final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
+        assertThat(h2).isNotNull();
+        assertThat(h2.getText()).isEqualTo("Demo Community 1");
+
+        final var createEventButton = _get(Button.class, spec -> spec.withText("Create Event"));
+        createEventButton.click();
+        MockVaadin.clientRoundtrip();
+        assertThat(_find(H2.class, spec -> spec.withText("New Event"))).hasSize(1);
+    }
+
+    @Test
+    void ownerCanCreateEvents() {
+        final var testUser = getMember("@demoCommunity1", MemberRole.OWNER);
+        login(testUser);
+
+        UI.getCurrent().navigate("communities/@demoCommunity1");
+
+        final var h2 = _get(H2.class, spec -> spec.withClasses("community-name"));
+        assertThat(h2).isNotNull();
+        assertThat(h2.getText()).isEqualTo("Demo Community 1");
+
+        final var createEventButton = _get(Button.class, spec -> spec.withText("Create Event"));
+        createEventButton.click();
+        MockVaadin.clientRoundtrip();
+        assertThat(_find(H2.class, spec -> spec.withText("New Event"))).hasSize(1);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private @NotNull UserDto getMember(final @NotNull String communityProfile,
+                                       final @NotNull MemberRole memberRole) {
+        final var communityWithImage = communityService.getCommunityWithImage(communityProfile).orElseThrow();
+        final var communityId = communityWithImage.community().id();
+        assertThat(communityId).isNotNull();
+        final var member = memberService.getMembersByCommunityId(communityId, memberRole).getFirst();
+        return userService.getUserById(member.userId()).orElseThrow();
+    }
 }

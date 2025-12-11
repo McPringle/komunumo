@@ -17,19 +17,21 @@
  */
 package app.komunumo.domain.community.boundary;
 
+import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.community.entity.CommunityWithImageDto;
-import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.user.control.LoginService;
-import app.komunumo.domain.member.control.MemberService;
-import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.domain.event.boundary.CreateEventView;
 import app.komunumo.domain.event.boundary.EventGrid;
+import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.member.control.MemberService;
+import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.util.ImageUtil;
+import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Div;
@@ -41,6 +43,7 @@ import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.NotFoundException;
+import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 @Route(value = "communities/:profile", layout = WebsiteLayout.class)
 @AnonymousAllowed
@@ -183,6 +187,21 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
 
         tabEvents.setWidthFull();
         pageContent.add(tabEvents);
+
+        loginService.getLoggedInUser()
+                .ifPresent(
+                        user -> {
+                            if (communityService.canCreateNewEvents(user)) {
+                                pageContent.add(new Button(
+                                        getTranslation("community.boundary.CommunityDetailView.createEventButton"),
+                                        _ -> {
+                                    final var communityId = Objects.requireNonNull(community.id()).toString();
+                                    final var params = QueryParameters.of("communityId", communityId);
+                                    UI.getCurrent().navigate(CreateEventView.class, params);
+                                }));
+                            }
+                        }
+                );
     }
 
     private Component getUpcomingEventsComponent(final @NotNull CommunityDto community,

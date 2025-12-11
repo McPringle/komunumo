@@ -65,7 +65,7 @@ class DemoModeKT extends KaribuTest {
     @Test
     void resetDemoData() {
         assertThat(userService.getAdminCount()).isOne();
-        assertThat(userService.getUserCount()).isEqualTo(3);
+        assertThat(userService.getUserCount()).isEqualTo(4);
         assertThat(communityService.getCommunityCount()).isEqualTo(6);
         assertThat(eventService.getEventCount()).isEqualTo(6);
         assertThat(imageService.getImageCount()).isEqualTo(2);
@@ -79,7 +79,7 @@ class DemoModeKT extends KaribuTest {
         userService.storeUser(new UserDto(null, null, null,
                 "demoUser", "demo-user@example.com", "Demo User", "", null,
                 UserRole.USER, UserType.LOCAL));
-        assertThat(userService.getUserCount()).isEqualTo(4);
+        assertThat(userService.getUserCount()).isEqualTo(5);
 
         final var community = communityService.storeCommunity(new CommunityDto(null, "demoCommunity", null, null,
                 "Demo Community", "", null));
@@ -100,7 +100,7 @@ class DemoModeKT extends KaribuTest {
         demoMode.resetDemoData();
 
         assertThat(userService.getAdminCount()).isOne();
-        assertThat(userService.getUserCount()).isEqualTo(3);
+        assertThat(userService.getUserCount()).isEqualTo(4);
         assertThat(communityService.getCommunityCount()).isEqualTo(6);
         assertThat(eventService.getEventCount()).isEqualTo(6);
         assertThat(imageService.getImageCount()).isEqualTo(2);

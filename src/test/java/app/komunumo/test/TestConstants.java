@@ -34,6 +34,11 @@ public interface TestConstants {
     @NotNull UUID USER_ID_ADMIN = UUID.fromString("4a7c0871-915f-49d6-8182-9e1e8d253f79");
 
     /**
+     * UUID of the predefined member test user.
+     */
+    @NotNull UUID USER_ID_MEMBER = UUID.fromString("d56a84c8-e63c-4df4-a854-3af6fb11cdbf");
+
+    /**
      * UUID of the predefined remote test user.
      */
     @NotNull UUID USER_ID_REMOTE = UUID.fromString("e7d67a8e-26f5-427d-9339-bf81fe598b39");

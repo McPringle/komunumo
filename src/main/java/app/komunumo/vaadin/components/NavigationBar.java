@@ -17,6 +17,7 @@
  */
 package app.komunumo.vaadin.components;
 
+import app.komunumo.domain.event.boundary.CreateEventView;
 import app.komunumo.domain.user.control.RegistrationService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.page.control.GlobalPageService;
@@ -113,6 +114,10 @@ public final class NavigationBar extends HorizontalLayout {
         final var createCommunityItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.createCommunity"),
                 _ -> ui.navigate(CreateCommunityView.class));
 
+        // create event
+        final var createEventItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.createEvent"),
+                _ -> ui.navigate(CreateEventView.class));
+
         // dark theme toggle
         avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.toggleDarkMode"), _ -> ThemeUtil.toggleDarkMode());
 
@@ -135,6 +140,7 @@ public final class NavigationBar extends HorizontalLayout {
             registerItem.setVisible(registrationAllowed && !isLoggedIn);
             adminMenuItem.setVisible(isAdmin);
             createCommunityItem.setVisible(isLocalUser && createCommunityAllowed);
+            createEventItem.setVisible(isLocalUser);
         });
 
         return avatar;
