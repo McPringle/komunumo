@@ -208,6 +208,7 @@ public abstract class KaribuTest extends IntegrationTest {
      * @param type the user type to assign
      * @return the persisted {@link UserDto} instance representing the created user
      */
+    @SuppressWarnings("SameParameterValue")
     protected @NotNull UserDto createRandomUser(final @NotNull UserRole role,
                                                 final @NotNull UserType type) {
         final var email = getRandomEmailAddress();
