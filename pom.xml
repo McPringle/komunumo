@@ -80,7 +80,7 @@
         <jooq.version>3.20.10</jooq.version>
         <maven.version>3.9.9</maven.version>
         <mockito.version>5.21.0</mockito.version>
-        <vaadin.version>24.9.6</vaadin.version>
+        <vaadin.version>24.9.7</vaadin.version>
         <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
         <buildtype>SNAPSHOT</buildtype>
         <revision>1.0.0-${buildtype}.${maven.build.timestamp}</revision>
