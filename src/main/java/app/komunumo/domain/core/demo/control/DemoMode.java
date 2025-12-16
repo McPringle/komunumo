@@ -22,6 +22,7 @@ import app.komunumo.domain.core.importer.control.ImporterLog;
 import app.komunumo.domain.core.importer.control.JSONImporter;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.core.image.control.ImageService;
@@ -45,12 +46,13 @@ public final class DemoMode {
     private final @NotNull ImageService imageService;
     private final @NotNull CommunityService communityService;
     private final @NotNull EventService eventService;
+    private final @NotNull MemberService memberService;
     private final @NotNull ParticipantService participantService;
     private final @NotNull GlobalPageService globalPageService;
+    private final @NotNull MailService mailService;
 
     private final boolean enabled;
     private final @NotNull String jsonDataUrl;
-    private final MemberService memberService;
 
     @SuppressWarnings("checkstyle:ParameterNumber") // constructor injection
     public DemoMode(final @NotNull AppConfig appConfig,
@@ -61,19 +63,21 @@ public final class DemoMode {
                     final @NotNull EventService eventService,
                     final @NotNull MemberService memberService,
                     final @NotNull ParticipantService participantService,
-                    final @NotNull GlobalPageService globalPageService) {
+                    final @NotNull GlobalPageService globalPageService,
+                    final @NotNull MailService mailService) {
         this.configurationService = configurationService;
         this.userService = userService;
         this.imageService = imageService;
         this.communityService = communityService;
         this.eventService = eventService;
+        this.memberService = memberService;
         this.participantService = participantService;
         this.globalPageService = globalPageService;
+        this.mailService = mailService;
 
         final var demoConfig = appConfig.demo();
         this.enabled = demoConfig.enabled();
         this.jsonDataUrl = demoConfig.json();
-        this.memberService = memberService;
     }
 
     @Scheduled(cron = "0 0 * * * *")
@@ -108,6 +112,7 @@ public final class DemoMode {
         demoDataImporter.importMembers(memberService);
         demoDataImporter.importEvents(eventService);
         demoDataImporter.importGlobalPages(globalPageService);
+        demoDataImporter.importMailTemplates(mailService);
         LOGGER.info("Demo data imported.");
 
         LOGGER.info("Cleaning up orphaned image files...");

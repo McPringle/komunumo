@@ -18,13 +18,18 @@
 package app.komunumo.domain.demo.control;
 
 import app.komunumo.domain.community.entity.CommunityDto;
+import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.demo.control.DemoMode;
+import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventStatus;
 import app.komunumo.domain.event.entity.EventVisibility;
+import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.domain.core.image.entity.ImageDto;
+import app.komunumo.domain.participant.control.ParticipantService;
+import app.komunumo.domain.participant.entity.ParticipantDto;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
@@ -35,41 +40,67 @@ import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Locale;
+import java.util.UUID;
 
+import static app.komunumo.data.db.Tables.MAIL_TEMPLATE;
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DemoModeKT extends KaribuTest {
 
     @Autowired
-    private UserService userService;
+    private @NotNull ConfigurationService configurationService;
 
     @Autowired
-    private CommunityService communityService;
+    private @NotNull ImageService imageService;
 
     @Autowired
-    private EventService eventService;
+    private @NotNull UserService userService;
 
     @Autowired
-    private ImageService imageService;
+    private @NotNull CommunityService communityService;
 
     @Autowired
-    private GlobalPageService globalPageService;
+    private @NotNull MemberService memberService;
+
+    @Autowired
+    private @NotNull EventService eventService;
+
+    @Autowired
+    private @NotNull ParticipantService participantService;
+
+    @Autowired
+    private @NotNull GlobalPageService globalPageService;
+
+    @Autowired
+    private @NotNull MailService mailService;
+
+    @Autowired
+    private @NotNull DSLContext dsl;
 
     @Autowired
     private @NotNull DemoMode demoMode;
 
     @Test
     void resetDemoData() {
+        assertThat(configurationService.getConfigurationCount()).isEqualTo(4);
+        assertThat(imageService.getImageCount()).isEqualTo(2);
         assertThat(userService.getAdminCount()).isOne();
         assertThat(userService.getUserCount()).isEqualTo(4);
         assertThat(communityService.getCommunityCount()).isEqualTo(6);
+        assertThat(memberService.getMemberCount()).isEqualTo(24);
         assertThat(eventService.getEventCount()).isEqualTo(6);
-        assertThat(imageService.getImageCount()).isEqualTo(2);
+        assertThat(participantService.getParticipantCount()).isEqualTo(0);
         assertThat(globalPageService.getGlobalPageCount()).isEqualTo(2);
+        assertThat(mailService.getMailTemplateCount()).isEqualTo(12);
+
+        imageService.storeImage(new ImageDto(null, ContentType.IMAGE_PNG));
+        assertThat(imageService.getImageCount()).isEqualTo(3);
 
         userService.storeUser(new UserDto(null, null, null,
                 "demoAdmin", "demo-admin@example.com", "Demo Admin", "", null,
@@ -85,26 +116,43 @@ class DemoModeKT extends KaribuTest {
                 "Demo Community", "", null));
         assertThat(communityService.getCommunityCount()).isEqualTo(7);
 
+        memberService.getMembersByCommunityId(UUID.fromString("9a73690b-6dbd-456a-88e9-dc3f77b69aa0"))
+                .forEach(member -> memberService.deleteMember(member));
+        assertThat(memberService.getMemberCount()).isEqualTo(20);
+
         eventService.storeEvent(new EventDto(null, community.id(), null, null,
                 "Demo Event", "", "", null, null, null,
                 EventVisibility.PUBLIC, EventStatus.DRAFT));
         assertThat(eventService.getEventCount()).isEqualTo(7);
 
-        imageService.storeImage(new ImageDto(null, ContentType.IMAGE_PNG));
-        assertThat(imageService.getImageCount()).isEqualTo(3);
+        participantService.storeParticipant(
+                new ParticipantDto(
+                        requireNonNull(eventService.getEvents().getFirst().id()),
+                        requireNonNull(userService.getAllUsers().getFirst().id()),
+                        null));
+        assertThat(participantService.getParticipantCount()).isEqualTo(1);
 
         globalPageService.storeGlobalPage(new GlobalPageDto("demo", Locale.ENGLISH, null, null,
                 "Demo Page", "**Demo Page**"));
         assertThat(globalPageService.getGlobalPageCount()).isEqualTo(3);
 
+        dsl.deleteFrom(MAIL_TEMPLATE)
+                .where(MAIL_TEMPLATE.ID.eq("TEST"))
+                .execute();
+        assertThat(mailService.getMailTemplateCount()).isEqualTo(10);
+
         demoMode.resetDemoData();
 
+        assertThat(configurationService.getConfigurationCount()).isEqualTo(4);
+        assertThat(imageService.getImageCount()).isEqualTo(2);
         assertThat(userService.getAdminCount()).isOne();
         assertThat(userService.getUserCount()).isEqualTo(4);
         assertThat(communityService.getCommunityCount()).isEqualTo(6);
+        assertThat(memberService.getMemberCount()).isEqualTo(24);
         assertThat(eventService.getEventCount()).isEqualTo(6);
-        assertThat(imageService.getImageCount()).isEqualTo(2);
+        assertThat(participantService.getParticipantCount()).isEqualTo(0);
         assertThat(globalPageService.getGlobalPageCount()).isEqualTo(2);
+        assertThat(mailService.getMailTemplateCount()).isEqualTo(12);
     }
 
 }

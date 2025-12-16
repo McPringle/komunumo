@@ -465,20 +465,26 @@
     {
       "mailTemplateId": "ACCOUNT_REGISTRATION_SUCCESS",
       "language": "en",
-      "subject": "Welcome to Komunumo!",
-      "markdown": "Hello {{name}},\n\nWelcome to Komunumo. We're glad to have you here!"
+      "subject": "Your new local account is ready",
+      "markdown": "Hello,\n\nWelcome to ${instanceName}! You have successfully created a new local account with us.\n\nThank you for trusting us!\n${instanceName}"
     },
     {
-      "mailTemplateId": "EVENT_REGISTRATION_SUCCESS",
+      "mailTemplateId": "ACCOUNT_REGISTRATION_SUCCESS",
       "language": "de",
-      "subject": "Willkommen bei Komunumo!",
-      "markdown": "Hallo {{name}},\n\nWillkommen bei Komunumo. Wir freuen uns, dass du hier bist!"
+      "subject": "Dein neues lokales Konto ist bereit",
+      "markdown": "Hallo,\n\nherzlich willkommen bei ${instanceName}! Du hast erfolgreich ein neues lokales Konto bei uns erstellt.\n\nVielen Dank für dein Vertrauen!\n${instanceName}"
     },
     {
       "mailTemplateId": "TEST",
       "language": "en",
-      "subject": "Password Reset Request",
-      "markdown": "Hello {{name}},\n\nTo reset your password, please click the following link: {{resetLink}}"
+      "subject": "Test mail",
+      "markdown": "Hello,\n\nthis is a test mail from ${instanceName}."
+    },
+    {
+      "mailTemplateId": "TEST",
+      "language": "de",
+      "subject": "Testmail",
+      "markdown": "Hallo,\n\ndies ist eine Testmail von ${instanceName}."
     },
     {
       "mailTemplateId": "INVALID_TEMPLATE",

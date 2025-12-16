@@ -18,20 +18,20 @@
 package app.komunumo.domain.member.control;
 
 import app.komunumo.domain.community.entity.CommunityDto;
+import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
+import app.komunumo.domain.core.confirmation.control.ConfirmationService;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
+import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.domain.core.mail.control.MailService;
-import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
-import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
-import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -128,6 +128,19 @@ public final class MemberService {
                 .fetchInto(MemberDto.class);
     }
 
+    /**
+     * <p>Counts the total number of members.</p>
+     *
+     * @return The total count of members; never negative.
+     */
+    public int getMemberCount() {
+        return Optional.ofNullable(
+                dsl.selectCount()
+                        .from(MEMBER)
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
+
     public int getMemberCount(final @Nullable UUID communityId) {
         return dsl.fetchCount(MEMBER, MEMBER.COMMUNITY_ID.eq(communityId));
     }
@@ -198,10 +211,10 @@ public final class MemberService {
                 });
     }
 
-    public boolean deleteMember(final @NotNull MemberDto communityOwner) {
+    public boolean deleteMember(final @NotNull MemberDto member) {
         return dsl.delete(MEMBER)
-                .where(MEMBER.USER_ID.eq(communityOwner.userId())
-                        .and(MEMBER.COMMUNITY_ID.eq(communityOwner.communityId())))
+                .where(MEMBER.USER_ID.eq(member.userId())
+                        .and(MEMBER.COMMUNITY_ID.eq(member.communityId())))
                 .execute() > 0;
     }
 

@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 7 settings, 4 images, 6 users, 7 communities, 7 events, 25 members, 7 participants, 3 global pages, and 4 mail templates.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 7 settings, 4 images, 6 users, 7 communities, 7 events, 25 members, 7 participants, 3 global pages, and 5 mail templates.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -355,13 +355,14 @@ class JSONImporterTest {
         try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
             final var importer = new JSONImporter(new ImporterLog(null), jsonUrl);
             importer.importMailTemplates(mailService);
-            verify(mailService, times(3)).storeMailTemplate(any());
+            verify(mailService, times(4)).storeMailTemplate(any());
             assertThat(logCaptor.getInfoLogs()).containsExactly(
                     IDENTIFIED_COUNTS_MESSAGE,
                     "Start importing mail templates...",
                     "...finished importing 2 mail templates.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import mail template: Simulated failure",
+                    "Failed to import mail template: Simulated failure", // TEST EN
+                    "Failed to import mail template: Simulated failure",          // TEST DE
                     "Failed to import mail template: No enum constant app.komunumo.domain.core.mail.entity.MailTemplateId.INVALID_TEMPLATE");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }

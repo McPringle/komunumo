@@ -67,6 +67,19 @@ public class ConfigurationService {
     }
 
     /**
+     * <p>Counts the total number of configurations.</p>
+     *
+     * @return The total count of configurations; never negative.
+     */
+    public int getConfigurationCount() {
+        return Optional.ofNullable(
+                dsl.selectCount()
+                        .from(CONFIG)
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
+
+    /**
      * <p>Returns the configuration value as a string for a language-independent setting.</p>
      *
      * @param setting the configuration setting

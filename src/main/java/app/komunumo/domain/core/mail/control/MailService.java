@@ -139,4 +139,16 @@ public final class MailService {
         return mailTemplateRecord.into(MailTemplate.class);
     }
 
+    /**
+     * <p>Counts the total number of mail templates.</p>
+     *
+     * @return The total count of mail templates; never negative.
+     */
+    public int getMailTemplateCount() {
+        return Optional.ofNullable(
+                dsl.selectCount()
+                        .from(MAIL_TEMPLATE)
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
 }
