@@ -48,7 +48,7 @@ error-screenshots/
 /dist/
 /nbdist/
 /.nb-gradle/
-.nb-configuration.xml
+nb-configuration.xml
 
 # VS Code
 /.vscode/
