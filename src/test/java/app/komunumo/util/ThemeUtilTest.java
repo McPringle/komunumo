@@ -106,6 +106,24 @@ class ThemeUtilTest {
     }
 
     @Test
+    void testInitializeDarkModeDoesNothingIfNotSet() {
+        try (MockedStatic<LocalStorageUtil> mockedLocalStorage = mockStatic(LocalStorageUtil.class)) {
+            mockedLocalStorage.when(() -> LocalStorageUtil.getBoolean(eq("dark-mode"), anyBoolean(), any())
+            ).thenAnswer(invocation -> {
+                final var callback = invocation.<Consumer<Boolean>>getArgument(2);
+                callback.accept(false);
+                return null;
+            });
+
+            when(themeListMock.contains(Lumo.DARK)).thenReturn(false);
+
+            ThemeUtil.initializeDarkMode();
+
+            verify(themeListMock, never()).add(Lumo.DARK);
+        }
+    }
+
+    @Test
     void testInitializeDarkModeDoesNothingIfAlreadyActive() {
         try (MockedStatic<LocalStorageUtil> mockedLocalStorage = mockStatic(LocalStorageUtil.class)) {
             mockedLocalStorage.when(() ->
