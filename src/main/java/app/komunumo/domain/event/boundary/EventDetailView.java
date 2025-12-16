@@ -116,7 +116,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        @SuppressWarnings("DataFlowIssue") final var participantCount = this.participantService.getParticipantsCount(event.id());
+        @SuppressWarnings("DataFlowIssue") final var participantCount = this.participantService.getParticipantCount(event.id());
         final var participantParagraph = new Paragraph(getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
         participantParagraph.addClassName("event-participant-count");
         pageContent.add(participantParagraph);

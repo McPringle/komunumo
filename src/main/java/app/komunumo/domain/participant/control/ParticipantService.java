@@ -148,7 +148,25 @@ public final class ParticipantService {
                 .execute() > 0;
     }
 
-    public int getParticipantsCount(final @NotNull UUID eventId) {
+    /**
+     * <p>Counts the total number of participants.</p>
+     *
+     * @return The total count of participants; never negative.
+     */
+    public int getParticipantCount() {
+        return Optional.ofNullable(
+                dsl.selectCount()
+                        .from(PARTICIPANT)
+                        .fetchOne(0, Integer.class)
+        ).orElse(0);
+    }
+
+    /**
+     * <p>Counts the total number of participants of the specified event.</p>
+     *
+     * @return The total count of participants of the event; never negative.
+     */
+    public int getParticipantCount(final @NotNull UUID eventId) {
         return Optional.ofNullable(
                 dsl.selectCount()
                         .from(PARTICIPANT)
