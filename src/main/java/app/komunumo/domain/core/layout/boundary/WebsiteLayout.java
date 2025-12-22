@@ -35,12 +35,14 @@ import com.vaadin.flow.component.html.Main;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.RouterLayout;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_SLOGAN;
 
+@AnonymousAllowed
 public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnterObserver {
 
     private final @NotNull Main main;
