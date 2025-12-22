@@ -18,7 +18,7 @@
 package app.komunumo.util;
 
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.component.page.ColorScheme;
 
 public final class ThemeUtil {
 
@@ -34,18 +34,15 @@ public final class ThemeUtil {
     }
 
     public static boolean isDarkModeActive() {
-        return UI.getCurrent().getElement().getThemeList().contains(Lumo.DARK);
+        return ColorScheme.Value.DARK.equals(UI.getCurrentOrThrow()
+                .getPage()
+                .getColorScheme());
     }
 
     public static void toggleDarkMode() {
-        final var themeList = UI.getCurrent().getElement().getThemeList();
-        if (isDarkModeActive()) {
-            themeList.remove(Lumo.DARK);
-            LocalStorageUtil.setBoolean(DARK_MODE, false);
-        } else {
-            themeList.add(Lumo.DARK);
-            LocalStorageUtil.setBoolean(DARK_MODE, true);
-        }
+        UI.getCurrentOrThrow()
+                .getPage()
+                .setColorScheme(isDarkModeActive() ? ColorScheme.Value.LIGHT : ColorScheme.Value.DARK);
     }
 
 
