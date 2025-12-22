@@ -80,7 +80,7 @@
         <jooq.version>3.20.10</jooq.version>
         <maven.version>3.9.9</maven.version>
         <mockito.version>5.21.0</mockito.version>
-        <vaadin.version>24.9.7</vaadin.version>
+        <vaadin.version>25.0.0</vaadin.version>
         <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
         <buildtype>SNAPSHOT</buildtype>
         <revision>1.0.0-${buildtype}.${maven.build.timestamp}</revision>
@@ -120,21 +120,11 @@
             <!-- Replace artifactId with vaadin to use commercial components -->
             <!-- Replace artifactId with vaadin-core to use only free components -->
             <artifactId>vaadin-core</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.vaadin</groupId>
-                    <artifactId>hilla-dev</artifactId>
-                </exclusion>
-                <exclusion> <!-- TODO CVE-2025-48924 -->
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-        <dependency> <!-- TODO CVE-2025-48924 -->
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.20.0</version>
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-dev</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
