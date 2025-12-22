@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-.confirmation-dialog {
+.confirmation-dialog::part(overlay) {
     width: 30em;
 }
 
@@ -29,7 +29,7 @@
 }
 
 @media (max-width: 600px) {
-    .confirmation-dialog {
+    .confirmation-dialog::part(overlay) {
         width: 90vw;
         height: 100vh;
         padding: 0;
