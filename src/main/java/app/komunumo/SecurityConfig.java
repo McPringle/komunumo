@@ -70,6 +70,7 @@ public class SecurityConfig {
                 .requestMatchers(
                         "/.well-known/**",
                         "/actuator/health",
+                        "/css/**",
                         "/images/**"
                 ).permitAll()
         );

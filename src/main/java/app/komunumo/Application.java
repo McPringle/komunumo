@@ -17,16 +17,16 @@
  */
 package app.komunumo;
 
-import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.image.boundary.ImageServlet;
+import app.komunumo.domain.core.image.control.ImageService;
+import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.server.AppShellSettings;
 import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.theme.Theme;
 import jakarta.servlet.http.HttpServlet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.SpringApplication;
@@ -46,7 +46,7 @@ import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTAN
  * The entry point of the Spring Boot application.
  */
 @Push
-@Theme(value = "komunumo")
+@StyleSheet("css/styles.css")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes, viewport-fit=cover")
 @PWA(name = "Komunumo - Open Source Community Manager", shortName = "Komunumo")
 @EnableScheduling
