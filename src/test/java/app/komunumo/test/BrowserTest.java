@@ -234,15 +234,12 @@ public abstract class BrowserTest extends IntegrationTest {
         page.waitForURL("**/login");
         page.waitForSelector(getInstanceNameSelector());
 
-        // wait for login dialog to appear
-        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
-                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
-        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        // wait for email field to appear
+        final var emailInput = page.locator("vaadin-email-field input");
+        emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         captureScreenshot("login_empty-dialog");
 
         // fill in email address
-        final var emailInput = page.locator("vaadin-email-field").locator("input");
         emailInput.fill(user.email());
         captureScreenshot("login_email-field-set");
 
