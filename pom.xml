@@ -192,11 +192,6 @@
             <artifactId>mariadb-java-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mariadb</artifactId>
-            <version>1.21.4</version>
-        </dependency>
-        <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq</artifactId>
             <version>${jooq.version}</version>
@@ -254,20 +249,18 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>1.21.4</version>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion> <!-- TODO CVE-2024-25710, CVE-2024-26308 -->
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-compress</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-        <dependency> <!-- TODO CVE-2024-25710, CVE-2024-26308 -->
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.28.0</version>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-jdbc</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-mariadb</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
@@ -882,14 +875,14 @@
                 <configuration>
                     <jdbc>
                         <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
-                        <url>jdbc:tc:mariadb:lts:///ignored?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/migration/R__rebuild-schema.sql</url>
+                        <url>jdbc:tc:mariadb:lts:///jooq?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/migration/R__rebuild-schema.sql</url>
                         <user>test</user>
                         <password>test</password>
                     </jdbc>
                     <generator>
                         <database>
                             <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
-                            <inputSchema>test</inputSchema>
+                            <inputSchema>jooq</inputSchema>
                             <outputSchemaToDefault>true</outputSchemaToDefault>
                             <forcedTypes>
                                 <forcedType>
@@ -953,6 +946,26 @@
                         <groupId>org.jooq</groupId>
                         <artifactId>jooq-meta-extensions</artifactId>
                         <version>${jooq.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers</artifactId>
+                        <version>${testcontainers.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers-jdbc</artifactId>
+                        <version>${testcontainers.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.testcontainers</groupId>
+                        <artifactId>testcontainers-mariadb</artifactId>
+                        <version>${testcontainers.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.mariadb.jdbc</groupId>
+                        <artifactId>mariadb-java-client</artifactId>
+                        <version>${mariadb.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
