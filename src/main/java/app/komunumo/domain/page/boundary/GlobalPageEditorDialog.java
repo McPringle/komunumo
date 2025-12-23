@@ -24,6 +24,7 @@ import app.komunumo.vaadin.components.MarkdownEditor;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;
+import com.vaadin.flow.component.ModalityMode;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -58,7 +59,7 @@ public class GlobalPageEditorDialog extends Dialog {
         this.globalPage = globalPage;
         this.onSavedCallback = onSavedCallback;
 
-        setModal(true);
+        setModality(ModalityMode.STRICT);
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
 

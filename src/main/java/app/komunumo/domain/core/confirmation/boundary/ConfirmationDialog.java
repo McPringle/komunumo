@@ -20,6 +20,7 @@ package app.komunumo.domain.core.confirmation.boundary;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
 import app.komunumo.util.SecurityUtil;
+import com.vaadin.flow.component.ModalityMode;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -44,7 +45,7 @@ public final class ConfirmationDialog extends Dialog {
 
         setCloseOnEsc(true);
         setCloseOnOutsideClick(true);
-        setModal(true);
+        setModality(ModalityMode.STRICT);
         setDraggable(false);
         setResizable(false);
 
