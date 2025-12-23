@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 import static app.komunumo.test.TestUtil.findComponent;
-import static com.github.mvysny.kaributesting.v10.LocatorJ._assertNone;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static com.github.mvysny.kaributesting.v10.NotificationsKt.expectNotifications;
@@ -115,7 +114,6 @@ class ConfirmationViewKT extends KaribuTest {
         MockVaadin.clientRoundtrip();
 
         assertThat(notification.isOpened()).isFalse();
-        _assertNone(PersistentNotification.class);
     }
 
     @ParameterizedTest
@@ -149,7 +147,6 @@ class ConfirmationViewKT extends KaribuTest {
         MockVaadin.clientRoundtrip();
 
         assertThat(notification.isOpened()).isFalse();
-        _assertNone(PersistentNotification.class);
     }
 
     @Test

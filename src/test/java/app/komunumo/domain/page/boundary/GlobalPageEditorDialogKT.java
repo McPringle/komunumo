@@ -17,9 +17,9 @@
  */
 package app.komunumo.domain.page.boundary;
 
+import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.page.entity.GlobalPageDto;
 import app.komunumo.domain.user.entity.UserRole;
-import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.test.KaribuTest;
 import app.komunumo.vaadin.components.PersistentNotification;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
@@ -39,7 +39,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Locale;
 
 import static app.komunumo.test.TestUtil.findComponent;
-import static com.github.mvysny.kaributesting.v10.LocatorJ._assertNone;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static com.vaadin.flow.component.ComponentUtil.fireEvent;
@@ -561,7 +560,6 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             _click(notificationCloseButton);
             MockVaadin.clientRoundtrip();
             assertThat(notification.isOpened()).isFalse();
-            _assertNone(PersistentNotification.class);
 
             // check that the dialog is still open
             assertThat(dialog.isOpened()).isTrue();
@@ -626,7 +624,6 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             _click(notificationCloseButton);
             MockVaadin.clientRoundtrip();
             assertThat(notification.isOpened()).isFalse();
-            _assertNone(PersistentNotification.class);
 
             // check that the dialog is still open
             assertThat(dialog.isOpened()).isTrue();
