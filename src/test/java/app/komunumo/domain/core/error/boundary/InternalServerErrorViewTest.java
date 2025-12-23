@@ -55,6 +55,7 @@ class InternalServerErrorViewTest {
             final var view = new InternalServerErrorView(configurationService);
             final var errorParameter = new ErrorParameter<>(Exception.class, new Exception());
             final var status = view.setErrorParameter(beforeEnterEvent, errorParameter);
+            view.beforeEnter(beforeEnterEvent);
 
             // Assert
             final var h2 = (H2) view.getChildren().findFirst().orElseThrow();

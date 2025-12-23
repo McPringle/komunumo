@@ -56,6 +56,7 @@ class NotFoundViewTest {
             final var view = new NotFoundView(configurationService);
             final var errorParameter = new ErrorParameter<>(NotFoundException.class, new NotFoundException());
             final var status = view.setErrorParameter(beforeEnterEvent, errorParameter);
+            view.beforeEnter(beforeEnterEvent);
 
             // Assert
             final var h2 = (H2) view.getChildren().findFirst().orElseThrow();

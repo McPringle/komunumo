@@ -17,18 +17,21 @@
  */
 package app.komunumo.domain.core.error.boundary;
 
-import app.komunumo.domain.core.error.entity.ErrorType;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.error.entity.ErrorType;
 import app.komunumo.vaadin.components.AbstractView;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 
 @AnonymousAllowed
-abstract class ErrorView extends AbstractView {
+abstract class ErrorView extends AbstractView implements BeforeEnterObserver {
 
-    private final @NotNull String viewTitle;
+    private final @NotNull ErrorType errorType;
+
+    private @NotNull String viewTitle = "";
 
     /**
      * <p>Creates a new error view based on the provided error type with access to the configuration service.</p>
@@ -39,8 +42,12 @@ abstract class ErrorView extends AbstractView {
     protected ErrorView(final @NotNull ErrorType errorType,
                         final @NotNull ConfigurationService configurationService) {
         super(configurationService);
-        final var ui = UI.getCurrent();
-        this.viewTitle = ui.getTranslation("core.error.boundary.ErrorView." + errorType.getTranslationKey());
+        this.errorType = errorType;
+    }
+
+    @Override
+    public void beforeEnter(final @NotNull BeforeEnterEvent event) {
+        viewTitle = event.getUI().getTranslation("core.error.boundary.ErrorView." + errorType.getTranslationKey());
         add(new H2(viewTitle));
     }
 
