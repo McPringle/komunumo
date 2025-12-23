@@ -19,31 +19,28 @@ package app.komunumo.util;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.ColorScheme;
+import org.jetbrains.annotations.NotNull;
 
 public final class ThemeUtil {
 
     private static final String DARK_MODE = "dark-mode";
 
     @SuppressWarnings("java:S5411") // Boolean value is never null
-    public static void initializeDarkMode() {
+    public static void initializeDarkMode(final @NotNull UI ui) {
         LocalStorageUtil.getBoolean(DARK_MODE, false, isDarkModeEnabled -> {
-            if (isDarkModeEnabled && !isDarkModeActive()) {
-                toggleDarkMode();
+            if (isDarkModeEnabled && !isDarkModeActive(ui)) {
+                toggleDarkMode(ui);
             }
         });
     }
 
-    public static boolean isDarkModeActive() {
-        return ColorScheme.Value.DARK.equals(UI.getCurrentOrThrow()
-                .getPage()
-                .getColorScheme());
+    public static boolean isDarkModeActive(final @NotNull UI ui) {
+        return ColorScheme.Value.DARK.equals(ui.getPage().getColorScheme());
     }
 
-    public static void toggleDarkMode() {
-        final var darkMode = !isDarkModeActive();
-        UI.getCurrentOrThrow()
-                .getPage()
-                .setColorScheme(darkMode ? ColorScheme.Value.DARK : ColorScheme.Value.LIGHT);
+    public static void toggleDarkMode(final @NotNull UI ui) {
+        final var darkMode = !isDarkModeActive(ui);
+        ui.getPage().setColorScheme(darkMode ? ColorScheme.Value.DARK : ColorScheme.Value.LIGHT);
         LocalStorageUtil.setBoolean(DARK_MODE, darkMode);
     }
 

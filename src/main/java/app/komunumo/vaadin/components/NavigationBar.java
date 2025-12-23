@@ -119,7 +119,7 @@ public final class NavigationBar extends HorizontalLayout {
                 _ -> ui.navigate(CreateEventView.class));
 
         // dark theme toggle
-        avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.toggleDarkMode"), _ -> ThemeUtil.toggleDarkMode());
+        avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.toggleDarkMode"), _ -> ThemeUtil.toggleDarkMode(ui));
 
         // logout as last entry in the menu
         final var logoutItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.logout"), _ ->

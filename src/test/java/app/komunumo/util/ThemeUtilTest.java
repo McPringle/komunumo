@@ -38,11 +38,12 @@ import static org.mockito.Mockito.when;
 
 class ThemeUtilTest {
 
+    private UI uiMock;
     private Page pageMock;
 
     @BeforeEach
     void setup() {
-        final var uiMock = mock(UI.class);
+        uiMock = mock(UI.class);
         pageMock = mock(Page.class);
         when(uiMock.getPage()).thenReturn(pageMock);
         UI.setCurrent(uiMock);
@@ -51,10 +52,10 @@ class ThemeUtilTest {
     @Test
     void testIsDarkModeActive() {
         when(pageMock.getColorScheme()).thenReturn(ColorScheme.Value.DARK);
-        assertThat(ThemeUtil.isDarkModeActive()).isTrue();
+        assertThat(ThemeUtil.isDarkModeActive(uiMock)).isTrue();
 
         when(pageMock.getColorScheme()).thenReturn(ColorScheme.Value.LIGHT);
-        assertThat(ThemeUtil.isDarkModeActive()).isFalse();
+        assertThat(ThemeUtil.isDarkModeActive(uiMock)).isFalse();
     }
 
     @Test
@@ -62,7 +63,7 @@ class ThemeUtilTest {
         try (MockedStatic<LocalStorageUtil> mockedLocalStorage = mockStatic(LocalStorageUtil.class)) {
             when(pageMock.getColorScheme()).thenReturn(ColorScheme.Value.LIGHT);
 
-            ThemeUtil.toggleDarkMode();
+            ThemeUtil.toggleDarkMode(uiMock);
 
             verify(pageMock).setColorScheme(ColorScheme.Value.DARK);
             mockedLocalStorage.verify(() -> LocalStorageUtil.setBoolean("dark-mode", true));
@@ -74,7 +75,7 @@ class ThemeUtilTest {
         try (MockedStatic<LocalStorageUtil> mockedLocalStorage = mockStatic(LocalStorageUtil.class)) {
             when(pageMock.getColorScheme()).thenReturn(ColorScheme.Value.DARK);
 
-            ThemeUtil.toggleDarkMode();
+            ThemeUtil.toggleDarkMode(uiMock);
 
             verify(pageMock).setColorScheme(ColorScheme.Value.LIGHT);
             mockedLocalStorage.verify(() -> LocalStorageUtil.setBoolean("dark-mode", false));
@@ -93,7 +94,7 @@ class ThemeUtilTest {
 
             when(pageMock.getColorScheme()).thenReturn(ColorScheme.Value.LIGHT);
 
-            ThemeUtil.initializeDarkMode();
+            ThemeUtil.initializeDarkMode(uiMock);
 
             verify(pageMock).setColorScheme(ColorScheme.Value.DARK);
         }
@@ -111,7 +112,7 @@ class ThemeUtilTest {
 
             when(pageMock.getColorScheme()).thenReturn(ColorScheme.Value.LIGHT);
 
-            ThemeUtil.initializeDarkMode();
+            ThemeUtil.initializeDarkMode(uiMock);
 
             verify(pageMock, never()).setColorScheme(any());
         }
@@ -130,7 +131,7 @@ class ThemeUtilTest {
 
             when(pageMock.getColorScheme()).thenReturn(ColorScheme.Value.DARK);
 
-            ThemeUtil.initializeDarkMode();
+            ThemeUtil.initializeDarkMode(uiMock);
 
             verify(pageMock, never()).setColorScheme(any());
         }

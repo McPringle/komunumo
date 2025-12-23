@@ -36,11 +36,9 @@ public final class TimeZoneUtil {
      * @param ui the UI instance from which to retrieve the client details.
      */
     public static void detectClientTimeZone(final @NotNull UI ui) {
-        ui.getPage().retrieveExtendedClientDetails(details -> {
-            final var timeZoneId = details.getTimeZoneId();
-            final var zoneId = ZoneId.of(timeZoneId);
-            VaadinSession.getCurrent().setAttribute(SESSION_TIME_ZONE_KEY, zoneId);
-        });
+        final var timeZoneId = ui.getPage().getExtendedClientDetails().getTimeZoneId();
+        final var zoneId = timeZoneId != null ? ZoneId.of(timeZoneId) : ZoneId.systemDefault();
+        VaadinSession.getCurrent().setAttribute(SESSION_TIME_ZONE_KEY, zoneId);
     }
 
     /**

@@ -26,7 +26,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.ArgumentCaptor;
 
 import java.time.ZoneId;
 
@@ -63,20 +62,16 @@ class TimeZoneUtilTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "Europe/Zurich", "UTC", "America/New_York" })
-    @SuppressWarnings("java:S6068") // false positive for mock verification
     void detectClientTimeZoneStoresZoneIdInSession(final @NotNull String zoneIdString) {
         final var mockUI = mock(UI.class);
         final var mockPage = mock(Page.class);
+        final var mockExtendedClientDetails = mock(ExtendedClientDetails.class);
         when(mockUI.getPage()).thenReturn(mockPage);
-        ArgumentCaptor<Page.ExtendedClientDetailsReceiver> captor =
-                ArgumentCaptor.forClass(Page.ExtendedClientDetailsReceiver.class);
+        when(mockPage.getExtendedClientDetails()).thenReturn(mockExtendedClientDetails);
+        when(mockExtendedClientDetails.getTimeZoneId()).thenReturn(zoneIdString);
 
         TimeZoneUtil.detectClientTimeZone(mockUI);
-        verify(mockPage).retrieveExtendedClientDetails(captor.capture());
-
-        final var mockDetails = mock(ExtendedClientDetails.class);
-        when(mockDetails.getTimeZoneId()).thenReturn(zoneIdString);
-        captor.getValue().receiveDetails(mockDetails);
+        verify(mockPage).getExtendedClientDetails();
 
         verify(mockSession).setAttribute(eq("CLIENT_TIMEZONE_ID"), eq(ZoneId.of(zoneIdString)));
     }

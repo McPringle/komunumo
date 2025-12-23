@@ -22,6 +22,8 @@ import app.komunumo.domain.user.control.RegistrationService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.util.LocaleUtil;
+import app.komunumo.util.TimeZoneUtil;
 import app.komunumo.vaadin.components.InfoBanner;
 import app.komunumo.vaadin.components.NavigationBar;
 import app.komunumo.vaadin.components.PageFooter;
@@ -93,7 +95,10 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
 
     @Override
     public void beforeEnter(final @NotNull BeforeEnterEvent event) {
-        ThemeUtil.initializeDarkMode();
+        final var ui = event.getUI();
+        TimeZoneUtil.detectClientTimeZone(ui);
+        LocaleUtil.detectClientLocale(ui);
+        ThemeUtil.initializeDarkMode(ui);
     }
 
 }
