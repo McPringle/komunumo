@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration
+        xmlns="http://www.jooq.org/xsd/jooq-codegen-3.20.1.xsd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+    http://www.jooq.org/xsd/jooq-codegen-3.20.1.xsd
+    https://www.jooq.org/xsd/jooq-codegen-3.20.1.xsd">
+
+    <jdbc>
+        <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
+        <url>jdbc:tc:mariadb:lts:///jooq?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:src/main/resources/db/migration/R__rebuild-schema.sql</url>
+        <user>test</user>
+        <password>test</password>
+    </jdbc>
+
+    <generator>
+        <database>
+            <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
+
+            <inputSchema>jooq</inputSchema>
+            <outputSchemaToDefault>true</outputSchemaToDefault>
+
+            <forcedTypes>
+                <forcedType>
+                    <includeTypes>VARCHAR</includeTypes>
+                    <includeExpression>(^id$|.*_id$)</includeExpression>
+                    <excludeExpression>mail_template\.id</excludeExpression>
+                    <userType>java.util.UUID</userType>
+                    <converter>app.komunumo.jooq.UUIDConverter</converter>
+                </forcedType>
+
+                <forcedType>
+                    <includeExpression>.*\.content_type</includeExpression>
+                    <userType>app.komunumo.domain.core.image.entity.ContentType</userType>
+                    <converter>app.komunumo.domain.core.image.control.ContentTypeConverter</converter>
+                </forcedType>
+
+                <forcedType>
+                    <includeTypes>TIMESTAMP</includeTypes>
+                    <includeExpression>.*</includeExpression>
+                    <userType>java.time.ZonedDateTime</userType>
+                    <converter>app.komunumo.jooq.ZonedDateTimeConverter</converter>
+                </forcedType>
+
+                <forcedType>
+                    <includeExpression>event\.status</includeExpression>
+                    <userType>app.komunumo.domain.event.entity.EventStatus</userType>
+                    <converter>app.komunumo.domain.event.control.EventStatusConverter</converter>
+                </forcedType>
+
+                <forcedType>
+                    <includeExpression>event\.visibility</includeExpression>
+                    <userType>app.komunumo.domain.event.entity.EventVisibility</userType>
+                    <converter>app.komunumo.domain.event.control.EventVisibilityConverter</converter>
+                </forcedType>
+            </forcedTypes>
+
+            <properties>
+                <property>
+                    <key>sort</key>
+                    <value>semantic</value>
+                </property>
+            </properties>
+        </database>
+
+        <strategy>
+            <matchers>
+                <tables>
+                    <table>
+                        <expression>^(COMMUNITY|EVENT|USER)$</expression>
+                        <recordImplements>
+                            app.komunumo.jooq.RecordWithTimestamps
+                        </recordImplements>
+                    </table>
+                </tables>
+            </matchers>
+        </strategy>
+
+        <generate>
+            <validationAnnotations>true</validationAnnotations>
+            <javaTimeTypes>true</javaTimeTypes>
+        </generate>
+
+        <target>
+            <packageName>app.komunumo.data.db</packageName>
+            <directory>target/generated-sources/jooq</directory>
+        </target>
+    </generator>
+</configuration>

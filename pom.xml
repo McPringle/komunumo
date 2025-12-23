@@ -476,7 +476,49 @@
                             </environmentVariables>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>jooq-codegen-forked</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${java.home}/bin/java</executable>
+                            <workingDirectory>${project.basedir}</workingDirectory>
+
+                            <includePluginDependencies>true</includePluginDependencies>
+                            <classpathScope>test</classpathScope>
+                            <longClasspath>true</longClasspath>
+
+                            <arguments>
+                                <argument>-cp</argument>
+                                <classpath/>
+                                <argument>org.jooq.codegen.GenerationTool</argument>
+                                <argument>${project.basedir}/src/main/resources/jooq-codegen.xml</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                 </executions>
+
+                <dependencies>
+                    <!-- Needed so GenerationTool is available -->
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-meta</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-meta-extensions</artifactId>
+                        <version>${jooq.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -843,116 +885,6 @@
                     <years>1</years>
                     <shouldFailBuild>true</shouldFailBuild>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-                <executions>
-                    <execution>
-                        <id>jooq-codegen</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jdbc>
-                        <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
-                        <url>jdbc:tc:mariadb:lts:///jooq?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:${basedir}/src/main/resources/db/migration/R__rebuild-schema.sql</url>
-                        <user>test</user>
-                        <password>test</password>
-                    </jdbc>
-                    <generator>
-                        <database>
-                            <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
-                            <inputSchema>jooq</inputSchema>
-                            <outputSchemaToDefault>true</outputSchemaToDefault>
-                            <forcedTypes>
-                                <forcedType>
-                                    <includeTypes>VARCHAR</includeTypes>
-                                    <includeExpression>(^id$|.*_id$)</includeExpression>
-                                    <excludeExpression>mail_template\.id</excludeExpression>
-                                    <userType>java.util.UUID</userType>
-                                    <converter>app.komunumo.jooq.UUIDConverter</converter>
-                                </forcedType>
-                                <forcedType>
-                                    <userType>app.komunumo.domain.core.image.entity.ContentType</userType>
-                                    <converter>app.komunumo.domain.core.image.control.ContentTypeConverter</converter>
-                                    <includeExpression>.*\.content_type</includeExpression>
-                                </forcedType>
-                                <forcedType>
-                                    <includeTypes>TIMESTAMP</includeTypes>
-                                    <includeExpression>.*</includeExpression>
-                                    <userType>java.time.ZonedDateTime</userType>
-                                    <converter>app.komunumo.jooq.ZonedDateTimeConverter</converter>
-                                </forcedType>
-                                <forcedType>
-                                    <userType>app.komunumo.domain.event.entity.EventStatus</userType>
-                                    <converter>app.komunumo.domain.event.control.EventStatusConverter</converter>
-                                    <includeExpression>event\.status</includeExpression>
-                                </forcedType>
-                                <forcedType>
-                                    <userType>app.komunumo.domain.event.entity.EventVisibility</userType>
-                                    <converter>app.komunumo.domain.event.control.EventVisibilityConverter</converter>
-                                    <includeExpression>event\.visibility</includeExpression>
-                                </forcedType>
-                            </forcedTypes>
-                            <properties>
-                                <property>
-                                    <key>sort</key>
-                                    <value>semantic</value>
-                                </property>
-                            </properties>
-                        </database>
-                        <strategy>
-                            <matchers>
-                                <tables>
-                                    <table>
-                                        <expression>^(COMMUNITY|EVENT|USER)$</expression>
-                                        <recordImplements>app.komunumo.jooq.RecordWithTimestamps</recordImplements>
-                                    </table>
-                                </tables>
-                            </matchers>
-                        </strategy>
-                        <generate>
-                            <validationAnnotations>true</validationAnnotations>
-                            <javaTimeTypes>true</javaTimeTypes>
-                        </generate>
-                        <target>
-                            <packageName>app.komunumo.data.db</packageName>
-                            <directory>target/generated-sources/jooq</directory>
-                        </target>
-                    </generator>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jooq</groupId>
-                        <artifactId>jooq-meta-extensions</artifactId>
-                        <version>${jooq.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.testcontainers</groupId>
-                        <artifactId>testcontainers</artifactId>
-                        <version>${testcontainers.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.testcontainers</groupId>
-                        <artifactId>testcontainers-jdbc</artifactId>
-                        <version>${testcontainers.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.testcontainers</groupId>
-                        <artifactId>testcontainers-mariadb</artifactId>
-                        <version>${testcontainers.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.mariadb.jdbc</groupId>
-                        <artifactId>mariadb-java-client</artifactId>
-                        <version>${mariadb.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
             <plugin>
