@@ -17,13 +17,13 @@
  */
 package app.komunumo.domain.community.boundary;
 
+import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
+import app.komunumo.domain.member.control.MemberService;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.community.control.CommunityService;
-import app.komunumo.domain.member.control.MemberService;
-import app.komunumo.domain.user.control.UserService;
 import app.komunumo.test.BrowserTest;
 import app.komunumo.util.LinkUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
@@ -83,14 +83,12 @@ public class JoinCommunityFlowBT extends BrowserTest {
         page.click(JOIN_BUTTON_SELECTOR);
 
         // wait for join dialog to appear
-        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
-                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
-        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        // wait for email field to appear
+        final var emailInput = page.locator("vaadin-email-field input");
+        emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         captureScreenshot("joinCommunityAnonymously_dialog");
 
         // fill in email address
-        final var emailInput = page.locator("vaadin-email-field").locator("input");
         emailInput.fill(emailAddressMember);
         captureScreenshot("joinCommunityAnonymously_dialogFilled");
 

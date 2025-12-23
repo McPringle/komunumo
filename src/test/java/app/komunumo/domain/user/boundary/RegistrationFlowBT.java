@@ -92,15 +92,12 @@ public class RegistrationFlowBT extends BrowserTest {
         // click on register menu item
         page.click(REGISTER_MENU_ITEM_SELECTOR);
 
-        // wait for register dialog to appear
-        final var overlay = page.locator("vaadin-dialog-overlay[opened]")
-                .filter(new Locator.FilterOptions().setHas(page.locator("vaadin-email-field")));
-        overlay.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        page.waitForFunction("overlay => !overlay.hasAttribute('opening')", overlay.elementHandle());
+        // wait for email field to appear
+        final var emailInput = page.locator("vaadin-email-field input");
+        emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         captureScreenshot(screenshotPrefix + "_register-dialog-empty");
 
         // fill in email address
-        final var emailInput = page.locator("vaadin-email-field").locator("input");
         emailInput.fill(email);
         captureScreenshot(screenshotPrefix + "_register-dialog-filled");
 
