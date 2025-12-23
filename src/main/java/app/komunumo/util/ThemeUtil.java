@@ -40,9 +40,11 @@ public final class ThemeUtil {
     }
 
     public static void toggleDarkMode() {
+        final var darkMode = !isDarkModeActive();
         UI.getCurrentOrThrow()
                 .getPage()
-                .setColorScheme(isDarkModeActive() ? ColorScheme.Value.LIGHT : ColorScheme.Value.DARK);
+                .setColorScheme(darkMode ? ColorScheme.Value.DARK : ColorScheme.Value.LIGHT);
+        LocalStorageUtil.setBoolean(DARK_MODE, darkMode);
     }
 
 
