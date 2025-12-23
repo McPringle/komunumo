@@ -90,7 +90,7 @@ class LocalStorageUtilTest {
     @Test
     void getString_returnsStoredValue_whenPresent() {
         // given
-        when(page.executeJs(eq("return localStorage.getItem($0);"), any()))
+        when(page.executeJs(eq("return localStorage.getItem($0);"), any(Object[].class)))
                 .thenReturn(pending);
         doAnswer(inv -> {
             SerializableConsumer<String> consumer = inv.getArgument(1);
@@ -110,7 +110,7 @@ class LocalStorageUtilTest {
     @Test
     void getString_returnsDefault_whenMissing() {
         // given
-        when(page.executeJs(eq("return localStorage.getItem($0);"), any()))
+        when(page.executeJs(eq("return localStorage.getItem($0);"), any(Object[].class)))
                 .thenReturn(pending);
         doAnswer(inv -> {
             SerializableConsumer<String> consumer = inv.getArgument(1);
@@ -130,7 +130,7 @@ class LocalStorageUtilTest {
     @Test
     void getString_returnsDefault_onException() {
         // given
-        when(page.executeJs(anyString(), any()))
+        when(page.executeJs(anyString(), any(Object[].class)))
                 .thenThrow(new RuntimeException("boom"));
 
         final AtomicReference<String> result = new AtomicReference<>();
@@ -155,7 +155,7 @@ class LocalStorageUtilTest {
     @Test
     void getBoolean_returnsParsedValue_whenPresent() {
         // given
-        when(page.executeJs(eq("return localStorage.getItem($0);"), any()))
+        when(page.executeJs(eq("return localStorage.getItem($0);"), any(Object[].class)))
                 .thenReturn(pending);
         doAnswer(inv -> {
             SerializableConsumer<String> consumer = inv.getArgument(1);
@@ -175,7 +175,7 @@ class LocalStorageUtilTest {
     @Test
     void getBoolean_returnsDefault_whenMissing() {
         // given
-        when(page.executeJs(eq("return localStorage.getItem($0);"), any()))
+        when(page.executeJs(eq("return localStorage.getItem($0);"), any(Object[].class)))
                 .thenReturn(pending);
         doAnswer(inv -> {
             SerializableConsumer<String> consumer = inv.getArgument(1);
@@ -195,7 +195,7 @@ class LocalStorageUtilTest {
     @Test
     void getBoolean_parsesNonBooleanAsFalse() {
         // given
-        when(page.executeJs(eq("return localStorage.getItem($0);"), any()))
+        when(page.executeJs(eq("return localStorage.getItem($0);"), any(Object[].class)))
                 .thenReturn(pending);
         doAnswer(inv -> {
             SerializableConsumer<String> consumer = inv.getArgument(1);
