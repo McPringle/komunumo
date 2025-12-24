@@ -379,5 +379,15 @@ class JSONImporterTest {
         }
     }
 
+    @Test
+    void testNullData() {
+        final var jsonUrl = "http://localhost:8082/import/null-data.json";
+        final var expectedMessage = "Identified 0 settings, 0 images, 0 users, 0 communities, 0 events, 0 members, 0 participants, 0 global pages, and 0 mail templates.";
+        try (var logCaptor = LogCaptor.forClass(ImporterLog.class)) {
+            new JSONImporter(new ImporterLog(null), jsonUrl);
+            assertThat(logCaptor.getInfoLogs()).containsExactly(expectedMessage);
+        }
+    }
+
 }
 
