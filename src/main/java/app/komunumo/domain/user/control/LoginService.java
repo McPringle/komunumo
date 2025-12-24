@@ -38,6 +38,7 @@ import com.vaadin.flow.server.VaadinServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,21 +58,21 @@ public final class LoginService {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(LoginService.class);
     private static final @NotNull String CONTEXT_LOGIN_LOCATION = "location";
 
+    private final @NotNull ObjectProvider<AuthenticationSignal> authenticationSignalProvider;
 
     private final @NotNull UserService userService;
     private final @NotNull ConfirmationService confirmationService;
     private final @NotNull TranslationProvider translationProvider;
-    private final @NotNull AuthenticationSignal authenticationSignal;
 
     public LoginService(final @NotNull UserService userService,
                         final @NotNull ConfirmationService confirmationService,
                         final @NotNull TranslationProvider translationProvider,
-                        final @NotNull AuthenticationSignal authenticationSignal) {
+                        final @NotNull ObjectProvider<AuthenticationSignal> authenticationSignalProvider) {
         super();
         this.userService = userService;
         this.confirmationService = confirmationService;
         this.translationProvider = translationProvider;
-        this.authenticationSignal = authenticationSignal;
+        this.authenticationSignalProvider = authenticationSignalProvider;
     }
 
     public boolean login(final @NotNull String emailAddress) {
@@ -82,14 +83,14 @@ public final class LoginService {
         final var optUser = userService.getUserByEmail(emailAddress);
         if (optUser.isEmpty()) {
             LOGGER.info("User with email {} not found.", emailAddress);
-            authenticationSignal.setAuthenticated(false);
+            authenticationSignalProvider.ifAvailable(signal -> signal.setAuthenticated(false));
             return false;
         }
 
         final var user = optUser.orElseThrow();
         if (!user.type().isLoginAllowed()) {
             LOGGER.info("User with email {} exists but login is not allowed for type {}", emailAddress, user.type());
-            authenticationSignal.setAuthenticated(false);
+            authenticationSignalProvider.ifAvailable(signal -> signal.setAuthenticated(false));
             return false;
         }
 
@@ -126,8 +127,9 @@ public final class LoginService {
         }
 
         LOGGER.info("User with email {} successfully logged in.", emailAddress);
-        authenticationSignal.setAuthenticated(true, UserRole.ADMIN.equals(user.role()),
-                UserType.LOCAL.equals(user.type()));
+        authenticationSignalProvider.ifAvailable(signal ->
+                signal.setAuthenticated(true, UserRole.ADMIN.equals(user.role()),
+                        UserType.LOCAL.equals(user.type())));
 
         return true;
     }
@@ -146,11 +148,11 @@ public final class LoginService {
     }
 
     public void logout(final @NotNull String location) {
-        UI.getCurrent().getPage().setLocation(location);
         SecurityContextHolder.clearContext();
         final var logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
-        authenticationSignal.setAuthenticated(false);
+        authenticationSignalProvider.ifAvailable(signal -> signal.setAuthenticated(false));
+        UI.getCurrentOrThrow().getPage().setLocation(location);
     }
 
     public void startLoginProcess(final @NotNull Locale locale,

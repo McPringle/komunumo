@@ -19,27 +19,35 @@
 package app.komunumo.domain.user.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.vaadin.components.AbstractView;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.PermitAll;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Route(value = "logout", layout = WebsiteLayout.class)
 @PermitAll
-public final class LogoutView extends AbstractView {
+public final class LogoutView extends AbstractView implements BeforeEnterObserver {
+
+    private final @NotNull LoginService loginService;
 
     public LogoutView(final @NotNull ConfigurationService configurationService,
                       final @NotNull LoginService loginService) {
         super(configurationService);
-        loginService.logout();
+        this.loginService = loginService;
     }
 
     @Override
     protected @NotNull String getViewTitle() {
-        return getTranslation(UI.getCurrent().getLocale(), "user.boundary.LogoutView.title");
+        return getTranslation("user.boundary.LogoutView.title");
     }
 
+    @Override
+    public void beforeEnter(final @Nullable BeforeEnterEvent event) {
+        loginService.logout();
+    }
 }

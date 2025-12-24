@@ -40,6 +40,7 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.ObjectProvider;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_SLOGAN;
@@ -54,9 +55,9 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
                          final @NotNull GlobalPageService globalPageService,
                          final @NotNull LoginService loginService,
                          final @NotNull RegistrationService registrationService,
-                         final @NotNull AuthenticationSignal authenticationSignal) {
+                         final @NotNull ObjectProvider<AuthenticationSignal> authenticationSignalProvider) {
         super();
-        authenticationSignal.refreshFromSecurityContext();
+        authenticationSignalProvider.ifAvailable(AuthenticationSignal::refreshFromSecurityContext);
         final var ui = UI.getCurrent();
 
         if (appConfig.demo().enabled()) {
@@ -64,7 +65,8 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         }
 
         addPageHeader(configurationService);
-        add(new NavigationBar(configurationService, globalPageService, loginService, registrationService, authenticationSignal));
+        add(new NavigationBar(configurationService, globalPageService, loginService, registrationService,
+                authenticationSignalProvider));
 
         main = new Main();
         add(main);
