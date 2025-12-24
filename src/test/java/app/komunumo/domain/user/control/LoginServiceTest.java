@@ -247,7 +247,7 @@ class LoginServiceTest {
              final var ignored = mockConstruction(SecurityContextLogoutHandler.class)) {
 
             // Static stubs
-            staticUI.when(UI::getCurrentOrThrow).thenReturn(ui);
+            staticUI.when(UI::getCurrent).thenReturn(ui);
             staticVaadinServletRequest.when(VaadinServletRequest::getCurrent).thenReturn(vaadinServletRequest);
 
             // Act + Assert (no exception)
@@ -282,7 +282,7 @@ class LoginServiceTest {
              final var ignored = mockConstruction(SecurityContextLogoutHandler.class)) {
 
             // Static stubs
-            staticUI.when(UI::getCurrentOrThrow).thenReturn(ui);
+            staticUI.when(UI::getCurrent).thenReturn(ui);
             staticVaadinServletRequest.when(VaadinServletRequest::getCurrent).thenReturn(vaadinServletRequest);
 
             // Act + Assert (no exception)

@@ -152,7 +152,13 @@ public final class LoginService {
         final var logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
         authenticationSignalProvider.ifAvailable(signal -> signal.setAuthenticated(false));
-        UI.getCurrentOrThrow().getPage().setLocation(location);
+
+        final var ui = UI.getCurrent();
+        if (ui == null) {
+            LOGGER.warn("No UI available during logout; cannot redirect to '{}'.", location);
+        } else {
+            ui.getPage().setLocation(location);
+        }
     }
 
     public void startLoginProcess(final @NotNull Locale locale,
