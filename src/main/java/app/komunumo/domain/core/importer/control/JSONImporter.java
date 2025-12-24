@@ -18,36 +18,37 @@
 package app.komunumo.domain.core.importer.control;
 
 import app.komunumo.KomunumoException;
+import app.komunumo.domain.community.control.CommunityService;
+import app.komunumo.domain.community.entity.CommunityDto;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.core.image.entity.ContentType;
+import app.komunumo.domain.core.image.entity.ImageDto;
+import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.domain.core.mail.entity.MailTemplate;
+import app.komunumo.domain.core.mail.entity.MailTemplateId;
+import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventStatus;
 import app.komunumo.domain.event.entity.EventVisibility;
-import app.komunumo.domain.community.entity.CommunityDto;
-import app.komunumo.domain.core.config.entity.ConfigurationSetting;
-import app.komunumo.domain.core.image.entity.ContentType;
-import app.komunumo.domain.page.entity.GlobalPageDto;
-import app.komunumo.domain.participant.entity.ParticipantDto;
-import app.komunumo.domain.core.mail.entity.MailTemplate;
-import app.komunumo.domain.core.mail.entity.MailTemplateId;
-import app.komunumo.domain.core.image.entity.ImageDto;
+import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
+import app.komunumo.domain.page.control.GlobalPageService;
+import app.komunumo.domain.page.entity.GlobalPageDto;
+import app.komunumo.domain.participant.control.ParticipantService;
+import app.komunumo.domain.participant.entity.ParticipantDto;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.community.control.CommunityService;
-import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.participant.control.ParticipantService;
-import app.komunumo.domain.page.control.GlobalPageService;
-import app.komunumo.domain.core.mail.control.MailService;
-import app.komunumo.domain.core.image.control.ImageService;
-import app.komunumo.domain.member.control.MemberService;
-import app.komunumo.domain.user.control.UserService;
 import app.komunumo.util.DownloadUtil;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,16 +63,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class JSONImporter {
 
     private final @NotNull ImporterLog importerLog;
-    private final @NotNull JSONObject jsonData;
+    private final @NotNull JsonNode root;
+    private final @NotNull ObjectMapper objectMapper;
 
     public JSONImporter(final @NotNull ImporterLog importerLog,
                         final @NotNull String jsonDataUrl) {
         this.importerLog = importerLog;
+        this.objectMapper = new ObjectMapper();
         try {
-            final String json = DownloadUtil.getString(jsonDataUrl);
-            final JSONObject jsonObject = new JSONObject(json);
-            logJSONInfo(jsonObject);
-            jsonData = jsonObject;
+            final var json = DownloadUtil.getString(jsonDataUrl);
+            this.root = objectMapper.readTree(json);
+            logJSONInfo();
         } catch (IOException | URISyntaxException e) {
             importerLog.error("Failed to download JSON data from URL: %s".formatted(jsonDataUrl));
             throw new KomunumoException("Failed to download JSON data from URL: %s".formatted(jsonDataUrl), e);
@@ -81,50 +83,46 @@ public final class JSONImporter {
     public JSONImporter(final @NotNull ImporterLog importerLog,
                         final @NotNull File jsonDataFile) {
         this.importerLog = importerLog;
+        this.objectMapper = new ObjectMapper();
         try {
-            final String json = Files.readString(jsonDataFile.toPath());
-            final JSONObject jsonObject = new JSONObject(json);
-            logJSONInfo(jsonObject);
-            jsonData = jsonObject;
+            final var json = Files.readString(jsonDataFile.toPath());
+            this.root = objectMapper.readTree(json);
+            logJSONInfo();
         } catch (IOException e) {
             importerLog.error("Failed to download JSON data from URL: %s".formatted(jsonDataFile.getName()));
             throw new KomunumoException("Failed to load JSON data from file: %s".formatted(jsonDataFile.getName()), e);
         }
     }
 
-    private void logJSONInfo(final @NotNull JSONObject jsonObject) {
+    private void logJSONInfo() {
         importerLog.info("""
                 Identified %d settings, %d images, %d users, %d communities, %d events, %d members, \
                 %d participants, %d global pages, and %d mail templates."""
                 .formatted(
-                        countArrayItems(jsonObject, "settings"),
-                        countArrayItems(jsonObject, "images"),
-                        countArrayItems(jsonObject, "users"),
-                        countArrayItems(jsonObject, "communities"),
-                        countArrayItems(jsonObject, "events"),
-                        countArrayItems(jsonObject, "members"),
-                        countArrayItems(jsonObject, "participants"),
-                        countArrayItems(jsonObject, "globalPages"),
-                        countArrayItems(jsonObject, "mailTemplates")));
+                        countArrayItems("settings"),
+                        countArrayItems("images"),
+                        countArrayItems("users"),
+                        countArrayItems("communities"),
+                        countArrayItems("events"),
+                        countArrayItems("members"),
+                        countArrayItems("participants"),
+                        countArrayItems("globalPages"),
+                        countArrayItems("mailTemplates")));
     }
 
-    private static int countArrayItems(final @NotNull JSONObject jsonData,
-                                       final @NotNull String arrayName) {
-        if (jsonData.has(arrayName)) {
-            return jsonData.getJSONArray(arrayName).length();
-        }
-        return 0;
+    private int countArrayItems(final @NotNull String arrayName) {
+        final var node = root.get(arrayName);
+        return node != null && node.isArray() ? node.size() : 0;
     }
 
     public void importSettings(final @NotNull ConfigurationService configurationService) {
-        if (jsonData.has("settings")) {
+        if (root.has("settings")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing settings...");
-            jsonData.getJSONArray("settings").forEach(object -> {
+            root.get("settings").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var setting = ConfigurationSetting.fromString(jsonObject.getString("setting"));
-                    final var language = jsonObject.optString("language", null);
+                    final var setting = ConfigurationSetting.fromString(node.path("setting").asString());
+                    final var language = node.path("language").asString(null);
 
                     if (setting.isLanguageDependent() && language == null) {
                         importerLog.warn("Skipping setting '%s' because it is language-dependent but no language was provided."
@@ -137,11 +135,11 @@ public final class JSONImporter {
                     }
 
                     final var locale = language == null ? null : Locale.forLanguageTag(language);
-                    final var value = jsonObject.getString("value");
+                    final var value = node.path("value").asString();
                     configurationService.setConfiguration(setting, locale, value);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping setting '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping setting '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             configurationService.clearCache();
@@ -152,27 +150,26 @@ public final class JSONImporter {
     }
 
     public void importUsers(final @NotNull UserService userService) {
-        if (jsonData.has("users")) {
+        if (root.has("users")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing users...");
-            jsonData.getJSONArray("users").forEach(object -> {
+            root.get("users").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var userId = UUID.fromString(jsonObject.getString("userId"));
-                    final var profile = jsonObject.getString("profile").trim();
-                    final var email = jsonObject.getString("email").trim();
-                    final var name = jsonObject.getString("name").trim();
-                    final var bio = jsonObject.getString("bio").trim();
-                    final var imageId = parseUUID(jsonObject.optString("imageId"));
-                    final var role = UserRole.valueOf(jsonObject.getString("role").trim());
-                    final var type = UserType.valueOf(jsonObject.getString("type").trim());
+                    final var userId = UUID.fromString(node.path("userId").asString());
+                    final var profile = node.path("profile").asString().trim();
+                    final var email = node.path("email").asString().trim();
+                    final var name = node.path("name").asString().trim();
+                    final var bio = node.path("bio").asString().trim();
+                    final var imageId = parseUUID(node.path("imageId").asString());
+                    final var role = UserRole.valueOf(node.path("role").asString().trim());
+                    final var type = UserType.valueOf(node.path("type").asString().trim());
 
                     final var user = new UserDto(userId, null, null, profile, email, name, bio, imageId,
                             role, type);
                     userService.storeUser(user);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping user '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping user '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d users.".formatted(counter.get()));
@@ -182,16 +179,15 @@ public final class JSONImporter {
     }
 
     public void importImages(final @NotNull ImageService imageService) {
-        if (jsonData.has("images")) {
+        if (root.has("images")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing images...");
-            jsonData.getJSONArray("images").forEach(object -> {
+            root.get("images").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var imageId = UUID.fromString(jsonObject.getString("imageId"));
-                    final var contentType = ContentType.fromContentType(jsonObject.getString("contentType"));
+                    final var imageId = UUID.fromString(node.path("imageId").asString());
+                    final var contentType = ContentType.fromContentType(node.path("contentType").asString());
 
-                    final var url = jsonObject.getString("url");
+                    final var url = node.path("url").asString();
                     final var path = DownloadUtil.downloadFile(url);
 
                     final var image = new ImageDto(imageId, contentType);
@@ -199,7 +195,7 @@ public final class JSONImporter {
                     imageService.storeImage(image);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping image '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping image '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d images.".formatted(counter.get()));
@@ -209,24 +205,23 @@ public final class JSONImporter {
     }
 
     public void importCommunities(final @NotNull CommunityService communityService) {
-        if (jsonData.has("communities")) {
+        if (root.has("communities")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing communities...");
-            jsonData.getJSONArray("communities").forEach(object -> {
+            root.get("communities").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var communityId = UUID.fromString(jsonObject.getString("communityId"));
-                    final var profile = jsonObject.getString("profile").trim();
-                    final var name = jsonObject.getString("name").trim();
-                    final var description = jsonObject.getString("description").trim();
-                    final var imageId = parseUUID(jsonObject.optString("imageId"));
+                    final var communityId = UUID.fromString(node.path("communityId").asString());
+                    final var profile = node.path("profile").asString().trim();
+                    final var name = node.path("name").asString().trim();
+                    final var description = node.path("description").asString().trim();
+                    final var imageId = parseUUID(node.path("imageId").asString());
 
                     final var community = new CommunityDto(communityId, profile, null, null,
                             name, description, imageId);
                     communityService.storeCommunity(community);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping community '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping community '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d communities.".formatted(counter.get()));
@@ -236,29 +231,28 @@ public final class JSONImporter {
     }
 
     public void importEvents(final @NotNull EventService eventService) {
-        if (jsonData.has("events")) {
+        if (root.has("events")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing events...");
-            jsonData.getJSONArray("events").forEach(object -> {
+            root.get("events").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var eventId = UUID.fromString(jsonObject.getString("eventId"));
-                    final var communityId = UUID.fromString(jsonObject.getString("communityId"));
-                    final var title = jsonObject.getString("title").trim();
-                    final var description = jsonObject.getString("description").trim();
-                    final var location = jsonObject.getString("location").trim();
-                    final var begin = parseDateTime(jsonObject.optString("begin", ""));
-                    final var end = parseDateTime(jsonObject.optString("end", ""));
-                    final var imageId = parseUUID(jsonObject.optString("imageId", ""));
-                    final var visibility = EventVisibility.valueOf(jsonObject.getString("visibility"));
-                    final var status = EventStatus.valueOf(jsonObject.getString("status"));
+                    final var eventId = UUID.fromString(node.path("eventId").asString());
+                    final var communityId = UUID.fromString(node.path("communityId").asString());
+                    final var title = node.path("title").asString().trim();
+                    final var description = node.path("description").asString().trim();
+                    final var location = node.path("location").asString().trim();
+                    final var begin = parseDateTime(node.path("begin").asString());
+                    final var end = parseDateTime(node.path("end").asString());
+                    final var imageId = parseUUID(node.path("imageId").asString());
+                    final var visibility = EventVisibility.valueOf(node.path("visibility").asString());
+                    final var status = EventStatus.valueOf(node.path("status").asString());
 
                     final var event = new EventDto(eventId, communityId, null, null,
                             title, description, location, begin, end, imageId, visibility, status);
                     eventService.storeEvent(event);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping event '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping event '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d events.".formatted(counter.get()));
@@ -268,20 +262,19 @@ public final class JSONImporter {
     }
 
     public void importParticipants(final @NotNull ParticipantService participantService) {
-        if (jsonData.has("participants")) {
+        if (root.has("participants")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing participants...");
-            jsonData.getJSONArray("participants").forEach(object -> {
+            root.get("participants").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var eventId = UUID.fromString(jsonObject.getString("eventId"));
-                    final var userId = UUID.fromString(jsonObject.getString("userId"));
-                    final var registeredDate = parseDateTime(jsonObject.getString("registered"));
+                    final var eventId = UUID.fromString(node.path("eventId").asString());
+                    final var userId = UUID.fromString(node.path("userId").asString());
+                    final var registeredDate = parseDateTime(node.path("registered").asString());
                     final var participant =  new ParticipantDto(eventId, userId, registeredDate);
                     participantService.storeParticipant(participant);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping participant '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping participant '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d participants.".formatted(counter.get()));
@@ -291,22 +284,21 @@ public final class JSONImporter {
     }
 
     public void importMembers(final @NotNull MemberService memberService) {
-        if (jsonData.has("members")) {
+        if (root.has("members")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing members...");
-            jsonData.getJSONArray("members").forEach(object -> {
+            root.get("members").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var userId = UUID.fromString(jsonObject.getString("userId"));
-                    final var communityId = UUID.fromString(jsonObject.getString("communityId"));
-                    final var role = MemberRole.valueOf(jsonObject.getString("role"));
-                    final var since = parseDateTime(jsonObject.optString("since", ""));
+                    final var userId = UUID.fromString(node.path("userId").asString());
+                    final var communityId = UUID.fromString(node.path("communityId").asString());
+                    final var role = MemberRole.valueOf(node.path("role").asString());
+                    final var since = parseDateTime(node.path("since").asString());
 
                     final var member = new MemberDto(userId, communityId, role, since);
                     memberService.storeMember(member);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping member '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping member '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d members.".formatted(counter.get()));
@@ -316,22 +308,28 @@ public final class JSONImporter {
     }
 
     public void importGlobalPages(final @NotNull GlobalPageService globalPageService) {
-        if (jsonData.has("globalPages")) {
+        if (root.has("globalPages")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing global pages...");
-            jsonData.getJSONArray("globalPages").forEach(object -> {
+            root.get("globalPages").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var slot = jsonObject.getString("slot").trim();
-                    final var locale = Locale.forLanguageTag(jsonObject.getString("language"));
-                    final var title = jsonObject.getString("title").trim();
-                    final var markdown = jsonObject.getString("markdown").trim();
+                    final var slot = node.path("slot").asString().trim();
+                    final var languageNode = node.path("language");
+                    if (languageNode.isMissingNode()) {
+                        throw new NullPointerException("Language must be set");
+                    }
+                    if (languageNode.isNull()) {
+                        throw new NullPointerException("Language must not be null");
+                    }
+                    final var locale = Locale.forLanguageTag(languageNode.asString());
+                    final var title = node.path("title").asString().trim();
+                    final var markdown = node.path("markdown").asString().trim();
 
                     final var globalPage = new GlobalPageDto(slot, locale, null, null, title, markdown);
                     globalPageService.storeGlobalPage(globalPage);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Skipping global page '%s': %s".formatted(object, e.getMessage()));
+                    importerLog.warn("Skipping global page '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d global pages.".formatted(counter.get()));
@@ -341,23 +339,22 @@ public final class JSONImporter {
     }
 
     public void importMailTemplates(final @NotNull MailService mailService) {
-        if (jsonData.has("mailTemplates")) {
+        if (root.has("mailTemplates")) {
             final var counter = new AtomicInteger(0);
             importerLog.info("Start importing mail templates...");
-            jsonData.getJSONArray("mailTemplates").forEach(object -> {
+            root.get("mailTemplates").forEach(node -> {
                 try {
-                    final var jsonObject = (JSONObject) object;
-                    final var mailTemplateId = MailTemplateId.valueOf(jsonObject.getString("mailTemplateId"));
-                    final var language = Locale.forLanguageTag(jsonObject.getString("language"));
-                    final var subject = jsonObject.getString("subject").trim();
-                    final var markdown = jsonObject.getString("markdown").trim();
+                    final var mailTemplateId = MailTemplateId.valueOf(node.path("mailTemplateId").asString());
+                    final var language = Locale.forLanguageTag(node.path("language").asString());
+                    final var subject = node.path("subject").asString().trim();
+                    final var markdown = node.path("markdown").asString().trim();
 
                     final var mailTemplate = new MailTemplate(mailTemplateId, language, subject, markdown);
 
                     mailService.storeMailTemplate(mailTemplate);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
-                    importerLog.warn("Failed to import mail template: %s".formatted(e.getMessage()));
+                    importerLog.warn("Skipping mail template '%s': %s".formatted(node, e.getMessage()));
                 }
             });
             importerLog.info("...finished importing %d mail templates.".formatted(counter.get()));
@@ -366,12 +363,11 @@ public final class JSONImporter {
         }
     }
 
-    private @Nullable UUID parseUUID(final @NotNull String uuidString) {
+    private static @Nullable UUID parseUUID(final @NotNull String uuidString) {
         return uuidString.isBlank() ? null : UUID.fromString(uuidString);
     }
 
-    private @Nullable ZonedDateTime parseDateTime(final @NotNull String dateTime) {
+    private static @Nullable ZonedDateTime parseDateTime(final @NotNull String dateTime) {
         return dateTime.isBlank() ? null : ZonedDateTime.parse(dateTime);
     }
-
 }

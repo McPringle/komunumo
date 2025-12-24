@@ -46,7 +46,7 @@ import static org.mockito.Mockito.verify;
 
 class JSONImporterTest {
 
-    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 7 settings, 4 images, 6 users, 7 communities, 7 events, 25 members, 7 participants, 3 global pages, and 5 mail templates.";
+    private static final String IDENTIFIED_COUNTS_MESSAGE = "Identified 7 settings, 4 images, 6 users, 7 communities, 7 events, 25 members, 7 participants, 4 global pages, and 5 mail templates.";
     private static final UUID UUID_ZERO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     @Test
@@ -193,7 +193,7 @@ class JSONImporterTest {
             assertThat(logCaptor.getWarnLogs()).containsExactly(
                     "Skipping setting 'instance.slogan' because it is language-dependent but no language was provided.",
                     "Skipping setting 'instance.custom.styles' because it is not language-dependent but a language was provided.",
-                    "Skipping setting '{\"value\":\"The test will throw an exception if this setting is read.\",\"setting\":\"simulated.failure\"}': Unknown setting: simulated.failure");
+                    "Skipping setting '{\"setting\":\"simulated.failure\",\"value\":\"The test will throw an exception if this setting is read.\"}': Unknown setting: simulated.failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -238,7 +238,7 @@ class JSONImporterTest {
                     "Start importing users...",
                     "...finished importing 5 users.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping user '{\"imageId\":\"\",\"role\":\"USER\",\"profile\":\"@duplicate@example.com\",\"name\":\"Doris Duplicate\",\"bio\":\"User with duplicate email for integration tests\",\"type\":\"ANONYMOUS\",\"userId\":\"00000000-0000-0000-0000-000000000000\",\"email\":\"anonymous@example.com\"}': Simulated failure");
+                    "Skipping user '{\"userId\":\"00000000-0000-0000-0000-000000000000\",\"profile\":\"@duplicate@example.com\",\"email\":\"anonymous@example.com\",\"name\":\"Doris Duplicate\",\"bio\":\"User with duplicate email for integration tests\",\"imageId\":\"\",\"role\":\"USER\",\"type\":\"ANONYMOUS\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -259,7 +259,7 @@ class JSONImporterTest {
                     "Start importing communities...",
                     "...finished importing 6 communities.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping community '{\"imageId\":\"\",\"profile\":\"@demoCommunity1\",\"name\":\"Duplicate Profile Community\",\"description\":\"A community with duplicate profile for integration tests.\",\"communityId\":\"00000000-0000-0000-0000-000000000000\"}': Simulated failure");
+                    "Skipping community '{\"communityId\":\"00000000-0000-0000-0000-000000000000\",\"profile\":\"@demoCommunity1\",\"name\":\"Duplicate Profile Community\",\"description\":\"A community with duplicate profile for integration tests.\",\"imageId\":\"\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -280,7 +280,7 @@ class JSONImporterTest {
                     "Start importing events...",
                     "...finished importing 6 events.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping event '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"imageId\":\"\",\"visibility\":\"PRIVATE\",\"description\":\"Event with a community that does not exist for integration tests.\",\"location\":\"Somewhere\",\"end\":\"2030-01-07T20:00:00+02:00[Europe/Zurich]\",\"communityId\":\"42524267-be7e-404b-a9bf-c3da72b97717\",\"title\":\"Event with invalid community\",\"begin\":\"2030-01-07T18:00:00+02:00[Europe/Zurich]\",\"status\":\"DRAFT\"}': Simulated failure");
+                    "Skipping event '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"communityId\":\"42524267-be7e-404b-a9bf-c3da72b97717\",\"title\":\"Event with invalid community\",\"description\":\"Event with a community that does not exist for integration tests.\",\"location\":\"Somewhere\",\"begin\":\"2030-01-07T18:00:00+02:00[Europe/Zurich]\",\"end\":\"2030-01-07T20:00:00+02:00[Europe/Zurich]\",\"imageId\":\"\",\"visibility\":\"PRIVATE\",\"status\":\"DRAFT\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -301,7 +301,7 @@ class JSONImporterTest {
                     "Start importing members...",
                     "...finished importing 24 members.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping member '{\"role\":\"MEMBER\",\"communityId\":\"00000000-0000-0000-0000-000000000000\",\"userId\":\"00000000-0000-0000-0000-000000000000\",\"since\":\"2025-01-01T10:00:00+02:00[Europe/Zurich]\"}': Simulated failure");
+                    "Skipping member '{\"userId\":\"00000000-0000-0000-0000-000000000000\",\"communityId\":\"00000000-0000-0000-0000-000000000000\",\"role\":\"MEMBER\",\"since\":\"2025-01-01T10:00:00+02:00[Europe/Zurich]\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -322,7 +322,7 @@ class JSONImporterTest {
                     "Start importing participants...",
                     "...finished importing 6 participants.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping participant '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"registered\":\"2029-12-07T12:00:00+02:00[Europe/Zurich]\",\"userId\":\"c9fc8b0a-6ff7-4c00-a6f2-d85f5829edff\"}': Simulated failure");
+                    "Skipping participant '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"userId\":\"c9fc8b0a-6ff7-4c00-a6f2-d85f5829edff\",\"registered\":\"2029-12-07T12:00:00+02:00[Europe/Zurich]\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -340,7 +340,8 @@ class JSONImporterTest {
                     "Start importing global pages...",
                     "...finished importing 2 global pages.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Skipping global page '{\"markdown\":\"This page has an invalid language code for integration tests.\",\"language\":null,\"slot\":\"invalid\",\"title\":\"Page with invalid language\"}': JSONObject[\"language\"] is not a string (class org.json.JSONObject$Null : null).");
+                    "Skipping global page '{\"slot\":\"invalid\",\"language\":null,\"title\":\"Page with invalid language\",\"markdown\":\"This page has an invalid language code for integration tests.\"}': Language must not be null",
+                    "Skipping global page '{\"slot\":\"invalid\",\"title\":\"Page with missing language\",\"markdown\":\"This page has a missing language code for integration tests.\"}': Language must be set");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
@@ -361,9 +362,9 @@ class JSONImporterTest {
                     "Start importing mail templates...",
                     "...finished importing 2 mail templates.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
-                    "Failed to import mail template: Simulated failure", // TEST EN
-                    "Failed to import mail template: Simulated failure",          // TEST DE
-                    "Failed to import mail template: No enum constant app.komunumo.domain.core.mail.entity.MailTemplateId.INVALID_TEMPLATE");
+                    "Skipping mail template '{\"mailTemplateId\":\"TEST\",\"language\":\"en\",\"subject\":\"Test mail\",\"markdown\":\"Hello,\\n\\nthis is a test mail from ${instanceName}.\"}': Simulated failure", // TEST EN
+                    "Skipping mail template '{\"mailTemplateId\":\"TEST\",\"language\":\"de\",\"subject\":\"Testmail\",\"markdown\":\"Hallo,\\n\\ndies ist eine Testmail von ${instanceName}.\"}': Simulated failure", // TEST DE
+                    "Skipping mail template '{\"mailTemplateId\":\"INVALID_TEMPLATE\",\"language\":\"en\",\"subject\":\"This should fail\",\"markdown\":\"This template has an invalid ID\"}': No enum constant app.komunumo.domain.core.mail.entity.MailTemplateId.INVALID_TEMPLATE");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
     }
