@@ -215,7 +215,7 @@
         </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
-            <artifactId>vaadin-testbench-junit5</artifactId>
+            <artifactId>vaadin-testbench-junit6</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
