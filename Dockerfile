@@ -1,5 +1,5 @@
 FROM eclipse-temurin:25
-RUN apt-get update apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 COPY target/komunumo-*.jar /usr/app/app.jar
 RUN groupadd -g 1001 komunumo && useradd -m -u 1001 -g 1001 komunumo
 USER komunumo
