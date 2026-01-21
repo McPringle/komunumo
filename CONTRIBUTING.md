@@ -309,7 +309,7 @@ After starting the script, logs will be shown. To stop the services, press `Ctrl
 
 ```env
 KOMUNUMO_INSTANCE_ADMIN=admin@example.com
-KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone=Europe/Zurich&allowMultiQueries=true
+KOMUNUMO_DB_URL='jdbc:mariadb://localhost:3306/komunumo?serverTimezone=Europe/Zurich&allowMultiQueries=true'
 KOMUNUMO_DB_USER=komunumo
 KOMUNUMO_DB_PASS=komunumo
 KOMUNUMO_DEMO_ENABLED=true
