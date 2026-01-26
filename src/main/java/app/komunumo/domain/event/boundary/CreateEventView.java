@@ -273,10 +273,10 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
                     title, description, location, beginDateTime, endDateTime, imageId, visibility, status);
             final var event = eventService.storeEvent(newEvent);
 
-            showNotification("event.boundary.CreateEventView.notification.success", NotificationVariant.LUMO_SUCCESS);
+            showNotification(getTranslation("event.boundary.CreateEventView.notification.success"), NotificationVariant.LUMO_SUCCESS);
             UI.getCurrent().navigate("events/%s".formatted(event.id()));
         } else {
-            showNotification("event.boundary.CreateEventView.notification.error", NotificationVariant.LUMO_ERROR);
+            showNotification(getTranslation("event.boundary.CreateEventView.notification.error"), NotificationVariant.LUMO_ERROR);
         }
     }
 
