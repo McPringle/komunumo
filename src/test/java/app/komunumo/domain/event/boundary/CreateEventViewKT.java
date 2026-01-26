@@ -351,6 +351,53 @@ class CreateEventViewKT extends KaribuTest {
     }
 
     @Test
+    void testCreate_beginEndDateTimeValidation() {
+        final var testUser = getTestUser(UserRole.USER);
+        login(testUser);
+        UI.getCurrent().navigate(CreateEventView.class);
+
+        final var beginDateTimeField = _get(DateTimePicker.class, spec -> spec.withClasses("begin-field"));
+        final var endDateTimeField = _get(DateTimePicker.class, spec -> spec.withClasses("end-field"));
+
+        // empty form = no date values
+        assertThat(beginDateTimeField.getValue()).isNull();
+        assertThat(endDateTimeField.getValue()).isNull();
+
+        // set end to today should not modify begin
+        final var today = LocalDateTime.now().withSecond(0).withNano(0);
+        endDateTimeField.setValue(today);
+        assertThat(beginDateTimeField.getValue()).isNull();
+        assertThat(endDateTimeField.getValue()).isEqualTo(today);
+
+        // set begin to tomorrow (after end) should update end to match begin
+        final var tomorrow = today.plusDays(1);
+        beginDateTimeField.setValue(tomorrow);
+        assertThat(beginDateTimeField.getValue()).isEqualTo(tomorrow);
+        assertThat(endDateTimeField.getValue()).isEqualTo(tomorrow);
+
+        // set begin to date after end should update end to match begin
+        final var dayAfterTomorrow = tomorrow.plusDays(1);
+        beginDateTimeField.setValue(dayAfterTomorrow);
+        assertThat(beginDateTimeField.getValue()).isEqualTo(dayAfterTomorrow);
+        assertThat(endDateTimeField.getValue()).isEqualTo(dayAfterTomorrow);
+
+        // set begin back to tomorrow should NOT update end
+        beginDateTimeField.setValue(tomorrow);
+        assertThat(beginDateTimeField.getValue()).isEqualTo(tomorrow);
+        assertThat(endDateTimeField.getValue()).isEqualTo(dayAfterTomorrow);
+
+        // set begin to null should NOT update end
+        beginDateTimeField.setValue(null);
+        assertThat(beginDateTimeField.getValue()).isNull();
+        assertThat(endDateTimeField.getValue()).isEqualTo(dayAfterTomorrow);
+
+        // set end to null
+        endDateTimeField.setValue(null);
+        assertThat(beginDateTimeField.getValue()).isNull();
+        assertThat(endDateTimeField.getValue()).isNull();
+    }
+
+    @Test
     @SuppressWarnings({"unchecked", "DataFlowIssue"})
     void testCreate_prefillCommunityFromUrl() {
         final var testUser = getTestUser(UserRole.USER);
