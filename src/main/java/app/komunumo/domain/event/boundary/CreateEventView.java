@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static app.komunumo.util.NotificationUtil.showNotification;
+import static com.vaadin.flow.component.notification.NotificationVariant.LUMO_WARNING;
 
 @RolesAllowed("USER_LOCAL")
 @Route(value = "events/new", layout = WebsiteLayout.class)
@@ -186,10 +187,23 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
 
         beginDateTimeField.addClassName("begin-field");
         beginDateTimeField.setLabel(getTranslation("event.boundary.CreateEventView.label.beginDateTime"));
+        beginDateTimeField.setMin(ZonedDateTime.now(TimeZoneUtil.getClientTimeZone()).toLocalDateTime());
+        beginDateTimeField.addValueChangeListener(_ -> {
+            final var beginDate = beginDateTimeField.getValue();
+            if (beginDate != null) {
+                endDateTimeField.setMin(beginDate);
+                final var endDate = endDateTimeField.getValue();
+                if (endDate != null && endDate.isBefore(beginDate)) {
+                    endDateTimeField.setValue(beginDate);
+                    showNotification(getTranslation("event.boundary.CreateEventView.warning.endDateTimeModified"), LUMO_WARNING);
+                }
+            }
+        });
         add(beginDateTimeField);
 
         endDateTimeField.addClassName("end-field");
         endDateTimeField.setLabel(getTranslation("event.boundary.CreateEventView.label.endDateTime"));
+        endDateTimeField.setMin(beginDateTimeField.getMin());
         add(endDateTimeField);
 
         timeZoneSelector.addClassName("time-zone-field");
@@ -235,7 +249,6 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
         binder.forField(titleField)
                 .asRequired(getTranslation("event.boundary.CreateEventView.validation.title.required"))
                 .bind(EventDto::title, null);
-
     }
 
     private void createEvent(final @NotNull ClickEvent<Button> buttonClickEvent) {
