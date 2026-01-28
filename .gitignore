@@ -12,6 +12,7 @@ Thumbs.db
 
 # The following files are generated/updated by vaadin-maven-plugin or vaadin-gradle-plugin
 /node_modules/
+/src/main/bundles/
 /src/main/frontend/generated/
 /pnpmfile.js
 /.npmrc
