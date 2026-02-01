@@ -17,10 +17,27 @@
  */
 package app.komunumo.vaadin.components;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.ObjectProvider;
+
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEffect;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Nav;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.router.RouterLink;
+
 import app.komunumo.domain.community.boundary.CommunityGridView;
 import app.komunumo.domain.community.boundary.CreateCommunityView;
 import app.komunumo.domain.core.config.boundary.ConfigurationEditorView;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 import app.komunumo.domain.core.exporter.boundary.ExporterView;
 import app.komunumo.domain.core.importer.boundary.ImporterView;
 import app.komunumo.domain.event.boundary.CreateEventView;
@@ -32,22 +49,6 @@ import app.komunumo.domain.user.control.RegistrationService;
 import app.komunumo.domain.user.entity.AuthenticationSignal;
 import app.komunumo.util.LocationUtil;
 import app.komunumo.util.ThemeUtil;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEffect;
-import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.avatar.Avatar;
-import com.vaadin.flow.component.contextmenu.ContextMenu;
-import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Nav;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.router.RouterLink;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.ObjectProvider;
-
-import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
-import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
-import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
 
 public final class NavigationBar extends HorizontalLayout {
 

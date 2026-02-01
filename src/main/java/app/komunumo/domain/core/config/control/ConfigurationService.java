@@ -17,22 +17,23 @@
  */
 package app.komunumo.domain.core.config.control;
 
-import app.komunumo.domain.core.config.entity.ConfigurationSetting;
-import app.komunumo.domain.core.config.entity.ConfigurationValue;
-import app.komunumo.util.LinkUtil;
-import app.komunumo.util.LocaleUtil;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 import static app.komunumo.data.db.tables.Config.CONFIG;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.domain.core.config.entity.ConfigurationValue;
+import app.komunumo.util.LinkUtil;
+import app.komunumo.util.LocaleUtil;
 
 /**
  * <p>Service for reading and writing instance configuration values.</p>

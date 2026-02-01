@@ -17,12 +17,13 @@
  */
 package app.komunumo.domain.core.mail.control;
 
-import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.core.mail.entity.MailFormat;
-import app.komunumo.domain.core.mail.entity.MailTemplate;
-import app.komunumo.domain.core.mail.entity.MailTemplateId;
-import app.komunumo.util.LocaleUtil;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
@@ -32,18 +33,17 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
 import static app.komunumo.data.db.tables.MailTemplate.MAIL_TEMPLATE;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.AppConfig;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_URL;
+import app.komunumo.domain.core.mail.entity.MailFormat;
 import static app.komunumo.domain.core.mail.entity.MailFormat.HTML;
 import static app.komunumo.domain.core.mail.entity.MailFormat.MARKDOWN;
+import app.komunumo.domain.core.mail.entity.MailTemplate;
+import app.komunumo.domain.core.mail.entity.MailTemplateId;
+import app.komunumo.util.LocaleUtil;
 import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;
 import static app.komunumo.util.TemplateUtil.replaceVariables;
 
