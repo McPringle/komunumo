@@ -21,6 +21,7 @@ import app.komunumo.domain.community.boundary.CommunityGridView;
 import app.komunumo.domain.community.boundary.CreateCommunityView;
 import app.komunumo.domain.core.config.boundary.ConfigurationEditorView;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.exporter.boundary.ExporterView;
 import app.komunumo.domain.core.importer.boundary.ImporterView;
 import app.komunumo.domain.event.boundary.CreateEventView;
 import app.komunumo.domain.event.boundary.EventGridView;
@@ -100,6 +101,9 @@ public final class NavigationBar extends HorizontalLayout {
         );
         adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.import"), _ ->
                 ui.navigate(ImporterView.class)
+        );
+        adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.export"), _ ->
+                ui.navigate(ExporterView.class)
         );
 
         // login as first entry in the menu
