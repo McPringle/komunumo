@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -150,5 +151,24 @@ public final class MailService {
                         .from(MAIL_TEMPLATE)
                         .fetchOne(0, Integer.class)
         ).orElse(0);
+    }
+
+    /**
+     * <p>Returns all mail templates stored in the database.</p>
+     *
+     * <p>This method retrieves all mail template entries including all language variants.
+     * It is primarily used for exporting the instance mail templates.</p>
+     *
+     * @return a list of all mail templates
+     */
+    public @NotNull List<@NotNull MailTemplate> getAllMailTemplates() {
+        return dsl.selectFrom(MAIL_TEMPLATE)
+                .fetch()
+                .map(record -> new MailTemplate(
+                        MailTemplateId.valueOf(record.get(MAIL_TEMPLATE.ID)),
+                        Locale.forLanguageTag(record.get(MAIL_TEMPLATE.LANGUAGE)),
+                        record.get(MAIL_TEMPLATE.SUBJECT),
+                        record.get(MAIL_TEMPLATE.MARKDOWN)
+                ));
     }
 }
