@@ -71,7 +71,8 @@ public class SecurityConfig {
                         "/.well-known/**",
                         "/actuator/health",
                         "/css/**",
-                        "/images/**"
+                        "/images/**",
+                        "/custom/styles/**"
                 ).permitAll()
         );
 

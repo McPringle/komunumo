@@ -17,30 +17,68 @@
  */
 package app.komunumo.domain.core.layout.boundary;
 
-import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.test.BrowserTest;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 
-import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class WebsiteLayoutCustomStylesBT extends BrowserTest {
 
     @Autowired
-    private @NotNull ConfigurationService configurationService;
+    private AppConfig appConfig;
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "http://localhost:8082/custom-styles/styles.css",
-            "http://localhost:8082/custom-styles/styles.css?foo=bar"
-    })
-    @SuppressWarnings("java:S2699")
-    void testCustomStyles(final @NotNull String customStylesUrl) {
+    @Autowired
+    private ResourceLoader resourceLoader;
+
+    @Test
+    void testWithoutCustomStyles() {
+        final var page = getPage();
+        page.navigate(getInstanceUrl());
+
+        final var locators = page.locator("link[rel='stylesheet']")
+                .all()
+                .stream()
+                .map(locator -> locator.getAttribute("href"))
+                .toList();
+
+        assertThat(locators).doesNotContain("/custom/styles/styles.css");
+    }
+
+    @Test
+    void testWithCustomStyles() throws IOException {
+        final var stylesFile = createTestCssFile();
+
         try {
-            configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, customStylesUrl);
+            final var page = getPage();
+            page.navigate(getInstanceUrl());
 
+            final var locators = page.locator("link[rel='stylesheet']")
+                    .all()
+                    .stream()
+                    .map(locator -> locator.getAttribute("href"))
+                    .toList();
+
+            assertThat(locators).contains("/custom/styles/styles.css");
+        } finally {
+            Files.deleteIfExists(stylesFile);
+        }
+    }
+
+    @Test
+    void testWithCustomStylesApplied() throws IOException {
+        final var stylesFile = createTestCssFile();
+
+        try {
             final var page = getPage();
             page.navigate(getInstanceUrl());
             page.waitForFunction("""
@@ -50,8 +88,18 @@ class WebsiteLayoutCustomStylesBT extends BrowserTest {
                     """);
             captureScreenshot("home-with-custom-styles");
         } finally {
-            configurationService.setConfiguration(INSTANCE_CUSTOM_STYLES, "");
+            Files.deleteIfExists(stylesFile);
         }
+    }
+
+    private @NonNull Path createTestCssFile() throws IOException {
+        final var cssContent = resourceLoader.getResource("classpath:custom-styles/styles.css")
+                .getContentAsString(StandardCharsets.UTF_8);
+        final var stylesDirectory = appConfig.files().basedir().resolve("custom", "styles");
+        Files.createDirectories(stylesDirectory);
+        final var stylesFile = stylesDirectory.resolve("styles.css");
+        Files.writeString(stylesFile, cssContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+        return stylesFile;
     }
 
 }

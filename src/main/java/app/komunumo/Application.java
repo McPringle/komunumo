@@ -17,7 +17,6 @@
  */
 package app.komunumo;
 
-import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.image.boundary.ImageServlet;
 import app.komunumo.domain.core.image.control.ImageService;
@@ -37,11 +36,6 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-
-import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_CUSTOM_STYLES;
-
 /**
  * The entry point of the Spring Boot application.
  */
@@ -54,15 +48,33 @@ import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTAN
 @EnableConfigurationProperties(AppConfig.class)
 public class Application extends SpringBootServletInitializer implements AppShellConfigurator {
 
-    private final @NotNull ConfigurationService configurationService;
+    private final @NotNull AppConfig appConfig;
 
-    public static void main(final @NotNull String... args) {
-        SpringApplication.run(Application.class, args);
+    /**
+     * <p>Creates the main application instance.</p>
+     *
+     * <p>The application configuration is injected by Spring Boot and stored for later use during application startup
+     * and runtime, for example when configuring the Vaadin application shell or registering infrastructure components
+     * that depend on file system paths.</p>
+     *
+     * @param appConfig the application configuration providing access to runtime and file system settings
+     */
+    public Application(final @NotNull AppConfig appConfig) {
+        super();
+        this.appConfig = appConfig;
     }
 
-    public Application(final @NotNull ConfigurationService configurationService) {
-        super();
-        this.configurationService = configurationService;
+    /**
+     * <p>Starts the Spring Boot application.</p>
+     *
+     * <p>This is the main entry point when the application is launched as a standalone JVM process. It bootstraps the
+     * Spring application context, triggers component scanning, applies autoconfiguration, and starts the embedded
+     * servlet container.</p>
+     *
+     * @param args the command-line arguments passed to the application
+     */
+    public static void main(final @NotNull String... args) {
+        SpringApplication.run(Application.class, args);
     }
 
     /**
@@ -81,13 +93,11 @@ public class Application extends SpringBootServletInitializer implements AppShel
      */
     @Override
     public void configurePage(final @NotNull AppShellSettings settings) {
-        final var customStyles = configurationService.getConfiguration(INSTANCE_CUSTOM_STYLES);
-        if (!customStyles.isBlank()) {
-            final var timestamp = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
-            final var href = customStyles.contains("?")
-                    ? customStyles + "&ts=" + timestamp
-                    : customStyles + "?ts=" + timestamp;
-            settings.addLink("stylesheet", href);
+        final var baseDir = appConfig.files().basedir();
+        final var stylePath = baseDir.resolve("custom", "styles", "styles.css");
+
+        if (stylePath.toFile().exists()) {
+            settings.addLink("stylesheet", "/custom/styles/styles.css");
         }
     }
 
@@ -97,13 +107,11 @@ public class Application extends SpringBootServletInitializer implements AppShel
      * <p>This servlet is responsible for streaming stored image files from the file system
      * and serves images with appropriate cache headers.</p>
      *
-     * @param appConfig the application configuration used to access instance settings
      * @param imageService the image service used to retrieve image data
      * @return a servlet registration bean that maps {@code /images/*} to {@link ImageServlet}
      */
     @Bean
     public @NotNull ServletRegistrationBean<@NotNull HttpServlet> imageServlet(
-            final @NotNull AppConfig appConfig,
             final @NotNull ImageService imageService) {
         return new ServletRegistrationBean<>(
                 new ImageServlet(appConfig, imageService),
