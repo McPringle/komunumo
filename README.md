@@ -309,6 +309,21 @@ MySQL and MariaDB have a possible silent truncation problem with the `GROUP_CONC
 KOMUNUMO_DB_URL=jdbc:mariadb://localhost:3306/komunumo?serverTimezone\=Europe/Zurich&allowMultiQueries=true
 ```
 
+### Custom Styling
+
+The visual appearance of *Komunumo* can be customized to your instance's need. As of now, this configuration is globally per instance (e.g. no further styling per community).
+
+To load a custom stylesheet (CSS file), just add it to the following location and restart your instance:
+
+```
+{KOMUNUMO_FILES_BASEDIR}/custom/styles/styles.css
+```
+
+*Komunumo* detects whether this file is present and if so loads it within the HTML output of all pages.
+
+If you reference other static files like images from your stylesheet, make sure to put those files in the same directory as the `styles.css` file.
+
+
 ## Copyright and License
 
 [AGPL License](https://www.gnu.org/licenses/agpl-3.0.de.html)
