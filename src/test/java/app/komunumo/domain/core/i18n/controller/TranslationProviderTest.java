@@ -17,20 +17,19 @@
  */
 package app.komunumo.domain.core.i18n.controller;
 
+import java.util.Locale;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.GERMAN;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static java.util.Locale.ENGLISH;
-import static java.util.Locale.GERMAN;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class TranslationProviderTest {
 
@@ -120,6 +119,42 @@ class TranslationProviderTest {
                 .isEqualTo("!en: test.missing.translation");
         assertThat(translationProvider.getTranslation("test.missing.translation", GERMAN))
                 .isEqualTo("!de: test.missing.translation");
+    }
+
+    @Test
+    void testHomeViewNoPastEventsInEnglish() {
+        assertThat(translationProvider.getTranslation("core.layout.boundary.HomeView.noPastEvents", ENGLISH))
+                .isEqualTo("There are no past events");
+    }
+
+    @Test
+    void testHomeViewNoPastEventsInGerman() {
+        assertThat(translationProvider.getTranslation("core.layout.boundary.HomeView.noPastEvents", GERMAN))
+                .isEqualTo("Es gibt keine vergangenen Veranstaltungen");
+    }
+
+    @Test
+    void testHomeViewNoUpcomingEventsInEnglish() {
+        assertThat(translationProvider.getTranslation("core.layout.boundary.HomeView.noUpcomingEvents", ENGLISH))
+                .isEqualTo("No events are currently planned");
+    }
+
+    @Test
+    void testHomeViewNoUpcomingEventsInGerman() {
+        assertThat(translationProvider.getTranslation("core.layout.boundary.HomeView.noUpcomingEvents", GERMAN))
+                .isEqualTo("Aktuell sind keine Veranstaltungen geplant");
+    }
+
+    @Test
+    void testMoreEventsCardTitleInEnglish() {
+        assertThat(translationProvider.getTranslation("event.boundary.MoreEventsCard.title", ENGLISH))
+                .isEqualTo("See more events");
+    }
+
+    @Test
+    void testMoreEventsCardTitleInGerman() {
+        assertThat(translationProvider.getTranslation("event.boundary.MoreEventsCard.title", GERMAN))
+                .isEqualTo("Weitere Veranstaltungen ansehen");
     }
 
 }
