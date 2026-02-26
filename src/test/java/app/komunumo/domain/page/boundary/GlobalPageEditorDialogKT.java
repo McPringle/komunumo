@@ -687,7 +687,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             tabSheet.setSelectedIndex(1);
 
             // check that the preview has the correct initial content
-            final var markdown = findComponent(dialog, Markdown.class);
+            final var markdown = _get(dialog, Markdown.class);
             assertThat(markdown).isNotNull();
             assertThat(markdown.getContent()).startsWith("## Legal Notice");
 
@@ -753,7 +753,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             tabSheet.setSelectedIndex(2);
 
             // check that the help has the correct initial content
-            final var markdown = findComponent(dialog, Markdown.class);
+            final var markdown = _get(dialog, Markdown.class);
             assertThat(markdown).isNotNull();
             assertThat(markdown.getContent()).startsWith("## Rich Text Formatting");
 
