@@ -30,8 +30,11 @@ import java.util.List;
 import java.util.Locale;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
+import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_SLOGAN;
+import static java.util.Locale.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 class ConfigurationServiceKT extends KaribuTest {
 
@@ -47,11 +50,29 @@ class ConfigurationServiceKT extends KaribuTest {
     }
 
     @Test
+    void getAllConfigurationsForExport() {
+        assertThat(configurationService.getAllConfigurationsForExport()).isEmpty();
+
+        configurationService.setConfiguration(INSTANCE_NAME, null, "Test Instance");
+        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "Test Slogan EN");
+        configurationService.setConfiguration(INSTANCE_SLOGAN, GERMAN, "Test Slogan DE");
+
+        assertThat(configurationService.getAllConfigurationsForExport())
+                .hasSize(3)
+                .extracting("setting", "language", "value")
+                .containsExactlyInAnyOrder(
+                        tuple("instance.name", "", "Test Instance"),
+                        tuple("instance.slogan", "EN", "Test Slogan EN"),
+                        tuple("instance.slogan", "DE", "Test Slogan DE")
+                );
+    }
+
+    @Test
     void getConfiguration_languageDependentWithNullLocale_throwsIllegalArgumentException() {
         // Language-dependent setting requires a non-null locale
         assertThatThrownBy(() ->
                 configurationService.getConfiguration(
-                        ConfigurationSetting.INSTANCE_SLOGAN, null, String.class
+                        INSTANCE_SLOGAN, null, String.class
                 )
         )
                 .isInstanceOf(IllegalArgumentException.class)
@@ -63,7 +84,7 @@ class ConfigurationServiceKT extends KaribuTest {
         // Language-independent setting must not receive a locale
         assertThatThrownBy(() ->
                 configurationService.getConfiguration(
-                        ConfigurationSetting.INSTANCE_NAME, Locale.ENGLISH, String.class
+                        ConfigurationSetting.INSTANCE_NAME, ENGLISH, String.class
                 )
         )
                 .isInstanceOf(IllegalArgumentException.class)
@@ -78,50 +99,50 @@ class ConfigurationServiceKT extends KaribuTest {
 
     @Test
     void shouldReturnValueFromDatabaseForLanguageSpecificSetting() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN, "Offener Community-Manager");
-        final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN);
+        configurationService.setConfiguration(INSTANCE_SLOGAN, GERMAN, "Offener Community-Manager");
+        final var value = configurationService.getConfiguration(INSTANCE_SLOGAN, GERMAN);
         assertThat(value).isEqualTo("Offener Community-Manager");
     }
 
     @Test
     void shouldFallbackToEnglishIfLanguageSpecificSettingIsMissing() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "English Slogan");
-        final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.FRENCH);
+        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "English Slogan");
+        final var value = configurationService.getConfiguration(INSTANCE_SLOGAN, FRENCH);
         assertThat(value).isEqualTo("English Slogan");
     }
 
     @Test
     void shouldResolveLanguageFromRegionalLocale() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN, "Deutscher Slogan");
+        configurationService.setConfiguration(INSTANCE_SLOGAN, GERMAN, "Deutscher Slogan");
 
-        final var swissGerman = Locale.of("de", "CH");
-        final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, swissGerman);
+        final var swissGerman = of("de", "CH");
+        final var value = configurationService.getConfiguration(INSTANCE_SLOGAN, swissGerman);
 
         assertThat(value).isEqualTo("Deutscher Slogan");
     }
 
     @Test
     void shouldReturnDefaultIfNothingIsSet() {
-        final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ITALIAN);
+        final var value = configurationService.getConfiguration(INSTANCE_SLOGAN, ITALIAN);
         assertThat(value).isEqualTo("Your Instance Slogan");
     }
 
     @Test
     void shouldOverrideExistingValue() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "Old");
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "New");
-        final var value = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH);
+        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "Old");
+        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "New");
+        final var value = configurationService.getConfiguration(INSTANCE_SLOGAN, ENGLISH);
         assertThat(value).isEqualTo("New");
     }
 
     @Test
     void shouldInvalidateCacheWhenSettingIsChanged() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "Initial");
-        final var before = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH);
+        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "Initial");
+        final var before = configurationService.getConfiguration(INSTANCE_SLOGAN, ENGLISH);
         assertThat(before).isEqualTo("Initial");
 
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "Updated");
-        final var after = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH);
+        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "Updated");
+        final var after = configurationService.getConfiguration(INSTANCE_SLOGAN, ENGLISH);
         assertThat(after).isEqualTo("Updated");
     }
 
@@ -152,44 +173,44 @@ class ConfigurationServiceKT extends KaribuTest {
 
     @Test
     void shouldDeleteLanguageSpecificValueOnlyForGivenLocale() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "English Slogan");
-        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "English Slogan");
+        assertThat(configurationService.getConfiguration(INSTANCE_SLOGAN, ENGLISH))
                 .isEqualTo("English Slogan");
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN, "Deutscher Slogan");
-        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN))
+        configurationService.setConfiguration(INSTANCE_SLOGAN, GERMAN, "Deutscher Slogan");
+        assertThat(configurationService.getConfiguration(INSTANCE_SLOGAN, GERMAN))
                 .isEqualTo("Deutscher Slogan");
 
-        configurationService.deleteConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN);
+        configurationService.deleteConfiguration(INSTANCE_SLOGAN, GERMAN);
 
-        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN))
+        assertThat(configurationService.getConfiguration(INSTANCE_SLOGAN, GERMAN))
                 .isEqualTo("English Slogan"); // Fallback
-        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+        assertThat(configurationService.getConfiguration(INSTANCE_SLOGAN, ENGLISH))
                 .isEqualTo("English Slogan");
     }
 
     @Test
     void shouldFallbackToDefaultAfterDeletingLastLanguageValues() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH, "English Slogan");
-        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "English Slogan");
+        assertThat(configurationService.getConfiguration(INSTANCE_SLOGAN, ENGLISH))
                 .isEqualTo("English Slogan");
 
-        configurationService.deleteConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH);
+        configurationService.deleteConfiguration(INSTANCE_SLOGAN, ENGLISH);
 
-        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+        assertThat(configurationService.getConfiguration(INSTANCE_SLOGAN, ENGLISH))
                 .isEqualTo("Your Instance Slogan");
     }
 
     @Test
     void shouldResolveRegionalLocaleOnDelete() {
-        configurationService.setConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN, "Deutscher Slogan");
-        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, Locale.GERMAN))
+        configurationService.setConfiguration(INSTANCE_SLOGAN, GERMAN, "Deutscher Slogan");
+        assertThat(configurationService.getConfiguration(INSTANCE_SLOGAN, GERMAN))
                 .isEqualTo("Deutscher Slogan");
 
-        final var swissGerman = Locale.of("de", "CH");
-        configurationService.deleteConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, swissGerman);
+        final var swissGerman = of("de", "CH");
+        configurationService.deleteConfiguration(INSTANCE_SLOGAN, swissGerman);
 
         // The entry for "de" is considered deleted, therefore fallback to default
-        assertThat(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_SLOGAN, swissGerman))
+        assertThat(configurationService.getConfiguration(INSTANCE_SLOGAN, swissGerman))
                 .isEqualTo("Your Instance Slogan");
     }
 

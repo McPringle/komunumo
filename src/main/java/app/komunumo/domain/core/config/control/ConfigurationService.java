@@ -31,7 +31,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 import static app.komunumo.data.db.tables.Config.CONFIG;
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
-import app.komunumo.domain.core.config.entity.ConfigurationValue;
+import app.komunumo.domain.core.config.entity.ConfigurationExportValue;
 import app.komunumo.util.LinkUtil;
 import app.komunumo.util.LocaleUtil;
 
@@ -90,10 +90,10 @@ public class ConfigurationService {
      *
      * @return a list of all configuration values
      */
-    public @NotNull List<@NotNull ConfigurationValue> getAllConfigurations() {
+    public @NotNull List<@NotNull ConfigurationExportValue> getAllConfigurationsForExport() {
         return dsl.selectFrom(CONFIG)
                 .fetch()
-                .map(record -> new ConfigurationValue(
+                .map(record -> new ConfigurationExportValue(
                         record.get(CONFIG.SETTING),
                         record.get(CONFIG.LANGUAGE),
                         record.get(CONFIG.VALUE)

@@ -95,7 +95,7 @@ public final class JSONExporter {
     private void exportSettings(final @NotNull ObjectNode root,
                                 final @NotNull ConfigurationService configurationService) {
         final ArrayNode settingsArray = objectMapper.createArrayNode();
-        configurationService.getAllConfigurations().forEach(config -> {
+        configurationService.getAllConfigurationsForExport().forEach(config -> {
             final ObjectNode node = objectMapper.createObjectNode();
             node.put("setting", config.setting());
             if (config.language() == null || config.language().isEmpty()) {

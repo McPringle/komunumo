@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * @param language the ISO language code (e.g., "EN") or empty string for language-independent values
  * @param value the stored configuration value
  */
-public record ConfigurationValue(
+public record ConfigurationExportValue(
         @NotNull String setting,
         @Nullable String language,
         @NotNull String value

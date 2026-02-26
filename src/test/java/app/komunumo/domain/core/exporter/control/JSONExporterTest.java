@@ -21,7 +21,7 @@ import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.core.config.entity.ConfigurationValue;
+import app.komunumo.domain.core.config.entity.ConfigurationExportValue;
 import app.komunumo.domain.core.config.entity.FilesConfig;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.image.entity.ContentType;
@@ -104,7 +104,7 @@ class JSONExporterTest {
     @Test
     void testExportEmptyData() throws Exception {
         // given
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -147,9 +147,9 @@ class JSONExporterTest {
     void testExportSettings() throws Exception {
         // given
         mockEmptyServices();
-        final var config1 = new ConfigurationValue("instance.name", "", "Test Instance");
-        final var config2 = new ConfigurationValue("instance.slogan", "EN", "English Slogan");
-        when(configurationService.getAllConfigurations()).thenReturn(List.of(config1, config2));
+        final var config1 = new ConfigurationExportValue("instance.name", "", "Test Instance");
+        final var config2 = new ConfigurationExportValue("instance.slogan", "EN", "English Slogan");
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of(config1, config2));
 
         // when
         final String json = exporter.exportAll(
@@ -358,7 +358,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServices() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -370,7 +370,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptUsers() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
         when(eventService.getEvents()).thenReturn(List.of());
@@ -381,7 +381,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptCommunities() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(eventService.getEvents()).thenReturn(List.of());
@@ -392,7 +392,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptEvents() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -403,7 +403,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptMembers() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -414,7 +414,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptParticipants() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -425,7 +425,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptGlobalPages() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -436,7 +436,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptMailTemplates() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -447,7 +447,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptImages() {
-        when(configurationService.getAllConfigurations()).thenReturn(List.of());
+        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
         when(eventService.getEvents()).thenReturn(List.of());
