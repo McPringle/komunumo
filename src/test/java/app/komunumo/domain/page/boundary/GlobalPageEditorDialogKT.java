@@ -558,7 +558,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             // close the notification
             final var notificationCloseButton = _get(notification, Button.class);
             _click(notificationCloseButton);
-            MockVaadin.clientRoundtrip();
+            MockVaadin.clientRoundtrip(false);
             assertThat(notification.isOpened()).isFalse();
 
             // check that the dialog is still open
@@ -622,7 +622,7 @@ class GlobalPageEditorDialogKT extends KaribuTest {
             // close the notification
             final var notificationCloseButton = _get(notification, Button.class);
             _click(notificationCloseButton);
-            MockVaadin.clientRoundtrip();
+            MockVaadin.clientRoundtrip(false);
             assertThat(notification.isOpened()).isFalse();
 
             // check that the dialog is still open
