@@ -17,12 +17,13 @@
  */
 package app.komunumo.domain.core.mail.control;
 
-import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.core.mail.entity.MailFormat;
-import app.komunumo.domain.core.mail.entity.MailTemplate;
-import app.komunumo.domain.core.mail.entity.MailTemplateId;
-import app.komunumo.util.LocaleUtil;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
@@ -32,17 +33,17 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
 import static app.komunumo.data.db.tables.MailTemplate.MAIL_TEMPLATE;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.AppConfig;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_URL;
+import app.komunumo.domain.core.mail.entity.MailFormat;
 import static app.komunumo.domain.core.mail.entity.MailFormat.HTML;
 import static app.komunumo.domain.core.mail.entity.MailFormat.MARKDOWN;
+import app.komunumo.domain.core.mail.entity.MailTemplate;
+import app.komunumo.domain.core.mail.entity.MailTemplateId;
+import app.komunumo.util.LocaleUtil;
 import static app.komunumo.util.MarkdownUtil.convertMarkdownToHtml;
 import static app.komunumo.util.TemplateUtil.replaceVariables;
 
@@ -150,5 +151,24 @@ public final class MailService {
                         .from(MAIL_TEMPLATE)
                         .fetchOne(0, Integer.class)
         ).orElse(0);
+    }
+
+    /**
+     * <p>Returns all mail templates stored in the database.</p>
+     *
+     * <p>This method retrieves all mail template entries including all language variants.
+     * It is primarily used for exporting the instance mail templates.</p>
+     *
+     * @return a list of all mail templates
+     */
+    public @NotNull List<@NotNull MailTemplate> getAllMailTemplates() {
+        return dsl.selectFrom(MAIL_TEMPLATE)
+                .fetch()
+                .map(record -> new MailTemplate(
+                        MailTemplateId.valueOf(record.get(MAIL_TEMPLATE.ID)),
+                        Locale.forLanguageTag(record.get(MAIL_TEMPLATE.LANGUAGE)),
+                        record.get(MAIL_TEMPLATE.SUBJECT),
+                        record.get(MAIL_TEMPLATE.MARKDOWN)
+                ));
     }
 }

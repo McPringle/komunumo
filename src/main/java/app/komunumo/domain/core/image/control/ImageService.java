@@ -125,6 +125,10 @@ public final class ImageService {
                 .toList();
     }
 
+    public List<ImageDto> getAllImages() {
+        return dsl.selectFrom(IMAGE).fetchInto(ImageDto.class);
+    }
+
     public boolean deleteImage(final @NotNull ImageDto image) {
         final var path = ImageUtil.resolveImagePath(image);
         if (path != null) {
