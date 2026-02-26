@@ -65,7 +65,7 @@ class ConfirmationViewKT extends KaribuTest {
                 new QueryParameters(Map.of("id", List.of("12345")))
         );
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         if (redirectLocation.isBlank()) {
             assertThat(currentViewClass()).isEqualTo(ConfirmationView.class);
@@ -91,7 +91,7 @@ class ConfirmationViewKT extends KaribuTest {
                 new QueryParameters(Map.of("id", List.of("12345")))
         );
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         if (redirectLocation.isBlank()) {
             assertThat(currentViewClass()).isEqualTo(ConfirmationView.class);
@@ -111,7 +111,7 @@ class ConfirmationViewKT extends KaribuTest {
         final var closeButton = _get(notification, Button.class);
         _click(closeButton);
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         assertThat(notification.isOpened()).isFalse();
     }
@@ -128,7 +128,7 @@ class ConfirmationViewKT extends KaribuTest {
                 new QueryParameters(Map.of("id", List.of("12345")))
         );
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         assertThat(currentViewClass()).isEqualTo(ConfirmationView.class);
         final var main = _get(Main.class);
@@ -144,7 +144,7 @@ class ConfirmationViewKT extends KaribuTest {
         final var closeButton = _get(notification, Button.class);
         _click(closeButton);
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         assertThat(notification.isOpened()).isFalse();
     }
