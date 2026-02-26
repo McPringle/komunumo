@@ -45,12 +45,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @RolesAllowed("ADMIN")
 @Route(value = "admin/export", layout = WebsiteLayout.class)
 public final class ExporterView extends AbstractView {
+
+    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmssXXX");
 
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull ImageService imageService;
@@ -63,7 +66,6 @@ public final class ExporterView extends AbstractView {
     private final @NotNull MailService mailService;
 
     private final @NotNull UI ui;
-    private final @NotNull Button exportButton;
     private final @NotNull UnorderedList exportLog;
     private final @NotNull VerticalLayout exportFieldsContainer;
     private final @NotNull VerticalLayout exportLogContainer;
@@ -91,7 +93,7 @@ public final class ExporterView extends AbstractView {
         this.mailService = mailService;
         this.ui = UI.getCurrent();
 
-        exportButton = new Button(getTranslation("core.exporter.boundary.ExporterView.startExportButton"));
+        final var exportButton = new Button(getTranslation("core.exporter.boundary.ExporterView.startExportButton"));
         exportButton.setEnabled(true);
         exportButton.addClassName("start-export-button");
         exportButton.addClickListener(_ -> processExport());
@@ -135,7 +137,7 @@ public final class ExporterView extends AbstractView {
                         mailService
                 );
 
-                final String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+                final String timestamp = ZonedDateTime.now(ZoneOffset.UTC).format(TIMESTAMP_FORMAT);
                 final String fileName = "komunumo-export-" + timestamp + ".json";
 
                 final StreamResource resource = new StreamResource(fileName,
