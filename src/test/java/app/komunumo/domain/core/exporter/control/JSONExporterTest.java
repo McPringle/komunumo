@@ -17,21 +17,12 @@
  */
 package app.komunumo.domain.core.exporter.control;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.config.entity.ConfigurationValue;
+import app.komunumo.domain.core.config.entity.FilesConfig;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
@@ -53,14 +44,31 @@ import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.util.ImageUtil;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+
+import java.nio.file.Path;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class JSONExporterTest {
 
     private static final UUID TEST_UUID_1 = UUID.fromString("11111111-1111-1111-1111-111111111111");
     private static final UUID TEST_UUID_2 = UUID.fromString("22222222-2222-2222-2222-222222222222");
     private static final UUID TEST_UUID_3 = UUID.fromString("33333333-3333-3333-3333-333333333333");
+
+    @TempDir
+    private Path tempDir;
 
     private ConfigurationService configurationService;
     private ImageService imageService;
@@ -87,6 +95,10 @@ class JSONExporterTest {
         mailService = mock(MailService.class);
         exporter = new JSONExporter();
         objectMapper = new ObjectMapper();
+
+        final var appConfig = mock(AppConfig.class);
+        when(appConfig.files()).thenReturn(new FilesConfig(tempDir));
+        ImageUtil.initialize(appConfig);
     }
 
     @Test
@@ -134,10 +146,10 @@ class JSONExporterTest {
     @Test
     void testExportSettings() throws Exception {
         // given
+        mockEmptyServices();
         final var config1 = new ConfigurationValue("instance.name", "", "Test Instance");
         final var config2 = new ConfigurationValue("instance.slogan", "EN", "English Slogan");
         when(configurationService.getAllConfigurations()).thenReturn(List.of(config1, config2));
-        mockEmptyServices();
 
         // when
         final String json = exporter.exportAll(
