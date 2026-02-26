@@ -126,7 +126,8 @@ public final class ImageService {
     }
 
     public List<ImageDto> getAllImages() {
-        return dsl.selectFrom(IMAGE).fetchInto(ImageDto.class);
+        return dsl.selectFrom(IMAGE)
+                .fetchInto(ImageDto.class);
     }
 
     public boolean deleteImage(final @NotNull ImageDto image) {

@@ -62,6 +62,9 @@ class ImageServiceKT extends KaribuTest {
         assertThat(image.contentType()).isEqualTo(ContentType.IMAGE_WEBP);
         assertThat(imageService.getImageCount()).isEqualTo(3);
 
+        // read all images from the database
+        assertThat(imageService.getAllImages()).hasSize(3);
+
         // update existing image
         image = imageService.storeImage(new ImageDto(image.id(), ContentType.IMAGE_SVG));
         assertThat(image.id()).isEqualTo(imageId);
