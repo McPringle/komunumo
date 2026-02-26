@@ -205,6 +205,11 @@
             <version>5.0.9.Final</version>
         </dependency>
         <dependency>
+            <groupId>com.flowingcode.addons.carousel</groupId>
+            <artifactId>carousel-addon</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
