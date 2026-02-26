@@ -32,11 +32,11 @@ class LogoutViewKT extends KaribuTest {
     void logoutView() {
         final var user = getTestUser(UserRole.USER);
         login(user);
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
         assertThat(SecurityUtil.isLoggedIn()).isTrue();
 
         UI.getCurrent().navigate(LogoutView.class);
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
         assertThat(SecurityUtil.isLoggedIn()).isFalse();
     }
 

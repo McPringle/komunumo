@@ -35,7 +35,7 @@ class LoginViewKT extends KaribuTest {
     void loginDialogShouldOpenAutomatically() {
         UI.getCurrent().navigate(LoginView.class);
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         final var loginDialog = _get(ConfirmationDialog.class);
         assertThat(loginDialog).isNotNull();
@@ -46,7 +46,7 @@ class LoginViewKT extends KaribuTest {
     void loginDialogIsClosable() {
         UI.getCurrent().navigate(LoginView.class);
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         final var loginDialog = _get(ConfirmationDialog.class);
         assertThat(loginDialog).isNotNull();
@@ -56,7 +56,7 @@ class LoginViewKT extends KaribuTest {
         assertThat(closeButton).isNotNull();
         _click(closeButton);
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         assertThat(loginDialog.isOpened()).isFalse();
     }
@@ -65,7 +65,7 @@ class LoginViewKT extends KaribuTest {
     void loginDialogCanBeCanceled() {
         UI.getCurrent().navigate(LoginView.class);
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         final var loginDialog = _get(ConfirmationDialog.class);
         assertThat(loginDialog).isNotNull();
@@ -75,7 +75,7 @@ class LoginViewKT extends KaribuTest {
         assertThat(cancelButton).isNotNull();
         _click(cancelButton);
 
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
 
         assertThat(loginDialog.isOpened()).isFalse();
     }
@@ -84,7 +84,7 @@ class LoginViewKT extends KaribuTest {
     void redirectWhenAlreadyLoggedIn() {
         login(getTestUser(USER));
         UI.getCurrent().navigate(LoginView.class);
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
         assertThat(KaribuTest.currentViewClass())
                 .isNotEqualTo(LoginView.class);
     }

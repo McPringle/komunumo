@@ -77,10 +77,10 @@
 
     <properties>
         <java.version>25</java.version>
-        <jooq.version>3.20.10</jooq.version>
+        <jooq.version>3.20.11</jooq.version>
         <maven.version>3.9.9</maven.version>
         <mockito.version>5.21.0</mockito.version>
-        <vaadin.version>25.0.3</vaadin.version>
+        <vaadin.version>25.0.6</vaadin.version>
         <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
         <buildtype>SNAPSHOT</buildtype>
         <revision>1.0.0-${buildtype}.${maven.build.timestamp}</revision>
@@ -89,7 +89,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.3</version>
     </parent>
 
     <repositories>
@@ -154,7 +154,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>26.0.2-1</version>
+            <version>26.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -221,19 +221,19 @@
         <dependency>
             <groupId>com.github.mvysny.kaributesting</groupId>
             <artifactId>karibu-testing-v10-spring</artifactId>
-            <version>2.6.1</version>
+            <version>2.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
-            <version>1.57.0</version>
+            <version>1.58.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.27.6</version>
+            <version>3.27.7</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -301,7 +301,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.14.1</version>
+                    <version>3.15.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -331,7 +331,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.5.4</version>
+                    <version>3.5.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.simplify4u.plugins</groupId>
@@ -379,7 +379,7 @@
 
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.9.0</version>
+                <version>3.10.0</version>
                 <executions>
                     <execution>
                         <id>analyze</id>
@@ -652,7 +652,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>3.5.5</version>
 
                 <configuration>
                     <reportsDirectories>
@@ -680,7 +680,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>13.0.0</version>
+                        <version>13.2.0</version>
                     </dependency>
                 </dependencies>
                 <configuration>

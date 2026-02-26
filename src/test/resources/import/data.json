@@ -22,9 +22,9 @@
       "value": "Should be ignored because instance slogan is language dependent but the language is missing."
     },
     {
-      "setting": "instance.custom.styles",
+      "setting": "instance.createCommunityAllowed",
       "language": "de",
-      "value": "Should be ignored because custom styles are language independent but a language is given."
+      "value": "Should be ignored because instance createCommunityAllowed is not language dependent but the language is set."
     },
     {
       "setting": "simulated.failure",

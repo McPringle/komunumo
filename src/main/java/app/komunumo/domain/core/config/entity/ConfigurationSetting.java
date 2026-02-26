@@ -50,11 +50,6 @@ public enum ConfigurationSetting {
     INSTANCE_SLOGAN("instance.slogan", true, "Your Instance Slogan"),
 
     /**
-     * <p>Link to a custom CSS style file applied to all pages.</p>
-     */
-    INSTANCE_CUSTOM_STYLES("instance.custom.styles", false, ""),
-
-    /**
      * <p>Whether to hide the community list on the home page.</p>
      */
     INSTANCE_HIDE_COMMUNITIES("instance.hideCommunities", false, "false"),
@@ -69,8 +64,28 @@ public enum ConfigurationSetting {
      */
     INSTANCE_REGISTRATION_ALLOWED("instance.registrationAllowed", false, "true");
 
+    /**
+     * <p>The unique key identifying this configuration setting.</p>
+     *
+     * <p>This value is used as the primary identifier when storing and retrieving the setting from the persistent
+     * configuration storage. It must be unique across all configuration settings.</p>
+     */
     private final String setting;
+
+    /**
+     * <p>Indicates whether this configuration setting is language dependent.</p>
+     *
+     * <p>If {@code true}, the setting can have different values per language. If {@code false}, the setting is global
+     * and shared across all languages.</p>
+     */
     private final boolean languageDependent;
+
+    /**
+     * <p>The default value of this configuration setting.</p>
+     *
+     * <p>This value is used when no explicit value has been stored in the configuration database. It represents a
+     * sensible fallback to ensure the application can operate with predictable behavior.</p>
+     */
     private final String defaultValue;
 
     /**

@@ -206,7 +206,7 @@ class CommunityDetailViewKT extends KaribuTest {
 
         final var createEventButton = _get(Button.class, spec -> spec.withText("Create Event"));
         createEventButton.click();
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
         assertThat(_find(H2.class, spec -> spec.withText("New Event"))).hasSize(1);
     }
 
@@ -223,7 +223,7 @@ class CommunityDetailViewKT extends KaribuTest {
 
         final var createEventButton = _get(Button.class, spec -> spec.withText("Create Event"));
         createEventButton.click();
-        MockVaadin.clientRoundtrip();
+        MockVaadin.clientRoundtrip(false);
         assertThat(_find(H2.class, spec -> spec.withText("New Event"))).hasSize(1);
     }
 

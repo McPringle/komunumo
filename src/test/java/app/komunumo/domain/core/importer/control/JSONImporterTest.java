@@ -192,7 +192,7 @@ class JSONImporterTest {
                     "...finished importing 4 settings.");
             assertThat(logCaptor.getWarnLogs()).containsExactly(
                     "Skipping setting 'instance.slogan' because it is language-dependent but no language was provided.",
-                    "Skipping setting 'instance.custom.styles' because it is not language-dependent but a language was provided.",
+                    "Skipping setting 'instance.createCommunityAllowed' because it is not language-dependent but a language was provided.",
                     "Skipping setting '{\"setting\":\"simulated.failure\",\"value\":\"The test will throw an exception if this setting is read.\"}': Unknown setting: simulated.failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
         }
