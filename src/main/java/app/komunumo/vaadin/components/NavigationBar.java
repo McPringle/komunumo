@@ -17,20 +17,9 @@
  */
 package app.komunumo.vaadin.components;
 
-import app.komunumo.domain.community.boundary.CommunityGridView;
-import app.komunumo.domain.community.boundary.CreateCommunityView;
-import app.komunumo.domain.core.config.boundary.ConfigurationEditorView;
-import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.importer.boundary.ImporterView;
-import app.komunumo.domain.event.boundary.CreateEventView;
-import app.komunumo.domain.event.boundary.EventGridView;
-import app.komunumo.domain.page.control.GlobalPageService;
-import app.komunumo.domain.user.boundary.LogoutView;
-import app.komunumo.domain.user.control.LoginService;
-import app.komunumo.domain.user.control.RegistrationService;
-import app.komunumo.domain.user.entity.AuthenticationSignal;
-import app.komunumo.util.LocationUtil;
-import app.komunumo.util.ThemeUtil;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.ObjectProvider;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEffect;
 import com.vaadin.flow.component.UI;
@@ -41,12 +30,25 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.ObjectProvider;
 
+import app.komunumo.domain.community.boundary.CommunityGridView;
+import app.komunumo.domain.community.boundary.CreateCommunityView;
+import app.komunumo.domain.core.config.boundary.ConfigurationEditorView;
+import app.komunumo.domain.core.config.control.ConfigurationService;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_REGISTRATION_ALLOWED;
+import app.komunumo.domain.core.exporter.boundary.ExporterView;
+import app.komunumo.domain.core.importer.boundary.ImporterView;
+import app.komunumo.domain.event.boundary.CreateEventView;
+import app.komunumo.domain.event.boundary.EventGridView;
+import app.komunumo.domain.page.control.GlobalPageService;
+import app.komunumo.domain.user.boundary.LogoutView;
+import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.domain.user.control.RegistrationService;
+import app.komunumo.domain.user.entity.AuthenticationSignal;
+import app.komunumo.util.LocationUtil;
+import app.komunumo.util.ThemeUtil;
 
 public final class NavigationBar extends HorizontalLayout {
 
@@ -100,6 +102,9 @@ public final class NavigationBar extends HorizontalLayout {
         );
         adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.import"), _ ->
                 ui.navigate(ImporterView.class)
+        );
+        adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.export"), _ ->
+                ui.navigate(ExporterView.class)
         );
 
         // login as first entry in the menu
