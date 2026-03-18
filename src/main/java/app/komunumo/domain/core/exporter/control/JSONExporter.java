@@ -17,6 +17,7 @@
  */
 package app.komunumo.domain.core.exporter.control;
 
+import app.komunumo.KomunumoException;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.image.control.ImageService;
@@ -63,7 +64,6 @@ public final class JSONExporter {
      * @param globalPageService service for global page data
      * @param mailService service for mail template data
      * @return a pretty-printed JSON string containing all exported data
-     * @throws Exception if JSON serialization fails
      */
     @SuppressWarnings({"java:S107", "checkstyle:ParameterNumber"}) // Number of parameters is justified for complete export
     public String exportAll(
@@ -76,20 +76,24 @@ public final class JSONExporter {
             final @NotNull ParticipantService participantService,
             final @NotNull GlobalPageService globalPageService,
             final @NotNull MailService mailService
-    ) throws Exception {
-        final ObjectNode root = objectMapper.createObjectNode();
+    ) {
+        try {
+            final ObjectNode root = objectMapper.createObjectNode();
 
-        exportSettings(root, configurationService);
-        exportImages(root, imageService);
-        exportUsers(root, userService);
-        exportCommunities(root, communityService);
-        exportEvents(root, eventService);
-        exportMembers(root, memberService);
-        exportParticipants(root, participantService);
-        exportGlobalPages(root, globalPageService);
-        exportMailTemplates(root, mailService);
+            exportSettings(root, configurationService);
+            exportImages(root, imageService);
+            exportUsers(root, userService);
+            exportCommunities(root, communityService);
+            exportEvents(root, eventService);
+            exportMembers(root, memberService);
+            exportParticipants(root, participantService);
+            exportGlobalPages(root, globalPageService);
+            exportMailTemplates(root, mailService);
 
-        return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
+            return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
+        } catch (final Exception e) {
+            throw new KomunumoException(e.getMessage(), e);
+        }
     }
 
     private void exportSettings(final @NotNull ObjectNode root,
@@ -98,7 +102,9 @@ public final class JSONExporter {
         configurationService.getAllConfigurationsForExport().forEach(config -> {
             final ObjectNode node = objectMapper.createObjectNode();
             node.put("setting", config.setting());
-            if (config.language() == null || config.language().isEmpty()) {
+            if (config.language() == null) {
+                node.putNull("language");
+            } else if (config.language().isEmpty()) {
                 node.putNull("language");
             } else {
                 node.put("language", config.language());
@@ -119,12 +125,16 @@ public final class JSONExporter {
 
             // Include base64-encoded image data for complete export
             final var imagePath = ImageUtil.resolveImagePath(image);
-            if (imagePath != null && Files.exists(imagePath)) {
-                try {
-                    final byte[] imageData = Files.readAllBytes(imagePath);
-                    node.put("data", Base64.getEncoder().encodeToString(imageData));
-                } catch (final IOException e) {
-                    // Skip image data if file cannot be read
+            if (imagePath != null) {
+                if (Files.exists(imagePath)) {
+                    try {
+                        final byte[] imageData = Files.readAllBytes(imagePath);
+                        node.put("data", Base64.getEncoder().encodeToString(imageData));
+                    } catch (final IOException e) {
+                        // Skip image data if file cannot be read
+                        node.putNull("data");
+                    }
+                } else {
                     node.putNull("data");
                 }
             } else {

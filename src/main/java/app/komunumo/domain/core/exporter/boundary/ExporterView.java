@@ -17,6 +17,7 @@
  */
 package app.komunumo.domain.core.exporter.boundary;
 
+import app.komunumo.KomunumoException;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.exporter.control.JSONExporter;
@@ -28,6 +29,7 @@ import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.UserService;
+import app.komunumo.util.NotificationUtil;
 import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -36,12 +38,15 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.ListItem;
 import com.vaadin.flow.component.html.UnorderedList;
-import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.StreamResource;
+import com.vaadin.flow.server.streams.DownloadHandler;
+import com.vaadin.flow.server.streams.DownloadResponse;
+import com.vaadin.flow.server.streams.InputStreamDownloadHandler;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -140,27 +145,33 @@ public final class ExporterView extends AbstractView {
                 final String timestamp = ZonedDateTime.now(ZoneOffset.UTC).format(TIMESTAMP_FORMAT);
                 final String fileName = "komunumo-export-" + timestamp + ".json";
 
-                final StreamResource resource = new StreamResource(fileName,
-                        () -> new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)));
-                resource.setContentType("application/json");
-                resource.setCacheTime(0);
-
-                final Anchor downloadLink = new Anchor(resource,
+                final var downloadLink = new Anchor(
+                        getDownloadHandler(json, fileName),
                         getTranslation("core.exporter.boundary.ExporterView.downloadLink"));
-                downloadLink.getElement().setAttribute("download", true);
+
                 downloadLink.addClassName("export-download-link");
                 exportFieldsContainer.add(downloadLink);
 
                 exportLog.add(new ListItem(getTranslation("core.exporter.boundary.ExporterView.exportSuccess")));
-            } catch (final Exception e) {
+            } catch (final KomunumoException e) {
                 exportLog.add(new ListItem(getTranslation("core.exporter.boundary.ExporterView.exportFailed")
                         + ": " + e.getMessage()));
-                Notification.show(getTranslation("core.exporter.boundary.ExporterView.exportFailed"),
-                        5000, Notification.Position.MIDDLE);
+                NotificationUtil.showNotification(
+                        getTranslation("core.exporter.boundary.ExporterView.exportFailed"),
+                        NotificationVariant.LUMO_ERROR);
             } finally {
                 exportFieldsContainer.setEnabled(true);
             }
         });
+    }
+
+    private static @NonNull InputStreamDownloadHandler getDownloadHandler(
+            final @NotNull String json, final @NotNull String fileName) {
+        return DownloadHandler.fromInputStream(_ -> new DownloadResponse(
+                new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)),
+                fileName,
+                "application/json",
+                -1));
     }
 
     @Override
