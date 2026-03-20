@@ -28,6 +28,7 @@ import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.util.ImageUtil;
+import app.komunumo.util.NotificationUtil;
 import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlContainer;
@@ -39,6 +40,7 @@ import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.markdown.Markdown;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -47,6 +49,7 @@ import com.vaadin.flow.router.QueryParameters;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,27 +144,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         memberCountParagraph.addClassName("community-memberCount");
         pageContent.add(memberCountParagraph);
 
-        final var joinButton = new Button(getTranslation(locale, "community.boundary.CommunityDetailView.joinButton"));
-        joinButton.addClickListener(_ -> {
-            final var loggedInUser = loginService.getLoggedInUser();
-            if (loggedInUser.isPresent()) {
-                final var confirmDialog = new ConfirmDialog();
-                confirmDialog.setHeader(community.name());
-                confirmDialog.setText("Do you want to join this community and become a member? The organizers will be "
-                        + "able to see your profile and your name, but not your email address.");
-                confirmDialog.setCancelable(true);
-                confirmDialog.setCancelText("No");
-                confirmDialog.setConfirmButton("Yes, join", _ -> {
-                    memberService.joinCommunityWithUser(loggedInUser.orElseThrow(), community, locale);
-                    showDetails(communityWithImage, locale); // update view
-                });
-                confirmDialog.open();
-            } else {
-                memberService.joinCommunityStartConfirmationProcess(community, locale);
-            }
-        });
-        joinButton.addClassName("join-button");
-        pageContent.add(joinButton);
+        createMembershipButtons(communityWithImage, locale);
 
         final var upcomingEventsPlaceholder = new Div();
         upcomingEventsPlaceholder.add(getUpcomingEventsComponent(community, locale));
@@ -202,6 +185,56 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
                             }
                         }
                 );
+    }
+
+    private void createMembershipButtons(final @NonNull CommunityWithImageDto communityWithImage,
+                                         final @NonNull Locale locale) {
+        final var community = communityWithImage.community();
+        final var loggedInUser = loginService.getLoggedInUser();
+        final var isMember = loggedInUser.flatMap(user -> memberService.getMember(user, community)).isPresent();
+
+        if (isMember) {
+            final var leaveButton = new Button(getTranslation(locale, "community.boundary.CommunityDetailView.leaveButton"));
+            leaveButton.addClickListener(_ -> {
+                final var confirmDialog = new ConfirmDialog();
+                confirmDialog.setHeader(community.name());
+                confirmDialog.setText(getTranslation("community.boundary.CommunityDetailView.leaveConfirmation"));
+                confirmDialog.setCancelable(true);
+                confirmDialog.setCancelText(getTranslation("common.button.no"));
+                confirmDialog.setConfirmButton(getTranslation("common.button.yes"), _ -> {
+                    if (memberService.leaveCommunity(loggedInUser.orElseThrow(), community)) {
+                        showDetails(communityWithImage, locale); // update view
+                    } else {
+                        NotificationUtil.showNotification(
+                                getTranslation("community.boundary.CommunityDetailView.leaveError"),
+                                NotificationVariant.LUMO_WARNING);
+                    }
+                });
+                confirmDialog.open();
+            });
+            leaveButton.addClassName("leave-button");
+            pageContent.add(leaveButton);
+        } else {
+            final var joinButton = new Button(getTranslation(locale, "community.boundary.CommunityDetailView.joinButton"));
+            joinButton.addClickListener(_ -> {
+                if (loggedInUser.isPresent()) {
+                    final var confirmDialog = new ConfirmDialog();
+                    confirmDialog.setHeader(community.name());
+                    confirmDialog.setText(getTranslation("community.boundary.CommunityDetailView.joinConfirmation"));
+                    confirmDialog.setCancelable(true);
+                    confirmDialog.setCancelText(getTranslation("common.button.no"));
+                    confirmDialog.setConfirmButton(getTranslation("common.button.yes"), _ -> {
+                        memberService.joinCommunityWithUser(loggedInUser.orElseThrow(), community, locale);
+                        showDetails(communityWithImage, locale); // update view
+                    });
+                    confirmDialog.open();
+                } else {
+                    memberService.joinCommunityStartConfirmationProcess(community, locale);
+                }
+            });
+            joinButton.addClassName("join-button");
+            pageContent.add(joinButton);
+        }
     }
 
     private Component getUpcomingEventsComponent(final @NotNull CommunityDto community,

@@ -211,6 +211,17 @@ public final class MemberService {
                 });
     }
 
+    public boolean leaveCommunity(final @NotNull UserDto userDto, final @NotNull CommunityDto community) {
+        return getMember(userDto, community)
+                .map(member -> {
+                    if (member.role() != MemberRole.OWNER) {
+                        return deleteMember(member);
+                    }
+                    return false;
+                })
+                .orElse(false);
+    }
+
     public boolean deleteMember(final @NotNull MemberDto member) {
         return dsl.delete(MEMBER)
                 .where(MEMBER.USER_ID.eq(member.userId())

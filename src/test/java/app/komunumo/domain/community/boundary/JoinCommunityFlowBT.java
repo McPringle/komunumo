@@ -19,12 +19,10 @@ package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
-import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.test.BrowserTest;
 import app.komunumo.util.LinkUtil;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
@@ -37,20 +35,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static app.komunumo.domain.member.entity.MemberRole.OWNER;
 import static app.komunumo.test.TestUtil.extractLinkFromText;
 import static com.icegreen.greenmail.util.GreenMailUtil.getBody;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JoinCommunityFlowBT extends BrowserTest {
+public class JoinCommunityFlowBT extends CommunityFlowBT {
 
     private static final String JOIN_BUTTON_SELECTOR = "vaadin-button:has-text('Join Community')";
 
     @Autowired
     private @NotNull CommunityService communityService;
-
-    @Autowired
-    private @NotNull MemberService memberService;
 
     @Autowired
     private @NotNull UserService userService;
@@ -60,24 +54,22 @@ public class JoinCommunityFlowBT extends BrowserTest {
 
     @BeforeEach
     void setup() {
-        demoCommunity = communityService.getCommunities().getFirst();
-        assertThat(demoCommunity).isNotNull();
-        assertThat(demoCommunity.id()).isNotNull();
-
-        final var owner = memberService.getMembersByCommunityId(demoCommunity.id(), OWNER).getFirst();
-        demoCommunityOwner = userService.getUserById(owner.userId()).orElseThrow();
+        demoCommunity = communityService.getCommunity(UUID_COMMUNITY).orElseThrow();
+        demoCommunityOwner = userService.getUserById(UUID_OWNER).orElseThrow();
     }
 
     @Test
     void joinCommunityAnonymously() throws MessagingException {
         final var emailAddressMember = getRandomEmailAddress();
-        final var demoCommunityNameSelector = "h2.community-name";
 
         final var page = getPage();
         page.navigate(LinkUtil.getLink(demoCommunity, true));
         page.waitForURL("**/communities/" + demoCommunity.profile());
-        page.waitForSelector(demoCommunityNameSelector);
+        page.waitForSelector(DEMO_COMMUNITY_NAME_SELECTOR);
         captureScreenshot("joinCommunityAnonymously_detailViewLoaded");
+
+        // check member count before joining
+        assertThat(getMemberCount(page)).isEqualTo(4);
 
         // click the join button
         page.click(JOIN_BUTTON_SELECTOR);
@@ -126,6 +118,15 @@ public class JoinCommunityFlowBT extends BrowserTest {
         assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(demoCommunityOwner.email());
         assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 5 members."
                 .formatted(demoCommunity.name()));
+
+        // back to community detail page
+        page.navigate(LinkUtil.getLink(demoCommunity, true));
+        page.waitForURL("**/communities/" + demoCommunity.profile());
+        page.waitForSelector(DEMO_COMMUNITY_NAME_SELECTOR);
+        captureScreenshot("joinCommunityAnonymously_detailViewLoaded");
+
+        // check member count before joining
+        assertThat(getMemberCount(page)).isEqualTo(5);
     }
 
     @Test
@@ -144,13 +145,16 @@ public class JoinCommunityFlowBT extends BrowserTest {
         page.waitForSelector(demoCommunityNameSelector);
         captureScreenshot("joinCommunityWhenLoggedIn_detailViewLoaded");
 
+        // check member count before joining
+        assertThat(getMemberCount(page)).isEqualTo(4);
+
         // click the join button
         page.click(JOIN_BUTTON_SELECTOR);
 
         // confirm the join dialog
         page.getByRole(
                 AriaRole.BUTTON,
-                new Page.GetByRoleOptions().setName("Yes, join")
+                new Page.GetByRoleOptions().setName("Yes")
         ).click();
         captureScreenshot("joinCommunityWhenLoggedIn_dialogConfirmed");
 
@@ -165,6 +169,15 @@ public class JoinCommunityFlowBT extends BrowserTest {
         assertThat(ownerMessage.getAllRecipients()[0].toString()).isEqualTo(demoCommunityOwner.email());
         assertThat(getBody(ownerMessage)).contains("A new member joined your community \"%s\".\r\nYou now have 5 members."
                 .formatted(demoCommunity.name()));
+
+        // back to community detail page
+        page.navigate(LinkUtil.getLink(demoCommunity, true));
+        page.waitForURL("**/communities/" + demoCommunity.profile());
+        page.waitForSelector(demoCommunityNameSelector);
+        captureScreenshot("joinCommunityAnonymously_detailViewLoaded");
+
+        // check member count before joining
+        assertThat(getMemberCount(page)).isEqualTo(5);
     }
 
 }
