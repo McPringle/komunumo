@@ -59,21 +59,21 @@ public final class MemberService {
     private final @NotNull DSLContext dsl;
     private final @NotNull MailService mailService;
     private final @NotNull UserService userService;
-    private final @NotNull ConfirmationService confirmationService;
     private final @NotNull LoginService loginService;
+    private final @NotNull ConfirmationService confirmationService;
     private final @NotNull TranslationProvider translationProvider;
 
     public MemberService(final @NotNull DSLContext dsl,
                          final @NotNull MailService mailService,
                          final @NotNull UserService userService,
-                         final @NotNull ConfirmationService confirmationService,
                          final @NotNull LoginService loginService,
+                         final @NotNull ConfirmationService confirmationService,
                          final @NotNull TranslationProvider translationProvider) {
         this.dsl = dsl;
         this.mailService = mailService;
         this.userService = userService;
-        this.confirmationService = confirmationService;
         this.loginService = loginService;
+        this.confirmationService = confirmationService;
         this.translationProvider = translationProvider;
     }
 
