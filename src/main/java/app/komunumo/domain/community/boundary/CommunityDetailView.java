@@ -191,7 +191,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
                                          final @NonNull Locale locale) {
         final var community = communityWithImage.community();
         final var loggedInUser = loginService.getLoggedInUser();
-        final var isMember = loggedInUser.flatMap(user -> memberService.getMember(user, community)).isPresent();
+        final var isMember = memberService.isLoggedInUserMemberOf(community);
 
         if (isMember) {
             final var leaveButton = new Button(getTranslation(locale, "community.boundary.CommunityDetailView.leaveButton"));
