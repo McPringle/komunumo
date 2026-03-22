@@ -208,13 +208,14 @@ public final class ParticipantService {
                         final var success = deleteParticipant(participant);
                         if (success) {
                             final var email = user.email();
-                            final var eventTitle = event.title();
-                            final var eventLink = LinkUtil.getLink(event);
-
-                            final Map<String, String> mailVariables = Map.of(
-                                    "eventTitle", eventTitle, "eventLink", eventLink);
-                            mailService.sendMail(MailTemplateId.EVENT_UNREGISTRATION_SUCCESS, locale,
-                                    MailFormat.MARKDOWN, mailVariables, email);
+                            if (email != null && !email.isBlank()) {
+                                final var eventTitle = event.title();
+                                final var eventLink = LinkUtil.getLink(event);
+                                final Map<String, String> mailVariables = Map.of(
+                                        "eventTitle", eventTitle, "eventLink", eventLink);
+                                mailService.sendMail(MailTemplateId.EVENT_UNREGISTRATION_SUCCESS, locale,
+                                        MailFormat.MARKDOWN, mailVariables, email);
+                            }
                         }
                         return success;
                 })

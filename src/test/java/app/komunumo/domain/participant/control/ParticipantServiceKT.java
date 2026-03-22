@@ -201,4 +201,78 @@ class ParticipantServiceKT extends KaribuTest {
         verify(mailServiceMock, never()).sendMail(any(), any(), any(), any(), any());
     }
 
+    @Test
+    void unregisterFromEvent_shouldNotSendMail_whenEmailIsNull() {
+        final var participant = participantService.getAllParticipants().getFirst();
+        final var event = eventService.getEvent(participant.eventId()).orElseThrow();
+        final var user = userService.getUserById(participant.userId()).orElseThrow();
+        final var locale = Locale.ENGLISH;
+
+        final var userWithoutEmail = new UserDto(
+                user.id(),
+                user.created(),
+                user.updated(),
+                user.profile(),
+                null,
+                user.name(),
+                user.bio(),
+                user.imageId(),
+                user.role(),
+                user.type()
+        );
+
+        final var mailServiceMock = mock(MailService.class);
+
+        final var service = new ParticipantService(
+                dsl,
+                mailServiceMock,
+                userService,
+                loginService,
+                confirmationService,
+                translationProvider
+        );
+
+        final var result = service.unregisterFromEvent(userWithoutEmail, event, locale);
+
+        assertThat(result).isTrue();
+        verify(mailServiceMock, never()).sendMail(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void unregisterFromEvent_shouldNotSendMail_whenEmailIsEmpty() {
+        final var participant = participantService.getAllParticipants().getFirst();
+        final var event = eventService.getEvent(participant.eventId()).orElseThrow();
+        final var user = userService.getUserById(participant.userId()).orElseThrow();
+        final var locale = Locale.ENGLISH;
+
+        final var userWithoutEmail = new UserDto(
+                user.id(),
+                user.created(),
+                user.updated(),
+                user.profile(),
+                "",
+                user.name(),
+                user.bio(),
+                user.imageId(),
+                user.role(),
+                user.type()
+        );
+
+        final var mailServiceMock = mock(MailService.class);
+
+        final var service = new ParticipantService(
+                dsl,
+                mailServiceMock,
+                userService,
+                loginService,
+                confirmationService,
+                translationProvider
+        );
+
+        final var result = service.unregisterFromEvent(userWithoutEmail, event, locale);
+
+        assertThat(result).isTrue();
+        verify(mailServiceMock, never()).sendMail(any(), any(), any(), any(), any());
+    }
+
 }
