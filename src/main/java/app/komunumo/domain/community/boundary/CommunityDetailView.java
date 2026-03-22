@@ -112,7 +112,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
 
         if (image != null) {
             final var imageUrl = ImageUtil.resolveImageUrl(image);
-            final var altText = getTranslation(locale, "community.boundary.CommunityDetailView.profileImage", community.name());
+            final var altText = getTranslation("community.boundary.CommunityDetailView.profileImage", community.name());
             final var htmlImage = new Image(imageUrl, altText);
             htmlImage.addClassName("community-image");
             pageContent.add(htmlImage);
@@ -127,7 +127,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         pageContent.add(profile);
 
         final var prettyTime = new PrettyTime(locale);
-        final var createdText = getTranslation(locale, "community.boundary.CommunityDetailView.created",
+        final var createdText = getTranslation("community.boundary.CommunityDetailView.created",
                 prettyTime.format(community.created()));
         final var created = new Paragraph(createdText);
         created.addClassName("community-created");
@@ -138,7 +138,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         pageContent.add(description);
 
         final var memberCount = memberService.getMemberCount(community.id());
-        final var memberCountText = getTranslation(locale, "community.boundary.CommunityDetailView.memberCount",
+        final var memberCountText = getTranslation("community.boundary.CommunityDetailView.memberCount",
                 Map.of("count", memberCount));
         final var memberCountParagraph = new Paragraph(memberCountText);
         memberCountParagraph.addClassName("community-memberCount");
@@ -147,7 +147,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         createMembershipButtons(communityWithImage, locale);
 
         final var upcomingEventsPlaceholder = new Div();
-        upcomingEventsPlaceholder.add(getUpcomingEventsComponent(community, locale));
+        upcomingEventsPlaceholder.add(getUpcomingEventsComponent(community));
         final var pastEventsPlaceholder = new Div();
 
         final var tabEvents = new TabSheet();
@@ -161,10 +161,10 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         tabEvents.addSelectedChangeListener(changeEvent -> {
             if (changeEvent.getSelectedTab() == pastEventsTab) {
                 pastEventsPlaceholder.removeAll();
-                pastEventsPlaceholder.add(getPastEventsComponent(community, locale));
+                pastEventsPlaceholder.add(getPastEventsComponent(community));
             } else {
                 upcomingEventsPlaceholder.removeAll();
-                upcomingEventsPlaceholder.add(getUpcomingEventsComponent(community, locale));
+                upcomingEventsPlaceholder.add(getUpcomingEventsComponent(community));
             }
         });
 
@@ -194,7 +194,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         final var isMember = memberService.isLoggedInUserMemberOf(community);
 
         if (isMember) {
-            final var leaveButton = new Button(getTranslation(locale, "community.boundary.CommunityDetailView.leaveButton"));
+            final var leaveButton = new Button(getTranslation("community.boundary.CommunityDetailView.leaveButton"));
             leaveButton.addClickListener(_ -> {
                 final var confirmDialog = new ConfirmDialog();
                 confirmDialog.setHeader(community.name());
@@ -215,7 +215,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
             leaveButton.addClassName("leave-button");
             pageContent.add(leaveButton);
         } else {
-            final var joinButton = new Button(getTranslation(locale, "community.boundary.CommunityDetailView.joinButton"));
+            final var joinButton = new Button(getTranslation("community.boundary.CommunityDetailView.joinButton"));
             joinButton.addClickListener(_ -> {
                 if (loggedInUser.isPresent()) {
                     final var confirmDialog = new ConfirmDialog();
@@ -237,20 +237,18 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
         }
     }
 
-    private Component getUpcomingEventsComponent(final @NotNull CommunityDto community,
-                                                 final @NotNull Locale locale) {
+    private Component getUpcomingEventsComponent(final @NotNull CommunityDto community) {
         final var events = eventService.getUpcomingEventsWithImage(community);
         if (events.isEmpty()) {
-            return new Paragraph(getTranslation(locale, "community.boundary.CommunityDetailView.noUpcomingEvents"));
+            return new Paragraph(getTranslation("community.boundary.CommunityDetailView.noUpcomingEvents"));
         }
         return new EventGrid(events);
     }
 
-    private Component getPastEventsComponent(final @NotNull CommunityDto community,
-                                                 final @NotNull Locale locale) {
+    private Component getPastEventsComponent(final @NotNull CommunityDto community) {
         final var events = eventService.getPastEventsWithImage(community);
         if (events.isEmpty()) {
-            return new Paragraph(getTranslation(locale, "community.boundary.CommunityDetailView.noPastEvents"));
+            return new Paragraph(getTranslation("community.boundary.CommunityDetailView.noPastEvents"));
         }
         return new EventGrid(events);
     }
