@@ -23,6 +23,7 @@ import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.user.control.UserService;
 import com.icegreen.greenmail.util.GreenMailUtil;
+import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
@@ -30,6 +31,10 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.assertions.APIResponseAssertions;
+import com.microsoft.playwright.assertions.LocatorAssertions;
+import com.microsoft.playwright.assertions.PageAssertions;
+import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.ReducedMotion;
 import com.microsoft.playwright.options.ScreenshotType;
@@ -284,4 +289,42 @@ public abstract class BrowserTest extends IntegrationTest {
         captureScreenshot("logout_done");
     }
 
+    /**
+     * <p>Creates a Playwright assertion for the given {@link APIResponse}.</p>
+     *
+     * <p>This method provides access to Playwright's web-first assertions for API responses,
+     * enabling automatic waiting and retrying until the expected condition is met or a timeout occurs.</p>
+     *
+     * @param response the API response to assert on
+     * @return a Playwright {@link APIResponseAssertions} instance for fluent assertions
+     */
+    protected @NotNull APIResponseAssertions assertThatAPI(final @NotNull APIResponse response) {
+        return PlaywrightAssertions.assertThat(response);
+    }
+
+    /**
+     * <p>Creates a Playwright assertion for the given {@link Locator}.</p>
+     *
+     * <p>This method enables web-first assertions on DOM elements, automatically waiting and retrying
+     * until the expected condition is satisfied or a timeout is reached.</p>
+     *
+     * @param locator the locator representing the target element
+     * @return a Playwright {@link LocatorAssertions} instance for fluent assertions
+     */
+    protected @NotNull LocatorAssertions assertThatLocator(final @NotNull Locator locator) {
+        return PlaywrightAssertions.assertThat(locator);
+    }
+
+    /**
+     * <p>Creates a Playwright assertion for the given {@link Page}.</p>
+     *
+     * <p>This method provides access to Playwright's web-first assertions for pages, allowing checks
+     * on navigation, URL, and other page-level conditions with built-in waiting and retry logic.</p>
+     *
+     * @param page the page to assert on
+     * @return a Playwright {@link PageAssertions} instance for fluent assertions
+     */
+    protected @NotNull PageAssertions assertThatPage(final @NotNull Page page) {
+        return PlaywrightAssertions.assertThat(page);
+    }
 }

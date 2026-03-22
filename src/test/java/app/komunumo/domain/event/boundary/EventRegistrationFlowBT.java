@@ -26,6 +26,8 @@ import app.komunumo.test.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -60,7 +62,7 @@ class EventRegistrationFlowBT extends BrowserTest {
         page.navigate(getInstanceUrl() + "events/" + testEvent.id());
         page.waitForURL("**/events/" + testEvent.id());
         page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("events-page");
+        captureScreenshot("testRegistrationFlowSuccess_withAnonymousUser_eventDetails");
 
         // click on registration button
         page.click(REGISTRATION_BUTTON_SELECTOR);
@@ -68,11 +70,11 @@ class EventRegistrationFlowBT extends BrowserTest {
         // wait for email field to appear
         final var emailInput = page.locator("vaadin-email-field input");
         emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("registration-dialog");
+        captureScreenshot("testRegistrationFlowSuccess_withAnonymousUser_registrationDialog");
 
         // fill in email address
         emailInput.fill("anonymous@example.com");
-        captureScreenshot("registration-dialog-filled");
+        captureScreenshot("testRegistrationFlowSuccess_withAnonymousUser_registrationDialogFilled");
 
         // click on the request email button
         page.locator("vaadin-button.email-button").click();
@@ -80,7 +82,7 @@ class EventRegistrationFlowBT extends BrowserTest {
         // close the dialog
         final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
         closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("registration-dialog-after-email-requested");
+        captureScreenshot("testRegistrationFlowSuccess_withAnonymousUser_registrationDialogCloasable");
         closeButton.click();
 
         // wait for email confirmation mail
@@ -95,7 +97,7 @@ class EventRegistrationFlowBT extends BrowserTest {
         page.navigate(confirmationLink);
         page.waitForURL("**/confirm**");
         page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("confirmation-page");
+        captureScreenshot("testRegistrationFlowSuccess_withAnonymousUser_confirmationPage");
 
         // wait for registration confirmation mail
         final var successMessage = getEmailBySubject("[Komunumo Test] Your registration is confirmed");
@@ -128,41 +130,17 @@ class EventRegistrationFlowBT extends BrowserTest {
         page.navigate(getInstanceUrl() + "events/" + testEvent.id());
         page.waitForURL("**/events/" + testEvent.id());
         page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("events-page");
+        captureScreenshot("testRegistrationFlowSuccess_withLocalUser_eventDetails");
 
         // click on registration button
         page.click(REGISTRATION_BUTTON_SELECTOR);
 
-        // wait for email field to appear
-        final var emailInput = page.locator("vaadin-email-field input");
-        emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-
-        // check prefilled email address
-        captureScreenshot("registration-dialog-filled");
-        assertThat(emailInput.inputValue()).isEqualTo("test@example.com");
-
-        // click on the request email button
-        page.locator("vaadin-button.email-button").click();
-
-        // close the dialog
-        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
-        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("registration-dialog-after-email-requested");
-        closeButton.click();
-
-        // wait for email confirmation mail
-        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
-
-        // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
-        final var confirmationLink = extractLinkFromText(mailBody);
-        assertThat(confirmationLink).isNotNull();
-
-        // open the confirmation link
-        page.navigate(confirmationLink);
-        page.waitForURL("**/confirm**");
-        page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("confirmation-page");
+        // confirm the registration dialog
+        page.getByRole(
+                AriaRole.BUTTON,
+                new Page.GetByRoleOptions().setName("Yes")
+        ).click();
+        captureScreenshot("testRegistrationFlowSuccess_withLocalUser_dialogConfirmed");
 
         // wait for registration confirmation mail
         final var successMessage = getEmailBySubject("[Komunumo Test] Your registration is confirmed");

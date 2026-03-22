@@ -17,23 +17,36 @@
  */
 package app.komunumo.domain.participant.control;
 
+import app.komunumo.domain.core.confirmation.control.ConfirmationService;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
+import app.komunumo.domain.core.i18n.controller.TranslationProvider;
+import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.event.entity.EventDto;
+import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
 import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
+import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
 import java.util.Locale;
+import java.util.Optional;
 
 import static app.komunumo.domain.participant.control.ParticipantService.CONTEXT_KEY_EVENT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class ParticipantServiceKT extends KaribuTest {
 
@@ -45,6 +58,18 @@ class ParticipantServiceKT extends KaribuTest {
 
     @Autowired
     private @NotNull UserService userService;
+
+    @Autowired
+    private @NotNull DSLContext dsl;
+
+    @Autowired
+    private @NotNull LoginService loginService;
+
+    @Autowired
+    private @NotNull ConfirmationService confirmationService;
+
+    @Autowired
+    private @NotNull TranslationProvider translationProvider;
 
     @Test
     void joinEventExistingUser() {
@@ -66,7 +91,7 @@ class ParticipantServiceKT extends KaribuTest {
 
         final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
-        final var confirmationResponse = participantService.registerForEvent(email, context, locale);
+        final var confirmationResponse = participantService.executeRegistration(email, context, locale);
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         assertThat(participantService.getParticipantCount(event.id())).isOne();
@@ -105,11 +130,11 @@ class ParticipantServiceKT extends KaribuTest {
 
         final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
-        final var confirmationResponse1 = participantService.registerForEvent(email, context, locale);
+        final var confirmationResponse1 = participantService.executeRegistration(email, context, locale);
         assertThat(confirmationResponse1.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         // try to join again with the same email
-        final var confirmationResponse2 = participantService.registerForEvent(email, context, locale);
+        final var confirmationResponse2 = participantService.executeRegistration(email, context, locale);
         assertThat(confirmationResponse2.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         final var participants = participantService.getAllParticipants();
@@ -135,6 +160,45 @@ class ParticipantServiceKT extends KaribuTest {
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();
+    }
+
+    /**
+     * <p>Verifies the defensive behavior of {@link ParticipantService#unregisterFromEvent(UserDto, EventDto, Locale)}
+     * in the unlikely case that the participant deletion fails.</p>
+     *
+     * <p>From a business perspective, this scenario cannot normally occur. The participant is retrieved immediately
+     * before the deletion is executed, so the subsequent delete operation is expected to succeed under normal
+     * conditions.</p>
+     *
+     * <p>This test therefore covers a purely technical safeguard. It simulates a failure of the underlying delete
+     * operation to ensure that the service behaves correctly in such a situation, specifically that no confirmation
+     * email is sent and the method returns {@code false}.</p>
+     */
+    @Test
+    void unregisterFromEvent_shouldNotSendMail_whenDeletionFails() {
+        final var participant = participantService.getAllParticipants().getFirst();
+        final var event = eventService.getEvent(participant.eventId()).orElseThrow();
+        final var user = userService.getUserById(participant.userId()).orElseThrow();
+        final var locale = Locale.ENGLISH;
+
+        final var mailServiceMock = mock(MailService.class);
+
+        final var service = spy(new ParticipantService(
+                dsl,
+                mailServiceMock,
+                userService,
+                loginService,
+                confirmationService,
+                translationProvider
+        ));
+
+        doReturn(Optional.of(participant)).when(service).getParticipant(event, user);
+        doReturn(false).when(service).deleteParticipant(participant);
+
+        final var result = service.unregisterFromEvent(user, event, locale);
+
+        assertThat(result).isFalse();
+        verify(mailServiceMock, never()).sendMail(any(), any(), any(), any(), any());
     }
 
 }
