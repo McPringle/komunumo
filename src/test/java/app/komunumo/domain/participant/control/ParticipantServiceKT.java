@@ -91,7 +91,7 @@ class ParticipantServiceKT extends KaribuTest {
 
         final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
-        final var confirmationResponse = participantService.executeRegistration(email, context, locale);
+        final var confirmationResponse = participantService.handleConfirmationResponse(email, context, locale);
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         assertThat(participantService.getParticipantCount(event.id())).isOne();
@@ -130,11 +130,11 @@ class ParticipantServiceKT extends KaribuTest {
 
         final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var locale = Locale.ENGLISH;
-        final var confirmationResponse1 = participantService.executeRegistration(email, context, locale);
+        final var confirmationResponse1 = participantService.handleConfirmationResponse(email, context, locale);
         assertThat(confirmationResponse1.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         // try to join again with the same email
-        final var confirmationResponse2 = participantService.executeRegistration(email, context, locale);
+        final var confirmationResponse2 = participantService.handleConfirmationResponse(email, context, locale);
         assertThat(confirmationResponse2.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         final var participants = participantService.getAllParticipants();
@@ -160,6 +160,129 @@ class ParticipantServiceKT extends KaribuTest {
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();
+    }
+
+    @Test
+    void joinEvent_withInvalidEventId_shouldFail() {
+        assertThat(participantService.getAllParticipants()).hasSize(6);
+
+        final var email = "test@komunumo.app";
+        assertThat(userService.getUserByEmail(email)).isEmpty();
+
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(event).isNotNull();
+
+        final var eventWithoutId = new EventDto(
+                null,
+                event.communityId(),
+                event.created(),
+                event.updated(),
+                event.title(),
+                event.description(),
+                event.location(),
+                event.begin(),
+                event.end(),
+                event.imageId(),
+                event.visibility(),
+                event.status()
+        );
+
+        final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, eventWithoutId);
+        final var locale = Locale.ENGLISH;
+        final var confirmationResponse = participantService.handleConfirmationResponse(email, context, locale);
+        assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.WARNING);
+
+        assertThat(participantService.getAllParticipants()).hasSize(6);
+    }
+
+    @Test
+    void registerForEvent_withInvalidEventId_shouldFail() {
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(event).isNotNull();
+
+        final var eventWithoutId = new EventDto(
+                null,
+                event.communityId(),
+                event.created(),
+                event.updated(),
+                event.title(),
+                event.description(),
+                event.location(),
+                event.begin(),
+                event.end(),
+                event.imageId(),
+                event.visibility(),
+                event.status()
+        );
+
+        final var user = getTestUser(UserRole.USER);
+        final var locale = Locale.ENGLISH;
+
+        final var result = participantService.registerForEvent(eventWithoutId, user, locale);
+
+        assertThat(result).isFalse();
+        assertThat(participantService.getAllParticipants()).hasSize(6);
+    }
+
+    @Test
+    void registerForEvent_withInvalidUserId_shouldReturnFalse() {
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(event).isNotNull();
+
+        final var user = getTestUser(UserRole.USER);
+        final var userWithoutId = new UserDto(
+                null,
+                user.created(),
+                user.updated(),
+                user.profile(),
+                user.email(),
+                user.name(),
+                user.bio(),
+                user.imageId(),
+                user.role(),
+                user.type()
+        );
+
+        final var locale = Locale.ENGLISH;
+
+        final var result = participantService.registerForEvent(event, userWithoutId, locale);
+
+        assertThat(result).isFalse();
+        assertThat(participantService.getAllParticipants()).hasSize(6);
+    }
+
+    @Test
+    void registerForEvent_withUserWithEmailNull_shouldReturnTrue() {
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(event).isNotNull();
+
+        final var user = userService.storeUser(new UserDto(
+                null, null, null, "@test", null, "Test", "",
+                null, UserRole.USER, UserType.REMOTE));
+
+        final var locale = Locale.ENGLISH;
+
+        final var result = participantService.registerForEvent(event, user, locale);
+
+        assertThat(result).isTrue();
+        assertThat(participantService.getAllParticipants()).hasSize(7);
+    }
+
+    @Test
+    void registerForEvent_withUserWithEmailBlank_shouldReturnTrue() {
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        assertThat(event).isNotNull();
+
+        final var user = userService.storeUser(new UserDto(
+                null, null, null, "@test", "   ", "Test", "",
+                null, UserRole.USER, UserType.REMOTE));
+
+        final var locale = Locale.ENGLISH;
+
+        final var result = participantService.registerForEvent(event, user, locale);
+
+        assertThat(result).isTrue();
+        assertThat(participantService.getAllParticipants()).hasSize(7);
     }
 
     /**

@@ -161,7 +161,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
                     confirmDialog.setCancelable(true);
                     confirmDialog.setCancelText(getTranslation("common.button.no"));
                     confirmDialog.setConfirmButton(getTranslation("common.button.yes"), _ -> {
-                        participantService.registerForEvent(loggedInUser.orElseThrow(), event, locale);
+                        participantService.registerForEvent(event, loggedInUser.orElseThrow(), locale);
                         showDetails(eventWithImage, locale); // update view
                     });
                     confirmDialog.open();
