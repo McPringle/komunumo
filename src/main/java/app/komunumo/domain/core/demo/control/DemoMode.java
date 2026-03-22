@@ -111,6 +111,7 @@ public final class DemoMode {
         demoDataImporter.importCommunities(communityService);
         demoDataImporter.importMembers(memberService);
         demoDataImporter.importEvents(eventService);
+        demoDataImporter.importParticipants(participantService);
         demoDataImporter.importGlobalPages(globalPageService);
         demoDataImporter.importMailTemplates(mailService);
         LOGGER.info("Demo data imported.");

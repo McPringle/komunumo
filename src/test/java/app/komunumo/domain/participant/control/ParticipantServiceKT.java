@@ -48,6 +48,8 @@ class ParticipantServiceKT extends KaribuTest {
 
     @Test
     void joinEventExistingUser() {
+        assertThat(participantService.getAllParticipants()).hasSize(6);
+
         final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
         assertThat(event).isNotNull();
         assertThat(event.id()).isNotNull();
@@ -69,9 +71,12 @@ class ParticipantServiceKT extends KaribuTest {
 
         assertThat(participantService.getParticipantCount(event.id())).isOne();
         final var participants = participantService.getAllParticipants();
-        assertThat(participants).hasSize(1);
+        assertThat(participants).hasSize(7);
 
-        final var participant = participants.getFirst();
+        final var participant = participants.stream()
+                .filter(p -> p.userId().equals(user.id()))
+                .findFirst()
+                .orElseThrow();
         assertThat(participant).isNotNull().satisfies(testee -> {
             assertThat(testee.eventId()).isEqualTo(event.id());
             assertThat(testee.userId()).isEqualTo(user.id());
@@ -81,7 +86,7 @@ class ParticipantServiceKT extends KaribuTest {
 
         assertThat(participantService.deleteParticipant(participant)).isTrue();
         assertThat(participantService.deleteParticipant(participant)).isFalse();
-        assertThat(participantService.getAllParticipants()).isEmpty();
+        assertThat(participantService.getAllParticipants()).hasSize(6);
         assertThat(participantService.getParticipantCount(event.id())).isZero();
 
         assertThat(userService.deleteUser(user)).isTrue();
@@ -90,7 +95,7 @@ class ParticipantServiceKT extends KaribuTest {
 
     @Test
     void joinEventAnonymousUser() {
-        assertThat(participantService.getAllParticipants()).isEmpty();
+        assertThat(participantService.getAllParticipants()).hasSize(6);
 
         final var email = "test@komunumo.app";
         assertThat(userService.getUserByEmail(email)).isEmpty();
@@ -108,12 +113,15 @@ class ParticipantServiceKT extends KaribuTest {
         assertThat(confirmationResponse2.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
         final var participants = participantService.getAllParticipants();
-        assertThat(participants).hasSize(1);
+        assertThat(participants).hasSize(7);
 
         final var user = userService.getUserByEmail(email).orElseThrow();
         assertThat(user.email()).isEqualTo(email);
 
-        final var participant = participants.getFirst();
+        final var participant = participants.stream()
+                .filter(p -> p.userId().equals(user.id()))
+                .findFirst()
+                .orElseThrow();
         assertThat(participant).isNotNull().satisfies(testee -> {
             assertThat(testee.eventId()).isEqualTo(event.id());
             assertThat(testee.userId()).isEqualTo(user.id());
@@ -123,7 +131,7 @@ class ParticipantServiceKT extends KaribuTest {
 
         assertThat(participantService.deleteParticipant(participant)).isTrue();
         assertThat(participantService.deleteParticipant(participant)).isFalse();
-        assertThat(participantService.getAllParticipants()).isEmpty();
+        assertThat(participantService.getAllParticipants()).hasSize(6);
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();
