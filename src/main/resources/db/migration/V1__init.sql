@@ -1,18 +1,3 @@
--- Drop table in opposite order to avoid foreign key constraints.
-
-DROP TABLE IF EXISTS global_page;
-DROP TABLE IF EXISTS participation;
-DROP TABLE IF EXISTS participant;
-DROP TABLE IF EXISTS event;
-DROP TABLE IF EXISTS member;
-DROP TABLE IF EXISTS community;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS image;
-DROP TABLE IF EXISTS mail_template;
-DROP TABLE IF EXISTS config;
-
--- Recreate tables in correct order.
-
 CREATE TABLE config (
     setting VARCHAR(255) NOT NULL,
     language VARCHAR(2) NOT NULL DEFAULT '',
