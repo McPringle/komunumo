@@ -40,7 +40,7 @@ jobs:
         retention-days: 7
         compression-level: 9
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v6
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_ORG_TOKEN }}
     - name: Check clean git state
