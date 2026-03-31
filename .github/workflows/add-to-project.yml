@@ -7,11 +7,11 @@ on:
 
 jobs:
   add-to-project:
-    if: github.repository_owner == 'McPringle'
+    if: github.repository_owner == 'komunumo'
     name: Add issue to project board
     runs-on: ubuntu-latest
     steps:
       - uses: actions/add-to-project@v1.0.2
         with:
-          project-url: https://github.com/users/McPringle/projects/8
+          project-url: https://github.com/orgs/komunumo/projects/1
           github-token: ${{ secrets.ADD_TO_PROJECT_TOKEN }}
