@@ -15,7 +15,7 @@
     <licenses>
         <license>
             <name>GNU Affero General Public License v3.0 only</name>
-            <url>https://github.com/McPringle/komunumo/blob/main/LICENSE.md</url>
+            <url>https://github.com/komunumo/komunumo/blob/main/LICENSE.md</url>
             <distribution>manual</distribution>
             <comments>A FSF Free/Libre and OSI approved license</comments>
         </license>
@@ -65,14 +65,14 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/McPringle/komunumo/issues</url>
+        <url>https://github.com/komunumo/komunumo/issues</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/McPringle/komunumo.git</connection>
-        <developerConnection>scm:git:https://github.com/McPringle/komunumo.git</developerConnection>
+        <connection>scm:git:https://github.com/komunumo/komunumo.git</connection>
+        <developerConnection>scm:git:https://github.com/komunumo/komunumo.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/McPringle/komunumo</url>
+        <url>https://github.com/komunumo/komunumo</url>
     </scm>
 
     <properties>

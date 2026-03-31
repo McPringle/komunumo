@@ -1,7 +1,7 @@
 # Komunumo
 
-[![All Tests](https://github.com/McPringle/komunumo/actions/workflows/all-tests.yml/badge.svg)](https://github.com/McPringle/komunumo/actions/workflows/all-tests.yml)
-[![codecov](https://codecov.io/github/McPringle/komunumo/graph/badge.svg?token=6MTYWYK083)](https://codecov.io/github/McPringle/komunumo)
+[![All Tests](https://github.com/komunumo/komunumo/actions/workflows/all-tests.yml/badge.svg)](https://github.com/komunumo/komunumo/actions/workflows/all-tests.yml)
+[![codecov](https://codecov.io/github/komunumo/komunumo/graph/badge.svg?token=w7dqTcK0Yy)](https://codecov.io/github/komunumo/komunumo)
 
 **Open Source Community Manager**
 
@@ -42,7 +42,7 @@ We have set ourselves the goal of implementing all important [Meetup](https://ww
 - **MINOR** versions add functionality in a backwards-compatible manner,
 - **PATCH** versions include backwards-compatible bug fixes.
 
-This versioning scheme applies to the public API, database schema, and plugin interfaces. We aim to keep upgrades predictable and manageable. Breaking changes, new features, and fixes are documented in the [CHANGELOG.md](CHANGELOG.md) and in the [release notes](https://github.com/McPringle/komunumo/releases).
+This versioning scheme applies to the public API, database schema, and plugin interfaces. We aim to keep upgrades predictable and manageable. Breaking changes, new features, and fixes are documented in the [CHANGELOG.md](CHANGELOG.md) and in the [release notes](https://github.com/komunumo/komunumo/releases).
 
 ## Contributing
 
@@ -60,8 +60,8 @@ You can find our Matrix channel here: [@komunumo:ijug.eu](https://matrix.to/#/%2
 
 We use the corresponding GitHub function for discussions. The discussions held here are long-lived and divided into categories for the sake of clarity. One important category, for example, is that for questions and answers.
 
-Discussions on GitHub: https://github.com/McPringle/komunumo/discussions  
-Questions and Answers: https://github.com/McPringle/komunumo/discussions/categories/q-a
+Discussions on GitHub: https://github.com/komunumo/komunumo/discussions  
+Questions and Answers: https://github.com/komunumo/komunumo/discussions/categories/q-a
 
 ## Configuration
 
