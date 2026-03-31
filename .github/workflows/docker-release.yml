@@ -9,7 +9,7 @@ on:
 
 jobs:
   docker:
-    if: github.repository_owner == 'McPringle'
+    if: github.repository_owner == 'komunumo'
     runs-on: ubuntu-latest
     name: Docker Release
 

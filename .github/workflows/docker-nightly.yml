@@ -25,6 +25,7 @@ jobs:
       - run: "echo Last daily build: ${{ fromJson(steps.check-last-build.outputs.data).workflow_runs[0].head_sha }}"
 
   check-secrets:
+    if: github.repository_owner == 'komunumo'
     runs-on: ubuntu-latest
     name: Check secrets
 
