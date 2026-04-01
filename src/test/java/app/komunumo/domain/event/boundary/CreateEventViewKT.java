@@ -170,7 +170,8 @@ class CreateEventViewKT extends KaribuTest {
                 .isEqualTo("Test Event Description");
         assertThat(_find(Image.class, spec -> spec.withClasses("event-image")))
                 .isEmpty();
-        assertThat(_get(Paragraph.class, spec -> spec.withClasses("event-participant-count")).getText())
+        assertThat(_get(Paragraph.class, spec -> spec.withClasses("event-participant-count"))
+                .getChildren().findFirst().orElseThrow().getElement().getText())
                 .isEqualTo("no participants");
     }
 
@@ -227,7 +228,8 @@ class CreateEventViewKT extends KaribuTest {
                 .isEqualTo("Test Event Description");
         assertThat(_get(Image.class, spec -> spec.withClasses("event-image")).getSrc())
                 .isEqualTo("/images/%s.svg".formatted(communityWithImage.imageId().toString()));
-        assertThat(_get(Paragraph.class, spec -> spec.withClasses("event-participant-count")).getText())
+        assertThat(_get(Paragraph.class, spec -> spec.withClasses("event-participant-count"))
+                .getChildren().findFirst().orElseThrow().getElement().getText())
                 .isEqualTo("no participants");
     }
 
@@ -284,7 +286,8 @@ class CreateEventViewKT extends KaribuTest {
                 .isEqualTo("Test Event Description");
         assertThat(_get(Image.class, spec -> spec.withClasses("event-image")).getSrc())
                 .isEqualTo("/images/%s.svg".formatted(imageId));
-        assertThat(_get(Paragraph.class, spec -> spec.withClasses("event-participant-count")).getText())
+        assertThat(_get(Paragraph.class, spec -> spec.withClasses("event-participant-count"))
+                .getChildren().findFirst().orElseThrow().getElement().getText())
                 .isEqualTo("no participants");
     }
 
@@ -346,7 +349,8 @@ class CreateEventViewKT extends KaribuTest {
                 .isEqualTo("Test Event Description");
         assertThat(_find(Image.class, spec -> spec.withClasses("event-image")))
                 .isEmpty();
-        assertThat(_get(Paragraph.class, spec -> spec.withClasses("event-participant-count")).getText())
+        assertThat(_get(Paragraph.class, spec -> spec.withClasses("event-participant-count"))
+                .getChildren().findFirst().orElseThrow().getElement().getText())
                 .isEqualTo("no participants");
     }
 

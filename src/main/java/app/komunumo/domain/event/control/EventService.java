@@ -26,6 +26,9 @@ import app.komunumo.data.db.tables.records.EventRecord;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
+import app.komunumo.domain.member.entity.MemberRole;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.jooq.UniqueIdGenerator;
 import app.komunumo.jooq.StorageService;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +46,7 @@ import java.util.UUID;
 import static app.komunumo.data.db.tables.Community.COMMUNITY;
 import static app.komunumo.data.db.tables.Event.EVENT;
 import static app.komunumo.data.db.tables.Image.IMAGE;
+import static app.komunumo.data.db.tables.Member.MEMBER;
 import static org.jooq.impl.DSL.noCondition;
 
 @Service
@@ -168,4 +172,19 @@ public final class EventService extends StorageService {
                 .execute() > 0;
     }
 
+    public boolean hasManagementPermission(final @NotNull EventDto event, final @NotNull UserDto user) {
+        if (user.role() == UserRole.ADMIN) {
+            return true;
+        }
+
+        return dsl.fetchExists(
+                dsl.selectOne()
+                        .from(EVENT)
+                        .join(MEMBER).on(MEMBER.COMMUNITY_ID.eq(EVENT.COMMUNITY_ID))
+                        .where(EVENT.ID.eq(event.id()))
+                        .and(MEMBER.USER_ID.eq(user.id()))
+                        .and(MEMBER.ROLE.in(MemberRole.OWNER.name(),
+                                MemberRole.ORGANIZER.name()))
+        );
+    }
 }

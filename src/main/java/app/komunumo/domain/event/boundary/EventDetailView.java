@@ -25,11 +25,13 @@ import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.ImageUtil;
+import app.komunumo.util.LinkUtil;
 import app.komunumo.util.ParseUtil;
 import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -122,10 +124,20 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        @SuppressWarnings("DataFlowIssue") final var participantCount = this.participantService.getParticipantCount(event.id());
-        final var participantParagraph = new Paragraph(getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
-        participantParagraph.addClassName("event-participant-count");
-        pageContent.add(participantParagraph);
+        final var participantCount = this.participantService.getParticipantCount(event.id());
+        final var loggedInUser = loginService.getLoggedInUser();
+        if (loggedInUser.isPresent() && eventService.hasManagementPermission(event, loggedInUser.orElseThrow())) {
+            final var participantLink = new Anchor(LinkUtil.getLink(event) + "/participants",
+                    getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
+            final var participantParagraph = new Paragraph(participantLink);
+            participantParagraph.addClassName("event-participant-count");
+            pageContent.add(participantParagraph);
+        } else {
+            final var participantParagraph = new Paragraph(
+                    getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
+            participantParagraph.addClassName("event-participant-count");
+            pageContent.add(participantParagraph);
+        }
 
         createRegistrationButtons(eventWithImage, locale);
     }

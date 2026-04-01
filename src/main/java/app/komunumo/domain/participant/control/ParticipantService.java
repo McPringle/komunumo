@@ -29,6 +29,7 @@ import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.event.entity.EventDto;
+import app.komunumo.domain.participant.entity.RegisteredParticipantDto;
 import app.komunumo.domain.participant.entity.ParticipantDto;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
@@ -50,6 +51,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static app.komunumo.data.db.tables.Participant.PARTICIPANT;
+import static app.komunumo.data.db.tables.User.USER;
 
 @Service
 public final class ParticipantService {
@@ -244,6 +246,19 @@ public final class ParticipantService {
                         return success;
                 })
                 .orElse(false);
+    }
+
+    public @NotNull List<@NotNull RegisteredParticipantDto> getParticipants(final @NotNull EventDto event) {
+        return dsl.select(USER.fields())
+                .select(PARTICIPANT.REGISTERED)
+                .from(PARTICIPANT)
+                .join(USER).on(PARTICIPANT.USER_ID.eq(USER.ID))
+                .where(PARTICIPANT.EVENT_ID.eq(event.id()))
+                .orderBy(PARTICIPANT.REGISTERED.asc())
+                .fetch(record -> new RegisteredParticipantDto(
+                        record.into(USER).into(UserDto.class),
+                        record.get(PARTICIPANT.REGISTERED, ZonedDateTime.class)
+                ));
     }
 
 }
