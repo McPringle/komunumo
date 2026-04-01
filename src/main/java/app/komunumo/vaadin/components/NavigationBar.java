@@ -26,6 +26,7 @@ import app.komunumo.domain.event.boundary.CreateEventView;
 import app.komunumo.domain.event.boundary.EventGridView;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.user.boundary.LogoutView;
+import app.komunumo.domain.user.boundary.EditProfileView;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.RegistrationService;
 import app.komunumo.domain.user.entity.AuthenticationSignal;
@@ -107,8 +108,18 @@ public final class NavigationBar extends HorizontalLayout {
                 loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
+        // register local account
         final var registerItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.register"), _ ->
                 registrationService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+        );
+
+        // settings menu
+        final var settingsMenuItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.settings"));
+        final var settingsMenu = settingsMenuItem.getSubMenu();
+
+        // edit profile
+        settingsMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.editProfile"),
+                _ -> ui.navigate(EditProfileView.class)
         );
 
         // create community
@@ -140,6 +151,7 @@ public final class NavigationBar extends HorizontalLayout {
             logoutItem.setVisible(isLoggedIn);
             registerItem.setVisible(registrationAllowed && !isLoggedIn);
             adminMenuItem.setVisible(isAdmin);
+            settingsMenuItem.setVisible(isLocalUser);
             createCommunityItem.setVisible(isLocalUser && createCommunityAllowed);
             createEventItem.setVisible(isLocalUser);
         }));
