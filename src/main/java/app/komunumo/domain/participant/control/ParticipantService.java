@@ -29,8 +29,8 @@ import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.event.entity.EventDto;
-import app.komunumo.domain.participant.entity.RegisteredParticipantDto;
 import app.komunumo.domain.participant.entity.ParticipantDto;
+import app.komunumo.domain.participant.entity.RegisteredParticipantDto;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import static app.komunumo.data.db.tables.Participant.PARTICIPANT;
 import static app.komunumo.data.db.tables.User.USER;
@@ -202,13 +201,15 @@ public final class ParticipantService {
     /**
      * <p>Counts the total number of participants of the specified event.</p>
      *
+     * @param event The event for which the participants should be counted; must not be {@code null}.
+     *
      * @return The total count of participants of the event; never negative.
      */
-    public int getParticipantCount(final @NotNull UUID eventId) {
+    public int getParticipantCount(final @NotNull EventDto event) {
         return Optional.ofNullable(
                 dsl.selectCount()
                         .from(PARTICIPANT)
-                        .where(PARTICIPANT.EVENT_ID.eq(eventId))
+                        .where(PARTICIPANT.EVENT_ID.eq(event.id()))
                         .fetchOne(0, Integer.class)
         ).orElse(0);
     }

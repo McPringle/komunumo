@@ -79,7 +79,7 @@ class ParticipantServiceKT extends KaribuTest {
         assertThat(event).isNotNull();
         assertThat(event.id()).isNotNull();
 
-        assertThat(participantService.getParticipantCount(event.id())).isZero();
+        assertThat(participantService.getParticipantCount(event)).isZero();
 
         final var email = "test@komunumo.app";
         assertThat(userService.getUserByEmail(email)).isEmpty();
@@ -94,7 +94,7 @@ class ParticipantServiceKT extends KaribuTest {
         final var confirmationResponse = participantService.handleConfirmationResponse(email, context, locale);
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
 
-        assertThat(participantService.getParticipantCount(event.id())).isOne();
+        assertThat(participantService.getParticipantCount(event)).isOne();
         final var participants = participantService.getAllParticipants();
         assertThat(participants).hasSize(7);
 
@@ -112,7 +112,7 @@ class ParticipantServiceKT extends KaribuTest {
         assertThat(participantService.deleteParticipant(participant)).isTrue();
         assertThat(participantService.deleteParticipant(participant)).isFalse();
         assertThat(participantService.getAllParticipants()).hasSize(6);
-        assertThat(participantService.getParticipantCount(event.id())).isZero();
+        assertThat(participantService.getParticipantCount(event)).isZero();
 
         assertThat(userService.deleteUser(user)).isTrue();
         assertThat(userService.deleteUser(user)).isFalse();

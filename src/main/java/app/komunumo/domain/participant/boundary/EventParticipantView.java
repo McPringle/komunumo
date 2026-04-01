@@ -128,7 +128,7 @@ public final class EventParticipantView extends AbstractView implements BeforeEn
 
         add(participantsGrid);
 
-        final var participantCount = participantService.getParticipantCount(event.id());
+        final var participantCount = participantService.getParticipantCount(event);
         add(new Paragraph(getTranslation("participant.boundary.EventParticipantView.participantCount",
                 participantCount)));
     }

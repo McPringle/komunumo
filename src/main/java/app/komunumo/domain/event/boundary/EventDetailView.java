@@ -124,7 +124,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        final var participantCount = this.participantService.getParticipantCount(event.id());
+        final var participantCount = this.participantService.getParticipantCount(event);
         final var loggedInUser = loginService.getLoggedInUser();
         if (loggedInUser.isPresent() && eventService.hasManagementPermission(event, loggedInUser.orElseThrow())) {
             final var participantLink = new Anchor(LinkUtil.getLink(event) + "/participants",
