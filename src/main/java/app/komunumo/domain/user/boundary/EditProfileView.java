@@ -19,14 +19,32 @@ package app.komunumo.domain.user.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.vaadin.components.AbstractView;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.textfield.EmailField;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
+import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
+
 @Route(value = "settings/profile", layout = WebsiteLayout.class)
 @RolesAllowed("USER_LOCAL")
 public class EditProfileView extends AbstractView {
+
+    private static final int BIO_MAX_LENGTH = 1_000;
+
+    private final @NotNull LoginService loginService;
+    private final @NotNull UserService userService;
 
     /**
      * <p>Creates a new view instance with access to the configuration service for
@@ -35,8 +53,13 @@ public class EditProfileView extends AbstractView {
      * @param configurationService the configuration service used to resolve the instance name;
      *                             must not be {@code null}
      */
-    public EditProfileView(final @NotNull ConfigurationService configurationService) {
+    public EditProfileView(final @NotNull ConfigurationService configurationService,
+                           final @NotNull LoginService loginService,
+                           final @NotNull UserService userService) {
         super(configurationService);
+        this.loginService = loginService;
+        this.userService = userService;
+        createUserInterface();
     }
 
     @Override
@@ -44,4 +67,134 @@ public class EditProfileView extends AbstractView {
         return getTranslation("user.boundary.EditProfileView.title");
     }
 
+    private void createUserInterface() {
+        final var user = loginService.getLoggedInUser()
+                .orElseThrow(() -> new IllegalStateException("No logged-in user"));
+
+        final var handleField = new TextField(getTranslation("user.boundary.EditProfileView.handle"));
+        handleField.setReadOnly(true);
+        handleField.setValueChangeMode(EAGER);
+        handleField.setWidthFull();
+
+        final var emailField = new EmailField(getTranslation("user.boundary.EditProfileView.email"));
+        emailField.setReadOnly(true);
+        emailField.setValueChangeMode(EAGER);
+        emailField.setWidthFull();
+
+        final var nameField = new TextField(getTranslation("user.boundary.EditProfileView.name"));
+        nameField.setRequiredIndicatorVisible(true);
+        nameField.setValueChangeMode(EAGER);
+        nameField.setWidthFull();
+
+        final var bioField = new TextArea(getTranslation("user.boundary.EditProfileView.bio"));
+        bioField.setWidthFull();
+        bioField.setMaxLength(BIO_MAX_LENGTH);
+        bioField.setValueChangeMode(EAGER);
+        bioField.addValueChangeListener(event -> {
+            final int length = event.getValue().length();
+            bioField.setHelperText(length + " / " + BIO_MAX_LENGTH);
+        });
+
+        final var binder = new Binder<EditProfileFormData>();
+
+        binder.forField(handleField)
+                .asRequired(getTranslation("user.boundary.EditProfileView.handle.required"))
+                .withConverter(String::trim, String::trim)
+                .withValidator(handle -> handle.startsWith("@"),
+                        getTranslation("user.boundary.EditProfileView.handle.invalid"))
+                .bind(EditProfileFormData::handle, EditProfileFormData::setHandle);
+
+        binder.forField(emailField)
+                .asRequired(getTranslation("user.boundary.EditProfileView.email.required"))
+                .withConverter(String::trim, String::trim)
+                .bind(EditProfileFormData::email, EditProfileFormData::setEmail);
+
+        binder.forField(nameField)
+                .asRequired(getTranslation("user.boundary.EditProfileView.name.required"))
+                .withConverter(String::trim, String::trim)
+                .bind(EditProfileFormData::name, EditProfileFormData::setName);
+
+        binder.forField(bioField)
+                .bind(EditProfileFormData::bio, EditProfileFormData::setBio);
+
+        final var formData = new EditProfileFormData(user);
+        binder.setBean(formData);
+
+        final var saveButton = new Button(getTranslation("user.boundary.EditProfileView.save"));
+        saveButton.addClickListener(_ -> {
+            if (!binder.validate().isOk()) {
+                return;
+            }
+
+            final var updatedUser = new UserDto(
+                    user.id(),
+                    user.created(),
+                    user.updated(),
+                    formData.handle().isBlank() ? null : formData.handle(),
+                    formData.email().isBlank() ? null : formData.email(),
+                    formData.name(),
+                    formData.bio(),
+                    user.imageId(),
+                    user.role(),
+                    user.type()
+            );
+
+            userService.storeUser(updatedUser);
+        });
+
+        final var formLayout = new FormLayout();
+        formLayout.setWidthFull();
+        formLayout.setMaxWidth("40rem");
+        formLayout.add(handleField, emailField, nameField, bioField);
+
+        add(formLayout, saveButton);
+    }
+
+    private static final class EditProfileFormData {
+
+        private String handle;
+        private String email;
+        private String name;
+        private String bio;
+
+        public EditProfileFormData(final @NotNull UserDto user) {
+            setHandle(Optional.ofNullable(user.profile()).orElse(""));
+            setEmail(Optional.ofNullable(user.email()).orElse(""));
+            setName(user.name());
+            setBio(user.bio());
+        }
+
+        public String handle() {
+            return handle;
+        }
+
+        public void setHandle(final @NotNull String handle) {
+            this.handle = handle;
+        }
+
+        public String email() {
+            return email;
+        }
+
+        public void setEmail(final @NotNull String email) {
+            this.email = email;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public void setName(final @NotNull String name) {
+            this.name = name;
+        }
+
+        public String bio() {
+            return bio;
+        }
+
+        public void setBio(final @NotNull String bio) {
+            this.bio = bio;
+        }
+
+    }
 }
