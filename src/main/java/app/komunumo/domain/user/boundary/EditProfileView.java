@@ -22,9 +22,12 @@ import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.util.NotificationUtil;
 import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
@@ -39,7 +42,7 @@ import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
 
 @Route(value = "settings/profile", layout = WebsiteLayout.class)
 @RolesAllowed("USER_LOCAL")
-public class EditProfileView extends AbstractView {
+public final class EditProfileView extends AbstractView {
 
     private static final int BIO_MAX_LENGTH = 1_000;
 
@@ -60,6 +63,7 @@ public class EditProfileView extends AbstractView {
         this.loginService = loginService;
         this.userService = userService;
         createUserInterface();
+        addClassName("edit-profile-view");
     }
 
     @Override
@@ -71,17 +75,22 @@ public class EditProfileView extends AbstractView {
         final var user = loginService.getLoggedInUser()
                 .orElseThrow(() -> new IllegalStateException("No logged-in user"));
 
+        add(new H2(getViewTitle()));
+
         final var emailField = new EmailField(getTranslation("user.boundary.EditProfileView.email"));
+        emailField.addClassName("email-field");
         emailField.setReadOnly(true);
         emailField.setValueChangeMode(EAGER);
         emailField.setWidthFull();
 
         final var nameField = new TextField(getTranslation("user.boundary.EditProfileView.name"));
+        nameField.addClassName("name-field");
         nameField.setRequiredIndicatorVisible(true);
         nameField.setValueChangeMode(EAGER);
         nameField.setWidthFull();
 
         final var bioField = new TextArea(getTranslation("user.boundary.EditProfileView.bio"));
+        bioField.addClassName("bio-field");
         bioField.setWidthFull();
         bioField.setMaxLength(BIO_MAX_LENGTH);
         bioField.setValueChangeMode(EAGER);
@@ -94,12 +103,10 @@ public class EditProfileView extends AbstractView {
 
         binder.forField(emailField)
                 .asRequired(getTranslation("user.boundary.EditProfileView.email.required"))
-                .withConverter(String::trim, String::trim)
                 .bind(EditProfileFormData::email, EditProfileFormData::setEmail);
 
         binder.forField(nameField)
                 .asRequired(getTranslation("user.boundary.EditProfileView.name.required"))
-                .withConverter(String::trim, String::trim)
                 .bind(EditProfileFormData::name, EditProfileFormData::setName);
 
         binder.forField(bioField)
@@ -109,6 +116,7 @@ public class EditProfileView extends AbstractView {
         binder.setBean(formData);
 
         final var saveButton = new Button(getTranslation("user.boundary.EditProfileView.save"));
+        saveButton.addClassName("save-button");
         saveButton.addClickListener(_ -> {
             if (!binder.validate().isOk()) {
                 return;
@@ -119,20 +127,23 @@ public class EditProfileView extends AbstractView {
                     user.created(),
                     user.updated(),
                     user.profile(),
-                    formData.email().isBlank() ? null : formData.email(),
-                    formData.name(),
-                    formData.bio(),
+                    user.email(),
+                    formData.name().trim(),
+                    formData.bio().trim(),
                     user.imageId(),
                     user.role(),
                     user.type()
             );
 
             userService.storeUser(updatedUser);
+            NotificationUtil.showNotification(
+                    getTranslation("user.boundary.EditProfileView.saveSuccess"),
+                    NotificationVariant.LUMO_SUCCESS);
         });
 
         final var formLayout = new FormLayout();
         formLayout.setWidthFull();
-        formLayout.setMaxWidth("40rem");
+        formLayout.setAutoResponsive(true);
         formLayout.add(emailField, nameField, bioField);
 
         add(formLayout, saveButton);
@@ -144,29 +155,29 @@ public class EditProfileView extends AbstractView {
         private String name;
         private String bio;
 
-        public EditProfileFormData(final @NotNull UserDto user) {
+        EditProfileFormData(final @NotNull UserDto user) {
             setEmail(Optional.ofNullable(user.email()).orElse(""));
             setName(user.name());
             setBio(user.bio());
         }
 
-        public String email() {
+        String email() {
             return email;
         }
 
-        public void setEmail(final @NotNull String email) {
+        void setEmail(final @NotNull String email) {
             this.email = email;
         }
 
-        public String name() {
+        String name() {
             return name;
         }
 
-        public void setName(final @NotNull String name) {
+        void setName(final @NotNull String name) {
             this.name = name;
         }
 
-        public String bio() {
+        String bio() {
             return bio;
         }
 
