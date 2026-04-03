@@ -28,11 +28,10 @@ import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.user.boundary.LogoutView;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.RegistrationService;
-import app.komunumo.domain.user.entity.AuthenticationSignal;
+import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.util.LocationUtil;
 import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEffect;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
@@ -41,8 +40,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.signals.Signal;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.ObjectProvider;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_CREATE_COMMUNITY_ALLOWED;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_HIDE_COMMUNITIES;
@@ -54,7 +53,7 @@ public final class NavigationBar extends HorizontalLayout {
                          final @NotNull GlobalPageService globalPageService,
                          final @NotNull LoginService loginService,
                          final @NotNull RegistrationService registrationService,
-                         final @NotNull ObjectProvider<AuthenticationSignal> authenticationSignalProvider) {
+                         final @NotNull AuthenticationState authenticationState) {
         super();
         final var ui = UI.getCurrent();
         addClassName("navigation-bar");
@@ -64,7 +63,7 @@ public final class NavigationBar extends HorizontalLayout {
         menuContainer.add(getNavigationBar(ui, configurationService, globalPageService));
         addToStart(menuContainer);
 
-        addToEnd(getAvatar(ui, configurationService, loginService, registrationService, authenticationSignalProvider));
+        addToEnd(getAvatar(ui, configurationService, loginService, registrationService, authenticationState));
     }
 
     private Component getNavigationBar(final @NotNull UI ui,
@@ -87,7 +86,7 @@ public final class NavigationBar extends HorizontalLayout {
                                 final @NotNull ConfigurationService configurationService,
                                 final @NotNull LoginService loginService,
                                 final @NotNull RegistrationService registrationService,
-                                final @NotNull ObjectProvider<AuthenticationSignal> authenticationSignalProvider) {
+                                final @NotNull AuthenticationState authenticationState) {
         final var avatar = new Avatar();
         final var avatarMenu = new ContextMenu(avatar);
         avatarMenu.setOpenOnClick(true);
@@ -127,22 +126,27 @@ public final class NavigationBar extends HorizontalLayout {
                 ui.navigate(LogoutView.class)
         );
 
-        // update menu items based on authentication state
-        ComponentEffect.effect(this, () -> authenticationSignalProvider.ifAvailable(signal -> {
-            final var isLoggedIn = signal.isAuthenticated();
-            final var isLocalUser = signal.isLocalUser();
-            final var isAdmin = signal.isAdmin();
+        final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
+        final var createCommunityAllowed = configurationService.getConfiguration(INSTANCE_CREATE_COMMUNITY_ALLOWED, Boolean.class);
 
-            final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
-            final var createCommunityAllowed = configurationService.getConfiguration(INSTANCE_CREATE_COMMUNITY_ALLOWED, Boolean.class);
+        loginItem.bindVisible(Signal.not(authenticationState.getAuthenticatedSignal()));
+        logoutItem.bindVisible(authenticationState.getAuthenticatedSignal());
 
-            loginItem.setVisible(!isLoggedIn);
-            logoutItem.setVisible(isLoggedIn);
-            registerItem.setVisible(registrationAllowed && !isLoggedIn);
-            adminMenuItem.setVisible(isAdmin);
-            createCommunityItem.setVisible(isLocalUser && createCommunityAllowed);
-            createEventItem.setVisible(isLocalUser);
+        registerItem.bindVisible(Signal.computed(() -> {
+            final var authenticationSignal = authenticationState.getAuthenticatedSignal();
+            final var isAuthenticated = authenticationSignal.get();
+            return registrationAllowed && !isAuthenticated;
         }));
+
+        adminMenuItem.bindVisible(authenticationState.getAdminSignal());
+
+        createCommunityItem.bindVisible(Signal.computed(() -> {
+            final var localUserSignal = authenticationState.getLocalUserSignal();
+            final var isLocalUser = localUserSignal.get();
+            return isLocalUser && createCommunityAllowed;
+        }));
+
+        createEventItem.bindVisible(authenticationState.getLocalUserSignal());
 
         return avatar;
     }

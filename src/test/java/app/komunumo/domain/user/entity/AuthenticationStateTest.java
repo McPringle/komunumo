@@ -30,13 +30,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AuthenticationSignalTest {
+class AuthenticationStateTest {
 
-    private AuthenticationSignal signal;
+    private AuthenticationState authenticationState;
 
     @BeforeEach
     void setup() {
-        signal = new AuthenticationSignal();
+        authenticationState = new AuthenticationState();
         SecurityContextHolder.clearContext();
     }
 
@@ -47,79 +47,79 @@ class AuthenticationSignalTest {
 
     @Test
     void uninitialized_isNotAuthenticated_andNotAdmin() {
-        assertThat(signal.isAuthenticated()).isFalse();
-        assertThat(signal.isAdmin()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isFalse();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
     }
 
 
     @Test
     void setAuthenticated_false_resultsInNotAuthenticated_andNotAdmin() {
-        signal.setAuthenticated(false);
+        authenticationState.setAuthenticated(false);
 
-        assertThat(signal.isAuthenticated()).isFalse();
-        assertThat(signal.isAdmin()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isFalse();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
     }
 
 
     @Test
     void setAuthenticated_true_resultsInAuthenticated_andNotAdmin() {
-        signal.setAuthenticated(true);
+        authenticationState.setAuthenticated(true);
 
-        assertThat(signal.isAuthenticated()).isTrue();
-        assertThat(signal.isAdmin()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isTrue();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
     }
 
     @Test
     void setAuthenticated_trueAndAdmin_resultsInAuthenticated_andAdmin() {
-        signal.setAuthenticated(true, true, false);
+        authenticationState.setAuthenticated(true, true, false);
 
-        assertThat(signal.isAuthenticated()).isTrue();
-        assertThat(signal.isAdmin()).isTrue();
-        assertThat(signal.isLocalUser()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isTrue();
+        assertThat(authenticationState.getAdminSignal().peek()).isTrue();
+        assertThat(authenticationState.getLocalUserSignal().peek()).isFalse();
     }
 
     @Test
     void setAuthenticated_trueAndNotAdmin_resultsInAuthenticated_andNotAdmin() {
-        signal.setAuthenticated(true, false, true);
+        authenticationState.setAuthenticated(true, false, true);
 
-        assertThat(signal.isAuthenticated()).isTrue();
-        assertThat(signal.isAdmin()).isFalse();
-        assertThat(signal.isLocalUser()).isTrue();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isTrue();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
+        assertThat(authenticationState.getLocalUserSignal().peek()).isTrue();
     }
 
     @Test
     void setAuthenticated_falseAndAdmin_resultsInNotAuthenticated_andNotAdmin() {
-        signal.setAuthenticated(false, true, false);
+        authenticationState.setAuthenticated(false, true, false);
 
-        assertThat(signal.isAuthenticated()).isFalse();
-        assertThat(signal.isAdmin()).isFalse();
-        assertThat(signal.isLocalUser()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isFalse();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
+        assertThat(authenticationState.getLocalUserSignal().peek()).isFalse();
     }
 
     @Test
     void setAuthenticated_trueAndLocalUser_resultsInAuthenticated_andLocalUser() {
-        signal.setAuthenticated(true, false, false);
+        authenticationState.setAuthenticated(true, false, false);
 
-        assertThat(signal.isAuthenticated()).isTrue();
-        assertThat(signal.isAdmin()).isFalse();
-        assertThat(signal.isLocalUser()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isTrue();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
+        assertThat(authenticationState.getLocalUserSignal().peek()).isFalse();
     }
 
     @Test
     void setAuthenticated_falseAndLocalUser_resultsInNotAuthenticated_andLocalUser() {
-        signal.setAuthenticated(false, false, true);
+        authenticationState.setAuthenticated(false, false, true);
 
-        assertThat(signal.isAuthenticated()).isFalse();
-        assertThat(signal.isAdmin()).isFalse();
-        assertThat(signal.isLocalUser()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isFalse();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
+        assertThat(authenticationState.getLocalUserSignal().peek()).isFalse();
     }
 
     @Test
     void refreshFromSecurityContext_noAuthentication_setsFalseFalse() {
-        signal.refreshFromSecurityContext();
+        authenticationState.refreshFromSecurityContext();
 
-        assertThat(signal.isAuthenticated()).isFalse();
-        assertThat(signal.isAdmin()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isFalse();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
     }
 
     @Test
@@ -133,10 +133,10 @@ class AuthenticationSignalTest {
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        signal.refreshFromSecurityContext();
+        authenticationState.refreshFromSecurityContext();
 
-        assertThat(signal.isAuthenticated()).isFalse();
-        assertThat(signal.isAdmin()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isFalse();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
     }
 
     @Test
@@ -148,10 +148,10 @@ class AuthenticationSignalTest {
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        signal.refreshFromSecurityContext();
+        authenticationState.refreshFromSecurityContext();
 
-        assertThat(signal.isAuthenticated()).isTrue();
-        assertThat(signal.isAdmin()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isTrue();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
     }
 
     @Test
@@ -166,10 +166,10 @@ class AuthenticationSignalTest {
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        signal.refreshFromSecurityContext();
+        authenticationState.refreshFromSecurityContext();
 
-        assertThat(signal.isAuthenticated()).isTrue();
-        assertThat(signal.isAdmin()).isTrue();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isTrue();
+        assertThat(authenticationState.getAdminSignal().peek()).isTrue();
     }
 
     @Test
@@ -180,10 +180,10 @@ class AuthenticationSignalTest {
         );
         SecurityContextHolder.getContext().setAuthentication(anonymousAuth);
 
-        signal.refreshFromSecurityContext();
+        authenticationState.refreshFromSecurityContext();
 
-        assertThat(signal.isAuthenticated()).isFalse();
-        assertThat(signal.isAdmin()).isFalse();
+        assertThat(authenticationState.getAuthenticatedSignal().peek()).isFalse();
+        assertThat(authenticationState.getAdminSignal().peek()).isFalse();
     }
 
 }
