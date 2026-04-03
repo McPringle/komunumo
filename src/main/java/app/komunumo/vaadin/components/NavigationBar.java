@@ -150,6 +150,7 @@ public final class NavigationBar extends HorizontalLayout {
         }));
 
         adminMenuItem.bindVisible(authenticationState.getAdminSignal());
+        settingsMenuItem.bindVisible(authenticationState.getLocalUserSignal());
 
         createCommunityItem.bindVisible(Signal.computed(() -> {
             final var localUserSignal = authenticationState.getLocalUserSignal();
