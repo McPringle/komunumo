@@ -18,24 +18,26 @@
 package app.komunumo.domain.user.entity;
 
 import app.komunumo.util.SecurityUtil;
-import com.vaadin.signals.ValueSignal;
+import com.vaadin.flow.signals.local.ValueSignal;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>Publishes authentication and authorization state for reactive UI updates.</p>
+ * <p>Provides authentication and authorization state as reactive signals for UI components.</p>
  *
- * <p>This simplified signal tracks whether a user is authenticated and whether the user
- * has the ADMIN role. Components can observe these signals to adjust visibility and behavior.</p>
+ * <p>This class exposes session-scoped state derived from the Spring Security context,
+ * including whether the current user is authenticated, has admin privileges, and is a
+ * local user. UI components can subscribe to these signals to reactively adjust their
+ * visibility and behavior.</p>
  *
- * <p>This bean is session scoped so each user session has an independent state that mirrors the
- * Spring Security context.</p>
+ * <p>The state is updated explicitly via {@link #refreshFromSecurityContext()}, which
+ * reads the current authentication information from the security layer.</p>
  */
 @Component
 @Scope(value = "vaadin-session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class AuthenticationSignal {
+public class AuthenticationState {
 
     private final @NotNull ValueSignal<Boolean> authenticated = new ValueSignal<>(false);
     private final @NotNull ValueSignal<Boolean> admin = new ValueSignal<>(false);
@@ -72,37 +74,48 @@ public class AuthenticationSignal {
      * @param isLocalUser true if the authenticated user has USER privileges and is of type LOCAL
      */
     public void setAuthenticated(final boolean isAuthenticated, final boolean isAdmin, final boolean isLocalUser) {
-        authenticated.value(isAuthenticated);
-        admin.value(isAuthenticated && isAdmin);
-        localUser.value(isAuthenticated && isLocalUser);
+        authenticated.set(isAuthenticated);
+        admin.set(isAuthenticated && isAdmin);
+        localUser.set(isAuthenticated && isLocalUser);
     }
 
     /**
-     * <p>Returns whether the current user is authenticated.</p>
+     * <p>Returns the signal indicating whether the current user is authenticated.</p>
      *
-     * @return true if authenticated, false otherwise
-     */
-    public boolean isAuthenticated() {
-        return Boolean.TRUE.equals(authenticated.value());
-    }
-
-
-    /**
-     * <p>Returns whether the current user has ADMIN privileges.</p>
+     * <p>The signal emits {@code true} if the user is logged in, otherwise {@code false}.
+     * UI components can subscribe to this signal to reactively update their state
+     * based on authentication status.</p>
      *
-     * @return true if authenticated and ADMIN, false otherwise
+     * @return The authentication signal; never {@code null}.
      */
-    public boolean isAdmin() {
-        return isAuthenticated() && Boolean.TRUE.equals(admin.value());
+    public ValueSignal<Boolean> getAuthenticatedSignal() {
+        return authenticated;
     }
 
     /**
-     * <p>Returns whether the current user has USER privileges and is of type LOCAL.</p>
+     * <p>Returns the signal indicating whether the current user has admin privileges.</p>
      *
-     * @return true if authenticated and USER and of type LOCAL, false otherwise
+     * <p>The signal emits {@code true} only if the user is authenticated and has
+     * the admin role. Otherwise, it emits {@code false}. This ensures that admin
+     * state is never {@code true} for unauthenticated users.</p>
+     *
+     * @return The admin signal; never {@code null}.
      */
-    public boolean isLocalUser() {
-        return isAuthenticated() && Boolean.TRUE.equals(localUser.value());
+    public ValueSignal<Boolean> getAdminSignal() {
+        return admin;
+    }
+
+    /**
+     * <p>Returns the signal indicating whether the current user is a local user.</p>
+     *
+     * <p>The signal emits {@code true} only if the user is authenticated and of type
+     * local. Otherwise, it emits {@code false}. This can be used to distinguish local
+     * users from remote or anonymous users in the UI.</p>
+     *
+     * @return The local user signal; never {@code null}.
+     */
+    public ValueSignal<Boolean> getLocalUserSignal() {
+        return localUser;
     }
 
 }

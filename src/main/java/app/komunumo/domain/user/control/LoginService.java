@@ -17,19 +17,19 @@
  */
 package app.komunumo.domain.user.control;
 
-import app.komunumo.domain.user.entity.UserDto;
-import app.komunumo.domain.user.entity.UserRole;
-import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
+import app.komunumo.SecurityConfig;
 import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
+import app.komunumo.domain.core.confirmation.control.ConfirmationService;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
-import app.komunumo.domain.core.confirmation.control.ConfirmationService;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.SecurityConfig;
-import app.komunumo.domain.user.entity.UserPrincipal;
 import app.komunumo.domain.core.i18n.controller.TranslationProvider;
-import app.komunumo.domain.user.entity.AuthenticationSignal;
+import app.komunumo.domain.user.entity.AuthenticationState;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserPrincipal;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
@@ -38,7 +38,6 @@ import com.vaadin.flow.server.VaadinServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,7 +57,7 @@ public final class LoginService {
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(LoginService.class);
     private static final @NotNull String CONTEXT_LOGIN_LOCATION = "location";
 
-    private final @NotNull ObjectProvider<AuthenticationSignal> authenticationSignalProvider;
+    private final @NotNull AuthenticationState authenticationState;
 
     private final @NotNull UserService userService;
     private final @NotNull ConfirmationService confirmationService;
@@ -67,12 +66,12 @@ public final class LoginService {
     public LoginService(final @NotNull UserService userService,
                         final @NotNull ConfirmationService confirmationService,
                         final @NotNull TranslationProvider translationProvider,
-                        final @NotNull ObjectProvider<AuthenticationSignal> authenticationSignalProvider) {
+                        final @NotNull AuthenticationState authenticationState) {
         super();
         this.userService = userService;
         this.confirmationService = confirmationService;
         this.translationProvider = translationProvider;
-        this.authenticationSignalProvider = authenticationSignalProvider;
+        this.authenticationState = authenticationState;
     }
 
     public boolean login(final @NotNull String emailAddress) {
@@ -83,14 +82,14 @@ public final class LoginService {
         final var optUser = userService.getUserByEmail(emailAddress);
         if (optUser.isEmpty()) {
             LOGGER.info("User with email {} not found.", emailAddress);
-            authenticationSignalProvider.ifAvailable(signal -> signal.setAuthenticated(false));
+            authenticationState.setAuthenticated(false);
             return false;
         }
 
         final var user = optUser.orElseThrow();
         if (!user.type().isLoginAllowed()) {
             LOGGER.info("User with email {} exists but login is not allowed for type {}", emailAddress, user.type());
-            authenticationSignalProvider.ifAvailable(signal -> signal.setAuthenticated(false));
+            authenticationState.setAuthenticated(false);
             return false;
         }
 
@@ -127,9 +126,8 @@ public final class LoginService {
         }
 
         LOGGER.info("User with email {} successfully logged in.", emailAddress);
-        authenticationSignalProvider.ifAvailable(signal ->
-                signal.setAuthenticated(true, UserRole.ADMIN.equals(user.role()),
-                        UserType.LOCAL.equals(user.type())));
+        authenticationState.setAuthenticated(true, UserRole.ADMIN.equals(user.role()),
+                        UserType.LOCAL.equals(user.type()));
 
         return true;
     }
@@ -148,10 +146,10 @@ public final class LoginService {
     }
 
     public void logout(final @NotNull String location) {
-        SecurityContextHolder.clearContext();
+        authenticationState.setAuthenticated(false);
+
         final var logoutHandler = new SecurityContextLogoutHandler();
         logoutHandler.logout(VaadinServletRequest.getCurrent().getHttpServletRequest(), null, null);
-        authenticationSignalProvider.ifAvailable(signal -> signal.setAuthenticated(false));
 
         final var ui = UI.getCurrent();
         if (ui == null) {
