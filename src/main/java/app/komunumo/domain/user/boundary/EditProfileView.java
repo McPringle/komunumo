@@ -71,11 +71,6 @@ public class EditProfileView extends AbstractView {
         final var user = loginService.getLoggedInUser()
                 .orElseThrow(() -> new IllegalStateException("No logged-in user"));
 
-        final var handleField = new TextField(getTranslation("user.boundary.EditProfileView.handle"));
-        handleField.setReadOnly(true);
-        handleField.setValueChangeMode(EAGER);
-        handleField.setWidthFull();
-
         final var emailField = new EmailField(getTranslation("user.boundary.EditProfileView.email"));
         emailField.setReadOnly(true);
         emailField.setValueChangeMode(EAGER);
@@ -96,13 +91,6 @@ public class EditProfileView extends AbstractView {
         });
 
         final var binder = new Binder<EditProfileFormData>();
-
-        binder.forField(handleField)
-                .asRequired(getTranslation("user.boundary.EditProfileView.handle.required"))
-                .withConverter(String::trim, String::trim)
-                .withValidator(handle -> handle.startsWith("@"),
-                        getTranslation("user.boundary.EditProfileView.handle.invalid"))
-                .bind(EditProfileFormData::handle, EditProfileFormData::setHandle);
 
         binder.forField(emailField)
                 .asRequired(getTranslation("user.boundary.EditProfileView.email.required"))
@@ -130,7 +118,7 @@ public class EditProfileView extends AbstractView {
                     user.id(),
                     user.created(),
                     user.updated(),
-                    formData.handle().isBlank() ? null : formData.handle(),
+                    user.profile(),
                     formData.email().isBlank() ? null : formData.email(),
                     formData.name(),
                     formData.bio(),
@@ -145,31 +133,21 @@ public class EditProfileView extends AbstractView {
         final var formLayout = new FormLayout();
         formLayout.setWidthFull();
         formLayout.setMaxWidth("40rem");
-        formLayout.add(handleField, emailField, nameField, bioField);
+        formLayout.add(emailField, nameField, bioField);
 
         add(formLayout, saveButton);
     }
 
     private static final class EditProfileFormData {
 
-        private String handle;
         private String email;
         private String name;
         private String bio;
 
         public EditProfileFormData(final @NotNull UserDto user) {
-            setHandle(Optional.ofNullable(user.profile()).orElse(""));
             setEmail(Optional.ofNullable(user.email()).orElse(""));
             setName(user.name());
             setBio(user.bio());
-        }
-
-        public String handle() {
-            return handle;
-        }
-
-        public void setHandle(final @NotNull String handle) {
-            this.handle = handle;
         }
 
         public String email() {
@@ -195,6 +173,5 @@ public class EditProfileView extends AbstractView {
         public void setBio(final @NotNull String bio) {
             this.bio = bio;
         }
-
     }
 }
