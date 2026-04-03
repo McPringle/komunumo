@@ -74,7 +74,7 @@ class LoginFlowBT extends BrowserTest {
 
         // click on the request email button
         page.locator("vaadin-button.email-button").click();
-        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
+        final var closeButton = page.locator("vaadin-button.close-button:has-text(\"Close\")");
         closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         closeButton.click();
         captureScreenshot("loginFails_after-email-requested");

@@ -252,7 +252,7 @@ public abstract class BrowserTest extends IntegrationTest {
         page.locator("vaadin-button.email-button").click();
 
         // close the dialog
-        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
+        final var closeButton = page.locator("vaadin-button.close-button:has-text(\"Close\")");
         closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
         captureScreenshot("login_email-send");
         closeButton.click();
