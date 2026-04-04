@@ -126,7 +126,7 @@ public class CreateCommunityView extends AbstractView {
 
             if (userPrincipalOptional.isEmpty()) {
                 showNotification(getTranslation("community.boundary.CreateCommunityView.permissionError"),
-                        NotificationVariant.LUMO_ERROR);
+                        NotificationVariant.ERROR);
             } else if (binder.validate().isOk()) {
                 final var image = imageField.getValue();
                 final var imageId = image != null ? image.id() : null;
@@ -140,12 +140,12 @@ public class CreateCommunityView extends AbstractView {
                 memberService.storeMember(memberDto);
 
                 showNotification(getTranslation("community.boundary.CreateCommunityView.notification.success"),
-                        NotificationVariant.LUMO_SUCCESS);
+                        NotificationVariant.SUCCESS);
                 UI.getCurrent().navigate("communities/%s".formatted(community.profile()));
 
             } else {
                 showNotification(getTranslation("community.boundary.CreateCommunityView.notification.error"),
-                        NotificationVariant.LUMO_ERROR);
+                        NotificationVariant.ERROR);
             }
         });
 

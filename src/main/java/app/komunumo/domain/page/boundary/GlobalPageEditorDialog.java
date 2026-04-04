@@ -67,7 +67,7 @@ public class GlobalPageEditorDialog extends Dialog {
         setHeaderTitle(getTranslation("page.boundary.GlobalPageEditorDialog.title"));
 
         final var closeButton = new Button(new Icon("lumo", "cross"), this::cancel);
-        closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        closeButton.addThemeVariants(ButtonVariant.TERTIARY);
         closeButton.addClassName("close-button");
         getHeader().add(closeButton);
 
@@ -92,7 +92,7 @@ public class GlobalPageEditorDialog extends Dialog {
         final var cancelButton = new Button(getTranslation("page.boundary.GlobalPageEditorDialog.cancel"), this::cancel);
         footer.add(cancelButton);
         saveButton = new Button(getTranslation("page.boundary.GlobalPageEditorDialog.save"), this::save);
-        saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveButton.addThemeVariants(ButtonVariant.PRIMARY);
         saveButton.setEnabled(false);
         footer.add(saveButton);
 
@@ -115,11 +115,11 @@ public class GlobalPageEditorDialog extends Dialog {
                 close();
             } else {
                 showNotification(getTranslation("page.boundary.GlobalPageEditorDialog.saveError"),
-                        NotificationVariant.LUMO_WARNING);
+                        NotificationVariant.WARNING);
             }
         } else {
             showNotification(getTranslation("page.boundary.GlobalPageEditorDialog.permissionError"),
-                    NotificationVariant.LUMO_WARNING);
+                    NotificationVariant.WARNING);
         }
     }
 

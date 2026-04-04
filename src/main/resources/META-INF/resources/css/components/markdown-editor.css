@@ -28,5 +28,5 @@
 }
 
 .markdown-editor vaadin-tabsheet::part(content) {
-    padding: var(--lumo-space-s) 0 0 0;
+    padding: var(--vaadin-padding-s) 0 0 0;
 }

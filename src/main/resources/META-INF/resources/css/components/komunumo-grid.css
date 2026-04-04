@@ -20,5 +20,5 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    gap: var(--lumo-space-m);
+    gap: var(--vaadin-gap-m);
 }

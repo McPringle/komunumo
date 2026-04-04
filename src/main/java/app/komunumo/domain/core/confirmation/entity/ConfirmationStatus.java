@@ -21,9 +21,9 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import org.jetbrains.annotations.NotNull;
 
 public enum ConfirmationStatus {
-        SUCCESS(NotificationVariant.LUMO_SUCCESS),
-        WARNING(NotificationVariant.LUMO_WARNING),
-        ERROR(NotificationVariant.LUMO_ERROR);
+        SUCCESS(NotificationVariant.SUCCESS),
+        WARNING(NotificationVariant.WARNING),
+        ERROR(NotificationVariant.ERROR);
 
         private final @NotNull NotificationVariant notificationVariant;
 

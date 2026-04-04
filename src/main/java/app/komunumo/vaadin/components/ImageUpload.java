@@ -118,7 +118,7 @@ public final class ImageUpload extends CustomField<ImageDto> {
         } catch (final IOException e) {
             LOGGER.error("Failed to store uploaded image file: {}", e.getMessage(), e);
             showNotification(getTranslation("vaadin.components.ImageUpload.storeError"),
-                    NotificationVariant.LUMO_ERROR);
+                    NotificationVariant.ERROR);
         }
     }
 

@@ -138,7 +138,7 @@ public final class EditProfileView extends AbstractView {
             userService.storeUser(updatedUser);
             NotificationUtil.showNotification(
                     getTranslation("user.boundary.EditProfileView.saveSuccess"),
-                    NotificationVariant.LUMO_SUCCESS);
+                    NotificationVariant.SUCCESS);
         });
 
         final var formLayout = new FormLayout();

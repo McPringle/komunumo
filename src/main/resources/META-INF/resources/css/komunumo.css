@@ -15,6 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-.create-community-view vaadin-vertical-layout {
-    padding: 0;
+:root {
+    --komunumo-color-warning-text: #111827;
+    --komunumo-color-warning-background: #f59e0b;
+
+    --komunumo-color-success-text: #166534;
+    --komunumo-color-success-background: #dcfce7;
+
+    --komunumo-color-error-text: #991b1b;
+    --komunumo-color-error-background: #fee2e2;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --komunumo-color-warning-text: #000000;
+        --komunumo-color-warning-background: #fbbf24;
+
+        --komunumo-color-success-text: #4ade80;
+        --komunumo-color-success-background: #052e16;
+
+        --komunumo-color-error-text: #f87171;
+        --komunumo-color-error-background: #450a0a;
+    }
+}
+
+html {
+    /* Follow the user's operating system preference, also known as "auto" or "system" */
+    color-scheme: light dark;
 }

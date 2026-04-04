@@ -16,8 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*noinspection CssUnknownTarget*/
-@import '../lumo/lumo.css';
+@import "komunumo.css";
 
 @import "fonts/space-grotesk.css";
 

@@ -207,7 +207,7 @@ public final class CommunityDetailView extends AbstractView implements BeforeEnt
                     } else {
                         NotificationUtil.showNotification(
                                 getTranslation("community.boundary.CommunityDetailView.leaveError"),
-                                NotificationVariant.LUMO_WARNING);
+                                NotificationVariant.WARNING);
                     }
                 });
                 confirmDialog.open();

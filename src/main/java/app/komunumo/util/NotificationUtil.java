@@ -35,8 +35,8 @@ public final class NotificationUtil {
      */
     public static void showNotification(final @NotNull String message,
                                     final @NotNull NotificationVariant notificationVariant) {
-        final var persistentNotification = notificationVariant.equals(NotificationVariant.LUMO_ERROR)
-                || notificationVariant.equals(NotificationVariant.LUMO_WARNING);
+        final var persistentNotification = notificationVariant.equals(NotificationVariant.ERROR)
+                || notificationVariant.equals(NotificationVariant.WARNING);
 
         final var notification = persistentNotification
                 ? new PersistentNotification(message)

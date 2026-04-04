@@ -17,8 +17,8 @@
  */
 
 .page-footer {
-    padding: var(--lumo-space-m);
-    border-top: 1px solid darkgray;
+    padding: var(--vaadin-padding-m);
+    border-top: 1px solid var(--vaadin-border-color);
     font-style: italic;
-    font-size: var(--lumo-font-size-s);
+    font-size: var(--aura-font-size-s);
 }

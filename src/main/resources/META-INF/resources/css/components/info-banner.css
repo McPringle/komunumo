@@ -20,9 +20,9 @@
     display: flex;
     justify-content: center;
     justify-items: center;
-    padding: var(--lumo-space-s);
-    background-color: var(--lumo-warning-color);
-    color: var(--lumo-warning-contrast-color);
-    box-shadow: var(--lumo-box-shadow-s);
-    font-size: var(--lumo-font-size-xl);
+    padding: var(--vaadin-padding-s);
+    background-color: var(--komunumo-color-warning-background);
+    color: var(--komunumo-color-warning-text);
+    box-shadow: var(--aura-shadow-s);
+    font-size: var(--aura-font-size-xl);
 }
