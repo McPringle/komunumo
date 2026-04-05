@@ -26,7 +26,6 @@ import app.komunumo.util.NotificationUtil;
 import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.vaadin.components.MarkdownEditor;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.EmailField;
@@ -142,12 +141,7 @@ public final class EditProfileView extends AbstractView {
                     NotificationVariant.SUCCESS);
         });
 
-        final var formLayout = new FormLayout();
-        formLayout.setWidthFull();
-        formLayout.setAutoResponsive(true);
-        formLayout.add(emailField, nameField, bioField);
-
-        add(formLayout, saveButton);
+        add(emailField, nameField, bioField, saveButton);
     }
 
     private static final class EditProfileFormData {
