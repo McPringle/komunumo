@@ -37,13 +37,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
-
 @Route(value = "settings/profile", layout = WebsiteLayout.class)
 @RolesAllowed("USER_LOCAL")
 public final class EditProfileView extends AbstractView {
-
-    private static final int BIO_MAX_LENGTH = 1_000;
 
     private final @NotNull LoginService loginService;
     private final @NotNull UserService userService;
@@ -79,25 +75,17 @@ public final class EditProfileView extends AbstractView {
         final var emailField = new EmailField(getTranslation("user.boundary.EditProfileView.email"));
         emailField.addClassName("email-field");
         emailField.setReadOnly(true);
-        emailField.setValueChangeMode(EAGER);
         emailField.setWidthFull();
 
         final var nameField = new TextField(getTranslation("user.boundary.EditProfileView.name"));
         nameField.addClassName("name-field");
         nameField.setRequiredIndicatorVisible(true);
-        nameField.setValueChangeMode(EAGER);
         nameField.setWidthFull();
 
         final var bioField = new MarkdownEditor(getLocale());
         bioField.setLabel(getTranslation("user.boundary.EditProfileView.bio"));
         bioField.addClassName("bio-field");
         bioField.setWidthFull();
-        bioField.setMaxLength(BIO_MAX_LENGTH);
-        bioField.setValueChangeMode(EAGER);
-        bioField.addValueChangeListener(event -> {
-            final int length = event.getValue().length();
-            bioField.setHelperText(length + " / " + BIO_MAX_LENGTH);
-        });
 
         final var binder = new Binder<EditProfileFormData>();
 
