@@ -24,12 +24,12 @@ import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.util.NotificationUtil;
 import app.komunumo.vaadin.components.AbstractView;
+import app.komunumo.vaadin.components.MarkdownEditor;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.EmailField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.Route;
@@ -89,7 +89,8 @@ public final class EditProfileView extends AbstractView {
         nameField.setValueChangeMode(EAGER);
         nameField.setWidthFull();
 
-        final var bioField = new TextArea(getTranslation("user.boundary.EditProfileView.bio"));
+        final var bioField = new MarkdownEditor(getLocale());
+        bioField.setLabel(getTranslation("user.boundary.EditProfileView.bio"));
         bioField.addClassName("bio-field");
         bioField.setWidthFull();
         bioField.setMaxLength(BIO_MAX_LENGTH);

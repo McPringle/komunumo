@@ -20,12 +20,12 @@ package app.komunumo.domain.user.boundary;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.test.KaribuTest;
+import app.komunumo.vaadin.components.MarkdownEditor;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ class EditProfileViewKT extends KaribuTest {
         assertThat(nameField.getValue()).isEqualTo(testUser.name());
         assertThat(nameField.isReadOnly()).isFalse();
 
-        final var bioField = _get(TextArea.class, spec -> spec.withClasses("bio-field"));
+        final var bioField = _get(MarkdownEditor.class, spec -> spec.withClasses("bio-field"));
         assertThat(bioField).isNotNull();
         assertThat(bioField.getValue()).isEqualTo(testUser.bio());
         assertThat(bioField.isReadOnly()).isFalse();
