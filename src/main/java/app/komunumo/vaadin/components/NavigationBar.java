@@ -95,21 +95,21 @@ public final class NavigationBar extends HorizontalLayout {
         // admin menu
         final var adminMenuItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.admin"));
         final var adminMenu = adminMenuItem.getSubMenu();
-        adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.config"), _ ->
-                ui.navigate(ConfigurationEditorView.class)
+        adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.config"),
+                _ -> ui.navigate(ConfigurationEditorView.class)
         );
-        adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.import"), _ ->
-                ui.navigate(ImporterView.class)
+        adminMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.import"),
+                _ -> ui.navigate(ImporterView.class)
         );
 
         // login as first entry in the menu
-        final var loginItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.login"), _ ->
-                loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+        final var loginItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.login"),
+                _ -> loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
         // register local account
-        final var registerItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.register"), _ ->
-                registrationService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+        final var registerItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.register"),
+                _ -> registrationService.startRegistrationProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
         );
 
         // settings menu
@@ -130,11 +130,12 @@ public final class NavigationBar extends HorizontalLayout {
                 _ -> ui.navigate(CreateEventView.class));
 
         // dark theme toggle
-        avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.toggleDarkMode"), _ -> ThemeUtil.toggleDarkMode(ui));
+        avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.toggleDarkMode"),
+                _ -> ThemeUtil.toggleDarkMode(ui));
 
         // logout as last entry in the menu
-        final var logoutItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.logout"), _ ->
-                ui.navigate(LogoutView.class)
+        final var logoutItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.logout"),
+                _ -> ui.navigate(LogoutView.class)
         );
 
         final var registrationAllowed = configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class);
