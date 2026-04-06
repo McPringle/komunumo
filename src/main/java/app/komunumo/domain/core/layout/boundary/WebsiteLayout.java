@@ -21,7 +21,6 @@ import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.user.control.LoginService;
-import app.komunumo.domain.user.control.RegistrationService;
 import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.util.LocaleUtil;
 import app.komunumo.util.ThemeUtil;
@@ -53,7 +52,6 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
                          final @NotNull ConfigurationService configurationService,
                          final @NotNull GlobalPageService globalPageService,
                          final @NotNull LoginService loginService,
-                         final @NotNull RegistrationService registrationService,
                          final @NotNull AuthenticationState authenticationState) {
         super();
         authenticationState.refreshFromSecurityContext();
@@ -64,8 +62,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         }
 
         addPageHeader(configurationService);
-        add(new NavigationBar(configurationService, globalPageService, loginService, registrationService,
-                authenticationState));
+        add(new NavigationBar(configurationService, globalPageService, loginService, authenticationState));
 
         main = new Main();
         add(main);

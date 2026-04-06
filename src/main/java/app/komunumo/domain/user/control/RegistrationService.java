@@ -45,7 +45,8 @@ import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTAN
 public final class RegistrationService {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(RegistrationService.class);
-    private static final @NotNull String CONTEXT_REGISTRATION_LOCATION = "location";
+    private static final @NotNull String CONTEXT_REGISTRATION_NAME = "name";
+    private static final @NotNull String REGISTRATION_SUCCESS_REDIRECT = "/settings/profile";
 
     private final @NotNull ConfigurationService configurationService;
     private final @NotNull UserService userService;
@@ -69,9 +70,9 @@ public final class RegistrationService {
         this.translationProvider = translationProvider;
     }
 
-
-    public void startRegistrationProcess(final @NotNull Locale locale,
-                                         final @NotNull String location) {
+    public void startRegistrationProcess(final @NotNull String name,
+                                         final @NotNull String email,
+                                         final @NotNull Locale locale) {
         if (!configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)) {
             LOGGER.warn("Registration attempt while registration is disabled.");
             return;
@@ -79,37 +80,38 @@ public final class RegistrationService {
 
         final var actionMessage = translationProvider.getTranslation("user.control.AccountService.registrationText", locale);
         final ConfirmationHandler actionHandler = this::passwordlessRegistrationHandler;
-        final var actionContext = ConfirmationContext.of(CONTEXT_REGISTRATION_LOCATION, location);
+        final var actionContext = ConfirmationContext.of(CONTEXT_REGISTRATION_NAME, name);
         final var confirmationRequest = new ConfirmationRequest(
                 actionMessage,
                 actionHandler,
                 actionContext,
                 locale
         );
-        confirmationService.startConfirmationProcess(confirmationRequest);
+        confirmationService.sendConfirmationMail(email, confirmationRequest);
     }
 
     private @NotNull ConfirmationResponse passwordlessRegistrationHandler(final @NotNull String email,
                                                                           final @NotNull ConfirmationContext context,
                                                                           final @NotNull Locale locale) {
-        var localUser = userService.getUserByEmail(email).orElseGet(() -> createNewLocalUser(email));
+        final var name = (String) context.getOrDefault(CONTEXT_REGISTRATION_NAME, "");
+        var localUser = userService.getUserByEmail(email).orElseGet(() -> createNewLocalUser(name, email));
 
         if (localUser.type() != UserType.LOCAL) {
             localUser = userService.changeUserType(localUser, UserType.LOCAL);
             userService.storeUser(localUser);
         }
 
-        mailService.sendMail(MailTemplateId.ACCOUNT_REGISTRATION_SUCCESS, locale, MailFormat.MARKDOWN, Map.of(), email);
+        final var variables = Map.of("name", (String) context.getOrDefault(CONTEXT_REGISTRATION_NAME, ""));
+        mailService.sendMail(MailTemplateId.ACCOUNT_REGISTRATION_SUCCESS, locale, MailFormat.MARKDOWN, variables, email);
         loginService.login(email);
 
         final var status = ConfirmationStatus.SUCCESS;
         final var message = translationProvider.getTranslation("user.control.AccountService.successMessage", locale);
-        final var location = (String) context.getOrDefault(CONTEXT_REGISTRATION_LOCATION, "");
-        return new ConfirmationResponse(status, message, location);
+        return new ConfirmationResponse(status, message, REGISTRATION_SUCCESS_REDIRECT);
     }
 
-    private UserDto createNewLocalUser(final @NotNull String email) {
-        return userService.storeUser(new UserDto(null, null, null, null, email, "", "", null,
+    private UserDto createNewLocalUser(final @NotNull String name, final @NotNull String email) {
+        return userService.storeUser(new UserDto(null, null, null, null, email, name, "", null,
                 UserRole.USER, UserType.LOCAL));
     }
 
