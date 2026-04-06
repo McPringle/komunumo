@@ -30,12 +30,16 @@ import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.participant.entity.ParticipantDto;
+import app.komunumo.domain.participant.entity.RegisteredParticipantDto;
+import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.util.LinkUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.VisibleForTesting;
 import org.jooq.DSLContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneOffset;
@@ -44,9 +48,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 
 import static app.komunumo.data.db.tables.Participant.PARTICIPANT;
+import static app.komunumo.data.db.tables.User.USER;
 
 @Service
 public final class ParticipantService {
@@ -54,21 +58,26 @@ public final class ParticipantService {
     @VisibleForTesting
     static final @NotNull String CONTEXT_KEY_EVENT = "event";
 
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(ParticipantService.class);
+
     private final @NotNull DSLContext dsl;
     private final @NotNull MailService mailService;
     private final @NotNull UserService userService;
+    private final @NotNull LoginService loginService;
     private final @NotNull ConfirmationService confirmationService;
     private final @NotNull TranslationProvider translationProvider;
 
     public ParticipantService(final @NotNull DSLContext dsl,
                               final @NotNull MailService mailService,
                               final @NotNull UserService userService,
+                              final @NotNull LoginService loginService,
                               final @NotNull ConfirmationService confirmationService,
                               final @NotNull TranslationProvider translationProvider) {
         super();
         this.dsl = dsl;
         this.mailService = mailService;
         this.userService = userService;
+        this.loginService = loginService;
         this.confirmationService = confirmationService;
         this.translationProvider = translationProvider;
     }
@@ -77,7 +86,7 @@ public final class ParticipantService {
                                          final @NotNull Locale locale) {
         final var actionMessage = translationProvider.getTranslation(
                 "participant.control.ParticipantService.actionText", locale, event.title());
-        final ConfirmationHandler actionHandler = this::registerForEvent;
+        final ConfirmationHandler actionHandler = this::handleConfirmationResponse;
         final var actionContext = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
         final var confirmationRequest = new ConfirmationRequest(
                 actionMessage,
@@ -89,14 +98,42 @@ public final class ParticipantService {
     }
 
     @VisibleForTesting
-    @NotNull ConfirmationResponse registerForEvent(final @NotNull String email,
-                                                   final @NotNull ConfirmationContext context,
-                                                   final @NotNull Locale locale) {
+    @NotNull ConfirmationResponse handleConfirmationResponse(final @NotNull String email,
+                                                             final @NotNull ConfirmationContext context,
+                                                             final @NotNull Locale locale) {
         final var event = (EventDto) context.get(CONTEXT_KEY_EVENT);
         final var user = userService.getUserByEmail(email)
                 .orElseGet(() -> userService.createAnonymousUserWithEmail(email));
 
-        @SuppressWarnings("DataFlowIssue") // event and user objects are from the DB and are guaranteed to have an ID
+        final var eventTitle = event.title();
+        final var eventLink = LinkUtil.getLink(event);
+
+        if (registerForEvent(event, user, locale)) {
+            final var status = ConfirmationStatus.SUCCESS;
+            final var message = translationProvider.getTranslation(
+                    "participant.control.ParticipantService.registrationSuccessMessage", locale, eventTitle);
+            return new ConfirmationResponse(status, message, eventLink);
+        } else {
+            final var status = ConfirmationStatus.WARNING;
+            final var message = translationProvider.getTranslation(
+                    "participant.control.ParticipantService.registrationFailedMessage", locale, eventTitle);
+            return new ConfirmationResponse(status, message, eventLink);
+        }
+    }
+
+    public boolean registerForEvent(final @NotNull EventDto event,
+                                             final @NotNull UserDto user,
+                                             final @NotNull Locale locale) {
+        if (event.id() == null) {
+            LOGGER.warn("Attempted to register for an event where the event ID is NULL. Event: {}", event);
+            return false;
+        }
+
+        if (user.id() == null) {
+            LOGGER.warn("Attempted to register for event where the user ID is NULL. User: {}", user);
+            return false;
+        }
+
         final var participant = getParticipant(event, user) // try to get existing participant
                 .orElseGet(() -> new ParticipantDto(event.id(), user.id(), null));
         storeParticipant(participant);
@@ -104,14 +141,14 @@ public final class ParticipantService {
         final var eventTitle = event.title();
         final var eventLink = LinkUtil.getLink(event);
 
-        final Map<String, String> mailVariables = Map.of("eventTitle", eventTitle, "eventLink", eventLink);
-        mailService.sendMail(MailTemplateId.EVENT_REGISTRATION_SUCCESS, locale, MailFormat.MARKDOWN,
-                mailVariables, email);
+        final var email = user.email();
+        if (email != null && !email.isBlank()) {
+            final Map<String, String> mailVariables = Map.of("eventTitle", eventTitle, "eventLink", eventLink);
+            mailService.sendMail(MailTemplateId.EVENT_REGISTRATION_SUCCESS, locale, MailFormat.MARKDOWN,
+                    mailVariables, email);
+        }
 
-        final var status = ConfirmationStatus.SUCCESS;
-        final var message = translationProvider.getTranslation("participant.control.ParticipantService.successMessage",
-                locale, eventTitle);
-        return new ConfirmationResponse(status, message, eventLink);
+        return true;
     }
 
     public void storeParticipant(final @NotNull ParticipantDto participant) {
@@ -164,14 +201,65 @@ public final class ParticipantService {
     /**
      * <p>Counts the total number of participants of the specified event.</p>
      *
+     * @param event The event for which the participants should be counted; must not be {@code null}.
+     *
      * @return The total count of participants of the event; never negative.
      */
-    public int getParticipantCount(final @NotNull UUID eventId) {
+    public int getParticipantCount(final @NotNull EventDto event) {
         return Optional.ofNullable(
                 dsl.selectCount()
                         .from(PARTICIPANT)
-                        .where(PARTICIPANT.EVENT_ID.eq(eventId))
+                        .where(PARTICIPANT.EVENT_ID.eq(event.id()))
                         .fetchOne(0, Integer.class)
         ).orElse(0);
     }
+
+    public boolean isParticipant(final @NotNull UserDto user,
+                                 final @NotNull EventDto event) {
+        return dsl.fetchExists(dsl.selectFrom(PARTICIPANT)
+                .where(PARTICIPANT.USER_ID.eq(user.id())
+                        .and(PARTICIPANT.EVENT_ID.eq(event.id()))));
+    }
+
+    public boolean isLoggedInUserParticipantOf(final @NotNull EventDto event) {
+        return loginService.getLoggedInUser()
+                .map(user -> isParticipant(user, event))
+                .orElse(false);
+    }
+
+    public boolean unregisterFromEvent(final @NotNull UserDto user,
+                                       final @NotNull EventDto event,
+                                       final @NotNull Locale locale) {
+        return getParticipant(event, user)
+                .map(participant -> {
+                        final var success = deleteParticipant(participant);
+                        if (success) {
+                            final var email = user.email();
+                            if (email != null && !email.isBlank()) {
+                                final var eventTitle = event.title();
+                                final var eventLink = LinkUtil.getLink(event);
+                                final Map<String, String> mailVariables = Map.of(
+                                        "eventTitle", eventTitle, "eventLink", eventLink);
+                                mailService.sendMail(MailTemplateId.EVENT_UNREGISTRATION_SUCCESS, locale,
+                                        MailFormat.MARKDOWN, mailVariables, email);
+                            }
+                        }
+                        return success;
+                })
+                .orElse(false);
+    }
+
+    public @NotNull List<@NotNull RegisteredParticipantDto> getParticipants(final @NotNull EventDto event) {
+        return dsl.select(USER.fields())
+                .select(PARTICIPANT.REGISTERED)
+                .from(PARTICIPANT)
+                .join(USER).on(PARTICIPANT.USER_ID.eq(USER.ID))
+                .where(PARTICIPANT.EVENT_ID.eq(event.id()))
+                .orderBy(PARTICIPANT.REGISTERED.asc())
+                .fetch(record -> new RegisteredParticipantDto(
+                        record.into(USER).into(UserDto.class),
+                        record.get(PARTICIPANT.REGISTERED, ZonedDateTime.class)
+                ));
+    }
+
 }

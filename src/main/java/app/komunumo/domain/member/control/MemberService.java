@@ -30,6 +30,7 @@ import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
+import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.util.LinkUtil;
@@ -58,19 +59,51 @@ public final class MemberService {
     private final @NotNull DSLContext dsl;
     private final @NotNull MailService mailService;
     private final @NotNull UserService userService;
+    private final @NotNull LoginService loginService;
     private final @NotNull ConfirmationService confirmationService;
     private final @NotNull TranslationProvider translationProvider;
 
     public MemberService(final @NotNull DSLContext dsl,
                          final @NotNull MailService mailService,
                          final @NotNull UserService userService,
+                         final @NotNull LoginService loginService,
                          final @NotNull ConfirmationService confirmationService,
                          final @NotNull TranslationProvider translationProvider) {
         this.dsl = dsl;
         this.mailService = mailService;
         this.userService = userService;
+        this.loginService = loginService;
         this.confirmationService = confirmationService;
         this.translationProvider = translationProvider;
+    }
+
+    /**
+     * <p>Checks whether the given user is a member of the specified community.</p>
+     *
+     * <p>Returns {@code true} if the user belongs to the community, otherwise {@code false}.</p>
+     *
+     * @param user the user to check for membership
+     * @param community the community in which membership is verified
+     * @return {@code true} if the user is a member of the community, otherwise {@code false}
+     */
+    public boolean isMember(final @NotNull UserDto user, final @NotNull CommunityDto community) {
+        return dsl.fetchExists(dsl.selectFrom(MEMBER)
+                .where(MEMBER.USER_ID.eq(user.id())
+                        .and(MEMBER.COMMUNITY_ID.eq(community.id()))));
+    }
+
+    /**
+     * <p>Checks whether the currently logged-in user is a member of the specified community.</p>
+     *
+     * <p>Returns {@code false} if no user is logged in.</p>
+     *
+     * @param community the community in which membership is verified
+     * @return {@code true} if the logged-in user is a member of the community, otherwise {@code false}
+     */
+    public boolean isLoggedInUserMemberOf(final @NotNull CommunityDto community) {
+        return loginService.getLoggedInUser()
+                .map(user -> isMember(user, community))
+                .orElse(false);
     }
 
     /**
@@ -209,6 +242,17 @@ public final class MemberService {
                             mailService.sendMail(MailTemplateId.COMMUNITY_JOIN_SUCCESS_OWNER, locale, MailFormat.MARKDOWN,
                                     mailVariables, owner.email()));
                 });
+    }
+
+    public boolean leaveCommunity(final @NotNull UserDto userDto, final @NotNull CommunityDto community) {
+        return getMember(userDto, community)
+                .map(member -> {
+                    if (member.role() != MemberRole.OWNER) {
+                        return deleteMember(member);
+                    }
+                    return false;
+                })
+                .orElse(false);
     }
 
     public boolean deleteMember(final @NotNull MemberDto member) {

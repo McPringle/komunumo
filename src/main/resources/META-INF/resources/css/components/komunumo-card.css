@@ -22,7 +22,7 @@
 }
 
 .komunumo-card:hover {
-    box-shadow: var(--lumo-box-shadow-s);
+    box-shadow: var(--aura-shadow-s);
     transform: scale(1.03);
 }
 

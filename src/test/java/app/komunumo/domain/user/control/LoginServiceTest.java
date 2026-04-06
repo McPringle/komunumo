@@ -19,7 +19,7 @@ package app.komunumo.domain.user.control;
 
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
 import app.komunumo.domain.core.i18n.controller.TranslationProvider;
-import app.komunumo.domain.user.entity.AuthenticationSignal;
+import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserPrincipal;
 import app.komunumo.domain.user.entity.UserRole;
@@ -30,12 +30,12 @@ import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -44,12 +44,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
@@ -60,37 +56,25 @@ import static org.mockito.Mockito.when;
 
 class LoginServiceTest {
 
-    private static LoginService createLoginServiceWithMocks(final @NotNull UserService userService,
-                                                            final @Nullable AuthenticationSignal authenticationSignal) {
+    private @NotNull LoginService loginService;
+    private @NotNull UserService userService;
+    private @NotNull AuthenticationState  authenticationState;
+
+    @BeforeEach
+    void setupMocks() {
         final var confirmationService = mock(ConfirmationService.class);
         final var translationProvider = mock(TranslationProvider.class);
 
-        @SuppressWarnings("unchecked")
-        final ObjectProvider<AuthenticationSignal> authenticationSignalProvider = mock(ObjectProvider.class);
-
-        if (authenticationSignal == null) {
-            doNothing()
-                    .when(authenticationSignalProvider)
-                    .ifAvailable(any());
-        } else {
-            doAnswer(invocation -> {
-                @SuppressWarnings("unchecked")
-                final var consumer = (Consumer<AuthenticationSignal>) invocation.getArgument(0);
-                consumer.accept(authenticationSignal);
-                return null;
-            }).when(authenticationSignalProvider).ifAvailable(any());
-        }
-
-        return new LoginService(userService, confirmationService, translationProvider, authenticationSignalProvider);
+        userService = mock(UserService.class);
+        authenticationState = mock(AuthenticationState.class);
+        loginService = new LoginService(userService, confirmationService, translationProvider, authenticationState);
     }
 
     @Test
     void userNotFound() {
         final var email = "test@example.com";
-        final var userService = mock(UserService.class);
         when(userService.getUserByEmail(email)).thenReturn(Optional.empty());
 
-        final var loginService = createLoginServiceWithMocks(userService, null);
         assertThat(loginService.login(email)).isFalse();
         assertThat(loginService.isUserLoggedIn()).isFalse();
 
@@ -99,56 +83,34 @@ class LoginServiceTest {
     }
 
     @Test
-    void loginNotAllowed_withAuthenticationSignal() {
+    void loginNotAllowed_forAnonymousUser() {
         final var email = "test@example.com";
         final var user = new UserDto(UUID.randomUUID(), null, null, "@test@example.com", email,
                 "Test User", "Just for testing", null, UserRole.USER, UserType.ANONYMOUS);
 
-        final var userService = mock(UserService.class);
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var authenticationSignal = mock(AuthenticationSignal.class);
-
-        final var loginService = createLoginServiceWithMocks(userService, authenticationSignal);
         assertThat(loginService.login(email)).isFalse();
         assertThat(loginService.isUserLoggedIn()).isFalse();
-        verify(authenticationSignal).setAuthenticated(false);
+        verify(authenticationState).setAuthenticated(false);
 
         final var loggedInUser = loginService.getLoggedInUser();
         assertThat(loggedInUser).isEmpty();
     }
 
     @Test
-    void loginNotAllowed_withoutAuthenticationSignal() {
-        final var email = "test@example.com";
-        final var user = new UserDto(UUID.randomUUID(), null, null, "@test@example.com", email,
-                "Test User", "Just for testing", null, UserRole.USER, UserType.ANONYMOUS);
-
-        final var userService = mock(UserService.class);
-        when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
-
-        final var loginService = createLoginServiceWithMocks(userService, null);
-        assertThat(loginService.login(email)).isFalse();
-        assertThat(loginService.isUserLoggedIn()).isFalse();
-
-        final var loggedInUser = loginService.getLoggedInUser();
-        assertThat(loggedInUser).isEmpty();
-    }
-
-    @Test
-    void loginAsUser_withoutAuthenticationSignal() {
+    void loginAsUserSuccess() {
         final var userId = UUID.randomUUID();
         final var email = "test@example.com";
         final var user = new UserDto(userId, null, null, "@test@example.com", email,
                 "Test User", "Just for testing", null, UserRole.USER, UserType.LOCAL);
 
-        final var userService = mock(UserService.class);
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var loginService = createLoginServiceWithMocks(userService, null);
         assertThat(loginService.login(email)).isTrue();
         assertThat(loginService.isUserLoggedIn()).isTrue();
+        verify(authenticationState).setAuthenticated(true, false, true);
 
         final var loggedInUser = loginService.getLoggedInUser();
         assertThat(loggedInUser).isPresent();
@@ -156,45 +118,21 @@ class LoginServiceTest {
     }
 
     @Test
-    void loginAsUser_withAuthenticationSignal() {
-        final var userId = UUID.randomUUID();
-        final var email = "test@example.com";
-        final var user = new UserDto(userId, null, null, "@test@example.com", email,
-                "Test User", "Just for testing", null, UserRole.USER, UserType.LOCAL);
-
-        final var userService = mock(UserService.class);
-        when(userService.getUserById(userId)).thenReturn(Optional.of(user));
-        when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
-
-        final var authenticationSignal = mock(AuthenticationSignal.class);
-
-        final var loginService = createLoginServiceWithMocks(userService, authenticationSignal);
-        assertThat(loginService.login(email)).isTrue();
-        assertThat(loginService.isUserLoggedIn()).isTrue();
-        verify(authenticationSignal).setAuthenticated(true, false, true);
-
-        final var loggedInUser = loginService.getLoggedInUser();
-        assertThat(loggedInUser).isPresent();
-        assertThat(loggedInUser.orElseThrow()).isEqualTo(user);
-    }
-
-    @Test
-    void loginAsAdmin_withoutAuthenticationSignal() {
+    void loginAsAdminSuccess() {
         final var userId = UUID.randomUUID();
         final var email = "test@example.com";
         final var user = new UserDto(userId, null, null, "@test@example.com", email,
                 "Test User", "Just for testing", null, UserRole.ADMIN, UserType.LOCAL);
 
-        final var userService = mock(UserService.class);
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
         when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
 
-        final var loginService = createLoginServiceWithMocks(userService, null);
         try (final var vaadinService = mockStatic(VaadinService.class)) {
             vaadinService.when(VaadinService::getCurrentRequest).thenReturn(mock(VaadinServletRequest.class));
             assertThat(loginService.login(email)).isTrue();
         }
         assertThat(loginService.isUserLoggedIn()).isTrue();
+        verify(authenticationState).setAuthenticated(true, true, true);
 
         final var loggedInUser = loginService.getLoggedInUser();
         assertThat(loggedInUser).isPresent();
@@ -202,33 +140,7 @@ class LoginServiceTest {
     }
 
     @Test
-    void loginAsAdmin_withAuthenticationSignal() {
-        final var userId = UUID.randomUUID();
-        final var email = "test@example.com";
-        final var user = new UserDto(userId, null, null, "@test@example.com", email,
-                "Test User", "Just for testing", null, UserRole.ADMIN, UserType.LOCAL);
-
-        final var userService = mock(UserService.class);
-        when(userService.getUserById(userId)).thenReturn(Optional.of(user));
-        when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
-
-        final var authenticationSignal = mock(AuthenticationSignal.class);
-
-        final var loginService = createLoginServiceWithMocks(userService, authenticationSignal);
-        try (final var vaadinService = mockStatic(VaadinService.class)) {
-            vaadinService.when(VaadinService::getCurrentRequest).thenReturn(mock(VaadinServletRequest.class));
-            assertThat(loginService.login(email)).isTrue();
-        }
-        assertThat(loginService.isUserLoggedIn()).isTrue();
-        verify(authenticationSignal).setAuthenticated(true, true, true);
-
-        final var loggedInUser = loginService.getLoggedInUser();
-        assertThat(loggedInUser).isPresent();
-        assertThat(loggedInUser.orElseThrow()).isEqualTo(user);
-    }
-
-    @Test
-    void logout_withoutAuthenticationSignal() {
+    void logoutSuccess_withUI_shouldRedirect() {
         final var location = "/test";
 
         final var page = mock(Page.class);
@@ -239,11 +151,8 @@ class LoginServiceTest {
         final var vaadinServletRequest = mock(VaadinServletRequest.class);
         when(vaadinServletRequest.getHttpServletRequest()).thenReturn(httpServletRequest);
 
-        final var userService = mock(UserService.class);
-        final var loginService = createLoginServiceWithMocks(userService, null);
         try (final var staticUI = mockStatic(UI.class);
              final var staticVaadinServletRequest = mockStatic(VaadinServletRequest.class);
-             final var staticSecurityContextHolder = mockStatic(SecurityContextHolder.class);
              final var ignored = mockConstruction(SecurityContextLogoutHandler.class)) {
 
             // Static stubs
@@ -255,57 +164,44 @@ class LoginServiceTest {
 
             // Verify: navigation target set
             verify(page).setLocation(location);
-
-            // Verify: security context cleared (static verification)
-            staticSecurityContextHolder.verify(SecurityContextHolder::clearContext);
-        }
-    }
-
-    @Test
-    void logout_withAuthenticationSignal() {
-        final var location = "/test";
-
-        final var page = mock(Page.class);
-        final var ui = mock(UI.class);
-        when(ui.getPage()).thenReturn(page);
-
-        final var httpServletRequest = mock(HttpServletRequest.class);
-        final var vaadinServletRequest = mock(VaadinServletRequest.class);
-        when(vaadinServletRequest.getHttpServletRequest()).thenReturn(httpServletRequest);
-
-        final var userService = mock(UserService.class);
-        final var authenticationSignal = mock(AuthenticationSignal.class);
-        final var loginService = createLoginServiceWithMocks(userService, authenticationSignal);
-        try (final var staticUI = mockStatic(UI.class);
-             final var staticVaadinServletRequest = mockStatic(VaadinServletRequest.class);
-             final var staticSecurityContextHolder = mockStatic(SecurityContextHolder.class);
-             final var ignored = mockConstruction(SecurityContextLogoutHandler.class)) {
-
-            // Static stubs
-            staticUI.when(UI::getCurrent).thenReturn(ui);
-            staticVaadinServletRequest.when(VaadinServletRequest::getCurrent).thenReturn(vaadinServletRequest);
-
-            // Act + Assert (no exception)
-            Assertions.assertThatCode(() -> loginService.logout(location)).doesNotThrowAnyException();
-
-            // Verify: navigation target set
-            verify(page).setLocation(location);
-
-            // Verify: security context cleared (static verification)
-            staticSecurityContextHolder.verify(SecurityContextHolder::clearContext);
 
             // Verify: authentication signal updated
-            verify(authenticationSignal).setAuthenticated(false);
+            verify(authenticationState).setAuthenticated(false);
         }
     }
 
     @Test
-    void getLoggedInUser_returnsEmpty_whenAuthenticationIsNull() {
+    void logoutSuccess_withoutUI_shouldLogWarning() {
+        final var location = "/test";
+
+        final var httpServletRequest = mock(HttpServletRequest.class);
+        final var vaadinServletRequest = mock(VaadinServletRequest.class);
+        when(vaadinServletRequest.getHttpServletRequest()).thenReturn(httpServletRequest);
+
+        try (final var staticUI = mockStatic(UI.class);
+             final var staticVaadinServletRequest = mockStatic(VaadinServletRequest.class);
+             final var ignored = mockConstruction(SecurityContextLogoutHandler.class);
+             final var logCaptor = LogCaptor.forClass(LoginService.class)) {
+
+            // Static stubs
+            staticUI.when(UI::getCurrent).thenReturn(null);
+            staticVaadinServletRequest.when(VaadinServletRequest::getCurrent).thenReturn(vaadinServletRequest);
+
+            // Act + Assert (no exception)
+            Assertions.assertThatCode(() -> loginService.logout(location)).doesNotThrowAnyException();
+
+            // Verify: warning was logged
+            assertThat(logCaptor.getWarnLogs()).contains("No UI available during logout; cannot redirect to '/test'.");
+
+            // Verify: authentication signal updated
+            verify(authenticationState).setAuthenticated(false);
+        }
+    }
+
+    @Test
+    void getLoggedInUser_returnsEmpty_whenSecurityContextIsCleared() {
         try {
             SecurityContextHolder.clearContext();
-
-            final var userService = mock(UserService.class);
-            final var loginService = createLoginServiceWithMocks(userService, null);
 
             final var result = loginService.getLoggedInUser();
 
@@ -325,9 +221,6 @@ class LoginServiceTest {
             when(ctx.getAuthentication()).thenReturn(auth);
             SecurityContextHolder.setContext(ctx);
 
-            final var userService = mock(UserService.class);
-            final var loginService = createLoginServiceWithMocks(userService, null);
-
             final var result = loginService.getLoggedInUser();
 
             assertThat(result).isEmpty();
@@ -343,9 +236,6 @@ class LoginServiceTest {
             final var userId = UUID.randomUUID();
             final var principal = mock(UserPrincipal.class);
             when(principal.getUserId()).thenReturn(userId);
-
-            final var userService = mock(UserService.class);
-            final var loginService = createLoginServiceWithMocks(userService, null);
 
             final var user = new UserDto(userId, null, null, null, null, "", "",
                     null, UserRole.USER, UserType.LOCAL);
@@ -371,9 +261,6 @@ class LoginServiceTest {
             final var principal = mock(UserPrincipal.class);
             when(principal.getUserId()).thenReturn(userId);
 
-            final var userService = mock(UserService.class);
-            final var loginService = createLoginServiceWithMocks(userService, null);
-
             when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
             securityUtil.when(SecurityUtil::getUserPrincipal)
@@ -398,11 +285,8 @@ class LoginServiceTest {
                     userId, null, null, "@local@example.com", email,
                     "Local User", "", null, UserRole.USER, UserType.LOCAL);
 
-            final var userService = mock(UserService.class);
             when(userService.getUserById(userId)).thenReturn(Optional.of(user));
             when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
-
-            final var loginService = createLoginServiceWithMocks(userService, null);
 
             assertThat(loginService.login(email)).isTrue();
 
@@ -424,11 +308,8 @@ class LoginServiceTest {
                     userId, null, null, "@local@example.com", email,
                     "Local Admin", "", null, UserRole.ADMIN, UserType.LOCAL);
 
-            final var userService = mock(UserService.class);
             when(userService.getUserById(userId)).thenReturn(Optional.of(user));
             when(userService.getUserByEmail(email)).thenReturn(Optional.of(user));
-
-            final var loginService = createLoginServiceWithMocks(userService, null);
 
             assertThat(loginService.login(email)).isTrue();
 

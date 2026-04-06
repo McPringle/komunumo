@@ -17,17 +17,21 @@
  */
 package app.komunumo.domain.event.boundary;
 
-import app.komunumo.domain.event.entity.EventWithImageDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.participant.control.ParticipantService;
-import app.komunumo.vaadin.components.AbstractView;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.event.entity.EventWithImageDto;
+import app.komunumo.domain.participant.control.ParticipantService;
+import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.ImageUtil;
+import app.komunumo.util.LinkUtil;
 import app.komunumo.util.ParseUtil;
+import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
@@ -40,6 +44,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,15 +60,18 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
     private final @NotNull HtmlContainer pageContent = new Div();
     private final @NotNull EventService eventService;
     private final @NotNull ParticipantService participantService;
+    private final @NotNull LoginService loginService;
 
     private @NotNull String pageTitle = "";
 
     public EventDetailView(final @NotNull ConfigurationService configurationService,
                            final @NotNull EventService eventService,
-                           final @NotNull ParticipantService participantService) {
+                           final @NotNull ParticipantService participantService,
+                           final @NotNull LoginService loginService) {
         super(configurationService);
         this.eventService = eventService;
         this.participantService = participantService;
+        this.loginService = loginService;
         addClassName("event-detail-view");
         add(pageContent);
     }
@@ -116,15 +124,66 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
         description.addClassName("event-description");
         pageContent.add(description);
 
-        @SuppressWarnings("DataFlowIssue") final var participantCount = this.participantService.getParticipantCount(event.id());
-        final var participantParagraph = new Paragraph(getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
-        participantParagraph.addClassName("event-participant-count");
-        pageContent.add(participantParagraph);
+        final var participantCount = this.participantService.getParticipantCount(event);
+        final var loggedInUser = loginService.getLoggedInUser();
+        if (loggedInUser.isPresent() && eventService.hasManagementPermission(event, loggedInUser.orElseThrow())) {
+            final var participantLink = new Anchor(LinkUtil.getLink(event) + "/participants",
+                    getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
+            final var participantParagraph = new Paragraph(participantLink);
+            participantParagraph.addClassName("event-participant-count");
+            pageContent.add(participantParagraph);
+        } else {
+            final var participantParagraph = new Paragraph(
+                    getTranslation("event.boundary.EventDetailView.participantCount", participantCount));
+            participantParagraph.addClassName("event-participant-count");
+            pageContent.add(participantParagraph);
+        }
 
-        final var registrationButton = new Button(getTranslation("event.boundary.EventDetailView.register"));
-        registrationButton.addClickListener(_ -> participantService.startConfirmationProcess(event, locale));
-        registrationButton.addClassName("registration-button");
-        pageContent.add(registrationButton);
+        createRegistrationButtons(eventWithImage, locale);
+    }
+
+    private void createRegistrationButtons(final @NotNull EventWithImageDto eventWithImage, final @NonNull Locale locale) {
+        final var event = eventWithImage.event();
+        final var loggedInUser = loginService.getLoggedInUser();
+        final var isParticipant = participantService.isLoggedInUserParticipantOf(event);
+
+        if (isParticipant) {
+            final var unregisterButton = new Button(getTranslation("event.boundary.EventDetailView.unregister"));
+            unregisterButton.addClickListener(_ -> {
+                final var confirmDialog = new ConfirmDialog();
+                confirmDialog.setHeader(event.title());
+                confirmDialog.setText(getTranslation("event.boundary.EventDetailView.unregisterConfirmation"));
+                confirmDialog.setCancelable(true);
+                confirmDialog.setCancelText(getTranslation("common.button.no"));
+                confirmDialog.setConfirmButton(getTranslation("common.button.yes"), _ -> {
+                    participantService.unregisterFromEvent(loggedInUser.orElseThrow(), event, locale);
+                    showDetails(eventWithImage, locale); // update view
+                });
+                confirmDialog.open();
+            });
+            unregisterButton.addClassName("leave-button");
+            pageContent.add(unregisterButton);
+        } else {
+            final var registerButton = new Button(getTranslation("event.boundary.EventDetailView.register"));
+            registerButton.addClickListener(_ -> {
+                if (loggedInUser.isPresent()) {
+                    final var confirmDialog = new ConfirmDialog();
+                    confirmDialog.setHeader(event.title());
+                    confirmDialog.setText(getTranslation("event.boundary.EventDetailView.registerConfirmation"));
+                    confirmDialog.setCancelable(true);
+                    confirmDialog.setCancelText(getTranslation("common.button.no"));
+                    confirmDialog.setConfirmButton(getTranslation("common.button.yes"), _ -> {
+                        participantService.registerForEvent(event, loggedInUser.orElseThrow(), locale);
+                        showDetails(eventWithImage, locale); // update view
+                    });
+                    confirmDialog.open();
+                } else {
+                    participantService.startConfirmationProcess(event, locale);
+                }
+            });
+            registerButton.addClassName("registration-button");
+            pageContent.add(registerButton);
+        }
     }
 
     private void addDateTimeText(final @Nullable ZonedDateTime dateTime,

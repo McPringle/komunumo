@@ -44,7 +44,7 @@
 
 ### Project Board
 
-To get an overview of ongoing and upcoming work, you can check our [project board](https://github.com/users/McPringle/projects/8/views/1), which organizes issues in a Kanban-style workflow:
+To get an overview of ongoing and upcoming work, you can check our [project board](https://github.com/orgs/komunumo/projects/1), which organizes issues in a Kanban-style workflow:
 
 | Status      | Description                                                   |
 |-------------|---------------------------------------------------------------|
@@ -59,7 +59,7 @@ To get an overview of ongoing and upcoming work, you can check our [project boar
 
 ### Good first issues
 
-To find possible tasks for your first contribution to *Komunumo*, we tagged some of the hopefully easier to solve issues as [good first issue](https://github.com/McPringle/komunumo/labels/good%20first%20issue).
+To find possible tasks for your first contribution to *Komunumo*, we tagged some of the hopefully easier to solve issues as [good first issue](https://github.com/komunumo/komunumo/labels/good%20first%20issue).
 
 If you prefer to meet people in real life to contribute to *Komunumo* together, we recommend to visit a [Hackergarten](https://www.hackergarten.net/) event. *Komunumo* is often selected as a contribution target in [Lucerne](https://www.meetup.com/hackergarten-luzern/), [Zurich](https://www.meetup.com/hackergarten-zurich/), and at the [CyberLand Open Source Camp](https://cyberland.ijug.eu/).
 
@@ -247,7 +247,7 @@ If you use Podman Desktop for macOS, activate the full Docker compatibility laye
 
 ### Clone and Verify
 
-1. Fork the [Komunumo repository](https://github.com/McPringle/komunumo) on GitHub.
+1. Fork the [Komunumo repository](https://github.com/komunumo/komunumo) on GitHub.
 2. Clone your fork locally:
 
    ```bash
@@ -359,8 +359,8 @@ You can find our Matrix channel here: [@komunumo:ijug.eu](https://matrix.to/#/%2
 
 We use the corresponding GitHub function for discussions. The discussions held here are long-lived and divided into categories for the sake of clarity. One important category, for example, is that for questions and answers.
 
-Discussions on GitHub: https://github.com/McPringle/komunumo/discussions  
-Questions and Answers: https://github.com/McPringle/komunumo/discussions/categories/q-a
+Discussions on GitHub: https://github.com/komunumo/komunumo/discussions  
+Questions and Answers: https://github.com/komunumo/komunumo/discussions/categories/q-a
 
 ## Architecture
 

@@ -21,5 +21,5 @@
 }
 
 .configuration-editor-view .configuration-setting-field {
-    border-top: 1px solid #ccc;
+    border-top: 1px solid var(--vaadin-border-color-secondary);
 }

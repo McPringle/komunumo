@@ -15,7 +15,7 @@
     <licenses>
         <license>
             <name>GNU Affero General Public License v3.0 only</name>
-            <url>https://github.com/McPringle/komunumo/blob/main/LICENSE.md</url>
+            <url>https://github.com/komunumo/komunumo/blob/main/LICENSE.md</url>
             <distribution>manual</distribution>
             <comments>A FSF Free/Libre and OSI approved license</comments>
         </license>
@@ -65,22 +65,23 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/McPringle/komunumo/issues</url>
+        <url>https://github.com/komunumo/komunumo/issues</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:git:https://github.com/McPringle/komunumo.git</connection>
-        <developerConnection>scm:git:https://github.com/McPringle/komunumo.git</developerConnection>
+        <connection>scm:git:https://github.com/komunumo/komunumo.git</connection>
+        <developerConnection>scm:git:https://github.com/komunumo/komunumo.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/McPringle/komunumo</url>
+        <url>https://github.com/komunumo/komunumo</url>
     </scm>
 
     <properties>
         <java.version>25</java.version>
-        <jooq.version>3.20.11</jooq.version>
+        <jooq.version>3.21.1</jooq.version>
+        <flyway.version>12.3.0</flyway.version>
         <maven.version>3.9.9</maven.version>
-        <mockito.version>5.21.0</mockito.version>
-        <vaadin.version>25.0.6</vaadin.version>
+        <mockito.version>5.23.0</mockito.version>
+        <vaadin.version>25.1.1</vaadin.version>
         <maven.build.timestamp.format>yyMMdd</maven.build.timestamp.format>
         <buildtype>SNAPSHOT</buildtype>
         <revision>1.0.0-${buildtype}.${maven.build.timestamp}</revision>
@@ -89,7 +90,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.5</version>
     </parent>
 
     <repositories>
@@ -197,7 +198,7 @@
         <dependency>
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
-            <version>78.2</version>
+            <version>78.3</version>
         </dependency>
         <dependency>
             <groupId>org.ocpsoft.prettytime</groupId>
@@ -272,7 +273,7 @@
         <dependency>
             <groupId>io.github.hakky54</groupId>
             <artifactId>logcaptor</artifactId>
-            <version>2.12.2</version>
+            <version>2.12.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -321,7 +322,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.5.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -680,7 +681,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>13.2.0</version>
+                        <version>13.4.0</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -700,7 +701,7 @@
             <plugin>
                 <groupId>org.gaul</groupId>
                 <artifactId>modernizer-maven-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
                 <configuration>
                     <javaVersion>${java.version}</javaVersion>
                     <failOnViolations>true</failOnViolations>

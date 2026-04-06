@@ -85,7 +85,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         }
 
         final var defaultButton = new Button(new Icon(VaadinIcon.TRASH));
-        defaultButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_ERROR);
+        defaultButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.ERROR);
         defaultButton.setAriaLabel("Reset setting to default value");
         defaultButton.setTooltipText("Reset setting to default value");
         defaultButton.setEnabled(!isDefaultValue);
@@ -101,7 +101,7 @@ final class ConfigurationEditorComponent extends VerticalLayout {
         resetButton.addClickListener(_ -> textField.setValue(actualValue));
 
         final var saveButton = new Button(new Icon(VaadinIcon.CHECK));
-        saveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.LUMO_SUCCESS);
+        saveButton.addThemeVariants(ButtonVariant.LUMO_ICON, ButtonVariant.SUCCESS);
         saveButton.setAriaLabel("Save and activate setting");
         saveButton.setTooltipText("Save and activate setting");
         saveButton.setEnabled(false);

@@ -16,13 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 .navigation-bar {
-    padding: var(--lumo-space-m);
-    border-bottom: 1px solid var(--lumo-contrast-10pct);
+    padding: var(--vaadin-padding-m);
+    border-bottom: 1px solid var(--vaadin-border-color-secondary);
 }
 
 .navigation-bar .menu-bar {
     display: flex;
-    gap: var(--lumo-space-m);
+    gap: var(--vaadin-gap-m);
 }
 
 .navigation-bar vaadin-avatar {

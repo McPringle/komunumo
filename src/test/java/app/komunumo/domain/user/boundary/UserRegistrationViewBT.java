@@ -17,15 +17,12 @@
  */
 package app.komunumo.domain.user.boundary;
 
-import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.user.control.RegistrationService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.test.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.options.WaitForSelectorState;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
@@ -38,7 +35,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-public class RegistrationFlowBT extends BrowserTest {
+public class UserRegistrationViewBT extends BrowserTest {
 
     private static final String REGISTER_MENU_ITEM_SELECTOR = "vaadin-context-menu-item[role='menuitem']:has-text('Register')";
     private static final String NEW_USER_EMAIL = "new@example.com";
@@ -56,24 +53,25 @@ public class RegistrationFlowBT extends BrowserTest {
 
     @Test
     void newUserCanRegister() throws FolderException {
-        testRegistrationFlow("newUserCanRegister", NEW_USER_EMAIL);
+        testRegistrationFlow("newUserCanRegister", "Natasha New", NEW_USER_EMAIL);
     }
 
     @Test
     void anonymousUserCanUpgrade() throws FolderException {
         final var anonymousUser = getTestUser(UserType.ANONYMOUS);
         assertThat(anonymousUser.email()).isNotNull();
-        testRegistrationFlow("anonymousUserCanUpgrade", anonymousUser.email());
+        testRegistrationFlow("anonymousUserCanUpgrade", anonymousUser.name(), anonymousUser.email());
     }
 
     @Test
     void remoteUserCanUpgrade() throws FolderException {
         final var remoteUser = getTestUser(UserType.REMOTE);
         assertThat(remoteUser.email()).isNotNull();
-        testRegistrationFlow("remoteUserCanUpgrade", remoteUser.email());
+        testRegistrationFlow("remoteUserCanUpgrade", remoteUser.name(), remoteUser.email());
     }
 
     private void testRegistrationFlow(final @NotNull String screenshotPrefix,
+                                      final @NotNull String name,
                                       final @NotNull String email)
             throws FolderException {
         final var greenMail = getGreenMail();
@@ -92,21 +90,60 @@ public class RegistrationFlowBT extends BrowserTest {
         // click on register menu item
         page.click(REGISTER_MENU_ITEM_SELECTOR);
 
-        // wait for email field to appear
-        final var emailInput = page.locator("vaadin-email-field input");
-        emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot(screenshotPrefix + "_register-dialog-empty");
+        // wait for the page to load
+        page.waitForURL("**/register");
+        page.waitForSelector(getInstanceNameSelector());
+        captureScreenshot(screenshotPrefix + "_after-page-loaded");
 
-        // fill in email address
+        // fields should be empty by default
+        final var nameInput = page.locator("vaadin-text-field.name-field input");
+        final var emailInput = page.locator("vaadin-email-field.email-field input");
+        assertThat(nameInput.inputValue()).isEmpty();
+        assertThat(emailInput.inputValue()).isEmpty();
+
+        // register button should be disabled by default
+        final var registerButton = page.locator("vaadin-button.register-button");
+        assertThat(registerButton.isDisabled()).isTrue();
+
+        // fill name
+        nameInput.fill(name);
+
+        // fill email
         emailInput.fill(email);
-        captureScreenshot(screenshotPrefix + "_register-dialog-filled");
 
-        // click on the request email button
-        page.locator("vaadin-button.email-button").click();
-        final var closeButton = page.locator("vaadin-button:has-text(\"Close\")");
-        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        closeButton.click();
-        captureScreenshot(screenshotPrefix + "_after-email-requested");
+        // register button should be enabled
+        page.waitForCondition(() -> !registerButton.isDisabled());
+
+        // try invalid email
+        emailInput.fill("invalid-email");
+        page.waitForCondition(registerButton::isDisabled);
+
+        // back to valid email
+        emailInput.fill(email);
+        page.waitForCondition(() -> !registerButton.isDisabled());
+
+        // try invalid name
+        nameInput.fill("ab");
+        page.waitForCondition(registerButton::isDisabled);
+
+        // back to valid name
+        nameInput.fill(name);
+        page.waitForCondition(() -> !registerButton.isDisabled());
+
+        captureScreenshot(screenshotPrefix + "_after-data-entered");
+
+        // click on the register email button
+        registerButton.click();
+
+        // wait for the confirmation dialog to appear
+        final var confirmDialog = page.locator("vaadin-confirm-dialog.registration-confirmation-dialog");
+        final var confirmDialogHeader = confirmDialog.locator("h3");
+        assertThat(confirmDialogHeader.innerText()).isEqualTo("Please confirm your email address");
+        captureScreenshot(screenshotPrefix + "_confirmation-dialog");
+
+        // close the confirmation dialog
+        final var confirmButton = confirmDialog.locator("vaadin-button[slot='confirm-button']");
+        confirmButton.click();
 
         // wait for the confirmation email
         final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
@@ -177,7 +214,7 @@ public class RegistrationFlowBT extends BrowserTest {
 
     @Test
     void registrationDisabled() {
-        try (var logCaptor = LogCaptor.forClass(RegistrationService.class)) {
+        try (var logCaptor = LogCaptor.forClass(UserRegistrationView.class)) {
 
             // new registrations are allowed by default
             assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isTrue();
@@ -223,5 +260,22 @@ public class RegistrationFlowBT extends BrowserTest {
             configurationService.setConfiguration(INSTANCE_REGISTRATION_ALLOWED, "true");
             assertThat(configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)).isTrue();
         }
+    }
+
+    @Test
+    void accessWithLoggedInUser_shouldRedirect() {
+        // login
+        login(getTestUser(UserType.LOCAL));
+
+        // navigate to communities page
+        final var page = getPage();
+        page.navigate(getInstanceUrl() + "communities");
+        page.waitForSelector(getInstanceNameSelector());
+
+        // try to navigate to register page
+        page.navigate(getInstanceUrl() + "register");
+
+        // expect to be redirected to root page
+        page.waitForURL("**/events");
     }
 }

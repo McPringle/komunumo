@@ -17,9 +17,9 @@
  */
 
 .profile-field .success {
-    color: var(--lumo-success-text-color);
+    color: var(--komunumo-color-success-text);
 }
 
 .profile-field .error {
-    color: var(--lumo-error-text-color);
+    color: var(--komunumo-color-error-text);
 }

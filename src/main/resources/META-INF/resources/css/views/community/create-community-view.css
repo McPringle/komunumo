@@ -18,7 +18,3 @@
 .create-community-view vaadin-vertical-layout {
     padding: 0;
 }
-
-.create-community-view .community-add-component {
-    border-top: 1px solid #ccc;
-}

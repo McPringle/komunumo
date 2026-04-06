@@ -26,6 +26,7 @@ import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.page.Viewport;
 import com.vaadin.flow.server.AppShellSettings;
 import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.theme.aura.Aura;
 import jakarta.servlet.http.HttpServlet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.SpringApplication;
@@ -40,6 +41,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * The entry point of the Spring Boot application.
  */
 @Push
+@StyleSheet(Aura.STYLESHEET)
 @StyleSheet("css/styles.css")
 @Viewport("width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes, viewport-fit=cover")
 @PWA(name = "Komunumo - Open Source Community Manager", shortName = "Komunumo")

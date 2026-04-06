@@ -17,19 +17,18 @@
  */
 package app.komunumo.domain.core.layout.boundary;
 
-import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.user.control.RegistrationService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.util.LocaleUtil;
+import app.komunumo.util.ThemeUtil;
 import app.komunumo.util.TimeZoneUtil;
 import app.komunumo.vaadin.components.InfoBanner;
 import app.komunumo.vaadin.components.NavigationBar;
 import app.komunumo.vaadin.components.PageFooter;
 import app.komunumo.vaadin.components.PageHeader;
-import app.komunumo.domain.user.entity.AuthenticationSignal;
-import app.komunumo.util.ThemeUtil;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
@@ -40,7 +39,6 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.ObjectProvider;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_SLOGAN;
@@ -54,10 +52,9 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
                          final @NotNull ConfigurationService configurationService,
                          final @NotNull GlobalPageService globalPageService,
                          final @NotNull LoginService loginService,
-                         final @NotNull RegistrationService registrationService,
-                         final @NotNull ObjectProvider<AuthenticationSignal> authenticationSignalProvider) {
+                         final @NotNull AuthenticationState authenticationState) {
         super();
-        authenticationSignalProvider.ifAvailable(AuthenticationSignal::refreshFromSecurityContext);
+        authenticationState.refreshFromSecurityContext();
         final var ui = UI.getCurrent();
 
         if (appConfig.demo().enabled()) {
@@ -65,8 +62,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         }
 
         addPageHeader(configurationService);
-        add(new NavigationBar(configurationService, globalPageService, loginService, registrationService,
-                authenticationSignalProvider));
+        add(new NavigationBar(configurationService, globalPageService, loginService, authenticationState));
 
         main = new Main();
         add(main);

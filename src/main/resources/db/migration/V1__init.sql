@@ -1,18 +1,3 @@
--- Drop table in opposite order to avoid foreign key constraints.
-
-DROP TABLE IF EXISTS global_page;
-DROP TABLE IF EXISTS participation;
-DROP TABLE IF EXISTS participant;
-DROP TABLE IF EXISTS event;
-DROP TABLE IF EXISTS member;
-DROP TABLE IF EXISTS community;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS image;
-DROP TABLE IF EXISTS mail_template;
-DROP TABLE IF EXISTS config;
-
--- Recreate tables in correct order.
-
 CREATE TABLE config (
     setting VARCHAR(255) NOT NULL,
     language VARCHAR(2) NOT NULL DEFAULT '',
@@ -151,6 +136,8 @@ VALUES ('ACCOUNT_REGISTRATION_SUCCESS', 'DE', 'Dein neues lokales Konto ist bere
        ('CONFIRMATION_PROCESS', 'EN', 'Please confirm your email address', 'Hello!\n\n${actionMessage}\n\nTo continue, please confirm your email address by clicking the link below:\n\n${confirmationLink}\n\nThis link is valid for ${confirmationTimeout}.\n\nThank you!\n${instanceName}'),
        ('EVENT_REGISTRATION_SUCCESS', 'DE', 'Deine Anmeldung ist bestätigt', 'Hallo,\n\ndeine Anmeldung für das Event "${eventTitle}" wurde erfolgreich bestätigt.\n\nDu bist nun offiziell für das Event angemeldet.\nWir freuen uns, dich dort zu sehen!\n\nVielen Dank und bis bald!'),
        ('EVENT_REGISTRATION_SUCCESS', 'EN', 'Your registration is confirmed', 'Hello,\n\nyour registration for the event "${eventTitle}" has been successfully confirmed.\n\nYou are now officially signed up for the event.\nWe look forward to seeing you there!\n\nThank you very much and see you soon!'),
+       ('EVENT_UNREGISTRATION_SUCCESS', 'DE', 'Deine Abmeldung ist bestätigt', 'Hallo,\n\ndeine Abmeldung vom Event "${eventTitle}" wurde erfolgreich bestätigt.\n\nDu bist nun nicht mehr für das Event angemeldet.\n\nVielen Dank für die Information!'),
+       ('EVENT_UNREGISTRATION_SUCCESS', 'EN', 'You canceled your registration', 'Hello,\n\nyour cancellation of the event "${eventTitle}" has been successfully confirmed.\n\nYou are no longer signed up for the event anymore.\n\nThank you very much for letting us know!'),
        ('TEST', 'DE', 'Testmail', 'Hallo,\n\ndies ist eine Testmail von ${instanceName}.'),
        ('TEST', 'EN', 'Test mail', 'Hello,\n\nthis is a test mail from ${instanceName}.');
 

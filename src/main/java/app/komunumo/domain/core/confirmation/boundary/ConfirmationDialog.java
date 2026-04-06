@@ -17,9 +17,8 @@
  */
 package app.komunumo.domain.core.confirmation.boundary;
 
-import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.util.SecurityUtil;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
 import com.vaadin.flow.component.ModalityMode;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -32,8 +31,8 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
 import org.jetbrains.annotations.NotNull;
 
-import static com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY;
-import static com.vaadin.flow.component.button.ButtonVariant.LUMO_TERTIARY;
+import static com.vaadin.flow.component.button.ButtonVariant.PRIMARY;
+import static com.vaadin.flow.component.button.ButtonVariant.TERTIARY;
 import static com.vaadin.flow.data.value.ValueChangeMode.EAGER;
 
 public final class ConfirmationDialog extends Dialog {
@@ -56,7 +55,7 @@ public final class ConfirmationDialog extends Dialog {
         setHeaderTitle(getTranslation("core.confirmation.boundary.ConfirmationDialog.title"));
         final var closeDialogButton = new Button(new Icon("lumo", "cross"),
                 _ -> close());
-        closeDialogButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        closeDialogButton.addThemeVariants(ButtonVariant.TERTIARY);
         closeDialogButton.addClassName("close-dialog-button");
         getHeader().add(closeDialogButton);
 
@@ -75,13 +74,13 @@ public final class ConfirmationDialog extends Dialog {
         add(emailField);
 
         final var emailButton = new Button(getTranslation("core.confirmation.boundary.ConfirmationDialog.button.email"));
-        emailButton.addThemeVariants(LUMO_PRIMARY);
+        emailButton.addThemeVariants(PRIMARY);
         emailButton.addClassName("email-button");
         getFooter().add(emailButton);
 
         final var cancelButton = new Button(getTranslation("core.confirmation.boundary.ConfirmationDialog.button.cancel"),
                 _ -> close());
-        cancelButton.addThemeVariants(LUMO_TERTIARY);
+        cancelButton.addThemeVariants(TERTIARY);
         cancelButton.addClassName("cancel-button");
         getFooter().add(cancelButton);
 
@@ -104,13 +103,11 @@ public final class ConfirmationDialog extends Dialog {
 
             getFooter().removeAll();
             final var closeButton = new Button(getTranslation("core.confirmation.boundary.ConfirmationDialog.button.close"));
-            closeButton.addThemeVariants(LUMO_PRIMARY);
+            closeButton.addThemeVariants(PRIMARY);
             closeButton.addClassName("close-button");
             closeButton.addClickListener(_ -> close());
             getFooter().add(closeButton);
         });
-
-        SecurityUtil.getUserPrincipal().ifPresent(principal -> emailField.setValue(principal.getEmail()));
 
         addOpenedChangeListener(evt -> {
             if (evt.isOpened()) {

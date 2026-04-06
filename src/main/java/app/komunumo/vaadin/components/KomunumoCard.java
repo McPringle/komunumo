@@ -36,13 +36,13 @@ public abstract class KomunumoCard extends Card {
     /**
      * <p>Creates a new {@code KomunumoCard} with default styling and no content.</p>
      *
-     * <p>Applies the CSS class {@code komunumo-card} and the Lumo theme variants:
+     * <p>Applies the CSS class {@code komunumo-card} and the theme variants:
      * {@code outlined}, {@code elevated}, and {@code cover-media}.</p>
      */
     protected KomunumoCard() {
         super();
         addClassName("komunumo-card");
-        addThemeVariants(CardVariant.LUMO_OUTLINED, CardVariant.LUMO_ELEVATED, CardVariant.LUMO_COVER_MEDIA);
+        addThemeVariants(CardVariant.OUTLINED, CardVariant.ELEVATED, CardVariant.COVER_MEDIA);
     }
 
     /**

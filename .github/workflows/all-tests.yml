@@ -20,11 +20,13 @@ jobs:
         java-version: '25'
         distribution: 'temurin'
         cache: maven
+    - name: Set up TestLens
+      uses: testlens-app/setup-testlens@v1
     - name: Build with Maven
       run: ./mvnw -B -V clean verify
     - name: Upload test artifacts
       if: ${{ always() }}
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: test-artifacts-${{ github.run_id }}
         path: |
@@ -38,7 +40,8 @@ jobs:
         retention-days: 7
         compression-level: 9
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
+      if: github.repository_owner == 'komunumo'
+      uses: codecov/codecov-action@v6
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_ORG_TOKEN }}
     - name: Check clean git state

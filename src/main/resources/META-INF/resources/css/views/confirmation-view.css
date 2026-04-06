@@ -17,5 +17,5 @@
  */
 
 .confirmation-view .error {
-    color: var(--lumo-error-text-color);
+    color: var(--komunumo-color-error-text);
 }

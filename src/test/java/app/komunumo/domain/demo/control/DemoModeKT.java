@@ -95,9 +95,9 @@ class DemoModeKT extends KaribuTest {
         assertThat(communityService.getCommunityCount()).isEqualTo(6);
         assertThat(memberService.getMemberCount()).isEqualTo(24);
         assertThat(eventService.getEventCount()).isEqualTo(6);
-        assertThat(participantService.getParticipantCount()).isEqualTo(0);
+        assertThat(participantService.getParticipantCount()).isEqualTo(6);
         assertThat(globalPageService.getGlobalPageCount()).isEqualTo(2);
-        assertThat(mailService.getMailTemplateCount()).isEqualTo(12);
+        assertThat(mailService.getMailTemplateCount()).isEqualTo(14);
 
         imageService.storeImage(new ImageDto(null, ContentType.IMAGE_PNG));
         assertThat(imageService.getImageCount()).isEqualTo(3);
@@ -107,7 +107,7 @@ class DemoModeKT extends KaribuTest {
                 UserRole.ADMIN, UserType.LOCAL));
         assertThat(userService.getAdminCount()).isEqualTo(2);
 
-        userService.storeUser(new UserDto(null, null, null,
+        final var newUser = userService.storeUser(new UserDto(null, null, null,
                 "demoUser", "demo-user@example.com", "Demo User", "", null,
                 UserRole.USER, UserType.LOCAL));
         assertThat(userService.getUserCount()).isEqualTo(5);
@@ -120,17 +120,17 @@ class DemoModeKT extends KaribuTest {
                 .forEach(member -> memberService.deleteMember(member));
         assertThat(memberService.getMemberCount()).isEqualTo(20);
 
-        eventService.storeEvent(new EventDto(null, community.id(), null, null,
+        final var newEvent = eventService.storeEvent(new EventDto(null, community.id(), null, null,
                 "Demo Event", "", "", null, null, null,
                 EventVisibility.PUBLIC, EventStatus.DRAFT));
         assertThat(eventService.getEventCount()).isEqualTo(7);
 
         participantService.storeParticipant(
                 new ParticipantDto(
-                        requireNonNull(eventService.getEvents().getFirst().id()),
-                        requireNonNull(userService.getAllUsers().getFirst().id()),
+                        requireNonNull(newEvent.id()),
+                        requireNonNull(newUser.id()),
                         null));
-        assertThat(participantService.getParticipantCount()).isEqualTo(1);
+        assertThat(participantService.getParticipantCount()).isEqualTo(7);
 
         globalPageService.storeGlobalPage(new GlobalPageDto("demo", Locale.ENGLISH, null, null,
                 "Demo Page", "**Demo Page**"));
@@ -139,7 +139,7 @@ class DemoModeKT extends KaribuTest {
         dsl.deleteFrom(MAIL_TEMPLATE)
                 .where(MAIL_TEMPLATE.ID.eq("TEST"))
                 .execute();
-        assertThat(mailService.getMailTemplateCount()).isEqualTo(10);
+        assertThat(mailService.getMailTemplateCount()).isEqualTo(12);
 
         demoMode.resetDemoData();
 
@@ -150,9 +150,9 @@ class DemoModeKT extends KaribuTest {
         assertThat(communityService.getCommunityCount()).isEqualTo(6);
         assertThat(memberService.getMemberCount()).isEqualTo(24);
         assertThat(eventService.getEventCount()).isEqualTo(6);
-        assertThat(participantService.getParticipantCount()).isEqualTo(0);
+        assertThat(participantService.getParticipantCount()).isEqualTo(6);
         assertThat(globalPageService.getGlobalPageCount()).isEqualTo(2);
-        assertThat(mailService.getMailTemplateCount()).isEqualTo(12);
+        assertThat(mailService.getMailTemplateCount()).isEqualTo(14);
     }
 
 }

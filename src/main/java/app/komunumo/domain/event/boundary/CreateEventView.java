@@ -39,7 +39,6 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -58,7 +57,9 @@ import java.util.List;
 import java.util.UUID;
 
 import static app.komunumo.util.NotificationUtil.showNotification;
-import static com.vaadin.flow.component.notification.NotificationVariant.LUMO_WARNING;
+import static com.vaadin.flow.component.notification.NotificationVariant.ERROR;
+import static com.vaadin.flow.component.notification.NotificationVariant.SUCCESS;
+import static com.vaadin.flow.component.notification.NotificationVariant.WARNING;
 
 @RolesAllowed("USER_LOCAL")
 @Route(value = "events/new", layout = WebsiteLayout.class)
@@ -195,7 +196,7 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
                 final var endDate = endDateTimeField.getValue();
                 if (endDate != null && endDate.isBefore(beginDate)) {
                     endDateTimeField.setValue(beginDate);
-                    showNotification(getTranslation("event.boundary.CreateEventView.warning.endDateTimeModified"), LUMO_WARNING);
+                    showNotification(getTranslation("event.boundary.CreateEventView.warning.endDateTimeModified"), WARNING);
                 }
             }
         });
@@ -242,7 +243,7 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
 
         createEventbutton.addClassName("create-button");
         createEventbutton.setText(getTranslation("event.boundary.CreateEventView.button.createEvent"));
-        createEventbutton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        createEventbutton.addThemeVariants(ButtonVariant.PRIMARY);
         createEventbutton.addClickListener(this::createEvent);
         add(createEventbutton);
 
@@ -256,7 +257,7 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
 
         if (userPrincipalOptional.isEmpty()) {
             showNotification(getTranslation("event.boundary.CreateEventView.notification.permissionError"),
-                    NotificationVariant.LUMO_ERROR);
+                    ERROR);
         } else if (binder.validate().isOk()) {
             final var communityId = communitySelector.getValue().id();
             final var title = titleField.getValue();
@@ -273,10 +274,10 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
                     title, description, location, beginDateTime, endDateTime, imageId, visibility, status);
             final var event = eventService.storeEvent(newEvent);
 
-            showNotification(getTranslation("event.boundary.CreateEventView.notification.success"), NotificationVariant.LUMO_SUCCESS);
+            showNotification(getTranslation("event.boundary.CreateEventView.notification.success"), SUCCESS);
             UI.getCurrent().navigate("events/%s".formatted(event.id()));
         } else {
-            showNotification(getTranslation("event.boundary.CreateEventView.notification.error"), NotificationVariant.LUMO_ERROR);
+            showNotification(getTranslation("event.boundary.CreateEventView.notification.error"), ERROR);
         }
     }
 

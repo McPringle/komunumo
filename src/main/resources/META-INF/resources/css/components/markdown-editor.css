@@ -19,14 +19,10 @@
 .markdown-editor {
     padding: 0;
     flex: 1 1 auto;
-    min-height: 0;
+    min-height: 20em;
 }
 
 .markdown-editor vaadin-tabsheet,
 .markdown-editor vaadin-text-area {
     padding: 0;
-}
-
-.markdown-editor vaadin-tabsheet::part(content) {
-    padding: var(--lumo-space-s) 0 0 0;
 }
