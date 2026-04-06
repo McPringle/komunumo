@@ -80,29 +80,29 @@ class LocaleUtilTest {
 
     @Test
     void shouldReturnLanguageCodeInUpperCaseForEnglish() {
-        assertThat(LocaleUtil.getLanguageCode(Locale.ENGLISH)).isEqualTo("EN");
+        assertThat(LocaleUtil.getLanguageCode(Locale.ENGLISH)).isEqualTo("en");
     }
 
     @Test
     void shouldReturnLanguageCodeInUpperCaseForGerman() {
-        assertThat(LocaleUtil.getLanguageCode(Locale.GERMAN)).isEqualTo("DE");
+        assertThat(LocaleUtil.getLanguageCode(Locale.GERMAN)).isEqualTo("de");
     }
 
     @Test
     void shouldReturnLanguageCodeInUpperCaseForFrench() {
-        assertThat(LocaleUtil.getLanguageCode(Locale.FRENCH)).isEqualTo("FR");
+        assertThat(LocaleUtil.getLanguageCode(Locale.FRENCH)).isEqualTo("fr");
     }
 
     @Test
     void shouldNormalizeLowerCaseLanguage() {
         final var custom = Locale.of("fr");
-        assertThat(LocaleUtil.getLanguageCode(custom)).isEqualTo("FR");
+        assertThat(LocaleUtil.getLanguageCode(custom)).isEqualTo("fr");
     }
 
     @Test
     void shouldIgnoreCountryAndVariant() {
         final var swissGerman = Locale.of("de", "CH");
-        assertThat(LocaleUtil.getLanguageCode(swissGerman)).isEqualTo("DE");
+        assertThat(LocaleUtil.getLanguageCode(swissGerman)).isEqualTo("de");
     }
 
 }

@@ -107,7 +107,7 @@ public class GlobalPageService {
                 .and(GLOBAL_PAGE.LANGUAGE.eq(languageCode))
                 .fetchOptionalInto(GlobalPageDto.class);
 
-        if (globalPage.isEmpty() && !languageCode.equals("EN")) {
+        if (globalPage.isEmpty() && !languageCode.equals("en")) {
             return getGlobalPage(slot, Locale.ENGLISH);
         }
 
@@ -123,7 +123,7 @@ public class GlobalPageService {
      */
     public @NotNull List<@NotNull GlobalPageDto> getGlobalPages(final @NotNull Locale locale) {
         final var preferredLanguageCode = LocaleUtil.getLanguageCode(locale);
-        final var fallbackLanguageCode = "EN";
+        final var fallbackLanguageCode = "en";
 
         // Load all pages in the desired language + fallback language
         final var pages = dsl.selectFrom(GLOBAL_PAGE)

@@ -21,6 +21,7 @@ import app.komunumo.KomunumoException;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.exporter.control.JSONExporter;
+import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.core.mail.control.MailService;
@@ -69,6 +70,7 @@ public final class ExporterView extends AbstractView {
     private final @NotNull ParticipantService participantService;
     private final @NotNull GlobalPageService globalPageService;
     private final @NotNull MailService mailService;
+    private final @NotNull TranslationProvider translationProvider;
 
     private final @NotNull UI ui;
     private final @NotNull UnorderedList exportLog;
@@ -84,7 +86,8 @@ public final class ExporterView extends AbstractView {
                         final @NotNull EventService eventService,
                         final @NotNull ParticipantService participantService,
                         final @NotNull GlobalPageService globalPageService,
-                        final @NotNull MailService mailService) {
+                        final @NotNull MailService mailService,
+                        final @NotNull TranslationProvider translationProvider) {
         super(configurationService);
 
         this.configurationService = configurationService;
@@ -96,6 +99,7 @@ public final class ExporterView extends AbstractView {
         this.participantService = participantService;
         this.globalPageService = globalPageService;
         this.mailService = mailService;
+        this.translationProvider = translationProvider;
         this.ui = UI.getCurrent();
 
         final var exportButton = new Button(getTranslation("core.exporter.boundary.ExporterView.startExportButton"));
@@ -139,7 +143,8 @@ public final class ExporterView extends AbstractView {
                         eventService,
                         participantService,
                         globalPageService,
-                        mailService
+                        mailService,
+                        translationProvider
                 );
 
                 final String timestamp = ZonedDateTime.now(ZoneOffset.UTC).format(TIMESTAMP_FORMAT);

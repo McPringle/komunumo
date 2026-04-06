@@ -17,23 +17,20 @@
  */
 package app.komunumo.domain.core.config.control;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.util.LinkUtil;
+import app.komunumo.util.LocaleUtil;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import java.util.Locale;
+import java.util.Optional;
 
 import static app.komunumo.data.db.tables.Config.CONFIG;
-import app.komunumo.domain.core.config.entity.ConfigurationSetting;
-import app.komunumo.domain.core.config.entity.ConfigurationExportValue;
-import app.komunumo.util.LinkUtil;
-import app.komunumo.util.LocaleUtil;
 
 /**
  * <p>Service for reading and writing instance configuration values.</p>
@@ -80,24 +77,6 @@ public class ConfigurationService {
                         .from(CONFIG)
                         .fetchOne(0, Integer.class)
         ).orElse(0);
-    }
-
-    /**
-     * <p>Returns all configuration values stored in the database.</p>
-     *
-     * <p>This method retrieves all configuration entries including language-specific values.
-     * It is primarily used for exporting the instance configuration.</p>
-     *
-     * @return a list of all configuration values
-     */
-    public @NotNull List<@NotNull ConfigurationExportValue> getAllConfigurationsForExport() {
-        return dsl.selectFrom(CONFIG)
-                .fetch()
-                .map(record -> new ConfigurationExportValue(
-                        record.get(CONFIG.SETTING),
-                        record.get(CONFIG.LANGUAGE),
-                        record.get(CONFIG.VALUE)
-                ));
     }
 
     /**
@@ -160,7 +139,7 @@ public class ConfigurationService {
                 ? getFromCacheOrDb(setting, "")
                         .orElse(setting.defaultValue())
                 : getFromCacheOrDb(setting, languageCode)
-                        .or(() -> getFromCacheOrDb(setting, "EN"))
+                        .or(() -> getFromCacheOrDb(setting, "en"))
                         .or(() -> getFromCacheOrDb(setting, ""))
                         .orElse(setting.defaultValue());
 

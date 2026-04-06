@@ -58,7 +58,7 @@ public final class LocaleUtil {
     }
 
     public static @NotNull String getLanguageCode(final @Nullable Locale locale) {
-        return locale == null ? "" : locale.getLanguage().toUpperCase(Locale.ROOT);
+        return locale == null ? "" : locale.getLanguage().toLowerCase(Locale.ROOT);
     }
 
     private LocaleUtil() {

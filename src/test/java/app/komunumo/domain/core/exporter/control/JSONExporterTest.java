@@ -21,8 +21,9 @@ import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.core.config.entity.ConfigurationExportValue;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.entity.FilesConfig;
+import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
@@ -58,6 +59,8 @@ import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -79,6 +82,7 @@ class JSONExporterTest {
     private ParticipantService participantService;
     private GlobalPageService globalPageService;
     private MailService mailService;
+    private TranslationProvider translationProvider;
     private JSONExporter exporter;
     private ObjectMapper objectMapper;
 
@@ -93,6 +97,7 @@ class JSONExporterTest {
         participantService = mock(ParticipantService.class);
         globalPageService = mock(GlobalPageService.class);
         mailService = mock(MailService.class);
+        translationProvider = new TranslationProvider();
         exporter = new JSONExporter();
         objectMapper = new ObjectMapper();
 
@@ -102,9 +107,9 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportEmptyData() throws Exception {
+    void testExportEmptyData() {
         // given
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -117,7 +122,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -147,14 +152,15 @@ class JSONExporterTest {
     void testExportSettings() throws Exception {
         // given
         mockEmptyServices();
-        final var config1 = new ConfigurationExportValue("instance.name", "", "Test Instance");
-        final var config2 = new ConfigurationExportValue("instance.slogan", "EN", "English Slogan");
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of(config1, config2));
+        when(configurationService.getConfigurationWithoutFallback(ConfigurationSetting.INSTANCE_NAME, null))
+                .thenReturn("Test Instance");
+        when(configurationService.getConfigurationWithoutFallback(ConfigurationSetting.INSTANCE_SLOGAN, Locale.ENGLISH))
+                .thenReturn("English Slogan");
 
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -162,10 +168,11 @@ class JSONExporterTest {
         final JsonNode settings = root.get("settings");
         assertThat(settings).hasSize(2);
         assertThat(settings.get(0).get("setting").asString()).isEqualTo("instance.name");
-        assertThat(settings.get(0).get("language").isNull()).isTrue();
+        assertThat(settings.get(0).has("language")).isFalse();
         assertThat(settings.get(0).get("value").asString()).isEqualTo("Test Instance");
         assertThat(settings.get(1).get("setting").asString()).isEqualTo("instance.slogan");
-        assertThat(settings.get(1).get("language").asString()).isEqualTo("EN");
+        assertThat(settings.get(1).get("language").asString()).isEqualTo("en");
+        assertThat(settings.get(1).get("value").asString()).isEqualTo("English Slogan");
     }
 
     @Test
@@ -179,7 +186,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -205,7 +212,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -232,7 +239,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -257,7 +264,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -280,7 +287,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -301,7 +308,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -324,7 +331,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -346,7 +353,7 @@ class JSONExporterTest {
         // when
         final String json = exporter.exportAll(
                 configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService
+                memberService, eventService, participantService, globalPageService, mailService, translationProvider
         );
 
         // then
@@ -357,8 +364,18 @@ class JSONExporterTest {
         assertThat(images.get(0).get("contentType").asString()).isEqualTo("image/jpeg");
     }
 
+    private void mockConfigurationServiceDefaults() {
+        when(configurationService.getConfigurationWithoutFallback(
+                any(ConfigurationSetting.class),
+                nullable(Locale.class)))
+                .thenAnswer(invocation -> {
+                    final ConfigurationSetting setting = invocation.getArgument(0);
+                    return setting.defaultValue();
+                });
+    }
+
     private void mockEmptyServices() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -370,7 +387,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptUsers() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
         when(eventService.getEvents()).thenReturn(List.of());
@@ -381,7 +398,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptCommunities() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(eventService.getEvents()).thenReturn(List.of());
@@ -392,7 +409,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptEvents() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -403,7 +420,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptMembers() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -414,7 +431,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptParticipants() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -425,7 +442,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptGlobalPages() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -436,7 +453,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptMailTemplates() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(imageService.getAllImages()).thenReturn(List.of());
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
@@ -447,7 +464,7 @@ class JSONExporterTest {
     }
 
     private void mockEmptyServicesExceptImages() {
-        when(configurationService.getAllConfigurationsForExport()).thenReturn(List.of());
+        mockConfigurationServiceDefaults();
         when(userService.getAllUsers()).thenReturn(List.of());
         when(communityService.getCommunities()).thenReturn(List.of());
         when(eventService.getEvents()).thenReturn(List.of());

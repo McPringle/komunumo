@@ -20,6 +20,8 @@ package app.komunumo.domain.core.exporter.control;
 import app.komunumo.KomunumoException;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.event.control.EventService;
@@ -28,6 +30,7 @@ import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.util.ImageUtil;
+import app.komunumo.util.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ArrayNode;
@@ -75,12 +78,13 @@ public final class JSONExporter {
             final @NotNull EventService eventService,
             final @NotNull ParticipantService participantService,
             final @NotNull GlobalPageService globalPageService,
-            final @NotNull MailService mailService
-    ) {
+            final @NotNull MailService mailService,
+            final @NotNull TranslationProvider translationProvider
+            ) {
         try {
             final ObjectNode root = objectMapper.createObjectNode();
 
-            exportSettings(root, configurationService);
+            exportSettings(root, configurationService, translationProvider);
             exportImages(root, imageService);
             exportUsers(root, userService);
             exportCommunities(root, communityService);
@@ -97,21 +101,43 @@ public final class JSONExporter {
     }
 
     private void exportSettings(final @NotNull ObjectNode root,
-                                final @NotNull ConfigurationService configurationService) {
+                                final @NotNull ConfigurationService configurationService,
+                                final @NotNull TranslationProvider translationProvider) {
         final ArrayNode settingsArray = objectMapper.createArrayNode();
-        configurationService.getAllConfigurationsForExport().forEach(config -> {
-            final ObjectNode node = objectMapper.createObjectNode();
-            node.put("setting", config.setting());
-            if (config.language() == null) {
-                node.putNull("language");
-            } else if (config.language().isEmpty()) {
-                node.putNull("language");
+
+        for (final var configurationSetting : ConfigurationSetting.values()) {
+            if (configurationSetting.isLanguageDependent()) {
+                for (final var locale : translationProvider.getProvidedLocales()) {
+                    final var defaultValue = configurationSetting.defaultValue();
+                    final var actualValue = configurationService.getConfigurationWithoutFallback(configurationSetting, locale);
+                    final var isDefaultValue = defaultValue.equals(actualValue);
+
+                    if (isDefaultValue) {
+                        continue; // skip default values to reduce export size
+                    }
+
+                    final ObjectNode node = objectMapper.createObjectNode();
+                    node.put("setting", configurationSetting.setting());
+                    node.put("language", LocaleUtil.getLanguageCode(locale));
+                    node.put("value", actualValue);
+                    settingsArray.add(node);
+                }
             } else {
-                node.put("language", config.language());
+                final var defaultValue = configurationSetting.defaultValue();
+                final var actualValue = configurationService.getConfigurationWithoutFallback(configurationSetting, null);
+                final var isDefaultValue = defaultValue.equals(actualValue);
+
+                if (isDefaultValue) {
+                    continue; // skip default values to reduce export size
+                }
+
+                final ObjectNode node = objectMapper.createObjectNode();
+                node.put("setting", configurationSetting.setting());
+                node.put("value", actualValue);
+                settingsArray.add(node);
             }
-            node.put("value", config.value());
-            settingsArray.add(node);
-        });
+        }
+
         root.set("settings", settingsArray);
     }
 

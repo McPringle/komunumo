@@ -31,10 +31,13 @@ import java.util.Locale;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_SLOGAN;
-import static java.util.Locale.*;
+import static java.util.Locale.ENGLISH;
+import static java.util.Locale.FRENCH;
+import static java.util.Locale.GERMAN;
+import static java.util.Locale.ITALIAN;
+import static java.util.Locale.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 
 class ConfigurationServiceKT extends KaribuTest {
 
@@ -47,24 +50,6 @@ class ConfigurationServiceKT extends KaribuTest {
     void cleanSetUp() {
         configurationService = new ConfigurationService(dsl);
         configurationService.deleteAllConfigurations();
-    }
-
-    @Test
-    void getAllConfigurationsForExport() {
-        assertThat(configurationService.getAllConfigurationsForExport()).isEmpty();
-
-        configurationService.setConfiguration(INSTANCE_NAME, null, "Test Instance");
-        configurationService.setConfiguration(INSTANCE_SLOGAN, ENGLISH, "Test Slogan EN");
-        configurationService.setConfiguration(INSTANCE_SLOGAN, GERMAN, "Test Slogan DE");
-
-        assertThat(configurationService.getAllConfigurationsForExport())
-                .hasSize(3)
-                .extracting("setting", "language", "value")
-                .containsExactlyInAnyOrder(
-                        tuple("instance.name", "", "Test Instance"),
-                        tuple("instance.slogan", "EN", "Test Slogan EN"),
-                        tuple("instance.slogan", "DE", "Test Slogan DE")
-                );
     }
 
     @Test
