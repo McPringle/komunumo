@@ -101,6 +101,14 @@ public class Application extends SpringBootServletInitializer implements AppShel
         if (stylePath.toFile().exists()) {
             settings.addLink("stylesheet", "/custom/styles/styles.css");
         }
+
+        settings.addFavIcon("icon", "icons/icon.png", "1024x1024");
+        settings.addFavIcon("icon", "icons/favicon-512x512.png", "512x512");
+        settings.addFavIcon("icon", "icons/favicon-192x192.png", "192x192");
+        settings.addFavIcon("icon", "icons/favicon-180x180.png", "180x180");
+        settings.addFavIcon("icon", "icons/favicon-32x32.png", "32x32");
+        settings.addFavIcon("icon", "icons/favicon-16x16.png", "16x16");
+        settings.addLink("shortcut icon", "icons/favicon.ico");
     }
 
     /**

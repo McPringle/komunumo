@@ -17,14 +17,23 @@
  */
 package app.komunumo;
 
+import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.domain.core.config.entity.FilesConfig;
+import com.vaadin.flow.server.AppShellSettings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.SpringApplication;
 
+import java.nio.file.Path;
+
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ApplicationTest {
@@ -44,5 +53,29 @@ class ApplicationTest {
             springApplication.verify(() -> SpringApplication.run(Application.class, args),
                     times(1));
         }
+    }
+
+    @Test
+    void configurePage_addsMetaTagFavIconsAndShortcutIcon() {
+        final var filesConfig = mock(FilesConfig.class);
+        when(filesConfig.basedir()).thenReturn(Path.of(""));
+        final var appConfig = mock(AppConfig.class);
+        when(appConfig.files()).thenReturn(filesConfig);
+
+        final var app = new Application(appConfig);
+        final var settings = mock(AppShellSettings.class);
+
+        app.configurePage(settings);
+
+        verify(settings).addFavIcon("icon", "icons/icon.png", "1024x1024");
+        verify(settings).addFavIcon("icon", "icons/favicon-512x512.png", "512x512");
+        verify(settings).addFavIcon("icon", "icons/favicon-192x192.png", "192x192");
+        verify(settings).addFavIcon("icon", "icons/favicon-180x180.png", "180x180");
+        verify(settings).addFavIcon("icon", "icons/favicon-32x32.png", "32x32");
+        verify(settings).addFavIcon("icon", "icons/favicon-16x16.png", "16x16");
+
+        verify(settings).addLink("shortcut icon", "icons/favicon.ico");
+
+        verifyNoMoreInteractions(settings);
     }
 }
