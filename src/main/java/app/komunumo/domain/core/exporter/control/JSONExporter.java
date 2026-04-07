@@ -30,15 +30,16 @@ import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.util.ImageUtil;
-import app.komunumo.util.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.node.ArrayNode;
 import tools.jackson.databind.node.ObjectNode;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
+
+import static app.komunumo.util.LocaleUtil.getLanguageCode;
 
 /**
  * <p>Exports all Komunumo instance data as a JSON file.</p>
@@ -48,10 +49,16 @@ import java.util.Base64;
  */
 public final class JSONExporter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSONExporter.class);
+
     private final @NotNull ObjectMapper objectMapper;
 
     public JSONExporter() {
-        this.objectMapper = new ObjectMapper();
+        this(new ObjectMapper());
+    }
+
+    public JSONExporter(final @NotNull ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -82,7 +89,7 @@ public final class JSONExporter {
             final @NotNull TranslationProvider translationProvider
             ) {
         try {
-            final ObjectNode root = objectMapper.createObjectNode();
+            final var root = objectMapper.createObjectNode();
 
             exportSettings(root, configurationService, translationProvider);
             exportImages(root, imageService);
@@ -103,7 +110,7 @@ public final class JSONExporter {
     private void exportSettings(final @NotNull ObjectNode root,
                                 final @NotNull ConfigurationService configurationService,
                                 final @NotNull TranslationProvider translationProvider) {
-        final ArrayNode settingsArray = objectMapper.createArrayNode();
+        final var settingsArray = objectMapper.createArrayNode();
 
         for (final var configurationSetting : ConfigurationSetting.values()) {
             if (configurationSetting.isLanguageDependent()) {
@@ -116,9 +123,9 @@ public final class JSONExporter {
                         continue; // skip default values to reduce export size
                     }
 
-                    final ObjectNode node = objectMapper.createObjectNode();
+                    final var node = objectMapper.createObjectNode();
                     node.put("setting", configurationSetting.setting());
-                    node.put("language", LocaleUtil.getLanguageCode(locale));
+                    node.put("language", getLanguageCode(locale));
                     node.put("value", actualValue);
                     settingsArray.add(node);
                 }
@@ -131,7 +138,7 @@ public final class JSONExporter {
                     continue; // skip default values to reduce export size
                 }
 
-                final ObjectNode node = objectMapper.createObjectNode();
+                final var node = objectMapper.createObjectNode();
                 node.put("setting", configurationSetting.setting());
                 node.put("value", actualValue);
                 settingsArray.add(node);
@@ -143,45 +150,42 @@ public final class JSONExporter {
 
     private void exportImages(final @NotNull ObjectNode root,
                               final @NotNull ImageService imageService) {
-        final ArrayNode imagesArray = objectMapper.createArrayNode();
+        final var imagesArray = objectMapper.createArrayNode();
         imageService.getAllImages().forEach(image -> {
-            final ObjectNode node = objectMapper.createObjectNode();
-            node.put("imageId", image.id().toString());
-            node.put("contentType", image.contentType().getContentType());
-
-            // Include base64-encoded image data for complete export
             final var imagePath = ImageUtil.resolveImagePath(image);
-            if (imagePath != null) {
-                if (Files.exists(imagePath)) {
-                    try {
-                        final byte[] imageData = Files.readAllBytes(imagePath);
-                        node.put("data", Base64.getEncoder().encodeToString(imageData));
-                    } catch (final IOException e) {
-                        // Skip image data if file cannot be read
-                        node.putNull("data");
-                    }
-                } else {
-                    node.putNull("data");
-                }
+            //noinspection DataFlowIssue // imagePath is never null because image is never null because it comes from db
+            if (!Files.exists(imagePath)) {
+                LOGGER.warn("Image not found: {}", imagePath);
             } else {
-                node.putNull("data");
+                try {
+                    final var imageData = Files.readAllBytes(imagePath);
+                    final var node = objectMapper.createObjectNode();
+                    //noinspection DataFlowIssue // image ID is never null because it comes from db
+                    node.put("imageId", image.id().toString());
+                    node.put("contentType", image.contentType().getContentType());
+                    node.put("data", Base64.getEncoder().encodeToString(imageData));
+                    imagesArray.add(node);
+                } catch (final Exception exception) {
+                    LOGGER.warn("Failed to read image file '{}': {}",
+                            imagePath.toAbsolutePath(), exception.getMessage(), exception);
+                }
             }
-            imagesArray.add(node);
         });
         root.set("images", imagesArray);
     }
 
     private void exportUsers(final @NotNull ObjectNode root,
                              final @NotNull UserService userService) {
-        final ArrayNode usersArray = objectMapper.createArrayNode();
+        final var usersArray = objectMapper.createArrayNode();
         userService.getAllUsers().forEach(user -> {
-            final ObjectNode node = objectMapper.createObjectNode();
+            final var node = objectMapper.createObjectNode();
+            //noinspection DataFlowIssue // user ID is never null because it comes from db
             node.put("userId", user.id().toString());
             node.put("profile", user.profile());
-            node.put("email", user.email() != null ? user.email() : "");
-            node.put("name", user.name() != null ? user.name() : "");
-            node.put("bio", user.bio() != null ? user.bio() : "");
-            node.put("imageId", user.imageId() != null ? user.imageId().toString() : "");
+            node.put("email", user.email());
+            node.put("name", user.name());
+            node.put("bio", user.bio());
+            node.put("imageId", user.imageId() != null ? user.imageId().toString() : null);
             node.put("role", user.role().name());
             node.put("type", user.type().name());
             usersArray.add(node);
@@ -191,9 +195,10 @@ public final class JSONExporter {
 
     private void exportCommunities(final @NotNull ObjectNode root,
                                    final @NotNull CommunityService communityService) {
-        final ArrayNode communitiesArray = objectMapper.createArrayNode();
+        final var communitiesArray = objectMapper.createArrayNode();
         communityService.getCommunities().forEach(community -> {
-            final ObjectNode node = objectMapper.createObjectNode();
+            final var node = objectMapper.createObjectNode();
+            //noinspection DataFlowIssue // community ID is never null because it comes from db
             node.put("communityId", community.id().toString());
             node.put("profile", community.profile());
             node.put("name", community.name());
@@ -206,11 +211,13 @@ public final class JSONExporter {
 
     private void exportEvents(final @NotNull ObjectNode root,
                               final @NotNull EventService eventService) {
-        final ArrayNode eventsArray = objectMapper.createArrayNode();
+        final var eventsArray = objectMapper.createArrayNode();
         eventService.getEvents().forEach(event -> {
-            final ObjectNode node = objectMapper.createObjectNode();
+            final var node = objectMapper.createObjectNode();
+            //noinspection DataFlowIssue // event ID is never null because it comes from db
             node.put("eventId", event.id().toString());
-            node.put("communityId", event.communityId() != null ? event.communityId().toString() : "");
+            //noinspection DataFlowIssue // community ID is never null because it comes from db
+            node.put("communityId", event.communityId().toString());
             node.put("title", event.title());
             node.put("description", event.description());
             node.put("location", event.location());
@@ -226,13 +233,14 @@ public final class JSONExporter {
 
     private void exportMembers(final @NotNull ObjectNode root,
                                final @NotNull MemberService memberService) {
-        final ArrayNode membersArray = objectMapper.createArrayNode();
+        final var membersArray = objectMapper.createArrayNode();
         memberService.getMembers().forEach(member -> {
-            final ObjectNode node = objectMapper.createObjectNode();
+            final var node = objectMapper.createObjectNode();
             node.put("userId", member.userId().toString());
             node.put("communityId", member.communityId().toString());
             node.put("role", member.role().name());
-            node.put("since", member.since() != null ? member.since().toString() : "");
+            //noinspection DataFlowIssue // since date is never null because it comes from db
+            node.put("since", member.since().toString());
             membersArray.add(node);
         });
         root.set("members", membersArray);
@@ -240,12 +248,13 @@ public final class JSONExporter {
 
     private void exportParticipants(final @NotNull ObjectNode root,
                                     final @NotNull ParticipantService participantService) {
-        final ArrayNode participantsArray = objectMapper.createArrayNode();
+        final var participantsArray = objectMapper.createArrayNode();
         participantService.getAllParticipants().forEach(participant -> {
-            final ObjectNode node = objectMapper.createObjectNode();
+            final var node = objectMapper.createObjectNode();
             node.put("eventId", participant.eventId().toString());
             node.put("userId", participant.userId().toString());
-            node.put("registered", participant.registered() != null ? participant.registered().toString() : "");
+            //noinspection DataFlowIssue // registered date is never null because it comes from db
+            node.put("registered", participant.registered().toString());
             participantsArray.add(node);
         });
         root.set("participants", participantsArray);
@@ -253,11 +262,11 @@ public final class JSONExporter {
 
     private void exportGlobalPages(final @NotNull ObjectNode root,
                                    final @NotNull GlobalPageService globalPageService) {
-        final ArrayNode globalPagesArray = objectMapper.createArrayNode();
+        final var globalPagesArray = objectMapper.createArrayNode();
         globalPageService.getAllGlobalPages().forEach(page -> {
-            final ObjectNode node = objectMapper.createObjectNode();
+            final var node = objectMapper.createObjectNode();
             node.put("slot", page.slot());
-            node.put("language", page.language().toLanguageTag());
+            node.put("language", getLanguageCode(page.language()));
             node.put("title", page.title());
             node.put("markdown", page.markdown());
             globalPagesArray.add(node);
@@ -267,9 +276,9 @@ public final class JSONExporter {
 
     private void exportMailTemplates(final @NotNull ObjectNode root,
                                      final @NotNull MailService mailService) {
-        final ArrayNode mailTemplatesArray = objectMapper.createArrayNode();
+        final var mailTemplatesArray = objectMapper.createArrayNode();
         mailService.getAllMailTemplates().forEach(template -> {
-            final ObjectNode node = objectMapper.createObjectNode();
+            final var node = objectMapper.createObjectNode();
             node.put("mailTemplateId", template.id().name());
             node.put("language", template.language().toLanguageTag());
             node.put("subject", template.subject());

@@ -46,22 +46,28 @@ import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.util.ImageUtil;
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.nio.file.StandardOpenOption.CREATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 class JSONExporterTest {
@@ -178,9 +184,11 @@ class JSONExporterTest {
     @Test
     void testExportUsers() throws Exception {
         // given
-        final var user = new UserDto(TEST_UUID_1, null, null, "testuser", "test@example.com",
-                "Test User", "Bio text", TEST_UUID_2, UserRole.USER, UserType.LOCAL);
-        when(userService.getAllUsers()).thenReturn(List.of(user));
+        final var user1 = new UserDto(TEST_UUID_1, null, null, "testuser1", "test1@example.com",
+                "Test User 1", "Bio text", TEST_UUID_2, UserRole.USER, UserType.LOCAL);
+        final var user2 = new UserDto(TEST_UUID_2, null, null, "testuser2", null,
+                "Test User 2", "Bio text", TEST_UUID_1, UserRole.USER, UserType.LOCAL);
+        when(userService.getAllUsers()).thenReturn(List.of(user1, user2));
         mockEmptyServicesExceptUsers();
 
         // when
@@ -192,13 +200,19 @@ class JSONExporterTest {
         // then
         final JsonNode root = objectMapper.readTree(json);
         final JsonNode users = root.get("users");
-        assertThat(users).hasSize(1);
+        assertThat(users).hasSize(2);
         assertThat(users.get(0).get("userId").asString()).isEqualTo(TEST_UUID_1.toString());
-        assertThat(users.get(0).get("profile").asString()).isEqualTo("testuser");
-        assertThat(users.get(0).get("email").asString()).isEqualTo("test@example.com");
-        assertThat(users.get(0).get("name").asString()).isEqualTo("Test User");
+        assertThat(users.get(0).get("profile").asString()).isEqualTo("testuser1");
+        assertThat(users.get(0).get("email").asString()).isEqualTo("test1@example.com");
+        assertThat(users.get(0).get("name").asString()).isEqualTo("Test User 1");
         assertThat(users.get(0).get("role").asString()).isEqualTo("USER");
         assertThat(users.get(0).get("type").asString()).isEqualTo("LOCAL");
+        assertThat(users.get(1).get("userId").asString()).isEqualTo(TEST_UUID_2.toString());
+        assertThat(users.get(1).get("profile").asString()).isEqualTo("testuser2");
+        assertThat(users.get(1).get("email").isNull()).isTrue();
+        assertThat(users.get(1).get("name").asString()).isEqualTo("Test User 2");
+        assertThat(users.get(1).get("role").asString()).isEqualTo("USER");
+        assertThat(users.get(1).get("type").asString()).isEqualTo("LOCAL");
     }
 
     @Test
@@ -344,24 +358,58 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportImages() throws Exception {
+    void testExportImages() {
         // given
-        final var image = new ImageDto(TEST_UUID_1, ContentType.IMAGE_JPEG);
-        when(imageService.getAllImages()).thenReturn(List.of(image));
+        final var image1 = new ImageDto(TEST_UUID_1, ContentType.IMAGE_JPEG); // ObjectMapper throws exception
+        final var image2 = new ImageDto(TEST_UUID_2, ContentType.IMAGE_JPEG); // file does not exist
+        final var image3 = new ImageDto(TEST_UUID_3, ContentType.IMAGE_JPEG); // successful export
+
+        List.of(image1, image3).forEach(image -> {
+            try {
+                final var tmpPath = Files.createTempFile("test-", ".jpg");
+                Files.writeString(tmpPath, "test", CREATE);
+                ImageUtil.storeImage(image, tmpPath);
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        when(imageService.getAllImages()).thenReturn(List.of(image1, image2, image3));
         mockEmptyServicesExceptImages();
 
+        final var objectMapper = spy(new ObjectMapper());
+        final var exporter = new JSONExporter(objectMapper);
+        final var counter = new AtomicInteger();
+        doAnswer(invocation -> {
+            if (counter.getAndIncrement() == 1) {
+                throw new RuntimeException("this call fails");
+            }
+            return invocation.callRealMethod();
+        }).when(objectMapper).createObjectNode();
         // when
-        final String json = exporter.exportAll(
-                configurationService, imageService, userService, communityService,
-                memberService, eventService, participantService, globalPageService, mailService, translationProvider
-        );
+        try (var logCaptor = LogCaptor.forClass(JSONExporter.class)) {
+            final String json = exporter.exportAll(
+                    configurationService, imageService, userService, communityService,
+                    memberService, eventService, participantService, globalPageService, mailService, translationProvider
+            );
 
-        // then
-        final JsonNode root = objectMapper.readTree(json);
-        final JsonNode images = root.get("images");
-        assertThat(images).hasSize(1);
-        assertThat(images.get(0).get("imageId").asString()).isEqualTo(TEST_UUID_1.toString());
-        assertThat(images.get(0).get("contentType").asString()).isEqualTo("image/jpeg");
+            // then
+            final JsonNode root = objectMapper.readTree(json);
+            final JsonNode images = root.get("images");
+            assertThat(logCaptor.getWarnLogs()
+                    .stream()
+                    .filter(l -> l.startsWith("Failed to read image file"))
+                    .toList())
+                    .hasSize(1);
+            assertThat(logCaptor.getWarnLogs()
+                    .stream()
+                    .filter(l -> l.startsWith("Image not found:"))
+                    .toList())
+                    .hasSize(1);
+            assertThat(images).hasSize(1);
+            assertThat(images.get(0).get("imageId").asString()).isEqualTo(TEST_UUID_3.toString());
+            assertThat(images.get(0).get("contentType").asString()).isEqualTo("image/jpeg");
+        }
     }
 
     private void mockConfigurationServiceDefaults() {
