@@ -17,9 +17,12 @@
  */
 package app.komunumo.infra.ui.vaadin.layout;
 
+import app.komunumo.SecurityConfig;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.page.control.GlobalPageService;
+import app.komunumo.domain.user.boundary.EditProfileView;
 import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.infra.config.AppConfig;
 import app.komunumo.infra.ui.i18n.LocaleUtil;
@@ -36,6 +39,8 @@ import com.vaadin.flow.router.RouterLayout;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_NAME;
 import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTANCE_SLOGAN;
@@ -43,14 +48,22 @@ import static app.komunumo.domain.core.config.entity.ConfigurationSetting.INSTAN
 @AnonymousAllowed
 public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnterObserver {
 
+    private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(WebsiteLayout.class);
+
     private final @NotNull Main main;
+
+    private final @NotNull UserService userService;
+    private final @NotNull LoginService loginService;
 
     public WebsiteLayout(final @NotNull AppConfig appConfig,
                          final @NotNull ConfigurationService configurationService,
                          final @NotNull GlobalPageService globalPageService,
+                         final @NotNull UserService userService,
                          final @NotNull LoginService loginService,
                          final @NotNull AuthenticationState authenticationState) {
         super();
+        this.userService = userService;
+        this.loginService = loginService;
         authenticationState.refreshFromSecurityContext();
         final var ui = UI.getCurrent();
 
@@ -90,10 +103,23 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
 
     @Override
     public void beforeEnter(final @NotNull BeforeEnterEvent event) {
+        // configure utility classes based on browser settings
         final var ui = event.getUI();
         TimeZoneUtil.detectClientTimeZone(ui);
         LocaleUtil.detectClientLocale(ui);
         ThemeUtil.initializeDarkMode(ui);
+
+        // redirect users with incomplete profiles (logout is always allowed)
+        loginService.getLoggedInUser().ifPresent(user -> {
+            final var path = event.getLocation().getPath();
+            if (path.equals("settings/profile") || path.equals(SecurityConfig.LOGOUT_URL)) {
+                return;
+            }
+            if (!userService.isProfileComplete(user)) {
+                LOGGER.info("Redirecting user '{}' with incomplete profile to edit profile view.", user.id());
+                event.forwardTo(EditProfileView.class);
+            }
+        });
     }
 
 }

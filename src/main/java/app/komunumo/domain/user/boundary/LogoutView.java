@@ -18,6 +18,7 @@
 
 package app.komunumo.domain.user.boundary;
 
+import app.komunumo.SecurityConfig;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.infra.ui.vaadin.layout.AbstractView;
@@ -29,7 +30,7 @@ import jakarta.annotation.security.PermitAll;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@Route(value = "logout", layout = WebsiteLayout.class)
+@Route(value = SecurityConfig.LOGOUT_URL, layout = WebsiteLayout.class)
 @PermitAll
 public final class LogoutView extends AbstractView implements BeforeEnterObserver {
 

@@ -17,6 +17,7 @@
  */
 package app.komunumo.domain.user.boundary;
 
+import app.komunumo.SecurityConfig;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
@@ -31,6 +32,10 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.BeforeLeaveEvent;
+import com.vaadin.flow.router.BeforeLeaveObserver;
+import com.vaadin.flow.router.NavigationTrigger;
 import com.vaadin.flow.router.Route;
 import jakarta.annotation.security.RolesAllowed;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +44,9 @@ import java.util.Optional;
 
 @Route(value = "settings/profile", layout = WebsiteLayout.class)
 @RolesAllowed("USER_LOCAL")
-public final class EditProfileView extends AbstractView {
+public final class EditProfileView extends AbstractView implements BeforeLeaveObserver {
+
+    private static final int MIN_NAME_LENGTH = 5;
 
     private final @NotNull LoginService loginService;
     private final @NotNull UserService userService;
@@ -80,6 +87,7 @@ public final class EditProfileView extends AbstractView {
         final var nameField = new TextField(getTranslation("user.boundary.EditProfileView.name"));
         nameField.addClassName("name-field");
         nameField.setRequiredIndicatorVisible(true);
+        nameField.setValueChangeMode(ValueChangeMode.EAGER);
         nameField.setWidthFull();
 
         final var bioField = new MarkdownEditor(getLocale());
@@ -95,6 +103,8 @@ public final class EditProfileView extends AbstractView {
 
         binder.forField(nameField)
                 .asRequired(getTranslation("user.boundary.EditProfileView.name.required"))
+                .withValidator(name -> name.length() >= MIN_NAME_LENGTH,
+                        getTranslation("user.boundary.EditProfileView.name.length", MIN_NAME_LENGTH))
                 .bind(EditProfileFormData::name, EditProfileFormData::setName);
 
         binder.forField(bioField)
@@ -102,6 +112,7 @@ public final class EditProfileView extends AbstractView {
 
         final var formData = new EditProfileFormData(user);
         binder.setBean(formData);
+        binder.validate();
 
         final var saveButton = new Button(getTranslation("user.boundary.EditProfileView.save"));
         saveButton.addClassName("save-button");
@@ -130,6 +141,28 @@ public final class EditProfileView extends AbstractView {
         });
 
         add(emailField, nameField, bioField, saveButton);
+
+        if (nameField.getValue().isBlank()) {
+            nameField.focus();
+        }
+    }
+
+    @Override
+    public void beforeLeave(final @NotNull BeforeLeaveEvent event) {
+        // logout is always allowed
+        if (event.getLocation().getPath().equals(SecurityConfig.LOGOUT_URL)) {
+            return;
+        }
+
+        // stop navigating away if the profile is incomplete
+        if (!userService.isProfileComplete(loginService.getLoggedInUser().orElseThrow())) {
+            event.postpone().cancel();
+            if (event.getTrigger() != NavigationTrigger.PROGRAMMATIC) {
+                NotificationUtil.showNotification(
+                        getTranslation("user.boundary.EditProfileView.profileIncomplete"),
+                        NotificationVariant.ERROR);
+            }
+        }
     }
 
     private static final class EditProfileFormData {

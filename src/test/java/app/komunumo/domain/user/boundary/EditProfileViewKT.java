@@ -17,20 +17,32 @@
  */
 package app.komunumo.domain.user.boundary;
 
+import app.komunumo.domain.community.boundary.CommunityGrid;
+import app.komunumo.domain.event.boundary.EventGridView;
 import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.infra.ui.vaadin.components.MarkdownEditor;
+import app.komunumo.infra.ui.vaadin.components.PersistentNotification;
 import app.komunumo.test.KaribuTest;
+import com.github.mvysny.kaributesting.v10.LocatorJ;
+import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.RouterLink;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
+import static com.github.mvysny.kaributesting.v10.RouterLinkKt._click;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class EditProfileViewKT extends KaribuTest {
@@ -81,7 +93,13 @@ class EditProfileViewKT extends KaribuTest {
 
         assertThat(nameField.getErrorMessage()).isEmpty();
         nameField.setValue("");
-        assertThat(nameField.getErrorMessage()).isEqualTo("Name is required");
+        assertThat(nameField.isInvalid()).isTrue();
+        assertThat(nameField.getErrorMessage()).isEqualTo("The name is required");
+        nameField.setValue("Testikowski");
+        assertThat(nameField.isInvalid()).isFalse();
+        nameField.setValue("123");
+        assertThat(nameField.isInvalid()).isTrue();
+        assertThat(nameField.getErrorMessage()).isEqualTo("The name must be at least 5 characters long");
 
         saveButton.click();
         userService.getUserById(testUser.id()).ifPresentOrElse(
@@ -98,6 +116,8 @@ class EditProfileViewKT extends KaribuTest {
         nameField.setValue("Modified Name");
         bioField.setValue("Modified Bio");
         saveButton.click();
+
+        MockVaadin.clientRoundtrip(false);
 
         final var notification = _get(Notification.class);
         assertThat(notification.isOpened()).isTrue();
@@ -117,4 +137,54 @@ class EditProfileViewKT extends KaribuTest {
         );
     }
 
+    @Test
+    void leavePageOnlyWhenProfileIsCompleted() {
+        final var user = userService.storeUser(new UserDto(null, null, null,
+                "demoUserIncomplete", "demo-user-incomplete@example.com", "", "", null,
+                UserRole.USER, UserType.LOCAL));
+        login(user);
+
+        UI.getCurrentOrThrow().navigate(EventGridView.class);
+
+        final var eventGrids = _find(EventGridView.class);
+        assertThat(eventGrids).isEmpty();
+
+        final var titles = _find(H2.class, spec -> spec.withText("My Profile"));
+        assertThat(titles).hasSize(1);
+
+        final var communityLink = _get(RouterLink.class, spec -> spec.withText("Communities"));
+        assertThat(communityLink).isNotNull();
+        _click(communityLink);
+
+        MockVaadin.clientRoundtrip(false);
+
+        final var notification = _get(PersistentNotification.class);
+        assertThat(notification.isOpened()).isTrue();
+
+        final var div = _get(notification, Div.class);
+        assertThat(div.getText()).isEqualTo(
+                "Your profile is incomplete. Please fill in all required fields and save your profile to complete it.");
+
+        final var closeButton = _get(notification, Button.class);
+        LocatorJ._click(closeButton);
+
+        MockVaadin.clientRoundtrip(false);
+
+        assertThat(notification.isOpened()).isFalse();
+
+        final var nameField = _get(TextField.class, spec -> spec.withClasses("name-field"));
+        assertThat(nameField).isNotNull();
+        nameField.setValue("Test User");
+
+        final var saveButton = _get(Button.class, spec -> spec.withClasses("save-button"));
+        assertThat(saveButton).isNotNull();
+        assertThat(saveButton.isEnabled()).isTrue();
+        saveButton.click();
+
+        MockVaadin.clientRoundtrip(false);
+
+        _click(communityLink);
+
+        _get(CommunityGrid.class);
+    }
 }

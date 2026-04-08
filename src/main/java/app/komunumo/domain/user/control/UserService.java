@@ -109,4 +109,8 @@ public final class UserService extends StorageService {
                 .execute();
         return getUserById(user.id()).orElseThrow();
     }
+
+    public boolean isProfileComplete(final @NotNull UserDto user) {
+        return !user.name().isBlank();
+    }
 }

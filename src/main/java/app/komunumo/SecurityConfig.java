@@ -44,6 +44,11 @@ public class SecurityConfig {
     public static final @NotNull String LOGIN_URL = "login";
 
     /**
+     * <p>The URL of the logout page (relative to the application root).</p>
+     */
+    public static final @NotNull String LOGOUT_URL = "logout";
+
+    /**
      * <p>The URL to redirect to after a successful logout.</p>
      */
     public static final @NotNull String LOGOUT_SUCCESS_URL = "/";

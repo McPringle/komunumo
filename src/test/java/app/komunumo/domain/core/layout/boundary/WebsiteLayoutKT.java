@@ -17,7 +17,12 @@
  */
 package app.komunumo.domain.core.layout.boundary;
 
+import app.komunumo.domain.event.boundary.EventGridView;
 import app.komunumo.domain.home.boundary.HomeView;
+import app.komunumo.domain.user.control.UserService;
+import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.infra.ui.vaadin.components.InfoBanner;
 import app.komunumo.infra.ui.vaadin.layout.NavigationBar;
 import app.komunumo.infra.ui.vaadin.layout.PageFooter;
@@ -39,6 +44,7 @@ import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -46,12 +52,17 @@ import static app.komunumo.test.TestUtil.assertContainsExactlyOneInstanceOf;
 import static app.komunumo.test.TestUtil.assertContainsExactlyOneRouterLinkOf;
 import static app.komunumo.test.TestUtil.findComponent;
 import static app.komunumo.test.TestUtil.findComponents;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class WebsiteLayoutKT extends KaribuTest {
+
+    @Autowired
+    private @NotNull UserService userService;
 
     private @NotNull WebsiteLayout websiteLayout;
 
@@ -148,4 +159,32 @@ class WebsiteLayoutKT extends KaribuTest {
                 .hasMessage("WebsiteLayout content must be a Component");
     }
 
+    @Test
+    void testNavigationWithCompleteProfile_shouldSucceed() {
+        final var user = userService.storeUser(new UserDto(null, null, null,
+                "demoUserComplete", "demo-user-complete@example.com", "Demo User Complete", "", null,
+                UserRole.USER, UserType.LOCAL));
+        login(user);
+
+        UI.getCurrentOrThrow().navigate(EventGridView.class);
+
+        final var eventGrids = _find(EventGridView.class);
+        assertThat(eventGrids).hasSize(1);
+    }
+
+    @Test
+    void testNavigationWithIncompleteProfile_shouldRedirect() {
+        final var user = userService.storeUser(new UserDto(null, null, null,
+                "demoUserIncomplete", "demo-user-incomplete@example.com", "", "", null,
+                UserRole.USER, UserType.LOCAL));
+        login(user);
+
+        UI.getCurrentOrThrow().navigate(EventGridView.class);
+
+        final var eventGrids = _find(EventGridView.class);
+        assertThat(eventGrids).isEmpty();
+
+        final var titles = _find(H2.class, spec -> spec.withText("My Profile"));
+        assertThat(titles).hasSize(1);
+    }
 }
