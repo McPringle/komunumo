@@ -27,11 +27,10 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.jetbrains.annotations.NotNull;
 
-public class PersistentNotification extends Notification {
+public final class PersistentNotification extends Notification {
 
     public PersistentNotification(final @NotNull String message) {
         super();
-        setDuration(0);
 
         final var text = new Div(new Text(message));
         final var closeButton = new Button(new Icon("lumo", "cross"));
@@ -42,6 +41,12 @@ public class PersistentNotification extends Notification {
         final var layout = new HorizontalLayout(text, closeButton);
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
         add(layout);
+    }
+
+    @Override
+    public void open() {
+        setDuration(0);
+        super.open();
     }
 
 }
