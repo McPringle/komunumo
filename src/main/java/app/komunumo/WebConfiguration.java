@@ -17,7 +17,7 @@
  */
 package app.komunumo;
 
-import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.infra.config.AppConfig;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;

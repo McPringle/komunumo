@@ -17,11 +17,11 @@
  */
 package app.komunumo.domain.event.boundary;
 
+import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.user.control.UserService;
 import app.komunumo.test.BrowserTest;
 import com.icegreen.greenmail.store.FolderException;
 import com.icegreen.greenmail.util.GreenMailUtil;

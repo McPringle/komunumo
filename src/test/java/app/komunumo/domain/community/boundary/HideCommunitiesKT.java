@@ -18,9 +18,9 @@
 package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.infra.ui.vaadin.layout.NavigationBar;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import app.komunumo.test.KaribuTest;
-import app.komunumo.vaadin.components.NavigationBar;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.router.RouterLink;

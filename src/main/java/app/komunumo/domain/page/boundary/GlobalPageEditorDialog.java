@@ -19,8 +19,8 @@ package app.komunumo.domain.page.boundary;
 
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.page.entity.GlobalPageDto;
+import app.komunumo.infra.ui.vaadin.components.MarkdownEditor;
 import app.komunumo.util.SecurityUtil;
-import app.komunumo.vaadin.components.MarkdownEditor;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeEvent;
 import com.vaadin.flow.component.HasValue.ValueChangeListener;

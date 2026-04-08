@@ -18,12 +18,12 @@
 package app.komunumo.domain.core.confirmation.control;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.domain.core.confirmation.boundary.ConfirmationDialog;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.domain.core.i18n.controller.TranslationProvider;
-import app.komunumo.domain.core.confirmation.boundary.ConfirmationDialog;
+import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.infra.ui.i18n.TranslationProvider;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;

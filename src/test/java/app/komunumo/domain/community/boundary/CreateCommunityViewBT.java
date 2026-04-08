@@ -17,8 +17,8 @@
  */
 package app.komunumo.domain.community.boundary;
 
-import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.user.entity.UserType;
 import app.komunumo.test.BrowserTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

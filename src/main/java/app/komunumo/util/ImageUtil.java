@@ -17,9 +17,9 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.core.image.entity.ImageDto;
+import app.komunumo.infra.config.AppConfig;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;

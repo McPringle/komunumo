@@ -17,8 +17,8 @@
  */
 package app.komunumo;
 
-import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.core.config.entity.FilesConfig;
+import app.komunumo.infra.config.AppConfig;
+import app.komunumo.infra.config.FilesConfig;
 import com.vaadin.flow.server.AppShellSettings;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

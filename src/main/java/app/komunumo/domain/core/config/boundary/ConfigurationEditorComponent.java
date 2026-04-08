@@ -17,10 +17,10 @@
  */
 package app.komunumo.domain.core.config.boundary;
 
-import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.i18n.controller.TranslationProvider;
-import app.komunumo.util.LocaleUtil;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.infra.ui.i18n.LocaleUtil;
+import app.komunumo.infra.ui.i18n.TranslationProvider;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;

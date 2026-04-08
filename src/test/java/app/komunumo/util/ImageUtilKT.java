@@ -17,9 +17,9 @@
  */
 package app.komunumo.util;
 
+import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
-import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

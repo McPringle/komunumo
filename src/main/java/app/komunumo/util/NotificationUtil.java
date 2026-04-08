@@ -17,7 +17,7 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.vaadin.components.PersistentNotification;
+import app.komunumo.infra.ui.vaadin.components.PersistentNotification;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import org.jetbrains.annotations.NotNull;

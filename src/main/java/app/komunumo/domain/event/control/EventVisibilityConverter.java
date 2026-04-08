@@ -17,8 +17,8 @@
  */
 package app.komunumo.domain.event.control;
 
-import app.komunumo.jooq.EnumByNameConverter;
 import app.komunumo.domain.event.entity.EventVisibility;
+import app.komunumo.infra.persistence.jooq.EnumByNameConverter;
 
 public final class EventVisibilityConverter extends EnumByNameConverter<EventVisibility> {
     public EventVisibilityConverter() {

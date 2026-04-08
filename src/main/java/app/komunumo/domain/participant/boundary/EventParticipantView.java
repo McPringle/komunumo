@@ -18,16 +18,16 @@
 package app.komunumo.domain.participant.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.participant.entity.RegisteredParticipantDto;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.entity.UserDto;
-import app.komunumo.util.LinkUtil;
+import app.komunumo.infra.ui.vaadin.control.LinkUtil;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import app.komunumo.util.ParseUtil;
-import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Anchor;

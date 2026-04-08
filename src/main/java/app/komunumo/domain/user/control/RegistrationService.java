@@ -17,20 +17,20 @@
  */
 package app.komunumo.domain.user.control;
 
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
+import app.komunumo.domain.core.confirmation.control.ConfirmationService;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
+import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
+import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.mail.control.MailService;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
-import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
-import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
-import app.komunumo.domain.core.i18n.controller.TranslationProvider;
+import app.komunumo.infra.ui.i18n.TranslationProvider;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

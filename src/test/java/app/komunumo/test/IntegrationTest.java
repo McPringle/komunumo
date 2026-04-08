@@ -17,9 +17,9 @@
  */
 package app.komunumo.test;
 
-import app.komunumo.domain.core.demo.control.DemoMode;
-import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.domain.core.demo.control.DemoMode;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.store.FolderException;

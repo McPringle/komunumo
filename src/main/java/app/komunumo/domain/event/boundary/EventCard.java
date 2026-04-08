@@ -19,9 +19,9 @@ package app.komunumo.domain.event.boundary;
 
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventWithImageDto;
-import app.komunumo.vaadin.components.KomunumoCard;
+import app.komunumo.infra.ui.vaadin.components.KomunumoCard;
+import app.komunumo.infra.ui.vaadin.control.LinkUtil;
 import app.komunumo.util.DateTimeUtil;
-import app.komunumo.util.LinkUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import org.jetbrains.annotations.NotNull;

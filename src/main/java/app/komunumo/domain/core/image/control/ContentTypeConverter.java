@@ -17,10 +17,10 @@
  */
 package app.komunumo.domain.core.image.control;
 
+import app.komunumo.domain.core.image.entity.ContentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Converter;
-import app.komunumo.domain.core.image.entity.ContentType;
 
 public final class ContentTypeConverter implements Converter<String, ContentType> {
 

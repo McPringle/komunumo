@@ -18,8 +18,8 @@
 package app.komunumo.domain.core.config.control;
 
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
-import app.komunumo.util.LinkUtil;
-import app.komunumo.util.LocaleUtil;
+import app.komunumo.infra.ui.i18n.LocaleUtil;
+import app.komunumo.infra.ui.vaadin.control.LinkUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +50,7 @@ public class ConfigurationService {
     /**
      * <p>In-memory cache keyed by setting and language code, storing optional string values.</p>
      */
-    private final @NotNull Cache<@NotNull CacheKey, @NotNull Optional<@Nullable String>> cache;
+    private final @NotNull Cache<@NotNull CacheKey, @NotNull Optional<@NotNull String>> cache;
 
     /**
      * <p>Creates a new configuration service backed by the given jOOQ context.</p>

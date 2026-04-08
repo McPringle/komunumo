@@ -19,11 +19,11 @@ package app.komunumo.domain.user.boundary;
 
 import app.komunumo.SecurityConfig;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.layout.boundary.RootView;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.domain.home.boundary.HomeView;
 import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import app.komunumo.util.LocationUtil;
-import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
@@ -52,7 +52,7 @@ public final class LoginView extends AbstractView implements BeforeEnterObserver
     public void beforeEnter(final @NotNull BeforeEnterEvent beforeEnterEvent) {
         final var loggedInUser = loginService.getLoggedInUser();
         if (loggedInUser.isPresent()) {
-            beforeEnterEvent.forwardTo(RootView.class);
+            beforeEnterEvent.forwardTo(HomeView.class);
         } else {
             final var ui = UI.getCurrent();
             loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui));

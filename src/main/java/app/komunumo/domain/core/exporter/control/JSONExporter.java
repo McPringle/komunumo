@@ -21,7 +21,6 @@ import app.komunumo.KomunumoException;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
-import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.event.control.EventService;
@@ -29,6 +28,7 @@ import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.UserService;
+import app.komunumo.infra.ui.i18n.TranslationProvider;
 import app.komunumo.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ import tools.jackson.databind.node.ObjectNode;
 import java.nio.file.Files;
 import java.util.Base64;
 
-import static app.komunumo.util.LocaleUtil.getLanguageCode;
+import static app.komunumo.infra.ui.i18n.LocaleUtil.getLanguageCode;
 
 /**
  * <p>Exports all Komunumo instance data as a JSON file.</p>

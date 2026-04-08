@@ -19,8 +19,8 @@ package app.komunumo.domain.demo.control;
 
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.demo.control.DemoMode;
-import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.event.control.EventService;
 import app.komunumo.test.KaribuTest;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.Assertions;

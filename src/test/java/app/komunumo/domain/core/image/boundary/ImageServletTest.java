@@ -17,14 +17,14 @@
  */
 package app.komunumo.domain.core.image.boundary;
 
-import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.core.config.entity.DemoConfig;
-import app.komunumo.domain.core.config.entity.FilesConfig;
-import app.komunumo.domain.core.config.entity.InstanceConfig;
-import app.komunumo.domain.core.config.entity.MailConfig;
+import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
-import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.infra.config.AppConfig;
+import app.komunumo.infra.config.DemoConfig;
+import app.komunumo.infra.config.FilesConfig;
+import app.komunumo.infra.config.InstanceConfig;
+import app.komunumo.infra.config.MailConfig;
 import app.komunumo.util.ImageUtil;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;

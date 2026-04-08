@@ -17,7 +17,7 @@
  */
 package app.komunumo.domain.core.image.control;
 
-import app.komunumo.domain.core.config.entity.AppConfig;
+import app.komunumo.infra.config.AppConfig;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.jetbrains.annotations.NotNull;

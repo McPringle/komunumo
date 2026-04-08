@@ -132,7 +132,7 @@ class ArchitectureTest {
                 "not depend on " + forbiddenTypeList) {
             @Override
             public void check(@NotNull JavaClass clazz, @NotNull ConditionEvents events) {
-                if (clazz.getFullName().equals("app.komunumo.jooq.ZonedDateTimeConverter")) {
+                if (clazz.getFullName().equals("app.komunumo.infra.persistence.jooq.ZonedDateTimeConverter")) {
                     return; // exception for ZonedDateTimeConverter
                 }
                 if (clazz.getFullName().equals("app.komunumo.domain.event.boundary.CreateEventView")) {
@@ -250,7 +250,7 @@ class ArchitectureTest {
     @Test
     void localeGetLanguageShouldOnlyBeUsedInLocaleUtil() {
         final var forbiddenMethod = "getLanguage";
-        final var allowedClass = "app.komunumo.util.LocaleUtil";
+        final var allowedClass = "app.komunumo.infra.ui.i18n.LocaleUtil";
 
         final var onlyLocaleUtilMayCallGetLanguage = new ArchCondition<JavaClass>(
                 "only LocaleUtil may call Locale.getLanguage()") {

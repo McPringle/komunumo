@@ -19,10 +19,10 @@ package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.infra.ui.vaadin.components.ImageUpload;
+import app.komunumo.infra.ui.vaadin.components.MarkdownEditor;
+import app.komunumo.infra.ui.vaadin.components.ProfileField;
 import app.komunumo.test.KaribuTest;
-import app.komunumo.vaadin.components.ImageUpload;
-import app.komunumo.vaadin.components.MarkdownEditor;
-import app.komunumo.vaadin.components.ProfileField;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;

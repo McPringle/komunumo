@@ -19,11 +19,11 @@ package app.komunumo.domain.user.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.domain.core.layout.boundary.RootView;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.domain.home.boundary.HomeView;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.RegistrationService;
-import app.komunumo.vaadin.components.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
@@ -55,7 +55,7 @@ public final class UserRegistrationView extends AbstractView implements BeforeEn
     private final @NotNull ConfirmationService confirmationService;
     private final @NotNull LoginService loginService;
 
-    protected UserRegistrationView(final @NotNull ConfigurationService configurationService,
+    public UserRegistrationView(final @NotNull ConfigurationService configurationService,
                                    final @NotNull RegistrationService registrationService,
                                    final @NotNull ConfirmationService confirmationService,
                                    final @NotNull LoginService loginService) {
@@ -75,12 +75,12 @@ public final class UserRegistrationView extends AbstractView implements BeforeEn
     public void beforeEnter(final @NotNull BeforeEnterEvent beforeEnterEvent) {
         if (!configurationService.getConfiguration(INSTANCE_REGISTRATION_ALLOWED, Boolean.class)) {
             LOGGER.warn("Registration attempt while registration is disabled.");
-            beforeEnterEvent.forwardTo(RootView.class);
+            beforeEnterEvent.forwardTo(HomeView.class);
         }
 
         final var loggedInUser = loginService.getLoggedInUser();
         if (loggedInUser.isPresent()) {
-            beforeEnterEvent.forwardTo(RootView.class);
+            beforeEnterEvent.forwardTo(HomeView.class);
         } else {
             createUserInterface();
         }
@@ -125,7 +125,7 @@ public final class UserRegistrationView extends AbstractView implements BeforeEn
             dialog.setConfirmText(getTranslation("user.boundary.UserRegistrationView.confirmationDialog.confirmButton"));
             dialog.addConfirmListener(_ -> {
                 dialog.close();
-                UI.getCurrent().navigate(RootView.class);
+                UI.getCurrent().navigate(HomeView.class);
             });
             dialog.open();
         });

@@ -17,8 +17,8 @@
  */
 package app.komunumo.domain.core.config.boundary;
 
-import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.test.BrowserTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

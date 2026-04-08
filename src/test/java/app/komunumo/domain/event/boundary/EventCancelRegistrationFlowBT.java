@@ -24,7 +24,6 @@ import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.test.BrowserTest;
 import com.microsoft.playwright.Page;
-import com.microsoft.playwright.assertions.PlaywrightAssertions;
 import com.microsoft.playwright.options.AriaRole;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;

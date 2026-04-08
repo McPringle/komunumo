@@ -22,7 +22,7 @@ import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
-import app.komunumo.util.LinkUtil;
+import app.komunumo.infra.ui.vaadin.control.LinkUtil;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import org.jetbrains.annotations.NotNull;

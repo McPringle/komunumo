@@ -17,8 +17,10 @@
  */
 package app.komunumo.domain.core.layout.boundary;
 
+import app.komunumo.domain.home.boundary.HomeView;
+import app.komunumo.infra.ui.vaadin.components.InfoBanner;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import app.komunumo.test.KaribuTest;
-import app.komunumo.vaadin.components.InfoBanner;
 import com.vaadin.flow.component.UI;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +37,7 @@ class WebsiteLayoutNoBannerKT extends KaribuTest {
 
     @BeforeEach
     void setUp() {
-        UI.getCurrent().navigate(RootView.class);
+        UI.getCurrent().navigate(HomeView.class);
         final var uiParent = UI.getCurrent()
                 .getCurrentView()
                 .getParent().orElseThrow()

@@ -18,12 +18,12 @@
 package app.komunumo;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.demo.control.DemoMode;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.infra.config.AppConfig;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

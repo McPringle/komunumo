@@ -19,8 +19,8 @@ package app.komunumo.domain.user.boundary;
 
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserRole;
+import app.komunumo.infra.ui.vaadin.components.MarkdownEditor;
 import app.komunumo.test.KaribuTest;
-import app.komunumo.vaadin.components.MarkdownEditor;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.notification.Notification;

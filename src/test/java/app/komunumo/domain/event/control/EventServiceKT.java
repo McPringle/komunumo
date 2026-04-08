@@ -17,11 +17,11 @@
  */
 package app.komunumo.domain.event.control;
 
+import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventStatus;
 import app.komunumo.domain.event.entity.EventVisibility;
 import app.komunumo.domain.event.entity.EventWithImageDto;
-import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;

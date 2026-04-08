@@ -19,8 +19,8 @@ package app.komunumo.domain.core.confirmation.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
-import app.komunumo.vaadin.components.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.AfterNavigationEvent;

@@ -20,10 +20,7 @@ package app.komunumo.domain.core.exporter.control;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.config.entity.ConfigurationSetting;
-import app.komunumo.domain.core.config.entity.FilesConfig;
-import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
@@ -45,6 +42,9 @@ import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.infra.config.AppConfig;
+import app.komunumo.infra.config.FilesConfig;
+import app.komunumo.infra.ui.i18n.TranslationProvider;
 import app.komunumo.util.ImageUtil;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeEach;
@@ -155,7 +155,7 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportSettings() throws Exception {
+    void testExportSettings() {
         // given
         mockEmptyServices();
         when(configurationService.getConfigurationWithoutFallback(ConfigurationSetting.INSTANCE_NAME, null))
@@ -182,7 +182,7 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportUsers() throws Exception {
+    void testExportUsers() {
         // given
         final var user1 = new UserDto(TEST_UUID_1, null, null, "testuser1", "test1@example.com",
                 "Test User 1", "Bio text", TEST_UUID_2, UserRole.USER, UserType.LOCAL);
@@ -216,7 +216,7 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportCommunities() throws Exception {
+    void testExportCommunities() {
         // given
         final var community = new CommunityDto(TEST_UUID_1, "test-community", null, null,
                 "Test Community", "A test community description", TEST_UUID_2);
@@ -240,7 +240,7 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportEvents() throws Exception {
+    void testExportEvents() {
         // given
         final var begin = ZonedDateTime.now();
         final var end = begin.plusHours(2);
@@ -268,7 +268,7 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportMembers() throws Exception {
+    void testExportMembers() {
         // given
         final var since = ZonedDateTime.now();
         final var member = new MemberDto(TEST_UUID_1, TEST_UUID_2, MemberRole.OWNER, since);
@@ -291,7 +291,7 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportParticipants() throws Exception {
+    void testExportParticipants() {
         // given
         final var registered = ZonedDateTime.now();
         final var participant = new ParticipantDto(TEST_UUID_1, TEST_UUID_2, registered);
@@ -313,7 +313,7 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportGlobalPages() throws Exception {
+    void testExportGlobalPages() {
         // given
         final var page = new GlobalPageDto("about", Locale.ENGLISH, null, null, "About Us", "# About\n\nThis is about us.");
         when(globalPageService.getAllGlobalPages()).thenReturn(List.of(page));
@@ -335,7 +335,7 @@ class JSONExporterTest {
     }
 
     @Test
-    void testExportMailTemplates() throws Exception {
+    void testExportMailTemplates() {
         // given
         final var template = new MailTemplate(MailTemplateId.CONFIRMATION_PROCESS, Locale.ENGLISH,
                 "Confirm your email", "Please confirm your email address.");

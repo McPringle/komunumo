@@ -17,11 +17,11 @@
  */
 package app.komunumo.test;
 
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.user.control.UserService;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.microsoft.playwright.APIResponse;
 import com.microsoft.playwright.Browser;

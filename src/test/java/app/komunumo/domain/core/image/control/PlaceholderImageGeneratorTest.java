@@ -18,11 +18,11 @@
 package app.komunumo.domain.core.image.control;
 
 import app.komunumo.KomunumoException;
-import app.komunumo.domain.core.config.entity.AppConfig;
-import app.komunumo.domain.core.config.entity.DemoConfig;
-import app.komunumo.domain.core.config.entity.FilesConfig;
-import app.komunumo.domain.core.config.entity.InstanceConfig;
-import app.komunumo.domain.core.config.entity.MailConfig;
+import app.komunumo.infra.config.AppConfig;
+import app.komunumo.infra.config.DemoConfig;
+import app.komunumo.infra.config.FilesConfig;
+import app.komunumo.infra.config.InstanceConfig;
+import app.komunumo.infra.config.MailConfig;
 import app.komunumo.util.ResourceUtil;
 import nl.altindag.log.LogCaptor;
 import org.jetbrains.annotations.NotNull;

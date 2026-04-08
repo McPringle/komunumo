@@ -17,9 +17,9 @@
  */
 package app.komunumo.domain.core.error.boundary;
 
-import app.komunumo.domain.core.error.entity.ErrorType;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.domain.core.error.entity.ErrorType;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.ErrorParameter;
 import com.vaadin.flow.router.HasErrorParameter;

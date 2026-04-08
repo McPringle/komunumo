@@ -17,8 +17,8 @@
  */
 package app.komunumo.domain.event.control;
 
-import app.komunumo.jooq.EnumByNameConverter;
 import app.komunumo.domain.event.entity.EventStatus;
+import app.komunumo.infra.persistence.jooq.EnumByNameConverter;
 
 public final class EventStatusConverter extends EnumByNameConverter<EventStatus> {
     public EventStatusConverter() {

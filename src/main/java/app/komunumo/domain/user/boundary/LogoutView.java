@@ -19,9 +19,9 @@
 package app.komunumo.domain.user.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.user.control.LoginService;
-import app.komunumo.vaadin.components.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.Route;

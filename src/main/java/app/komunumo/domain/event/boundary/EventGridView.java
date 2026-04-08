@@ -19,8 +19,8 @@ package app.komunumo.domain.event.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.event.control.EventService;
-import app.komunumo.vaadin.components.AbstractView;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;

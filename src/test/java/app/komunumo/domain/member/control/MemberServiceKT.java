@@ -18,9 +18,9 @@
 package app.komunumo.domain.member.control;
 
 import app.komunumo.domain.community.control.CommunityService;
-import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.member.entity.MemberDto;
 import app.komunumo.domain.member.entity.MemberRole;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;

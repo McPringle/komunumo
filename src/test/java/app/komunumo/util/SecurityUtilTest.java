@@ -17,8 +17,8 @@
  */
 package app.komunumo.util;
 
-import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserPrincipal;
+import app.komunumo.domain.user.entity.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

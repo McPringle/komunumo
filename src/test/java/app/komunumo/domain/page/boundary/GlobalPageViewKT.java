@@ -17,8 +17,8 @@
  */
 package app.komunumo.domain.page.boundary;
 
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
 import app.komunumo.test.KaribuTest;
-import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Main;

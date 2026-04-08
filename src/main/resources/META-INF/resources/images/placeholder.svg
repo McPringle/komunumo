@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${imageWidth}" height="${imageHeight}">
+<svg xmlns="http://www.w3.org/2000/svg" width="${imageWidth}" height="${imageHeight}">
     <rect width="100%" height="100%" fill="#d0d7de" />
     <g id="Logo" transform="translate(${logoPositionX},${logoPositionY}) scale(${logoScalingFactor})">
         <!-- User provided svg through file ${komunumo.instance.logo.path}.  default: komunumo.svg -->

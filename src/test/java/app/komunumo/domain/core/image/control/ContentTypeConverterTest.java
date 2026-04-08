@@ -17,8 +17,8 @@
  */
 package app.komunumo.domain.core.image.control;
 
-import org.junit.jupiter.api.Test;
 import app.komunumo.domain.core.image.entity.ContentType;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

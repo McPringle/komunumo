@@ -18,16 +18,16 @@
 package app.komunumo.domain.event.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.event.entity.EventWithImageDto;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.infra.ui.vaadin.control.LinkUtil;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import app.komunumo.util.DateTimeUtil;
 import app.komunumo.util.ImageUtil;
-import app.komunumo.util.LinkUtil;
 import app.komunumo.util.ParseUtil;
-import app.komunumo.vaadin.components.AbstractView;
 import com.vaadin.flow.component.HtmlContainer;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.confirmdialog.ConfirmDialog;

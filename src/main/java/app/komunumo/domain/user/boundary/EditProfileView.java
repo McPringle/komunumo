@@ -18,13 +18,13 @@
 package app.komunumo.domain.user.boundary;
 
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
+import app.komunumo.infra.ui.vaadin.components.MarkdownEditor;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import app.komunumo.util.NotificationUtil;
-import app.komunumo.vaadin.components.AbstractView;
-import app.komunumo.vaadin.components.MarkdownEditor;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.NotificationVariant;

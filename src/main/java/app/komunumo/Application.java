@@ -17,9 +17,9 @@
  */
 package app.komunumo;
 
-import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.image.boundary.ImageServlet;
 import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.infra.config.AppConfig;
 import com.vaadin.flow.component.dependency.StyleSheet;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.component.page.Push;

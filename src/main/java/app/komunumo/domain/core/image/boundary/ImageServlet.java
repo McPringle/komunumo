@@ -17,11 +17,11 @@
  */
 package app.komunumo.domain.core.image.boundary;
 
+import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.image.control.PlaceholderImageGenerator;
-import app.komunumo.domain.core.config.entity.AppConfig;
 import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.image.entity.ImageDto;
-import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.infra.config.AppConfig;
 import app.komunumo.util.ImageUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

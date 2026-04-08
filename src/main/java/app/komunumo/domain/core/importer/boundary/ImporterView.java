@@ -17,19 +17,19 @@
  */
 package app.komunumo.domain.core.importer.boundary;
 
-import app.komunumo.domain.core.importer.control.ImporterLog;
-import app.komunumo.domain.core.importer.control.JSONImporter;
 import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.participant.control.ParticipantService;
-import app.komunumo.domain.page.control.GlobalPageService;
-import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.core.importer.control.ImporterLog;
+import app.komunumo.domain.core.importer.control.JSONImporter;
+import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.member.control.MemberService;
+import app.komunumo.domain.page.control.GlobalPageService;
+import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.UserService;
-import app.komunumo.vaadin.components.AbstractView;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;

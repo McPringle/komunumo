@@ -18,8 +18,8 @@
 package app.komunumo.domain.community.boundary;
 
 import app.komunumo.domain.community.entity.CommunityWithImageDto;
-import app.komunumo.vaadin.components.KomunumoCard;
-import app.komunumo.util.LinkUtil;
+import app.komunumo.infra.ui.vaadin.components.KomunumoCard;
+import app.komunumo.infra.ui.vaadin.control.LinkUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import org.jetbrains.annotations.NotNull;

@@ -17,11 +17,11 @@
  */
 package app.komunumo.domain.core.config.boundary;
 
-import app.komunumo.domain.core.config.entity.ConfigurationSetting;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.i18n.controller.TranslationProvider;
-import app.komunumo.vaadin.components.AbstractView;
-import app.komunumo.domain.core.layout.boundary.WebsiteLayout;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.infra.ui.i18n.TranslationProvider;
+import app.komunumo.infra.ui.vaadin.layout.AbstractView;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;

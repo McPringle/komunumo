@@ -18,12 +18,12 @@
 package app.komunumo.domain.user.control;
 
 import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.domain.core.i18n.controller.TranslationProvider;
 import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserPrincipal;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
+import app.komunumo.infra.ui.i18n.TranslationProvider;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Page;

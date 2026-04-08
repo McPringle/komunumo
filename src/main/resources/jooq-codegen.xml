@@ -26,7 +26,7 @@
                     <includeExpression>(^id$|.*_id$)</includeExpression>
                     <excludeExpression>mail_template\.id</excludeExpression>
                     <userType>java.util.UUID</userType>
-                    <converter>app.komunumo.jooq.UUIDConverter</converter>
+                    <converter>app.komunumo.infra.persistence.jooq.UUIDConverter</converter>
                 </forcedType>
 
                 <forcedType>
@@ -39,7 +39,7 @@
                     <includeTypes>TIMESTAMP</includeTypes>
                     <includeExpression>.*</includeExpression>
                     <userType>java.time.ZonedDateTime</userType>
-                    <converter>app.komunumo.jooq.ZonedDateTimeConverter</converter>
+                    <converter>app.komunumo.infra.persistence.jooq.ZonedDateTimeConverter</converter>
                 </forcedType>
 
                 <forcedType>
@@ -69,7 +69,7 @@
                     <table>
                         <expression>^(COMMUNITY|EVENT|USER)$</expression>
                         <recordImplements>
-                            app.komunumo.jooq.RecordWithTimestamps
+                            app.komunumo.infra.persistence.jooq.RecordWithTimestamps
                         </recordImplements>
                     </table>
                 </tables>

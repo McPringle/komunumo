@@ -17,6 +17,7 @@
  */
 package app.komunumo.util;
 
+import app.komunumo.infra.ui.i18n.LocaleUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

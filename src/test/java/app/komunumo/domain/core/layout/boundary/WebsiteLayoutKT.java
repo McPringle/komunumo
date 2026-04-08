@@ -17,8 +17,13 @@
  */
 package app.komunumo.domain.core.layout.boundary;
 
-import app.komunumo.vaadin.components.InfoBanner;
-import app.komunumo.vaadin.components.PageFooter;
+import app.komunumo.domain.home.boundary.HomeView;
+import app.komunumo.infra.ui.vaadin.components.InfoBanner;
+import app.komunumo.infra.ui.vaadin.layout.NavigationBar;
+import app.komunumo.infra.ui.vaadin.layout.PageFooter;
+import app.komunumo.infra.ui.vaadin.layout.PageHeader;
+import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
+import app.komunumo.test.KaribuTest;
 import com.vaadin.flow.component.HasElement;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Anchor;
@@ -34,18 +39,15 @@ import com.vaadin.flow.router.RouterLink;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import app.komunumo.test.KaribuTest;
-import app.komunumo.vaadin.components.NavigationBar;
-import app.komunumo.vaadin.components.PageHeader;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static app.komunumo.test.TestUtil.assertContainsExactlyOneInstanceOf;
 import static app.komunumo.test.TestUtil.assertContainsExactlyOneRouterLinkOf;
 import static app.komunumo.test.TestUtil.findComponent;
 import static app.komunumo.test.TestUtil.findComponents;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +57,7 @@ class WebsiteLayoutKT extends KaribuTest {
 
     @BeforeEach
     void setUp() {
-        UI.getCurrent().navigate(RootView.class);
+        UI.getCurrent().navigate(HomeView.class);
         final var uiParent = UI.getCurrent()
                 .getCurrentView()
                 .getParent().orElseThrow()

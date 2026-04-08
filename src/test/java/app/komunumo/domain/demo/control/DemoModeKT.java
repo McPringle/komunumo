@@ -17,27 +17,27 @@
  */
 package app.komunumo.domain.demo.control;
 
+import app.komunumo.domain.community.control.CommunityService;
 import app.komunumo.domain.community.entity.CommunityDto;
 import app.komunumo.domain.core.config.control.ConfigurationService;
-import app.komunumo.domain.core.image.entity.ContentType;
 import app.komunumo.domain.core.demo.control.DemoMode;
+import app.komunumo.domain.core.image.control.ImageService;
+import app.komunumo.domain.core.image.entity.ContentType;
+import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventStatus;
 import app.komunumo.domain.event.entity.EventVisibility;
 import app.komunumo.domain.member.control.MemberService;
+import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.page.entity.GlobalPageDto;
-import app.komunumo.domain.core.image.entity.ImageDto;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.participant.entity.ParticipantDto;
+import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.domain.community.control.CommunityService;
-import app.komunumo.domain.event.control.EventService;
-import app.komunumo.domain.page.control.GlobalPageService;
-import app.komunumo.domain.core.image.control.ImageService;
-import app.komunumo.domain.user.control.UserService;
 import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
