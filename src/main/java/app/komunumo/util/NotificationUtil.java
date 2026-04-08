@@ -42,6 +42,7 @@ public final class NotificationUtil {
                 ? new PersistentNotification(message)
                 : new Notification(message);
         notification.addThemeVariants(notificationVariant);
+        notification.setPosition(Notification.Position.TOP_END);
         notification.setDuration(10_000);
         notification.open();
     }
