@@ -32,6 +32,7 @@ public class KomunumoMessageBox extends Div {
     public KomunumoMessageBox(final @NotNull String markdown,
                               final @NotNull MessageType messageType) {
         addClassName("komunumo-message-box");
+        addClassName("komunumo-message-box-" + messageType.name().toLowerCase());
         final var icon = createIcon(messageType);
         icon.addClassName("komunumo-message-box-icon");
         add(icon);

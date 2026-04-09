@@ -20,10 +20,10 @@
     align-items: flex-start;
     gap: 0.75rem;
     padding: 0.875rem 1rem;
-    border-left: 4px solid #d98e04;
+    border-left: 4px solid currentColor;
     border-radius: 0.5rem;
-    background: #fff7e6;
-    color: #5c4300;
+    background: var(--komunumo-color-message-background);
+    color: var(--komunumo-color-message-text);
     font-weight: 500;
     line-height: 1.45;
 }
@@ -32,5 +32,20 @@
     align-self: center;
     min-width: 1.25rem;
     min-height: 1.25rem;
-    color: #d98e04;
+    color: currentColor;
+}
+
+.komunumo-message-box-info {
+    background: var(--komunumo-color-message-background);
+    color: var(--komunumo-color-message-text);
+}
+
+.komunumo-message-box-warning {
+    background: var(--komunumo-color-warning-background);
+    color: var(--komunumo-color-warning-text);
+}
+
+.komunumo-message-box-error {
+    background: var(--komunumo-color-error-background);
+    color: var(--komunumo-color-error-text);
 }
