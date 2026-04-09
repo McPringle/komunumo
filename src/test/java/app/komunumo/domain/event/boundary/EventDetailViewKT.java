@@ -20,6 +20,7 @@ package app.komunumo.domain.event.boundary;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventWithImageDto;
+import app.komunumo.infra.ui.vaadin.components.KomunumoMessageBox;
 import app.komunumo.test.KaribuTest;
 import app.komunumo.util.DateTimeUtil;
 import com.vaadin.flow.component.UI;
@@ -118,7 +119,7 @@ class EventDetailViewKT extends KaribuTest {
         final var registerButton = _find(Button.class, spec -> spec.withClasses("registration-button"));
         assertThat(registerButton).hasSize(1);
 
-        final var registrationHint = _find(Markdown.class, spec -> spec.withClasses("registration-required-hint"));
+        final var registrationHint = _find(KomunumoMessageBox.class, spec -> spec.withClasses("registration-required-hint"));
         assertThat(registrationHint).isEmpty();
     }
 
@@ -136,8 +137,9 @@ class EventDetailViewKT extends KaribuTest {
         final var registerButton = _find(Button.class, spec -> spec.withClasses("registration-button"));
         assertThat(registerButton).isEmpty();
 
-        final var registrationHint = _get(Markdown.class, spec -> spec.withClasses("registration-required-hint"));
-        assertThat(registrationHint.getContent())
+        final var registrationHint = _get(KomunumoMessageBox.class, spec -> spec.withClasses("registration-required-hint"));
+        final var markdown = _get(registrationHint, Markdown.class);
+        assertThat(markdown.getContent())
                 .isEqualTo("You need to [register](register) and [sign in](login) to participate in this event.");
     }
 

@@ -22,6 +22,7 @@ import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.event.entity.EventWithImageDto;
 import app.komunumo.domain.participant.control.ParticipantService;
 import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.infra.ui.vaadin.components.KomunumoMessageBox;
 import app.komunumo.infra.ui.vaadin.control.LinkUtil;
 import app.komunumo.infra.ui.vaadin.layout.AbstractView;
 import app.komunumo.infra.ui.vaadin.layout.WebsiteLayout;
@@ -164,9 +165,8 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
             unregisterButton.addClassName("leave-button");
             pageContent.add(unregisterButton);
         } else if (loggedInUser.isEmpty() && !event.anonymousParticipationAllowed()) {
-            final var registrationHint = new Markdown(
+            final var registrationHint = new KomunumoMessageBox(
                     getTranslation("event.boundary.EventDetailView.registrationRequiresAccount"));
-            registrationHint.addClassName("komunumo-info-box");
             registrationHint.addClassName("registration-required-hint");
             pageContent.add(registrationHint);
         } else {

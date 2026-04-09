@@ -1,4 +1,4 @@
-/**
+/*
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,24 +15,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-html {
-    --komunumo-color-warning-text: #111827;
-    --komunumo-color-warning-background: #f59e0b;
+package app.komunumo.infra.ui.vaadin.components;
 
-    --komunumo-color-success-text: #166534;
-    --komunumo-color-success-background: #dcfce7;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.markdown.Markdown;
+import org.jetbrains.annotations.NotNull;
 
-    --komunumo-color-error-text: #991b1b;
-    --komunumo-color-error-background: #fee2e2;
-}
+public class KomunumoMessageBox extends Div {
 
-html[theme~="dark"] {
-    --komunumo-color-warning-text: #000000;
-    --komunumo-color-warning-background: #fbbf24;
+    public KomunumoMessageBox(final @NotNull String markdown) {
+        addClassName("komunumo-message-box");
+        add(new Markdown(markdown));
+    }
 
-    --komunumo-color-success-text: #4ade80;
-    --komunumo-color-success-background: #052e16;
-
-    --komunumo-color-error-text: #f87171;
-    --komunumo-color-error-background: #450a0a;
 }
