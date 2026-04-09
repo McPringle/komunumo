@@ -269,7 +269,7 @@ class JSONImporterTest {
 
     @Test
     void testImportEvents() {
-        final var eventStore = new ArrayList<EventDto>(3);
+        final var eventStore = new ArrayList<EventDto>();
         final var eventService = mock(EventService.class);
         doAnswer(invocation -> {
             final var event = invocation.getArgument(0, EventDto.class);
@@ -295,9 +295,9 @@ class JSONImporterTest {
             // test correct handling of 'anonymousParticipationAllowed'
             final var demoEvent1 = eventStore.get(0);
             assertThat(demoEvent1.anonymousParticipationAllowed()).isTrue();
-            final var demoEvent2 = eventStore.get(1);
+            final var demoEvent2 = eventStore.get(4);
             assertThat(demoEvent2.anonymousParticipationAllowed()).isTrue();
-            final var demoEvent3 = eventStore.get(2);
+            final var demoEvent3 = eventStore.get(5);
             assertThat(demoEvent3.anonymousParticipationAllowed()).isFalse();
         }
     }

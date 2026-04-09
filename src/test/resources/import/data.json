@@ -318,7 +318,6 @@
       "begin": "2020-01-02T18:00:00+02:00[Europe/Zurich]",
       "end": "2020-01-02T20:00:00+02:00[Europe/Zurich]",
       "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
-      "anonymousParticipationAllowed": true,
       "visibility": "PUBLIC",
       "status": "PUBLISHED"
     },
@@ -331,7 +330,6 @@
       "begin": "2030-01-03T18:00:00+02:00[Europe/Zurich]",
       "end": "2030-01-03T20:00:00+02:00[Europe/Zurich]",
       "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
-      "anonymousParticipationAllowed": false,
       "visibility": "PUBLIC",
       "status": "PUBLISHED"
     },
@@ -356,6 +354,7 @@
       "begin": "2030-01-05T18:00:00+02:00[Europe/Zurich]",
       "end": "2030-01-05T20:00:00+02:00[Europe/Zurich]",
       "imageId": "0278ec5a-9fe1-4882-85f9-845ca72c2795",
+      "anonymousParticipationAllowed": true,
       "visibility": "PUBLIC",
       "status": "PUBLISHED"
     },
@@ -368,6 +367,7 @@
       "begin": "2030-01-06T18:00:00+02:00[Europe/Zurich]",
       "end": "2030-01-06T20:00:00+02:00[Europe/Zurich]",
       "imageId": "",
+      "anonymousParticipationAllowed": false,
       "visibility": "PUBLIC",
       "status": "PUBLISHED"
     },

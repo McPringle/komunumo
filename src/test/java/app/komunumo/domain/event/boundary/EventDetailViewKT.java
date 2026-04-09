@@ -18,9 +18,12 @@
 package app.komunumo.domain.event.boundary;
 
 import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.event.entity.EventDto;
+import app.komunumo.domain.event.entity.EventWithImageDto;
 import app.komunumo.test.KaribuTest;
 import app.komunumo.util.DateTimeUtil;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Main;
@@ -99,6 +102,43 @@ class EventDetailViewKT extends KaribuTest {
 
         final var image = _find(Image.class, spec -> spec.withClasses("event-image"));
         assertThat(image).isEmpty();
+    }
+
+    @Test
+    void anonymousVisitorCanRegisterWhenAnonymousParticipationIsAllowed() {
+        final var testEvent = eventService.getUpcomingEventsWithImage()
+                .stream()
+                .map(EventWithImageDto::event)
+                .filter(EventDto::anonymousParticipationAllowed)
+                .findAny()
+                .orElseThrow();
+
+        UI.getCurrent().navigate("events/" + testEvent.id());
+
+        final var registerButton = _find(Button.class, spec -> spec.withClasses("registration-button"));
+        assertThat(registerButton).hasSize(1);
+
+        final var registrationHint = _find(Paragraph.class, spec -> spec.withClasses("registration-required-hint"));
+        assertThat(registrationHint).isEmpty();
+    }
+
+    @Test
+    void anonymousVisitorSeesHintWhenAnonymousParticipationIsNotAllowed() {
+        final var testEvent = eventService.getUpcomingEventsWithImage()
+                .stream()
+                .map(EventWithImageDto::event)
+                .filter(event -> !event.anonymousParticipationAllowed())
+                .findAny()
+                .orElseThrow();
+
+        UI.getCurrent().navigate("events/" + testEvent.id());
+
+        final var registerButton = _find(Button.class, spec -> spec.withClasses("registration-button"));
+        assertThat(registerButton).isEmpty();
+
+        final var registrationHint = _get(Paragraph.class, spec -> spec.withClasses("registration-required-hint"));
+        assertThat(registrationHint.getText())
+                .isEqualTo("You need to register and sign in to participate in this event.");
     }
 
     @Test

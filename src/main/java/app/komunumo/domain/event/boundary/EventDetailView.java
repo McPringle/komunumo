@@ -163,6 +163,12 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
             });
             unregisterButton.addClassName("leave-button");
             pageContent.add(unregisterButton);
+        } else if (loggedInUser.isEmpty() && !event.anonymousParticipationAllowed()) {
+            final var registrationHint = new Paragraph(
+                    getTranslation("event.boundary.EventDetailView.registrationRequiresAccount"));
+            registrationHint.addClassName("komunumo-info-box");
+            registrationHint.addClassName("registration-required-hint");
+            pageContent.add(registrationHint);
         } else {
             final var registerButton = new Button(getTranslation("event.boundary.EventDetailView.register"));
             registerButton.addClickListener(_ -> {
