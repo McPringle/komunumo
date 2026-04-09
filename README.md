@@ -18,10 +18,16 @@
 - [Configuration](#configuration)
     - [Server Configuration](#server-configuration)
     - [Instance Configuration](#instance-configuration)
+        - [Admin](#admin)
     - [File Configuration](#file-configuration)
     - [Demo Mode Configuration](#demo-mode-configuration)
+        - [Providing Custom Demo Data](#providing-custom-demo-data)
     - [Mail Configuration](#mail-configuration)
+        - [Available Environment Variables](#available-environment-variables)
+        - [Example Configuration](#example-configuration)
     - [Database Configuration](#database-configuration)
+        - [Important MySQL and MariaDB configuration](#important-mysql-and-mariadb-configuration)
+    - [Custom Styling](#custom-styling)
 - [Copyright and License](#copyright-and-license)
 
 ## About
