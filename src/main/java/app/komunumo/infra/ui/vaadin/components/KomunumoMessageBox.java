@@ -42,13 +42,14 @@ public class KomunumoMessageBox extends Div {
     private @NotNull Icon createIcon(final @NotNull MessageType messageType) {
         return switch (messageType) {
             case INFO -> VaadinIcon.INFO_CIRCLE.create();
+            case SUCCESS -> VaadinIcon.CHECK_CIRCLE.create();
             case WARNING -> VaadinIcon.WARNING.create();
             case ERROR -> new Icon("lumo", "error");
         };
     }
 
     public enum MessageType {
-        INFO, WARNING, ERROR
+        INFO, SUCCESS, WARNING, ERROR
     }
 
 }

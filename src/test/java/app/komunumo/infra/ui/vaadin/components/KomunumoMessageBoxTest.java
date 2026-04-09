@@ -38,6 +38,11 @@ public class KomunumoMessageBoxTest {
     }
 
     @Test
+    void successVariant() {
+        assertMessageBoxVariant(KomunumoMessageBox.MessageType.SUCCESS, "vaadin:check-circle", "komunumo-message-box-success");
+    }
+
+    @Test
     void warningVariant() {
         assertMessageBoxVariant(KomunumoMessageBox.MessageType.WARNING, "vaadin:warning", "komunumo-message-box-warning");
     }

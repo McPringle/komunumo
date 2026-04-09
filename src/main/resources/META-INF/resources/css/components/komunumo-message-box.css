@@ -40,6 +40,11 @@
     color: var(--komunumo-color-message-text);
 }
 
+.komunumo-message-box-success {
+    background: var(--komunumo-color-success-background);
+    color: var(--komunumo-color-success-text);
+}
+
 .komunumo-message-box-warning {
     background: var(--komunumo-color-warning-background);
     color: var(--komunumo-color-warning-text);
