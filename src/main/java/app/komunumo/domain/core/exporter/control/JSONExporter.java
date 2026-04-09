@@ -224,6 +224,7 @@ public final class JSONExporter {
             node.put("begin", event.begin() != null ? event.begin().toString() : "");
             node.put("end", event.end() != null ? event.end().toString() : "");
             node.put("imageId", event.imageId() != null ? event.imageId().toString() : "");
+            node.put("anonymousParticipationAllowed", event.anonymousParticipationAllowed());
             node.put("visibility", event.visibility().name());
             node.put("status", event.status().name());
             eventsArray.add(node);

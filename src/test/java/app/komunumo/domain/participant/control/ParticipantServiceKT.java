@@ -183,6 +183,7 @@ class ParticipantServiceKT extends KaribuTest {
                 event.begin(),
                 event.end(),
                 event.imageId(),
+                event.anonymousParticipationAllowed(),
                 event.visibility(),
                 event.status()
         );
@@ -211,6 +212,7 @@ class ParticipantServiceKT extends KaribuTest {
                 event.begin(),
                 event.end(),
                 event.imageId(),
+                event.anonymousParticipationAllowed(),
                 event.visibility(),
                 event.status()
         );

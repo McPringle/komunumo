@@ -34,6 +34,7 @@ public record EventDto(
         @Nullable ZonedDateTime begin,
         @Nullable ZonedDateTime end,
         @Nullable UUID imageId,
+        boolean anonymousParticipationAllowed,
         @NotNull EventVisibility visibility,
         @NotNull EventStatus status
         ) {

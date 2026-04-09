@@ -36,6 +36,7 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
@@ -77,6 +78,7 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
     private final @NotNull DateTimePicker endDateTimeField;
     private final @NotNull Select<ZoneId> timeZoneSelector;
     private final @NotNull ImageUpload imageField;
+    private final @NotNull Checkbox anonymousParticipationAllowed;
     private final @NotNull Select<EventVisibility> visibilitySelector;
     private final @NotNull Select<EventStatus> statusSelector;
     private final @NotNull Button createEventbutton;
@@ -100,6 +102,7 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
         this.endDateTimeField = new DateTimePicker();
         this.timeZoneSelector = new Select<>();
         this.imageField = new ImageUpload(imageService);
+        this.anonymousParticipationAllowed = new Checkbox();
         this.visibilitySelector = new Select<>();
         this.statusSelector = new Select<>();
         this.createEventbutton = new Button();
@@ -223,6 +226,11 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
         imageField.setLabel(getTranslation("event.boundary.CreateEventView.label.image"));
         add(imageField);
 
+        anonymousParticipationAllowed.addClassName("anonymous-participation-field");
+        anonymousParticipationAllowed.setLabel(getTranslation("event.boundary.CreateEventView.label.anonymousParticipationAllowed"));
+        anonymousParticipationAllowed.setValue(true);
+        add(anonymousParticipationAllowed);
+
         visibilitySelector.addClassName("visibility-field");
         visibilitySelector.setItemLabelGenerator(EventVisibility::name);
         visibilitySelector.setItems(EventVisibility.values());
@@ -267,11 +275,12 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
             final var endDateTime = ZonedDateTime.of(endDateTimeField.getValue(), timeZoneSelector.getValue());
             final var image = imageField.getValue();
             final var imageId = image != null ? image.id() : null;
+            final var anonymousParticipation = anonymousParticipationAllowed.getValue();
             final var visibility = visibilitySelector.getValue();
             final var status = statusSelector.getValue();
 
-            final var newEvent = new EventDto(null, communityId, null, null,
-                    title, description, location, beginDateTime, endDateTime, imageId, visibility, status);
+            final var newEvent = new EventDto(null, communityId, null, null, title, description,
+                    location, beginDateTime, endDateTime, imageId, anonymousParticipation, visibility, status);
             final var event = eventService.storeEvent(newEvent);
 
             showNotification(getTranslation("event.boundary.CreateEventView.notification.success"), SUCCESS);

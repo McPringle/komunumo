@@ -35,7 +35,7 @@ class EventCardKT extends KaribuTest {
         final var event = new EventDto(null, null, null, null,
                 "title", "description", "location",
                 null, null, null,
-                EventVisibility.PUBLIC, EventStatus.DRAFT);
+                true, EventVisibility.PUBLIC, EventStatus.DRAFT);
         final var eventWithImage = new EventWithImageDto(event, null);
 
         final var eventCard = new EventCard(eventWithImage);

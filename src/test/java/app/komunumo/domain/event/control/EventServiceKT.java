@@ -50,7 +50,7 @@ class EventServiceKT extends KaribuTest {
         // store a new event into the database
         var event = new EventDto(null, communityId, null, null,
                 "Test Event Title", "", "", null, null,
-                null, EventVisibility.PUBLIC, EventStatus.DRAFT);
+                null, true, EventVisibility.PUBLIC, EventStatus.DRAFT);
         event = eventService.storeEvent(event);
         final var eventId = event.id();
         assertThat(eventId).isNotNull().satisfies(testee -> {
@@ -98,7 +98,7 @@ class EventServiceKT extends KaribuTest {
         // update the existing event
         event = new EventDto(event.id(), event.communityId(), event.created(), event.updated(),
                 "Test Event Modified", event.description(), event.location(), event.begin(), event.end(),
-                event.imageId(), event.visibility(), event.status());
+                event.imageId(), event.anonymousParticipationAllowed(), event.visibility(), event.status());
         event = eventService.storeEvent(event);
         assertThat(event).isNotNull().satisfies(testee -> {
             assertThat(testee.id()).isEqualTo(eventId);
@@ -254,7 +254,7 @@ class EventServiceKT extends KaribuTest {
         final var testEvent = eventService.storeEvent(
                 new EventDto(null, communityWithImage.id(), null, null,
                 "Test Event", "This is a test event.", "Test", beginDate, endDate,
-                null, EventVisibility.PUBLIC, EventStatus.PUBLISHED));
+                null, true, EventVisibility.PUBLIC, EventStatus.PUBLISHED));
         assertThat(testEvent.id()).isNotNull();
         try {
             final var testEventWithImage = eventService.getEventWithImage(testEvent.id()).orElseThrow();
@@ -279,7 +279,7 @@ class EventServiceKT extends KaribuTest {
         final var testEvent = eventService.storeEvent(
                 new EventDto(null, communityWithImage.id(), null, null,
                 "Test Event", "This is a test event.", "Test", beginDate, endDate,
-                null, EventVisibility.PUBLIC, EventStatus.PUBLISHED));
+                null, true, EventVisibility.PUBLIC, EventStatus.PUBLISHED));
         assertThat(testEvent.id()).isNotNull();
         try {
             final var testEvents = eventService.getUpcomingEventsWithImage(communityWithImage);

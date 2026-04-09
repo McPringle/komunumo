@@ -244,11 +244,12 @@ public final class JSONImporter {
                     final var begin = parseDateTime(node.path("begin").asString());
                     final var end = parseDateTime(node.path("end").asString());
                     final var imageId = parseUUID(node.path("imageId").asString());
+                    final var anonymousParticipationAllowed = parseBoolean(node, "anonymousParticipationAllowed", true);
                     final var visibility = EventVisibility.valueOf(node.path("visibility").asString());
                     final var status = EventStatus.valueOf(node.path("status").asString());
 
-                    final var event = new EventDto(eventId, communityId, null, null,
-                            title, description, location, begin, end, imageId, visibility, status);
+                    final var event = new EventDto(eventId, communityId, null, null, title,
+                            description, location, begin, end, imageId, anonymousParticipationAllowed, visibility, status);
                     eventService.storeEvent(event);
                     counter.incrementAndGet();
                 } catch (final Exception e) {
@@ -259,6 +260,13 @@ public final class JSONImporter {
         } else {
             importerLog.warn("No events found in JSON data.");
         }
+    }
+
+    private boolean parseBoolean(final JsonNode node, final @NotNull String propertyName, final boolean defaultValue) {
+        if (node.has(propertyName)) {
+            return node.path(propertyName).asBoolean();
+        }
+        return defaultValue;
     }
 
     public void importParticipants(final @NotNull ParticipantService participantService) {

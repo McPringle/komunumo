@@ -122,7 +122,7 @@ class DemoModeKT extends KaribuTest {
 
         final var newEvent = eventService.storeEvent(new EventDto(null, community.id(), null, null,
                 "Demo Event", "", "", null, null, null,
-                EventVisibility.PUBLIC, EventStatus.DRAFT));
+                true, EventVisibility.PUBLIC, EventStatus.DRAFT));
         assertThat(eventService.getEventCount()).isEqualTo(7);
 
         participantService.storeParticipant(

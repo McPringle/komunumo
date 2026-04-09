@@ -51,7 +51,7 @@ class LinkUtilTest {
         final var event = new EventDto(UUID.fromString("8232a4f1-3f02-4db3-bf78-18387734c81c"),
                 UUID.fromString("e315c669-95ac-4231-96b6-55fb4c30e0e2"), null, null,
                 "Test Event Title", "Test Event Description", "", null, null, null,
-                EventVisibility.PUBLIC, EventStatus.PUBLISHED);
+                true, EventVisibility.PUBLIC, EventStatus.PUBLISHED);
         final var link = LinkUtil.getLink(event);
         assertThat(link).isEqualTo("/events/8232a4f1-3f02-4db3-bf78-18387734c81c");
     }
@@ -62,7 +62,7 @@ class LinkUtilTest {
         final var event = new EventDto(UUID.fromString("8232a4f1-3f02-4db3-bf78-18387734c81c"),
                 UUID.fromString("e315c669-95ac-4231-96b6-55fb4c30e0e2"), null, null,
                 "Test Event Title", "Test Event Description", "", null, null, null,
-                EventVisibility.PUBLIC, EventStatus.PUBLISHED);
+                true, EventVisibility.PUBLIC, EventStatus.PUBLISHED);
         final var link = LinkUtil.getLink(event);
         assertThat(link).isEqualTo("/events/8232a4f1-3f02-4db3-bf78-18387734c81c");
     }
@@ -89,7 +89,7 @@ class LinkUtilTest {
         final var event = new EventDto(UUID.fromString("8232a4f1-3f02-4db3-bf78-18387734c81c"),
                 UUID.fromString("e315c669-95ac-4231-96b6-55fb4c30e0e2"), null, null,
                 "Test Event Title", "Test Event Description", "", null, null, null,
-                EventVisibility.PUBLIC, EventStatus.PUBLISHED);
+                true, EventVisibility.PUBLIC, EventStatus.PUBLISHED);
         final var link = LinkUtil.getLink(event, true);
         assertThat(link).isEqualTo("/events/8232a4f1-3f02-4db3-bf78-18387734c81c");
     }
@@ -100,7 +100,7 @@ class LinkUtilTest {
         final var event = new EventDto(UUID.fromString("8232a4f1-3f02-4db3-bf78-18387734c81c"),
                 UUID.fromString("e315c669-95ac-4231-96b6-55fb4c30e0e2"), null, null,
                 "Test Event Title", "Test Event Description", "", null, null, null,
-                EventVisibility.PUBLIC, EventStatus.PUBLISHED);
+                true, EventVisibility.PUBLIC, EventStatus.PUBLISHED);
         final var link = LinkUtil.getLink(event, true);
         assertThat(link).isEqualTo("http://localhost:8080/events/8232a4f1-3f02-4db3-bf78-18387734c81c");
     }

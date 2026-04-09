@@ -246,7 +246,7 @@ class JSONExporterTest {
         final var end = begin.plusHours(2);
         final var event = new EventDto(TEST_UUID_1, TEST_UUID_2, null, null,
                 "Test Event", "Event description", "Test Location",
-                begin, end, TEST_UUID_3, EventVisibility.PUBLIC, EventStatus.PUBLISHED);
+                begin, end, TEST_UUID_3, true, EventVisibility.PUBLIC, EventStatus.PUBLISHED);
         when(eventService.getEvents()).thenReturn(List.of(event));
         mockEmptyServicesExceptEvents();
 

@@ -23,6 +23,7 @@ import app.komunumo.domain.core.config.control.ConfigurationService;
 import app.komunumo.domain.core.image.control.ImageService;
 import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.event.control.EventService;
+import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.member.control.MemberService;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.participant.control.ParticipantService;
@@ -32,12 +33,14 @@ import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -266,7 +269,13 @@ class JSONImporterTest {
 
     @Test
     void testImportEvents() {
+        final var eventStore = new ArrayList<EventDto>(3);
         final var eventService = mock(EventService.class);
+        doAnswer(invocation -> {
+            final var event = invocation.getArgument(0, EventDto.class);
+            eventStore.add(event);
+            return event;
+        }).when(eventService).storeEvent(any(EventDto.class));
         doThrow(new RuntimeException("Simulated failure"))
                 .when(eventService)
                 .storeEvent(argThat(event -> UUID_ZERO.equals(event.id())));
@@ -282,6 +291,14 @@ class JSONImporterTest {
             assertThat(logCaptor.getWarnLogs()).containsExactly(
                     "Skipping event '{\"eventId\":\"00000000-0000-0000-0000-000000000000\",\"communityId\":\"42524267-be7e-404b-a9bf-c3da72b97717\",\"title\":\"Event with invalid community\",\"description\":\"Event with a community that does not exist for integration tests.\",\"location\":\"Somewhere\",\"begin\":\"2030-01-07T18:00:00+02:00[Europe/Zurich]\",\"end\":\"2030-01-07T20:00:00+02:00[Europe/Zurich]\",\"imageId\":\"\",\"visibility\":\"PRIVATE\",\"status\":\"DRAFT\"}': Simulated failure");
             assertThat(logCaptor.getErrorLogs()).isEmpty();
+
+            // test correct handling of 'anonymousParticipationAllowed'
+            final var demoEvent1 = eventStore.get(0);
+            assertThat(demoEvent1.anonymousParticipationAllowed()).isTrue();
+            final var demoEvent2 = eventStore.get(1);
+            assertThat(demoEvent2.anonymousParticipationAllowed()).isTrue();
+            final var demoEvent3 = eventStore.get(2);
+            assertThat(demoEvent3.anonymousParticipationAllowed()).isFalse();
         }
     }
 
@@ -390,4 +407,3 @@ class JSONImporterTest {
     }
 
 }
-
