@@ -18,6 +18,7 @@
 package app.komunumo.infra.ui.vaadin.components;
 
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.markdown.Markdown;
 import org.jetbrains.annotations.NotNull;
@@ -25,11 +26,28 @@ import org.jetbrains.annotations.NotNull;
 public class KomunumoMessageBox extends Div {
 
     public KomunumoMessageBox(final @NotNull String markdown) {
+        this(markdown, MessageType.INFO);
+    }
+
+    public KomunumoMessageBox(final @NotNull String markdown,
+                              final @NotNull MessageType messageType) {
         addClassName("komunumo-message-box");
-        final var icon = VaadinIcon.INFO_CIRCLE.create();
+        final var icon = createIcon(messageType);
         icon.addClassName("komunumo-message-box-icon");
         add(icon);
         add(new Markdown(markdown));
+    }
+
+    private @NotNull Icon createIcon(final @NotNull MessageType messageType) {
+        return switch (messageType) {
+            case INFO -> VaadinIcon.INFO_CIRCLE.create();
+            case WARNING -> VaadinIcon.WARNING.create();
+            case ERROR -> new Icon("lumo", "error");
+        };
+    }
+
+    public enum MessageType {
+        INFO, WARNING, ERROR
     }
 
 }
