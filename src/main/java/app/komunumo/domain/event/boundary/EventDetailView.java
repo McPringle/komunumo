@@ -164,7 +164,7 @@ public final class EventDetailView extends AbstractView implements BeforeEnterOb
             unregisterButton.addClassName("leave-button");
             pageContent.add(unregisterButton);
         } else if (loggedInUser.isEmpty() && !event.anonymousParticipationAllowed()) {
-            final var registrationHint = new Paragraph(
+            final var registrationHint = new Markdown(
                     getTranslation("event.boundary.EventDetailView.registrationRequiresAccount"));
             registrationHint.addClassName("komunumo-info-box");
             registrationHint.addClassName("registration-required-hint");
