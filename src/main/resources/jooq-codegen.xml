@@ -7,8 +7,9 @@
     https://www.jooq.org/xsd/jooq-codegen-3.20.1.xsd">
 
     <jdbc>
-        <driver>org.testcontainers.jdbc.ContainerDatabaseDriver</driver>
-        <url>jdbc:tc:mariadb:lts:///jooq?allowMultiQueries=true&amp;TC_TMPFS=/testtmpfs:rw&amp;TC_INITSCRIPT=file:src/main/resources/db/migration/V1__init.sql</url>
+        <!-- JDBC values are overridden by JooqCodegenRunner after Flyway migrated a disposable database. -->
+        <driver>org.mariadb.jdbc.Driver</driver>
+        <url>jdbc:mariadb://unused/jooq</url>
         <user>test</user>
         <password>test</password>
     </jdbc>
@@ -19,6 +20,7 @@
 
             <inputSchema>jooq</inputSchema>
             <outputSchemaToDefault>true</outputSchemaToDefault>
+            <excludes>flyway_schema_history</excludes>
 
             <forcedTypes>
                 <forcedType>

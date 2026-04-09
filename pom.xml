@@ -489,13 +489,16 @@
 
                             <includePluginDependencies>true</includePluginDependencies>
                             <classpathScope>test</classpathScope>
-                            <longClasspath>true</longClasspath>
+                            <longClasspath>false</longClasspath>
 
                             <arguments>
+                                <argument>--source</argument>
+                                <argument>${java.version}</argument>
                                 <argument>-cp</argument>
                                 <classpath/>
-                                <argument>org.jooq.codegen.GenerationTool</argument>
-                                <argument>${project.basedir}/src/main/resources/jooq-codegen.xml</argument>
+                                <argument>${project.basedir}/src/main/jooq/JooqCodegenRunner.java</argument>
+                                <argument>${project.basedir}</argument>
+                                <argument>src/main/resources/jooq-codegen.xml</argument>
                             </arguments>
                         </configuration>
                     </execution>
