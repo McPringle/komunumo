@@ -21,8 +21,11 @@ import app.komunumo.domain.core.confirmation.control.ConfirmationService;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
 import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
 import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.domain.core.mail.entity.MailFormat;
+import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.event.entity.EventDto;
+import app.komunumo.domain.member.entity.MemberRole;
 import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.control.UserService;
 import app.komunumo.domain.user.entity.UserDto;
@@ -33,17 +36,22 @@ import app.komunumo.test.KaribuTest;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
+import org.mockito.invocation.Invocation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Optional;
 
+import static app.komunumo.data.db.Tables.MEMBER;
+import static app.komunumo.data.db.Tables.USER;
 import static app.komunumo.domain.participant.control.ParticipantService.CONTEXT_KEY_EVENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockingDetails;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -81,7 +89,7 @@ class ParticipantServiceKT extends KaribuTest {
 
         assertThat(participantService.getParticipantCount(event)).isZero();
 
-        final var email = "test@komunumo.app";
+        final var email = "test@example.com";
         assertThat(userService.getUserByEmail(email)).isEmpty();
 
         userService.storeUser(new UserDto(null, null, null, null, email, "", "",
@@ -122,7 +130,7 @@ class ParticipantServiceKT extends KaribuTest {
     void joinEventAnonymousUser() {
         assertThat(participantService.getAllParticipants()).hasSize(6);
 
-        final var email = "test@komunumo.app";
+        final var email = "test@example.com";
         assertThat(userService.getUserByEmail(email)).isEmpty();
 
         final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
@@ -166,7 +174,7 @@ class ParticipantServiceKT extends KaribuTest {
     void joinEvent_withInvalidEventId_shouldFail() {
         assertThat(participantService.getAllParticipants()).hasSize(6);
 
-        final var email = "test@komunumo.app";
+        final var email = "test@example.com";
         assertThat(userService.getUserByEmail(email)).isEmpty();
 
         final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
@@ -285,6 +293,115 @@ class ParticipantServiceKT extends KaribuTest {
 
         assertThat(result).isTrue();
         assertThat(participantService.getAllParticipants()).hasSize(7);
+    }
+
+    @Test
+    void handleConfirmationResponse_shouldNotifyEventManagers_withParticipantName() {
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        final var email = "participant-with-name@example.com";
+        final var user = userService.storeUser(new UserDto(
+                null, null, null, null, email, "Alice", "",
+                null, UserRole.USER, UserType.LOCAL));
+
+        final var expectedRecipientEmails = dsl.select(USER.EMAIL)
+                .from(MEMBER)
+                .join(USER).on(MEMBER.USER_ID.eq(USER.ID))
+                .where(MEMBER.COMMUNITY_ID.eq(event.communityId()))
+                .and(MEMBER.ROLE.in(MemberRole.OWNER.name(), MemberRole.ORGANIZER.name()))
+                .and(USER.EMAIL.isNotNull())
+                .fetch(USER.EMAIL)
+                .stream()
+                .filter(recipientEmail -> !recipientEmail.isBlank())
+                .distinct()
+                .toArray(String[]::new);
+
+        final var mailServiceMock = mock(MailService.class);
+        final var service = new ParticipantService(
+                dsl,
+                mailServiceMock,
+                userService,
+                loginService,
+                confirmationService,
+                translationProvider
+        );
+
+        final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
+        final var locale = Locale.ENGLISH;
+        final var confirmationResponse = service.handleConfirmationResponse(email, context, locale);
+
+        assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
+        assertManagerNotificationMail(mailServiceMock, locale, event.title(), "Alice", expectedRecipientEmails);
+    }
+
+    @Test
+    void handleConfirmationResponse_shouldNotifyEventManagers_withSomeone_forAnonymousUser() {
+        final var event = eventService.getUpcomingEventsWithImage().getFirst().event();
+        final var email = "anonymous-participant@example.com";
+
+        final var expectedRecipientEmails = dsl.select(USER.EMAIL)
+                .from(MEMBER)
+                .join(USER).on(MEMBER.USER_ID.eq(USER.ID))
+                .where(MEMBER.COMMUNITY_ID.eq(event.communityId()))
+                .and(MEMBER.ROLE.in(MemberRole.OWNER.name(), MemberRole.ORGANIZER.name()))
+                .and(USER.EMAIL.isNotNull())
+                .fetch(USER.EMAIL)
+                .stream()
+                .filter(recipientEmail -> !recipientEmail.isBlank())
+                .distinct()
+                .toArray(String[]::new);
+
+        final var mailServiceMock = mock(MailService.class);
+        final var service = new ParticipantService(
+                dsl,
+                mailServiceMock,
+                userService,
+                loginService,
+                confirmationService,
+                translationProvider
+        );
+
+        final var context = ConfirmationContext.of(CONTEXT_KEY_EVENT, event);
+        final var locale = Locale.ENGLISH;
+        final var confirmationResponse = service.handleConfirmationResponse(email, context, locale);
+
+        assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
+        assertManagerNotificationMail(mailServiceMock, locale, event.title(), "Someone", expectedRecipientEmails);
+    }
+
+    private void assertManagerNotificationMail(final @NotNull MailService mailServiceMock,
+                                               final @NotNull Locale locale,
+                                               final @NotNull String eventTitle,
+                                               final @NotNull String participantName,
+                                               final @NotNull String[] expectedRecipientEmails) {
+        final var managerMailInvocation = mockingDetails(mailServiceMock).getInvocations().stream()
+                .filter(invocation -> "sendMail".equals(invocation.getMethod().getName()))
+                .filter(invocation -> invocation.getArguments().length >= 5)
+                .filter(invocation -> invocation.getArguments()[0] == MailTemplateId.EVENT_REGISTRATION_NOTIFY_MANAGERS)
+                .findFirst()
+                .orElseThrow();
+
+        assertMailArguments(managerMailInvocation, locale, eventTitle, participantName, expectedRecipientEmails);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void assertMailArguments(final @NotNull Invocation invocation,
+                                     final @NotNull Locale locale,
+                                     final @NotNull String eventTitle,
+                                     final @NotNull String participantName,
+                                     final @NotNull String[] expectedRecipientEmails) {
+        final var arguments = invocation.getArguments();
+        assertThat(arguments[1]).isEqualTo(locale);
+        assertThat(arguments[2]).isEqualTo(MailFormat.MARKDOWN);
+
+        final var variables = (java.util.Map<String, String>) arguments[3];
+        assertThat(variables).containsEntry("eventTitle", eventTitle);
+        assertThat(variables).containsEntry("participantName", participantName);
+
+        final var actualRecipients = Arrays.stream(arguments)
+                .skip(4)
+                .map(String.class::cast)
+                .toArray(String[]::new);
+        assertThat(actualRecipients).containsExactlyInAnyOrder(expectedRecipientEmails);
     }
 
     /**

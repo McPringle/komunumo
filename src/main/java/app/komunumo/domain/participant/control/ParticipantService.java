@@ -28,6 +28,7 @@ import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.core.mail.entity.MailFormat;
 import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.event.entity.EventDto;
+import app.komunumo.domain.member.entity.MemberRole;
 import app.komunumo.domain.participant.entity.ParticipantDto;
 import app.komunumo.domain.participant.entity.RegisteredParticipantDto;
 import app.komunumo.domain.user.control.LoginService;
@@ -49,6 +50,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import static app.komunumo.data.db.tables.Member.MEMBER;
 import static app.komunumo.data.db.tables.Participant.PARTICIPANT;
 import static app.komunumo.data.db.tables.User.USER;
 
@@ -148,7 +150,39 @@ public final class ParticipantService {
                     mailVariables, email);
         }
 
+        notifyEventManagersAboutNewRegistration(event, user, locale);
+
         return true;
+    }
+
+    private void notifyEventManagersAboutNewRegistration(final @NotNull EventDto event,
+                                                         final @NotNull UserDto user,
+                                                         final @NotNull Locale locale) {
+        final var recipientEmails = dsl.select(USER.EMAIL)
+                .from(MEMBER)
+                .join(USER).on(MEMBER.USER_ID.eq(USER.ID))
+                .where(MEMBER.COMMUNITY_ID.eq(event.communityId()))
+                .and(MEMBER.ROLE.in(MemberRole.OWNER.name(), MemberRole.ORGANIZER.name()))
+                .and(USER.EMAIL.isNotNull())
+                .fetch(USER.EMAIL)
+                .stream()
+                .distinct()
+                .toArray(String[]::new);
+
+        final Map<String, String> mailVariables = Map.of(
+                "eventTitle", event.title(),
+                "participantName", resolveParticipantName(user, locale)
+        );
+        mailService.sendMail(MailTemplateId.EVENT_REGISTRATION_NOTIFY_MANAGERS, locale, MailFormat.MARKDOWN,
+                mailVariables, recipientEmails);
+    }
+
+    private @NotNull String resolveParticipantName(final @NotNull UserDto user,
+                                                   final @NotNull Locale locale) {
+        if (!user.name().isBlank()) {
+            return user.name();
+        }
+        return translationProvider.getTranslation("participant.control.ParticipantService.anonymousName", locale);
     }
 
     public void storeParticipant(final @NotNull ParticipantDto participant) {
