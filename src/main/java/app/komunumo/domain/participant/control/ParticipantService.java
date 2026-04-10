@@ -171,7 +171,8 @@ public final class ParticipantService {
 
         final Map<String, String> mailVariables = Map.of(
                 "eventTitle", event.title(),
-                "participantName", resolveParticipantName(user, locale)
+                "participantName", resolveParticipantName(user, locale),
+                "participantCount", Integer.toString(getParticipantCount(event))
         );
         mailService.sendMail(MailTemplateId.EVENT_REGISTRATION_NOTIFY_MANAGERS, locale, MailFormat.MARKDOWN,
                 mailVariables, recipientEmails);

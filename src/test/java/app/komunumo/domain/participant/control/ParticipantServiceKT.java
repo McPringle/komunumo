@@ -330,7 +330,9 @@ class ParticipantServiceKT extends KaribuTest {
         final var confirmationResponse = service.handleConfirmationResponse(email, context, locale);
 
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
-        assertManagerNotificationMail(mailServiceMock, locale, event.title(), "Alice", expectedRecipientEmails);
+        final var expectedParticipantCount = Integer.toString(service.getParticipantCount(event));
+        assertManagerNotificationMail(mailServiceMock, locale, event.title(), "Alice",
+                expectedParticipantCount, expectedRecipientEmails);
     }
 
     @Test
@@ -365,13 +367,16 @@ class ParticipantServiceKT extends KaribuTest {
         final var confirmationResponse = service.handleConfirmationResponse(email, context, locale);
 
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
-        assertManagerNotificationMail(mailServiceMock, locale, event.title(), "Someone", expectedRecipientEmails);
+        final var expectedParticipantCount = Integer.toString(service.getParticipantCount(event));
+        assertManagerNotificationMail(mailServiceMock, locale, event.title(), "Someone",
+                expectedParticipantCount, expectedRecipientEmails);
     }
 
     private void assertManagerNotificationMail(final @NotNull MailService mailServiceMock,
                                                final @NotNull Locale locale,
                                                final @NotNull String eventTitle,
                                                final @NotNull String participantName,
+                                               final @NotNull String participantCount,
                                                final @NotNull String[] expectedRecipientEmails) {
         final var managerMailInvocation = mockingDetails(mailServiceMock).getInvocations().stream()
                 .filter(invocation -> "sendMail".equals(invocation.getMethod().getName()))
@@ -380,7 +385,8 @@ class ParticipantServiceKT extends KaribuTest {
                 .findFirst()
                 .orElseThrow();
 
-        assertMailArguments(managerMailInvocation, locale, eventTitle, participantName, expectedRecipientEmails);
+        assertMailArguments(managerMailInvocation, locale, eventTitle, participantName,
+                participantCount, expectedRecipientEmails);
     }
 
     @SuppressWarnings("unchecked")
@@ -388,6 +394,7 @@ class ParticipantServiceKT extends KaribuTest {
                                      final @NotNull Locale locale,
                                      final @NotNull String eventTitle,
                                      final @NotNull String participantName,
+                                     final @NotNull String participantCount,
                                      final @NotNull String[] expectedRecipientEmails) {
         final var arguments = invocation.getArguments();
         assertThat(arguments[1]).isEqualTo(locale);
@@ -396,6 +403,7 @@ class ParticipantServiceKT extends KaribuTest {
         final var variables = (java.util.Map<String, String>) arguments[3];
         assertThat(variables).containsEntry("eventTitle", eventTitle);
         assertThat(variables).containsEntry("participantName", participantName);
+        assertThat(variables).containsEntry("participantCount", participantCount);
 
         final var actualRecipients = Arrays.stream(arguments)
                 .skip(4)
