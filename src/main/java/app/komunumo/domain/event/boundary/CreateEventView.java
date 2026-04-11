@@ -163,6 +163,7 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
         communitySelector.setEmptySelectionAllowed(false);
         communitySelector.setRequiredIndicatorVisible(true);
         communitySelector.setLabel(getTranslation("event.boundary.CreateEventView.label.community"));
+        communitySelector.setWidthFull();
         if (communityId != null) {
             communities.stream()
                     .filter(community -> communityId.equals(community.id()))
@@ -176,17 +177,20 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
         titleField.setLabel(getTranslation("event.boundary.CreateEventView.label.title"));
         titleField.setRequired(true);
         titleField.setMaxLength(255);
+        titleField.setWidthFull();
         add(titleField);
 
         descriptionField.addClassName("description-field");
         descriptionField.setValueChangeMode(ValueChangeMode.EAGER);
         descriptionField.setLabel(getTranslation("event.boundary.CreateEventView.label.description"));
+        descriptionField.setWidthFull();
         add(descriptionField);
 
         locationField.addClassName("location-field");
         locationField.setValueChangeMode(ValueChangeMode.EAGER);
         locationField.setLabel(getTranslation("event.boundary.CreateEventView.label.location"));
         locationField.setMaxLength(255);
+        locationField.setWidthFull();
         add(locationField);
 
         beginDateTimeField.addClassName("begin-field");
@@ -203,11 +207,13 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
                 }
             }
         });
+        beginDateTimeField.setWidthFull();
         add(beginDateTimeField);
 
         endDateTimeField.addClassName("end-field");
         endDateTimeField.setLabel(getTranslation("event.boundary.CreateEventView.label.endDateTime"));
         endDateTimeField.setMin(beginDateTimeField.getMin());
+        endDateTimeField.setWidthFull();
         add(endDateTimeField);
 
         timeZoneSelector.addClassName("time-zone-field");
@@ -220,15 +226,18 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
         timeZoneSelector.setValue(TimeZoneUtil.getClientTimeZone());
         timeZoneSelector.setEmptySelectionAllowed(false);
         timeZoneSelector.setLabel(getTranslation("event.boundary.CreateEventView.label.timeZone"));
+        timeZoneSelector.setWidthFull();
         add(timeZoneSelector);
 
         imageField.addClassName("image-field");
         imageField.setLabel(getTranslation("event.boundary.CreateEventView.label.image"));
+        imageField.setWidthFull();
         add(imageField);
 
         anonymousParticipationAllowed.addClassName("anonymous-participation-field");
         anonymousParticipationAllowed.setLabel(getTranslation("event.boundary.CreateEventView.label.anonymousParticipationAllowed"));
         anonymousParticipationAllowed.setValue(true);
+        anonymousParticipationAllowed.setWidthFull();
         add(anonymousParticipationAllowed);
 
         visibilitySelector.addClassName("visibility-field");
@@ -238,6 +247,7 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
         visibilitySelector.setLabel(getTranslation("event.boundary.CreateEventView.label.visibility"));
         visibilitySelector.setValue(EventVisibility.PUBLIC);
         visibilitySelector.setRequiredIndicatorVisible(true);
+        visibilitySelector.setWidthFull();
         add(visibilitySelector);
 
         statusSelector.addClassName("status-field");
@@ -247,6 +257,7 @@ public final class CreateEventView extends AbstractView implements AfterNavigati
         statusSelector.setLabel(getTranslation("event.boundary.CreateEventView.label.status"));
         statusSelector.setValue(EventStatus.DRAFT);
         statusSelector.setRequiredIndicatorVisible(true);
+        statusSelector.setWidthFull();
         add(statusSelector);
 
         createEventbutton.addClassName("create-button");
