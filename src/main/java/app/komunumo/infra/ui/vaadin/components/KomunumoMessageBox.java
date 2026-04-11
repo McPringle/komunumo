@@ -25,18 +25,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class KomunumoMessageBox extends Div {
 
-    public KomunumoMessageBox(final @NotNull String markdown) {
-        this(markdown, MessageType.INFO);
+    private final @NotNull String messageText;
+
+    public KomunumoMessageBox(final @NotNull String messageText) {
+        this(messageText, MessageType.INFO);
     }
 
-    public KomunumoMessageBox(final @NotNull String markdown,
+    public KomunumoMessageBox(final @NotNull String messageText,
                               final @NotNull MessageType messageType) {
+        this.messageText = messageText;
         addClassName("komunumo-message-box");
         addClassName("komunumo-message-box-" + messageType.name().toLowerCase());
         final var icon = createIcon(messageType);
         icon.addClassName("komunumo-message-box-icon");
         add(icon);
-        add(new Markdown(markdown));
+        add(new Markdown(messageText));
     }
 
     private @NotNull Icon createIcon(final @NotNull MessageType messageType) {
@@ -46,6 +49,11 @@ public class KomunumoMessageBox extends Div {
             case WARNING -> VaadinIcon.WARNING.create();
             case ERROR -> new Icon("lumo", "error");
         };
+    }
+
+    @Override
+    public @NotNull String getText() {
+        return messageText;
     }
 
     public enum MessageType {
