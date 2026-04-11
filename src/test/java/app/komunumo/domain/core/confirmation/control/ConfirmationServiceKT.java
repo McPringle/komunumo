@@ -57,7 +57,8 @@ class ConfirmationServiceKT extends KaribuTest {
             final var callCount = confirmationHandlerCounter.incrementAndGet();
             return switch (callCount) {
                 case 1 -> throw new KomunumoException("expected");
-                case 2 -> new ConfirmationResponse(ConfirmationStatus.SUCCESS, "Test Success Message", "");
+                case 2 -> new ConfirmationResponse(ConfirmationStatus.ERROR, "Test Error Message", "");
+                case 3 -> new ConfirmationResponse(ConfirmationStatus.SUCCESS, "Test Success Message", "");
                 default -> throw new IllegalStateException("Unexpected call count: " + callCount);
             };
         };
@@ -86,6 +87,7 @@ class ConfirmationServiceKT extends KaribuTest {
         assertThat(confirmationHandlerCounter.get()).isZero();
 
         try (var logCaptor = LogCaptor.forClass(ConfirmationService.class)) {
+            // first execution will throw a KomunumoException
             confirmationResponse = confirmationService.confirm(confirmationId, locale);
             assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.ERROR);
             assertThat(confirmationHandlerCounter.get()).isEqualTo(1);
@@ -93,15 +95,23 @@ class ConfirmationServiceKT extends KaribuTest {
                     "Error in 'actionHandler' for confirmation ID " + confirmationId + ": expected");
         }
 
+        // second execution will just return ERROR
+        confirmationResponse = confirmationService.confirm(confirmationId, locale);
+        assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.ERROR);
+        assertThat(confirmationResponse.message()).isEqualTo("Test Error Message");
+        assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
+
+        // third execution will return SUCCESS
         confirmationResponse = confirmationService.confirm(confirmationId, locale);
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.SUCCESS);
         assertThat(confirmationResponse.message()).isEqualTo("Test Success Message");
-        assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
+        assertThat(confirmationHandlerCounter.get()).isEqualTo(3);
 
+        // all following execution will throw a IllegalStateException
         confirmationResponse = confirmationService.confirm(confirmationId, locale);
         assertThat(confirmationResponse.confirmationStatus()).isEqualTo(ConfirmationStatus.ERROR);
         assertThat(confirmationResponse.message()).startsWith("An error occurred confirming your email address.");
-        assertThat(confirmationHandlerCounter.get()).isEqualTo(2);
+        assertThat(confirmationHandlerCounter.get()).isEqualTo(3);
     }
 
     private String extractConfirmationId(final @NotNull String body) {

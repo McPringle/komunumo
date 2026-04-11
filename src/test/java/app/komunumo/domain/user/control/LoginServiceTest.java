@@ -17,13 +17,14 @@
  */
 package app.komunumo.domain.user.control;
 
-import app.komunumo.domain.core.confirmation.control.ConfirmationService;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.domain.core.mail.control.MailService;
 import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserPrincipal;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.infra.ui.i18n.TranslationProvider;
 import app.komunumo.util.SecurityUtil;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.page.Page;
@@ -35,17 +36,22 @@ import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
 import static org.mockito.Mockito.mockStatic;
@@ -58,16 +64,19 @@ class LoginServiceTest {
 
     private @NotNull LoginService loginService;
     private @NotNull UserService userService;
+    private @NotNull MailService mailService;
     private @NotNull AuthenticationState  authenticationState;
 
     @BeforeEach
     void setupMocks() {
-        final var confirmationService = mock(ConfirmationService.class);
-        final var translationProvider = mock(TranslationProvider.class);
+        final var configurationService = mock(ConfigurationService.class);
+        when(configurationService.getConfiguration(ConfigurationSetting.INSTANCE_URL))
+                .thenReturn("http://localhost:8080");
 
+        mailService = mock(MailService.class);
         userService = mock(UserService.class);
         authenticationState = mock(AuthenticationState.class);
-        loginService = new LoginService(userService, confirmationService, translationProvider, authenticationState);
+        loginService = new LoginService(userService, authenticationState, configurationService, mailService);
     }
 
     @Test
@@ -322,4 +331,52 @@ class LoginServiceTest {
         }
     }
 
+    @Test
+    void startLoginProcess_whenUserNotFound() {
+        when(userService.getUserByEmail(any())).thenReturn(Optional.empty());
+        try (var logCaptor = LogCaptor.forClass(LoginService.class)) {
+            loginService.startLoginProcess("test@example.com", Locale.ENGLISH);
+            assertThat(logCaptor.getWarnLogs())
+                    .contains("User with email 'test@example.com' not found. Ignoring login request.");
+        }
+    }
+
+    @Test
+    void startLoginProcess_whenLoginNotAllowed() {
+        final var user = mock(UserDto.class);
+        when(user.type()).thenReturn(UserType.REMOTE);
+        when(userService.getUserByEmail(any())).thenReturn(Optional.of(user));
+        try (var logCaptor = LogCaptor.forClass(LoginService.class)) {
+            loginService.startLoginProcess("test@example.com", Locale.ENGLISH);
+            assertThat(logCaptor.getWarnLogs())
+                    .contains("User with email 'test@example.com' exists, but login is not allowed for type 'REMOTE'.");
+        }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void handleLogin_withError_shouldReturnFalse() {
+        final var user = mock(UserDto.class);
+        when(user.type()).thenReturn(UserType.LOCAL);
+        when(user.name()).thenReturn("Test User");
+
+        when(userService.getUserByEmail(any())).thenReturn(Optional.of(user), Optional.empty());
+
+        loginService.startLoginProcess("test@example.com", Locale.ENGLISH);
+
+        final var variablesCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(mailService).sendMail(any(), any(), any(), variablesCaptor.capture(), any());
+
+        @SuppressWarnings("unchecked")
+        final var variables = (Map<String, String>) variablesCaptor.getValue();
+        final var confirmationLink = variables.get("confirmationLink");
+        final var confirmationId = UriComponentsBuilder.fromUriString(confirmationLink)
+                .build()
+                .getQueryParams()
+                .getFirst(LoginService.CONFIRMATION_PARAMETER);
+        assertThat(confirmationId).isNotBlank();
+
+        final var result = loginService.handleLogin(confirmationId);
+        assertThat(result).isFalse();
+    }
 }

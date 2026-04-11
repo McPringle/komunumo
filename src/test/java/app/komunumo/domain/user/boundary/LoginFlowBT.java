@@ -19,15 +19,26 @@ package app.komunumo.domain.user.boundary;
 
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.test.BrowserTest;
-import com.icegreen.greenmail.util.GreenMailUtil;
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.options.WaitForSelectorState;
 import org.junit.jupiter.api.Test;
 
-import static app.komunumo.test.TestUtil.extractLinkFromText;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LoginFlowBT extends BrowserTest {
+
+    @Test
+    void clickLinkInAvatarMenu() {
+        final var page = getPage();
+        page.navigate(getInstanceUrl() + "events");
+        page.waitForURL("**/events");
+        page.waitForSelector(getInstanceNameSelector());
+
+        page.click(AVATAR_SELECTOR);
+        page.waitForSelector(CONTEXT_MENU_SELECTOR);
+        page.click(LOGIN_MENU_ITEM_SELECTOR);
+        page.waitForURL("**/login");
+
+        assertThat(page.url()).contains("/login");
+    }
 
     @Test
     @SuppressWarnings({"java:S2925", "java:S2699"})
@@ -42,119 +53,6 @@ class LoginFlowBT extends BrowserTest {
         captureScreenshot("loginWorks_event-page");
 
         logout();
-    }
-
-    @Test
-    @SuppressWarnings({"java:S2925", "java:S2699"})
-    void loginShouldFail() {
-        final var page = getPage();
-
-        // navigate to events page
-        page.navigate(getInstanceUrl() + "events");
-        page.waitForURL("**/events");
-        page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("loginFails_before-login");
-
-        // open avatar menu
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(CONTEXT_MENU_SELECTOR);
-        captureScreenshot("loginFails_profile-menu-before-login");
-
-        // click on login menu item
-        page.click(LOGIN_MENU_ITEM_SELECTOR);
-
-        // wait for email field to appear
-        final var emailInput = page.locator("vaadin-email-field input");
-        emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("loginFails_login-dialog-empty");
-
-        // fill in email address
-        emailInput.fill("fail@example.com");
-        captureScreenshot("loginFails_login-dialog-filled");
-
-        // click on the request email button
-        page.locator("vaadin-button.email-button").click();
-        final var closeButton = page.locator("vaadin-button.close-button:has-text(\"Close\")");
-        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        closeButton.click();
-        captureScreenshot("loginFails_after-email-requested");
-
-        // wait for the confirmation email
-        final var confirmationMessage = getEmailBySubject("[Komunumo Test] Please confirm your email address");
-
-        // extract the confirmation link
-        final var mailBody = GreenMailUtil.getBody(confirmationMessage);
-        final var confirmationLink = extractLinkFromText(mailBody);
-        assertThat(confirmationLink).isNotNull();
-
-        // open the confirmation link
-        page.navigate(confirmationLink);
-        page.waitForURL("**/confirm**");
-        page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("loginFails_confirmation-page");
-
-        // check for error message
-        final var message = page.locator("vaadin-notification-card").first();
-        assertThat(message.isVisible()).isTrue();
-        assertThat(message.textContent()).startsWith("The login to your profile was not successful.");
-    }
-
-    @Test
-    void loginDialogOpenAndClose() {
-        final var page = getPage();
-
-        // navigate to events page
-        page.navigate(getInstanceUrl() + "events");
-        page.waitForURL("**/events");
-        page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("loginDialogOpenAndClose_before-login");
-
-        // open avatar menu
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(CONTEXT_MENU_SELECTOR);
-        captureScreenshot("loginDialogOpenAndClose_profile-menu-before-login");
-
-        // click on login menu item
-        page.click(LOGIN_MENU_ITEM_SELECTOR);
-
-        // wait for email field to appear
-        final var emailInput = page.locator("vaadin-email-field input");
-        emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("loginDialogOpenAndClose_login-dialog-empty");
-
-        // close the dialog
-        final var closeButton = page.locator("vaadin-button.close-dialog-button");
-        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        closeButton.click();
-    }
-
-    @Test
-    void loginDialogCancel() {
-        final var page = getPage();
-
-        // navigate to events page
-        page.navigate(getInstanceUrl() + "events");
-        page.waitForURL("**/events");
-        page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("loginDialogCancel_before-login");
-
-        // open avatar menu
-        page.click(AVATAR_SELECTOR);
-        page.waitForSelector(CONTEXT_MENU_SELECTOR);
-        captureScreenshot("loginDialogCancel_profile-menu-before-login");
-
-        // click on login menu item
-        page.click(LOGIN_MENU_ITEM_SELECTOR);
-
-        // wait for email field to appear
-        final var emailInput = page.locator("vaadin-email-field input");
-        emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("loginDialogCancel_login-dialog-empty");
-
-        // cancel the dialog
-        final var cancelButton = page.locator("vaadin-button.cancel-button");
-        cancelButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        cancelButton.click();
     }
 
 }

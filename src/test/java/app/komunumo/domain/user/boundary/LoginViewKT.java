@@ -17,68 +17,20 @@
  */
 package app.komunumo.domain.user.boundary;
 
-import app.komunumo.domain.core.confirmation.boundary.ConfirmationDialog;
+import app.komunumo.SecurityConfig;
+import app.komunumo.domain.user.control.LoginService;
+import app.komunumo.infra.ui.vaadin.components.KomunumoMessageBox;
 import app.komunumo.test.KaribuTest;
 import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.router.QueryParameters;
 import org.junit.jupiter.api.Test;
 
 import static app.komunumo.domain.user.entity.UserRole.USER;
-import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class LoginViewKT extends KaribuTest {
-
-    @Test
-    void loginDialogShouldOpenAutomatically() {
-        UI.getCurrent().navigate(LoginView.class);
-
-        MockVaadin.clientRoundtrip(false);
-
-        final var loginDialog = _get(ConfirmationDialog.class);
-        assertThat(loginDialog).isNotNull();
-        assertThat(loginDialog.isOpened()).isTrue();
-    }
-
-    @Test
-    void loginDialogIsClosable() {
-        UI.getCurrent().navigate(LoginView.class);
-
-        MockVaadin.clientRoundtrip(false);
-
-        final var loginDialog = _get(ConfirmationDialog.class);
-        assertThat(loginDialog).isNotNull();
-        assertThat(loginDialog.isOpened()).isTrue();
-
-        final var closeButton = _get(loginDialog, Button.class, spec -> spec.withClasses("close-dialog-button"));
-        assertThat(closeButton).isNotNull();
-        _click(closeButton);
-
-        MockVaadin.clientRoundtrip(false);
-
-        assertThat(loginDialog.isOpened()).isFalse();
-    }
-
-    @Test
-    void loginDialogCanBeCanceled() {
-        UI.getCurrent().navigate(LoginView.class);
-
-        MockVaadin.clientRoundtrip(false);
-
-        final var loginDialog = _get(ConfirmationDialog.class);
-        assertThat(loginDialog).isNotNull();
-        assertThat(loginDialog.isOpened()).isTrue();
-
-        final var cancelButton = _get(loginDialog, Button.class, spec -> spec.withText("Cancel"));
-        assertThat(cancelButton).isNotNull();
-        _click(cancelButton);
-
-        MockVaadin.clientRoundtrip(false);
-
-        assertThat(loginDialog.isOpened()).isFalse();
-    }
 
     @Test
     void redirectWhenAlreadyLoggedIn() {
@@ -89,4 +41,12 @@ class LoginViewKT extends KaribuTest {
                 .isNotEqualTo(LoginView.class);
     }
 
+    @Test
+    void confirmWithInvalidConfirmationId_shouldShowError() {
+        UI.getCurrent().navigate(SecurityConfig.LOGIN_URL,
+                QueryParameters.of(LoginService.CONFIRMATION_PARAMETER, "invalid"));
+        final var messageBox = _get(KomunumoMessageBox.class);
+        assertThat(messageBox.getText())
+                .isEqualTo("The confirmation link is invalid or has expired.  \nPlease request a new one on this page.");
+    }
 }

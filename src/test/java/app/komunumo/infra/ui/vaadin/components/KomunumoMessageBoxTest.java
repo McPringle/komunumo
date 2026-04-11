@@ -28,6 +28,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class KomunumoMessageBoxTest {
 
     @Test
+    void messageText() {
+        final var messageBox = new KomunumoMessageBox("**Bold Message**");
+        assertThat(messageBox.getText()).isEqualTo("**Bold Message**");
+    }
+
+    @Test
     void defaultVariant() {
         assertMessageBoxVariant(null, "vaadin:info-circle", "komunumo-message-box-info");
     }

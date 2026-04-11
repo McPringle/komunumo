@@ -53,7 +53,7 @@ class EditProfileViewBT extends BrowserTest {
         page.navigate(getInstanceUrl() + "settings/profile");
         page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("noSettingsForAnonymousVisitors_afterManualNavigation");
-        assertThat(page.locator("h2:visible").allInnerTexts()).contains("Confirm your email address");
+        assertThat(page.locator("h3:visible").allInnerTexts()).contains("Please log in");
     }
 
     @Test

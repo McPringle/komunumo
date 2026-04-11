@@ -72,7 +72,7 @@ public final class WebsiteLayout extends Div implements RouterLayout, BeforeEnte
         }
 
         addPageHeader(configurationService);
-        add(new NavigationBar(configurationService, globalPageService, loginService, authenticationState));
+        add(new NavigationBar(configurationService, globalPageService, authenticationState));
 
         main = new Main();
         add(main);

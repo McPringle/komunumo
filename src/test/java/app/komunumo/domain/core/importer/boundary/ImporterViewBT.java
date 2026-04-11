@@ -67,7 +67,7 @@ class ImporterViewBT extends BrowserTest {
         page.navigate(getInstanceUrl() + "admin/import");
         page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("anonymousVisitor_afterManualNavigation");
-        assertThat(page.locator("h2:visible").allInnerTexts()).contains("Confirm your email address");
+        assertThat(page.locator("h3:visible").allInnerTexts()).contains("Please log in");
     }
 
     @Test

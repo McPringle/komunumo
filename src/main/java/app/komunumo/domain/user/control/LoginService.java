@@ -18,19 +18,19 @@
 package app.komunumo.domain.user.control;
 
 import app.komunumo.SecurityConfig;
-import app.komunumo.domain.core.confirmation.control.ConfirmationHandler;
-import app.komunumo.domain.core.confirmation.control.ConfirmationService;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationContext;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationRequest;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationResponse;
-import app.komunumo.domain.core.confirmation.entity.ConfirmationStatus;
+import app.komunumo.domain.core.config.control.ConfigurationService;
+import app.komunumo.domain.core.config.entity.ConfigurationSetting;
+import app.komunumo.domain.core.mail.control.MailService;
+import app.komunumo.domain.core.mail.entity.MailFormat;
+import app.komunumo.domain.core.mail.entity.MailTemplateId;
 import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.domain.user.entity.UserDto;
 import app.komunumo.domain.user.entity.UserPrincipal;
 import app.komunumo.domain.user.entity.UserRole;
 import app.komunumo.domain.user.entity.UserType;
-import app.komunumo.infra.ui.i18n.TranslationProvider;
 import app.komunumo.util.SecurityUtil;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.server.VaadinService;
 import com.vaadin.flow.server.VaadinServletRequest;
@@ -45,33 +45,50 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public final class LoginService {
 
     private static final @NotNull Logger LOGGER = LoggerFactory.getLogger(LoginService.class);
-    private static final @NotNull String CONTEXT_LOGIN_LOCATION = "location";
+    private static final @NotNull Duration CONFIRMATION_TIMEOUT = Duration.ofMinutes(5);
+    public static final @NotNull String CONFIRMATION_PARAMETER = "confirm";
 
     private final @NotNull AuthenticationState authenticationState;
 
     private final @NotNull UserService userService;
-    private final @NotNull ConfirmationService confirmationService;
-    private final @NotNull TranslationProvider translationProvider;
+
+    /**
+     * <p>In-memory cache storing confirmation data for pending login confirmations.</p>
+     *
+     * <p>Entries expire automatically after a fixed timeout to limit the validity of confirmation
+     * links and to protect against abuse.</p>
+     */
+    private final @NotNull Cache<@NotNull String, @NotNull ConfirmationData> confirmationCache = Caffeine.newBuilder()
+            .expireAfterWrite(CONFIRMATION_TIMEOUT)
+            .maximumSize(1_000) // prevent memory overflow (DDOS attack)
+            .build();
+    private final ConfigurationService configurationService;
+    private final MailService mailService;
 
     public LoginService(final @NotNull UserService userService,
-                        final @NotNull ConfirmationService confirmationService,
-                        final @NotNull TranslationProvider translationProvider,
-                        final @NotNull AuthenticationState authenticationState) {
+                        final @NotNull AuthenticationState authenticationState,
+                        final @NotNull ConfigurationService configurationService,
+                        final @NotNull MailService mailService) {
         super();
         this.userService = userService;
-        this.confirmationService = confirmationService;
-        this.translationProvider = translationProvider;
         this.authenticationState = authenticationState;
+        this.configurationService = configurationService;
+        this.mailService = mailService;
     }
 
     public boolean login(final @NotNull String emailAddress) {
@@ -159,31 +176,62 @@ public final class LoginService {
         }
     }
 
-    public void startLoginProcess(final @NotNull Locale locale,
-                                  final @NotNull String location) {
-        final var actionMessage = translationProvider.getTranslation("user.control.LoginService.actionText", locale);
-        final ConfirmationHandler actionHandler = this::passwordlessLoginHandler;
-        final var actionContext = ConfirmationContext.of(CONTEXT_LOGIN_LOCATION, location);
-        final var confirmationRequest = new ConfirmationRequest(
-                actionMessage,
-                actionHandler,
-                actionContext,
-                locale
+    public void startLoginProcess(final @NotNull String email,
+                                  final @NotNull Locale locale) {
+        userService.getUserByEmail(email).ifPresentOrElse(
+                user -> {
+                    if (user.type().isLoginAllowed()) {
+                        final var confirmationId = UUID.randomUUID().toString();
+                        final var confirmationData = new ConfirmationData(confirmationId, email);
+                        confirmationCache.put(confirmationId, confirmationData);
+                        final var confirmationLink = generateConfirmationLink(confirmationData);
+                        final var variables = Map.of(
+                                "userName", user.name(),
+                                "confirmationLink", confirmationLink,
+                                "timeoutMinutes", Long.toString(CONFIRMATION_TIMEOUT.toMinutes()));
+                        mailService.sendMail(MailTemplateId.LOGIN_CONFIRMATION_MAIL, locale, MailFormat.MARKDOWN, variables, email);
+                    } else {
+                        LOGGER.warn("User with email '{}' exists, but login is not allowed for type '{}'.", email, user.type());
+                    }
+                },
+                () -> {
+                    LOGGER.warn("User with email '{}' not found. Ignoring login request.", email);
+                }
         );
-        confirmationService.startConfirmationProcess(confirmationRequest);
     }
 
-    private @NotNull ConfirmationResponse passwordlessLoginHandler(final @NotNull String email,
-                                                                   final @NotNull ConfirmationContext context,
-                                                                   final @NotNull Locale locale) {
-        if (login(email)) {
-            final var status = ConfirmationStatus.SUCCESS;
-            final var message = translationProvider.getTranslation("user.control.LoginService.successMessage", locale);
-            final var location = (String) context.getOrDefault(CONTEXT_LOGIN_LOCATION, "");
-            return new ConfirmationResponse(status, message, location);
+    public boolean handleLogin(final @NotNull String confirmationId) {
+        final var confirmationData = confirmationCache.getIfPresent(confirmationId);
+        if (confirmationData != null) {
+            final var email = confirmationData.email();
+            if (login(email)) {
+                confirmationCache.invalidate(confirmationId);
+                return true;
+            }
         }
-        final var message = translationProvider.getTranslation("user.control.LoginService.failedMessage", locale);
-        return new ConfirmationResponse(ConfirmationStatus.ERROR, message, "");
+        return false;
     }
 
+    /**
+     * <p>Generates an absolute confirmation link for the given confirmation data.</p>
+     *
+     * @param confirmationData the confirmation data containing the identifier
+     * @return a URL pointing to the confirmation endpoint
+     */
+    private @NotNull String generateConfirmationLink(final @NotNull ConfirmationData confirmationData) {
+        final var instanceUrl = configurationService.getConfiguration(ConfigurationSetting.INSTANCE_URL);
+        return UriComponentsBuilder.fromUriString(instanceUrl)
+                .path(SecurityConfig.LOGIN_URL)
+                .queryParam(CONFIRMATION_PARAMETER, confirmationData.id())
+                .encode(StandardCharsets.UTF_8)
+                .build()
+                .toUriString();
+    }
+
+    /**
+     * <p>Internal data structure holding confirmation identifiers and associated email addresses.</p>
+     */
+    private record ConfirmationData(
+            @NotNull String id,
+            @NotNull String email) { }
 }

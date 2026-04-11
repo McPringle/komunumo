@@ -27,12 +27,11 @@ import app.komunumo.domain.event.boundary.CreateEventView;
 import app.komunumo.domain.event.boundary.EventGridView;
 import app.komunumo.domain.page.control.GlobalPageService;
 import app.komunumo.domain.user.boundary.EditProfileView;
+import app.komunumo.domain.user.boundary.LoginView;
 import app.komunumo.domain.user.boundary.LogoutView;
 import app.komunumo.domain.user.boundary.UserRegistrationView;
-import app.komunumo.domain.user.control.LoginService;
 import app.komunumo.domain.user.entity.AuthenticationState;
 import app.komunumo.infra.ui.vaadin.control.ThemeUtil;
-import app.komunumo.util.LocationUtil;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.avatar.Avatar;
@@ -53,7 +52,6 @@ public final class NavigationBar extends HorizontalLayout {
 
     public NavigationBar(final @NotNull ConfigurationService configurationService,
                          final @NotNull GlobalPageService globalPageService,
-                         final @NotNull LoginService loginService,
                          final @NotNull AuthenticationState authenticationState) {
         super();
         final var ui = UI.getCurrent();
@@ -64,7 +62,7 @@ public final class NavigationBar extends HorizontalLayout {
         menuContainer.add(getNavigationBar(ui, configurationService, globalPageService));
         addToStart(menuContainer);
 
-        addToEnd(getAvatar(ui, configurationService, loginService, authenticationState));
+        addToEnd(getAvatar(ui, configurationService, authenticationState));
     }
 
     private Component getNavigationBar(final @NotNull UI ui,
@@ -85,7 +83,6 @@ public final class NavigationBar extends HorizontalLayout {
 
     private Component getAvatar(final @NotNull UI ui,
                                 final @NotNull ConfigurationService configurationService,
-                                final @NotNull LoginService loginService,
                                 final @NotNull AuthenticationState authenticationState) {
         final var avatar = new Avatar();
         final var avatarMenu = new ContextMenu(avatar);
@@ -106,7 +103,7 @@ public final class NavigationBar extends HorizontalLayout {
 
         // login as first entry in the menu
         final var loginItem = avatarMenu.addItem(ui.getTranslation("vaadin.components.NavigationBar.login"),
-                _ -> loginService.startLoginProcess(ui.getLocale(), LocationUtil.getCurrentLocation(ui))
+                _ -> ui.navigate(LoginView.class)
         );
 
         // register local account

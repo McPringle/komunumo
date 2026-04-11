@@ -1,4 +1,4 @@
-/*
+/**
  * Komunumo - Open Source Community Manager
  * Copyright (C) Marcus Fihlon and the individual contributors to Komunumo.
  *
@@ -15,16 +15,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package app.komunumo.domain.core.mail.entity;
-
-public enum MailTemplateId {
-    ACCOUNT_REGISTRATION_SUCCESS,
-    COMMUNITY_JOIN_SUCCESS_MEMBER,
-    COMMUNITY_JOIN_SUCCESS_OWNER,
-    CONFIRMATION_PROCESS,
-    EVENT_REGISTRATION_NOTIFY_MANAGERS,
-    EVENT_REGISTRATION_SUCCESS,
-    EVENT_UNREGISTRATION_SUCCESS,
-    LOGIN_CONFIRMATION_MAIL,
-    TEST
+#login-view vaadin-email-field {
+    width: 400px;
 }

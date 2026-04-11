@@ -71,7 +71,7 @@ class ExporterViewBT extends BrowserTest {
         page.navigate(getInstanceUrl() + "admin/export");
         page.waitForSelector(getInstanceNameSelector());
         captureScreenshot("anonymousVisitor_afterManualNavigation");
-        assertThat(page.locator("h2:visible").allInnerTexts()).contains("Confirm your email address");
+        assertThat(page.locator("h3:visible").allInnerTexts()).contains("Please log in");
     }
 
     @Test

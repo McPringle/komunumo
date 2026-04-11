@@ -243,24 +243,16 @@ public abstract class BrowserTest extends IntegrationTest {
         // wait for email field to appear
         final var emailInput = page.locator("vaadin-email-field input");
         emailInput.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("login_empty-dialog");
 
         // fill in email address
         emailInput.fill(user.email());
-        captureScreenshot("login_email-field-set");
 
         // click on the request email button
         page.locator("vaadin-button.email-button").click();
 
-        // close the dialog
-        final var closeButton = page.locator("vaadin-button.close-button:has-text(\"Close\")");
-        closeButton.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.VISIBLE));
-        captureScreenshot("login_email-send");
-        closeButton.click();
-
         // wait for the confirmation email
         final var instanceName = configurationService.getConfiguration(INSTANCE_NAME);
-        final var confirmationMessage = getEmailBySubject("[%s] Please confirm your email address".formatted(instanceName));
+        final var confirmationMessage = getEmailBySubject("[%s] Please confirm your login".formatted(instanceName));
 
         // extract the confirmation link
         final var mailBody = GreenMailUtil.getBody(confirmationMessage);
@@ -269,9 +261,7 @@ public abstract class BrowserTest extends IntegrationTest {
 
         // open the confirmation link
         page.navigate(confirmationLink);
-        page.waitForURL("**/confirm**");
         page.waitForSelector(getInstanceNameSelector());
-        captureScreenshot("login_confirmation-page");
     }
 
     protected void logout() {
@@ -279,7 +269,6 @@ public abstract class BrowserTest extends IntegrationTest {
             page.click(AVATAR_SELECTOR);
             page.waitForSelector(CONTEXT_MENU_SELECTOR);
         }
-        captureScreenshot("logout_profile-menu");
 
         page.click(LOGOUT_MENU_ITEM_SELECTOR);
         page.waitForSelector("vaadin-context-menu-overlay",
@@ -287,7 +276,6 @@ public abstract class BrowserTest extends IntegrationTest {
         try {
             page.waitForLoadState(LoadState.NETWORKIDLE, new Page.WaitForLoadStateOptions().setTimeout(1500));
         } catch (PlaywrightException ignored) { }
-        captureScreenshot("logout_done");
     }
 
     /**

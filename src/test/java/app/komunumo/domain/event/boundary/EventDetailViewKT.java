@@ -17,12 +17,15 @@
  */
 package app.komunumo.domain.event.boundary;
 
+import app.komunumo.domain.core.confirmation.boundary.ConfirmationDialog;
 import app.komunumo.domain.event.control.EventService;
 import app.komunumo.domain.event.entity.EventDto;
 import app.komunumo.domain.event.entity.EventWithImageDto;
+import app.komunumo.domain.user.boundary.LoginView;
 import app.komunumo.infra.ui.vaadin.components.KomunumoMessageBox;
 import app.komunumo.test.KaribuTest;
 import app.komunumo.util.DateTimeUtil;
+import com.github.mvysny.kaributesting.v10.MockVaadin;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H2;
@@ -34,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static app.komunumo.test.TestUtil.findComponent;
+import static com.github.mvysny.kaributesting.v10.LocatorJ._click;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._find;
 import static com.github.mvysny.kaributesting.v10.LocatorJ._get;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -161,5 +165,62 @@ class EventDetailViewKT extends KaribuTest {
         final var h2 = findComponent(main, H2.class);
         assertThat(h2).isNotNull();
         assertThat(h2.getText()).isEqualTo("Page not found");
+    }
+
+    @Test
+    void registerDialogIsClosable() {
+        final var testEvent = eventService.getUpcomingEventsWithImage()
+                .stream()
+                .map(EventWithImageDto::event)
+                .filter(EventDto::anonymousParticipationAllowed)
+                .findAny()
+                .orElseThrow();
+
+        UI.getCurrent().navigate("events/" + testEvent.id());
+
+        final var registerButton = _get(Button.class, spec -> spec.withClasses("registration-button"));
+        _click(registerButton);
+
+        MockVaadin.clientRoundtrip(false);
+
+        final var registerDialog = _get(ConfirmationDialog.class);
+        assertThat(registerDialog).isNotNull();
+        assertThat(registerDialog.isOpened()).isTrue();
+
+        final var closeButton = _get(registerDialog, Button.class, spec -> spec.withClasses("close-dialog-button"));
+        assertThat(closeButton).isNotNull();
+        _click(closeButton);
+
+        MockVaadin.clientRoundtrip(false);
+
+        assertThat(registerDialog.isOpened()).isFalse();
+    }
+
+    @Test
+    void loginDialogCanBeCanceled() {
+        final var testEvent = eventService.getUpcomingEventsWithImage()
+                .stream()
+                .map(EventWithImageDto::event)
+                .filter(EventDto::anonymousParticipationAllowed)
+                .findAny()
+                .orElseThrow();
+
+        UI.getCurrent().navigate("events/" + testEvent.id());
+
+        final var registerButton = _get(Button.class, spec -> spec.withClasses("registration-button"));
+        _click(registerButton);
+
+        MockVaadin.clientRoundtrip(false);
+
+        final var registerDialog = _get(ConfirmationDialog.class);
+        assertThat(registerDialog.isOpened()).isTrue();
+
+        final var cancelButton = _get(registerDialog, Button.class, spec -> spec.withText("Cancel"));
+        assertThat(cancelButton).isNotNull();
+        _click(cancelButton);
+
+        MockVaadin.clientRoundtrip(false);
+
+        assertThat(registerDialog.isOpened()).isFalse();
     }
 }
