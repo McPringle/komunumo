@@ -23,14 +23,37 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.markdown.Markdown;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * <p>Visual message component for informational and status messages in Komunumo views.</p>
+ *
+ * <p>The message content is rendered as {@link Markdown} and decorated with a type-specific icon.</p>
+ */
 public class KomunumoMessageBox extends Div {
 
+    /**
+     * <p>Raw message text rendered by this component.</p>
+     */
     private final @NotNull String messageText;
 
+    /**
+     * <p>Creates a message box with the given text using the default type {@link MessageType#INFO}.</p>
+     *
+     * <p>The text is rendered as {@link Markdown} content.</p>
+     *
+     * @param messageText the message text to display
+     */
     public KomunumoMessageBox(final @NotNull String messageText) {
         this(messageText, MessageType.INFO);
     }
 
+    /**
+     * <p>Creates a message box with the given text and message type.</p>
+     *
+     * <p>The component adds type-specific CSS classes and renders the text as {@link Markdown}.</p>
+     *
+     * @param messageText the message text to display
+     * @param messageType the visual type defining color and icon
+     */
     public KomunumoMessageBox(final @NotNull String messageText,
                               final @NotNull MessageType messageType) {
         this.messageText = messageText;
@@ -42,6 +65,12 @@ public class KomunumoMessageBox extends Div {
         add(new Markdown(messageText));
     }
 
+    /**
+     * <p>Creates the icon representing the given {@link MessageType}.</p>
+     *
+     * @param messageType the message type to map to an icon
+     * @return the icon for the given message type
+     */
     private @NotNull Icon createIcon(final @NotNull MessageType messageType) {
         return switch (messageType) {
             case INFO -> VaadinIcon.INFO_CIRCLE.create();
@@ -51,11 +80,19 @@ public class KomunumoMessageBox extends Div {
         };
     }
 
+    /**
+     * <p>Returns the message text currently displayed by this component.</p>
+     *
+     * @return the configured message text
+     */
     @Override
     public @NotNull String getText() {
         return messageText;
     }
 
+    /**
+     * <p>Defines the available visual message types for {@link KomunumoMessageBox}.</p>
+     */
     public enum MessageType {
         INFO, SUCCESS, WARNING, ERROR
     }
