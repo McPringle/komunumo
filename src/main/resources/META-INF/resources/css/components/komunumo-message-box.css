@@ -24,7 +24,6 @@
     border-radius: 0.5rem;
     background: var(--komunumo-color-message-background);
     color: var(--komunumo-color-message-text);
-    font-weight: 500;
     line-height: 1.45;
 }
 
